@@ -1,0 +1,84 @@
+{
+  "kind": "collectionType",
+  "collectionName": "student_payments",
+  "info": {
+    "singularName": "student-payment",
+    "pluralName": "student-payments",
+    "displayName": "StudentPayment"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "paymentNumber": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "invoice": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::student-invoice.student-invoice"
+    },
+    "student": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "amount": {
+      "type": "decimal",
+      "required": true
+    },
+    "paymentDate": {
+      "type": "datetime",
+      "required": true
+    },
+    "paymentMethod": {
+      "type": "enumeration",
+      "enum": [
+        "CASH",
+        "BANK",
+        "MOBILE_MONEY",
+        "CARD"
+      ],
+      "required": true
+    },
+    "paymentCategory": {
+      "type": "enumeration",
+      "enum": [
+        "TUITION",
+        "TRANSPORT",
+        "TSHIRT",
+        "REGISTRATION",
+        "OTHER"
+      ],
+      "required": true
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": [
+        "DRAFT",
+        "SUBMITTED",
+        "APPROVED",
+        "REJECTED"
+      ],
+      "default": "DRAFT"
+    },
+    "notes": {
+      "type": "text"
+    },
+    "rejectionReason": {
+      "type": "text"
+    },
+    "receivedBy": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "approvedBy": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    }
+  }
+}

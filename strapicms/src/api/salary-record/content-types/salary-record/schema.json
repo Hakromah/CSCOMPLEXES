@@ -1,0 +1,76 @@
+{
+  "kind": "collectionType",
+  "collectionName": "salary_records",
+  "info": {
+    "singularName": "salary-record",
+    "pluralName": "salary-records",
+    "displayName": "SalaryRecord"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "recordNumber": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "staff": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "month": {
+      "type": "string",
+      "required": true
+    },
+    "year": {
+      "type": "integer",
+      "required": true
+    },
+    "baseSalary": {
+      "type": "decimal",
+      "required": true
+    },
+    "allowances": {
+      "type": "decimal",
+      "default": 0
+    },
+    "deductions": {
+      "type": "decimal",
+      "default": 0
+    },
+    "netSalary": {
+      "type": "decimal",
+      "required": true
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": [
+        "DRAFT",
+        "SUBMITTED",
+        "APPROVED",
+        "REJECTED",
+        "PAID",
+        "PARTIALLY_PAID"
+      ],
+      "default": "DRAFT"
+    },
+    "notes": {
+      "type": "text"
+    },
+    "rejectionReason": {
+      "type": "text"
+    },
+    "submittedBy": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "approvedBy": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    }
+  }
+}

@@ -1,0 +1,12 @@
+TypeError: strapi.plugin(...).service(...).hashPassword is not a function
+    at Object.createUser (C:\Users\pc\AMFOFANA-UPDATES\AMFOFANA\strapicms\dist\src\api\school-admin\services\school-admin.js:24:30)
+    at Object.createUser (C:\Users\pc\AMFOFANA-UPDATES\AMFOFANA\strapicms\dist\src\api\school-admin\controllers\school-admin.js:15:79)
+    at dispatch (C:\Users\pc\AMFOFANA-UPDATES\AMFOFANA\strapicms\node_modules\koa-compose\index.js:42:32)
+    at returnBodyMiddleware (C:\Users\pc\AMFOFANA-UPDATES\AMFOFANA\strapicms\node_modules\@strapi\core\dist\services\server\compose-endpoint.js:46:26)
+    at dispatch (C:\Users\pc\AMFOFANA-UPDATES\AMFOFANA\strapicms\node_modules\koa-compose\index.js:42:32)
+    at policiesMiddleware (C:\Users\pc\AMFOFANA-UPDATES\AMFOFANA\strapicms\node_modules\@strapi\core\dist\services\server\policy.js:21:15)
+    at dispatch (C:\Users\pc\AMFOFANA-UPDATES\AMFOFANA\strapicms\node_modules\koa-compose\index.js:42:32)
+    at C:\Users\pc\AMFOFANA-UPDATES\AMFOFANA\strapicms\node_modules\@strapi\core\dist\services\server\compose-endpoint.js:27:26
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async C:\Users\pc\AMFOFANA-UPDATES\AMFOFANA\strapicms\dist\src\middlewares\auth-cookie.js:10:9
+{}

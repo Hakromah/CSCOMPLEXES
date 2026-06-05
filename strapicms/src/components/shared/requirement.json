@@ -1,0 +1,13 @@
+{
+  "collectionName": "components_shared_requirements",
+  "info": {
+    "displayName": "requirement"
+  },
+  "options": {},
+  "attributes": {
+    "requirements": {
+      "type": "json"
+    }
+  },
+  "config": {}
+}

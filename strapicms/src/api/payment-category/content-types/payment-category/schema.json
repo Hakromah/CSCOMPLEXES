@@ -1,0 +1,26 @@
+{
+  "kind": "collectionType",
+  "collectionName": "payment_categories",
+  "info": {
+    "singularName": "payment-category",
+    "pluralName": "payment-categories",
+    "displayName": "PaymentCategory"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "description": {
+      "type": "string"
+    },
+    "isActive": {
+      "type": "boolean",
+      "default": true
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "kind": "collectionType",
+  "collectionName": "academic_resources",
+  "info": {
+    "singularName": "academic-resource",
+    "pluralName": "academic-resources",
+    "displayName": "Academic Resource"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "file": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "files"
+      ]
+    }
+  }
+}

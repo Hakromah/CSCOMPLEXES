@@ -1,0 +1,18 @@
+{
+  "collectionName": "components_shared_link_items",
+  "info": {
+    "displayName": "link-items",
+    "icon": "link"
+  },
+  "options": {},
+  "attributes": {
+    "text": {
+      "type": "string"
+    },
+    "visibled": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "config": {}
+}

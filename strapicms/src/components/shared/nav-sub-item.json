@@ -1,0 +1,21 @@
+{
+  "collectionName": "components_shared_nav_sub_items",
+  "info": {
+    "displayName": "nav-sub-item",
+    "icon": "bulletList"
+  },
+  "options": {},
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true
+    },
+    "url": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text"
+    }
+  }
+}

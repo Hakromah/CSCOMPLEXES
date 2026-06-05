@@ -1,0 +1,39 @@
+{
+  "kind": "singleType",
+  "collectionName": "why_choose_us_sections",
+  "info": {
+    "singularName": "why-choose-us-section",
+    "pluralName": "why-choose-us-sections",
+    "displayName": "Why Choose Us Section"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "subtitle": {
+      "type": "text"
+    },
+    "description": {
+      "type": "text"
+    },
+    "cards": {
+      "type": "component",
+      "component": "shared.feature-card",
+      "repeatable": true
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    }
+  }
+}

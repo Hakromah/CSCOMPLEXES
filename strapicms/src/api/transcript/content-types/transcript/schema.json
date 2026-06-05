@@ -1,0 +1,55 @@
+{
+  "kind": "collectionType",
+  "collectionName": "transcripts",
+  "info": {
+    "singularName": "transcript",
+    "pluralName": "transcripts",
+    "displayName": "Transcript"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "referenceNumber": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "generationDate": {
+      "type": "datetime",
+      "required": true
+    },
+    "student": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "academicYear": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::academic-year.academic-year"
+    },
+    "class": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::school-class.school-class"
+    },
+    "semesters": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::semester.semester"
+    },
+    "terms": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::term.term"
+    },
+    "gpa": {
+      "type": "decimal"
+    },
+    "averageScore": {
+      "type": "decimal"
+    }
+  }
+}

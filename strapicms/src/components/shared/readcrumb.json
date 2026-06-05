@@ -1,0 +1,27 @@
+{
+  "collectionName": "components_shared_readcrumbs",
+  "info": {
+    "displayName": "readcrumb",
+    "icon": "crown"
+  },
+  "options": {},
+  "attributes": {
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "description": {
+      "type": "text"
+    },
+    "breadcrumb_title": {
+      "type": "string"
+    }
+  },
+  "config": {}
+}

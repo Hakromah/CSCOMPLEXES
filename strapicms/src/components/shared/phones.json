@@ -1,0 +1,13 @@
+{
+  "collectionName": "components_shared_phones",
+  "info": {
+    "displayName": "phones"
+  },
+  "options": {},
+  "attributes": {
+    "phones": {
+      "type": "biginteger"
+    }
+  },
+  "config": {}
+}

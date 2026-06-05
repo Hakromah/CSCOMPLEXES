@@ -1,0 +1,45 @@
+{
+  "kind": "collectionType",
+  "collectionName": "exam_results",
+  "info": {
+    "singularName": "exam-result",
+    "pluralName": "exam-results",
+    "displayName": "Exam Result"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "marks": {
+      "type": "decimal",
+      "required": true
+    },
+    "grade": {
+      "type": "enumeration",
+      "enum": ["A", "A_MINUS", "B_PLUS", "B", "B_MINUS", "C_PLUS", "C", "D", "F"]
+    },
+    "letterGrade": {
+      "type": "string"
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": ["DRAFT", "SUBMITTED", "GRADED"],
+      "default": "DRAFT",
+      "required": true
+    },
+    "remarks": {
+      "type": "string"
+    },
+    "exam": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::school-exam.school-exam"
+    },
+    "student": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    }
+  }
+}

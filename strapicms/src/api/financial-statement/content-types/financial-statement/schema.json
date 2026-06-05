@@ -1,0 +1,43 @@
+{
+  "kind": "collectionType",
+  "collectionName": "financial_statements",
+  "info": {
+    "singularName": "financial-statement",
+    "pluralName": "financial-statements",
+    "displayName": "FinancialStatement"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "statementNumber": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "student": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "generatedDate": {
+      "type": "datetime",
+      "required": true
+    },
+    "totalInvoiced": {
+      "type": "decimal",
+      "required": true
+    },
+    "totalPaid": {
+      "type": "decimal",
+      "required": true
+    },
+    "outstandingBalance": {
+      "type": "decimal",
+      "required": true
+    },
+    "data": {
+      "type": "json"
+    }
+  }
+}

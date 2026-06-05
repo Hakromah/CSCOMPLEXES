@@ -1,0 +1,73 @@
+{
+  "kind": "collectionType",
+  "collectionName": "salary_payments",
+  "info": {
+    "singularName": "salary-payment",
+    "pluralName": "salary-payments",
+    "displayName": "SalaryPayment"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "paymentNumber": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "salaryRecord": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::salary-record.salary-record"
+    },
+    "staff": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "amount": {
+      "type": "decimal",
+      "required": true
+    },
+    "paymentDate": {
+      "type": "datetime",
+      "required": true
+    },
+    "paymentMethod": {
+      "type": "enumeration",
+      "enum": [
+        "CASH",
+        "BANK",
+        "MOBILE_MONEY",
+        "CARD"
+      ],
+      "required": true
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": [
+        "DRAFT",
+        "SUBMITTED",
+        "APPROVED",
+        "REJECTED"
+      ],
+      "default": "DRAFT"
+    },
+    "notes": {
+      "type": "text"
+    },
+    "rejectionReason": {
+      "type": "text"
+    },
+    "paidBy": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "approvedBy": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    }
+  }
+}

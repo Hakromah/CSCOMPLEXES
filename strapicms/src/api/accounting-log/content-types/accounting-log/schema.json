@@ -1,0 +1,44 @@
+{
+  "kind": "collectionType",
+  "collectionName": "accounting_logs",
+  "info": {
+    "singularName": "accounting-log",
+    "pluralName": "accounting-logs",
+    "displayName": "AccountingLog"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "actionType": {
+      "type": "string",
+      "required": true
+    },
+    "entityName": {
+      "type": "string",
+      "required": true
+    },
+    "entityId": {
+      "type": "string",
+      "required": true
+    },
+    "performedBy": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "previousValues": {
+      "type": "json"
+    },
+    "newValues": {
+      "type": "json"
+    },
+    "timestamp": {
+      "type": "datetime",
+      "required": true
+    },
+    "notes": {
+      "type": "text"
+    }
+  }
+}

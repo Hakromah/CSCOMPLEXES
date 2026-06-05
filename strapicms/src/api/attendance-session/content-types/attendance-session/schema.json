@@ -1,0 +1,41 @@
+{
+  "kind": "collectionType",
+  "collectionName": "attendance_sessions",
+  "info": {
+    "singularName": "attendance-session",
+    "pluralName": "attendance-sessions",
+    "displayName": "Attendance Session"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "date": {
+      "type": "date",
+      "required": true
+    },
+    "sessionTime": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "classe": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::school-class.school-class"
+    },
+    "subject": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::subject.subject"
+    },
+    "records": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::attendance-record.attendance-record",
+      "mappedBy": "session"
+    }
+  }
+}

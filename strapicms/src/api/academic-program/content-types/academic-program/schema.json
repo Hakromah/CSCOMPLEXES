@@ -1,0 +1,50 @@
+{
+  "kind": "collectionType",
+  "collectionName": "academic_programs",
+  "info": {
+    "singularName": "academic-program",
+    "pluralName": "academic-programs",
+    "displayName": "Academic Program"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "category": {
+      "type": "enumeration",
+      "enum": [
+        "Kindergarten",
+        "Elementary",
+        "Junior High",
+        "Senior High ",
+        "Vocational Training"
+      ]
+    },
+    "description": {
+      "type": "text"
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "sort_order": {
+      "type": "integer"
+    },
+    "header": {
+      "type": "string"
+    },
+    "subheader": {
+      "type": "text"
+    }
+  }
+}

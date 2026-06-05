@@ -1,0 +1,84 @@
+{
+  "kind": "collectionType",
+  "collectionName": "student_invoices",
+  "info": {
+    "singularName": "student-invoice",
+    "pluralName": "student-invoices",
+    "displayName": "StudentInvoice"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "invoiceNumber": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "student": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "month": {
+      "type": "string",
+      "required": true
+    },
+    "year": {
+      "type": "integer",
+      "required": true
+    },
+    "dueDate": {
+      "type": "date",
+      "required": true
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": [
+        "DRAFT",
+        "SUBMITTED",
+        "APPROVED",
+        "REJECTED",
+        "PAID",
+        "PARTIALLY_PAID"
+      ],
+      "default": "DRAFT"
+    },
+    "notes": {
+      "type": "text"
+    },
+    "rejectionReason": {
+      "type": "text"
+    },
+    "submittedBy": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "approvedBy": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "items": {
+      "type": "json",
+      "required": true
+    },
+    "subtotal": {
+      "type": "decimal",
+      "required": true
+    },
+    "totalPaid": {
+      "type": "decimal",
+      "default": 0
+    },
+    "remainingBalance": {
+      "type": "decimal",
+      "required": true
+    },
+    "currency": {
+      "type": "string",
+      "default": "GNF"
+    }
+  }
+}

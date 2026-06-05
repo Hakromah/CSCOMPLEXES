@@ -1,0 +1,56 @@
+{
+  "kind": "collectionType",
+  "collectionName": "financial_reports",
+  "info": {
+    "singularName": "financial-report",
+    "pluralName": "financial-reports",
+    "displayName": "FinancialReport"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "reportNumber": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "reportType": {
+      "type": "enumeration",
+      "enum": [
+        "MONTHLY",
+        "YEARLY",
+        "REVENUE",
+        "DEBT"
+      ],
+      "required": true
+    },
+    "period": {
+      "type": "string",
+      "required": true
+    },
+    "generatedDate": {
+      "type": "datetime",
+      "required": true
+    },
+    "totalRevenue": {
+      "type": "decimal",
+      "required": true
+    },
+    "totalExpenses": {
+      "type": "decimal",
+      "required": true
+    },
+    "netProfit": {
+      "type": "decimal",
+      "required": true
+    },
+    "outstandingDebt": {
+      "type": "decimal",
+      "required": true
+    },
+    "data": {
+      "type": "json"
+    }
+  }
+}

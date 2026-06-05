@@ -1,0 +1,38 @@
+{
+  "kind": "collectionType",
+  "collectionName": "academic_years",
+  "info": {
+    "singularName": "academic-year",
+    "pluralName": "academic-years",
+    "displayName": "Academic Year"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "classes": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::school-class.school-class",
+      "mappedBy": "academicYear"
+    },
+    "exams": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::school-exam.school-exam",
+      "mappedBy": "academicYear"
+    },
+    "semesters": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::semester.semester",
+      "mappedBy": "academicYear"
+    }
+  }
+}

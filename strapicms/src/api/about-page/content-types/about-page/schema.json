@@ -1,0 +1,98 @@
+{
+  "kind": "singleType",
+  "collectionName": "about_pages",
+  "info": {
+    "singularName": "about-page",
+    "pluralName": "about-pages",
+    "displayName": "About Page"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "history_title": {
+      "type": "string"
+    },
+    "history_image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "mission_text": {
+      "type": "text"
+    },
+    "vision_text": {
+      "type": "text"
+    },
+    "stat_students": {
+      "type": "string"
+    },
+    "stat_years": {
+      "type": "string"
+    },
+    "stat_programs": {
+      "type": "string"
+    },
+    "stat_awards": {
+      "type": "string"
+    },
+    "principal_name": {
+      "type": "string"
+    },
+    "principal_message": {
+      "type": "text"
+    },
+    "principal_image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "history_body": {
+      "type": "text"
+    },
+    "principal_role": {
+      "type": "string"
+    },
+    "values": {
+      "type": "component",
+      "component": "shared.values",
+      "repeatable": true
+    },
+    "home_heading": {
+      "type": "string"
+    },
+    "home_description": {
+      "type": "text"
+    },
+    "home_stat": {
+      "type": "string"
+    },
+    "home_image_1": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "home_image_2": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "breadcrumb_item": {
+      "type": "component",
+      "component": "shared.readcrumb",
+      "repeatable": true
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "collectionName": "components_shared_details",
+  "info": {
+    "displayName": "details"
+  },
+  "options": {},
+  "attributes": {
+    "details": {
+      "type": "json"
+    }
+  },
+  "config": {}
+}

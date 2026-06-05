@@ -1,0 +1,47 @@
+{
+  "kind": "collectionType",
+  "collectionName": "receipts",
+  "info": {
+    "singularName": "receipt",
+    "pluralName": "receipts",
+    "displayName": "Receipt"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "receiptNumber": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "paymentType": {
+      "type": "enumeration",
+      "enum": [
+        "STUDENT_PAYMENT",
+        "SALARY_PAYMENT"
+      ],
+      "required": true
+    },
+    "studentPayment": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::student-payment.student-payment"
+    },
+    "salaryPayment": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::salary-payment.salary-payment"
+    },
+    "generatedDate": {
+      "type": "datetime",
+      "required": true
+    },
+    "qrCode": {
+      "type": "text"
+    },
+    "pdfUrl": {
+      "type": "string"
+    }
+  }
+}
