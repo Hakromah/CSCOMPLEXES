@@ -91,17 +91,17 @@ export default function UserManagement() {
    });
 
    // --- DATA CALCULATIONS (The "Command Center" Logic) ---
-    const statsData = useMemo(() => {
-       const counts = { STUDENT: 0, TEACHER: 0, ADMIN: 0, ACCOUNTANT: 0, ACCOUNTLEAD: 0, DRIVER: 0, WORKER: 0 };
-       users.forEach(u => { if (counts[u.role as keyof typeof counts] !== undefined) counts[u.role as keyof typeof counts]++; });
-       return [
-          { name: 'Students', value: counts.STUDENT, color: '#10b981' },
-          { name: 'Teachers', value: counts.TEACHER, color: '#3b82f6' },
-          { name: 'Admins', value: counts.ADMIN, color: '#f59e0b' },
-          { name: 'Accountants', value: counts.ACCOUNTANT + counts.ACCOUNTLEAD, color: '#8b5cf6' },
-          { name: 'Drivers/Workers', value: counts.DRIVER + counts.WORKER, color: '#6366f1' }
-       ];
-    }, [users]);
+   const statsData = useMemo(() => {
+      const counts = { STUDENT: 0, TEACHER: 0, ADMIN: 0, ACCOUNTANT: 0, ACCOUNTLEAD: 0, DRIVER: 0, WORKER: 0 };
+      users.forEach(u => { if (counts[u.role as keyof typeof counts] !== undefined) counts[u.role as keyof typeof counts]++; });
+      return [
+         { name: 'Students', value: counts.STUDENT, color: '#10b981' },
+         { name: 'Teachers', value: counts.TEACHER, color: '#3b82f6' },
+         { name: 'Admins', value: counts.ADMIN, color: '#f59e0b' },
+         { name: 'Accountants', value: counts.ACCOUNTANT + counts.ACCOUNTLEAD, color: '#8b5cf6' },
+         { name: 'Drivers/Workers', value: counts.DRIVER + counts.WORKER, color: '#6366f1' }
+      ];
+   }, [users]);
 
    const fetchUsers = async () => {
       setLoading(true);
@@ -324,16 +324,16 @@ export default function UserManagement() {
          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <motion.div initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }}>
                <h1 className="text-[clamp(1.2rem,2vw+1rem,2rem)] font-black text-slate-900 tracking-tighter flex items-center gap-3 italic">
-                  REGISTRY COMMAND <Activity className="text-blue-500 animate-pulse" size={24} />
+                  COMMANDE D'ENREGISTREMENT <Activity className="text-blue-500 animate-pulse" size={24} />
                </h1>
-               <p className="text-slate-500 font-bold text-xs uppercase tracking-[0.3em]">Identity & Access Management</p>
+               <p className="text-slate-500 font-bold text-xs uppercase tracking-[0.3em]">Gestion des Identités et des Accès</p>
             </motion.div>
             <div className="flex gap-3">
                <Button onClick={() => setIsImportOpen(true)} variant="outline" className="rounded-2xl h-12 border-slate-200 hover:bg-white font-black text-[10px] uppercase tracking-widest gap-2 shadow-sm">
-                  <FileUp size={16} /> Bulk Import
+                  <FileUp size={16} /> Import en bloc
                </Button>
                <Button onClick={() => setIsCreateOpen(true)} className="bg-blue-600 hover:bg-blue-700 rounded-2xl h-12 px-6 font-black text-[10px] uppercase tracking-widest gap-2 shadow-xl shadow-blue-100 transition-all active:scale-95">
-                  <UserPlus size={16} /> New Identity
+                  <UserPlus size={16} /> Nouvelle Identité
                </Button>
             </div>
          </div>
@@ -344,7 +344,7 @@ export default function UserManagement() {
             <Card className="lg:col-span-1 border border-slate-100 md:hover:border-primary duration-500 transition-colors shadow-sm rounded-3xl bg-white overflow-hidden">
                <CardHeader className="bg-slate-900 text-white py-4 flex flex-row items-center justify-between">
                   <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-2">
-                     <PieChart size={14} className="text-blue-400" /> User Matrix
+                     <PieChart size={14} className="text-blue-400" /> Matrice d'Utilisateurs
                   </CardTitle>
                </CardHeader>
                <CardContent className="p-6">
@@ -396,13 +396,13 @@ export default function UserManagement() {
             <Card className="lg:col-span-2 border border-slate-100 md:hover:border-primary duration-500 transition-colors shadow-sm bg-white rounded-3xl overflow-hidden">
                <CardHeader className="bg-slate-900 text-white py-4">
                   <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-2">
-                     <Search size={14} className="text-blue-400" /> Enrollment Inspector
+                     <Search size={14} className="text-blue-400" /> Inspecteur d'Inscription
                   </CardTitle>
                </CardHeader>
                <CardContent className="p-6 h-full flex flex-col gap-6">
                   <Select onValueChange={handleStudentSelect}>
                      <SelectTrigger className="rounded-xl border-slate-200 h-11 bg-slate-50 font-bold">
-                        <SelectValue placeholder="Identify student record..." />
+                        <SelectValue placeholder="Identifier l'enregistrement de l'étudiant..." />
                      </SelectTrigger>
                      <SelectContent className="rounded-xl shadow-2xl border-slate-100">
                         {users.filter(u => u.role === 'STUDENT').map(s => (
@@ -434,7 +434,7 @@ export default function UserManagement() {
                               ))}
                            </motion.div>
                         ) : selectedStudentId && (
-                           <p className="text-slate-400 italic text-sm font-medium">No active class enrollments detected.</p>
+                           <p className="text-slate-400 italic text-sm font-medium">Aucune inscription active détectée.</p>
                         )}
                      </AnimatePresence>
                   </div>
@@ -448,7 +448,7 @@ export default function UserManagement() {
                <div className="flex flex-col md:flex-row gap-4">
                   <div className="relative flex-1">
                      <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
-                     <Input placeholder="Search registry by name, email, or fingerprint ID..." className="pl-12 h-12 bg-slate-50 border-none rounded-xl focus-visible:ring-2 focus-visible:ring-blue-600 font-medium" value={search} onChange={(e) => setSearch(e.target.value)} />
+                     <Input placeholder="Rechercher dans le registre par nom, e-mail ou identifiant biométrique..." className="pl-12 h-12 bg-slate-50 border-none rounded-xl focus-visible:ring-2 focus-visible:ring-blue-600 font-medium" value={search} onChange={(e) => setSearch(e.target.value)} />
                   </div>
                   <div className="flex p-1 bg-slate-100 rounded-2xl gap-1">
                      {['ALL', 'ADMIN', 'TEACHER', 'STUDENT', 'ACCOUNTANT', 'ACCOUNTLEAD', 'DRIVER', 'WORKER'].map((role) => (
@@ -465,10 +465,10 @@ export default function UserManagement() {
                <TableHeader className="bg-slate-50/50">
                   <TableRow className="border-slate-100 hover:bg-transparent">
                      <TableHead className="w-12"></TableHead>
-                     <TableHead className="font-black uppercase text-[10px] tracking-widest text-slate-400">Identity Profile</TableHead>
-                     <TableHead className="font-black uppercase text-[10px] tracking-widest text-slate-400">Fingerprint ID</TableHead>
-                     <TableHead className="font-black uppercase text-[10px] tracking-widest text-slate-400">Access Tier</TableHead>
-                     <TableHead className="font-black uppercase text-[10px] tracking-widest text-slate-400">Gender</TableHead>
+                     <TableHead className="font-black uppercase text-[10px] tracking-widest text-slate-400">Profil d'identité</TableHead>
+                     <TableHead className="font-black uppercase text-[10px] tracking-widest text-slate-400">Identifiant d'empreinte digitale</TableHead>
+                     <TableHead className="font-black uppercase text-[10px] tracking-widest text-slate-400">Niveau d'accès</TableHead>
+                     <TableHead className="font-black uppercase text-[10px] tracking-widest text-slate-400">Genre</TableHead>
                      <TableHead className="text-right font-black uppercase text-[10px] tracking-widest text-slate-400">Actions</TableHead>
                   </TableRow>
                </TableHeader>
@@ -477,7 +477,7 @@ export default function UserManagement() {
                      {loading ? (
                         <TableRow key="loading">
                            <TableCell colSpan={6} className="text-center py-24 text-slate-400 font-black animate-pulse uppercase tracking-widest">
-                              Synchronizing Encrypted Ledger...
+                              Synchronisation du Grand Livre Chiffré...
                            </TableCell>
                         </TableRow>
                      ) : (
@@ -506,13 +506,13 @@ export default function UserManagement() {
                                                 <Badge variant="outline" className="text-[10px] font-mono">{user.userId}</Badge>
                                              </div>
                                              <div className="grid grid-cols-2 gap-4">
-                                                <InfoBox icon={<CalendarIcon size={12} />} label="Birth Date" value={user.birthDate} />
-                                                <InfoBox icon={<MapPin size={12} />} label="Birth City" value={user.birthCity} />
-                                                <InfoBox icon={<Globe size={12} />} label="Country" value={user.birthCountry} />
+                                                <InfoBox icon={<CalendarIcon size={12} />} label="Date de naissance" value={user.birthDate} />
+                                                <InfoBox icon={<MapPin size={12} />} label="Ville de naissance" value={user.birthCity} />
+                                                <InfoBox icon={<Globe size={12} />} label="Pays" value={user.birthCountry} />
                                                 <InfoBox icon={<Phone size={12} />} label="Contact" value={user.phoneNumber} />
                                              </div>
                                              <div className="pt-3 border-t">
-                                                <InfoBox icon={<Home size={12} />} label="Residential Address" value={user.address} />
+                                                <InfoBox icon={<Home size={12} />} label="Adresse Résidentielle" value={user.address} />
                                              </div>
                                           </div>
                                        </PopoverContent>
@@ -521,11 +521,11 @@ export default function UserManagement() {
                                        <DropdownMenuTrigger asChild><Button variant="ghost" size="icon" className="h-8 w-8"><MoreVertical size={18} /></Button></DropdownMenuTrigger>
                                        <DropdownMenuContent align="end" className="w-52 rounded-2xl p-2 shadow-2xl">
                                           <DropdownMenuItem onClick={() => { setSelectedUser(user); setIsEditOpen(true); }} className="rounded-xl flex gap-2 py-2 cursor-pointer focus:bg-blue-50">
-                                             <Edit size={16} className="text-blue-500" /> Edit Credentials
+                                             <Edit size={16} className="text-blue-500" /> Modifier les identifiants
                                           </DropdownMenuItem>
                                           <DropdownMenuSeparator />
                                           <DropdownMenuItem onClick={() => { setSelectedUser(user); setIsDeleteOpen(true); }} className="rounded-xl flex gap-2 py-2 text-rose-600 font-black uppercase text-[10px] tracking-widest focus:bg-rose-50">
-                                             <Trash2 size={16} /> Purge Identity
+                                             <Trash2 size={16} /> Supprimer l'identité
                                           </DropdownMenuItem>
                                        </DropdownMenuContent>
                                     </DropdownMenu>
@@ -545,66 +545,65 @@ export default function UserManagement() {
          <Dialog open={isCreateOpen} onOpenChange={(open) => { setIsCreateOpen(open); if (!open) { setEmailDuplicate(null); form.reset(); } }}>
             <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl p-0 border-none shadow-2xl">
                <DialogHeader className="p-6 bg-blue-600 text-white">
-                  <DialogTitle className="text-xl font-black tracking-tighter uppercase">Initialize New Identity</DialogTitle>
+                  <DialogTitle className="text-xl font-black tracking-tighter uppercase">Initialiser une nouvelle identité</DialogTitle>
                </DialogHeader>
                <div className="p-8">
                   <Form {...form}>
                      <form onSubmit={form.handleSubmit(handleCreateSubmit)} className="space-y-6">
                         <div className="grid grid-cols-2 gap-6">
                            <FormField control={form.control} name="name" render={({ field }) => (
-                              <FormItem><FormLabel className="text-[10px] font-black uppercase text-slate-400">Legal Name</FormLabel><FormControl><Input placeholder="Full Name" className="rounded-xl bg-slate-50 border-none h-11 px-4" {...field} /></FormControl><FormMessage /></FormItem>
+                              <FormItem><FormLabel className="text-[10px] font-black uppercase text-slate-400">Nom complet</FormLabel><FormControl><Input placeholder="Nom complet" className="rounded-xl bg-slate-50 border-none h-11 px-4" {...field} /></FormControl><FormMessage /></FormItem>
                            )} />
-                            <FormField control={form.control} name="email" render={({ field }) => (
-                               <FormItem>
-                                 <FormLabel className="text-[10px] font-black uppercase text-slate-400">Institutional Email</FormLabel>
+                           <FormField control={form.control} name="email" render={({ field }) => (
+                              <FormItem>
+                                 <FormLabel className="text-[10px] font-black uppercase text-slate-400">Adresse e-mail institutionnelle</FormLabel>
                                  <FormControl>
-                                   <div className="relative">
-                                     <Input
-                                       placeholder="email@amf.edu"
-                                       className={`rounded-xl bg-slate-50 border h-11 px-4 transition-colors ${
-                                         emailDuplicate ? 'border-rose-400 bg-rose-50 focus-visible:ring-rose-300' : 'border-transparent'
-                                       }`}
-                                       {...field}
-                                       onChange={(e) => {
-                                         field.onChange(e);
-                                         checkEmailDuplicate(e.target.value);
-                                       }}
-                                     />
-                                     {emailDuplicate && (
-                                       <AlertCircle size={15} className="absolute right-3 top-3.5 text-rose-500" />
-                                     )}
-                                   </div>
+                                    <div className="relative">
+                                       <Input
+                                          placeholder="email@amf.edu"
+                                          className={`rounded-xl bg-slate-50 border h-11 px-4 transition-colors ${emailDuplicate ? 'border-rose-400 bg-rose-50 focus-visible:ring-rose-300' : 'border-transparent'
+                                             }`}
+                                          {...field}
+                                          onChange={(e) => {
+                                             field.onChange(e);
+                                             checkEmailDuplicate(e.target.value);
+                                          }}
+                                       />
+                                       {emailDuplicate && (
+                                          <AlertCircle size={15} className="absolute right-3 top-3.5 text-rose-500" />
+                                       )}
+                                    </div>
                                  </FormControl>
                                  <FormMessage />
                                  {emailDuplicate && (
-                                   <div className="flex items-start gap-2 bg-rose-50 border border-rose-200 rounded-xl px-3 py-2 mt-1">
-                                     <AlertCircle size={14} className="text-rose-500 shrink-0 mt-0.5" />
-                                     <p className="text-[11px] font-bold text-rose-700 leading-snug">
-                                       This email is already registered to{' '}
-                                       <span className="font-black">{emailDuplicate.name}</span>{' '}
-                                       <span className="bg-rose-100 text-rose-600 px-1.5 py-0.5 rounded font-black text-[9px] uppercase">{emailDuplicate.role}</span>
-                                     </p>
-                                   </div>
+                                    <div className="flex items-start gap-2 bg-rose-50 border border-rose-200 rounded-xl px-3 py-2 mt-1">
+                                       <AlertCircle size={14} className="text-rose-500 shrink-0 mt-0.5" />
+                                       <p className="text-[11px] font-bold text-rose-700 leading-snug">
+                                          Cette adresse e-mail est déjà enregistrée pour{' '}
+                                          <span className="font-black">{emailDuplicate.name}</span>{' '}
+                                          <span className="bg-rose-100 text-rose-600 px-1.5 py-0.5 rounded font-black text-[9px] uppercase">{emailDuplicate.role}</span>
+                                       </p>
+                                    </div>
                                  )}
-                               </FormItem>
-                            )} />
+                              </FormItem>
+                           )} />
                         </div>
                         <div className="grid grid-cols-2 gap-6 border-t pt-6">
                            <FormField control={form.control} name="password" render={({ field }) => (
-                              <FormItem><FormLabel className="text-[10px] font-black uppercase text-slate-400">Access Key</FormLabel><FormControl><Input type="password" placeholder="••••••••" className="rounded-xl bg-slate-50 border-none h-11 px-4" {...field} /></FormControl><FormMessage /></FormItem>
+                              <FormItem><FormLabel className="text-[10px] font-black uppercase text-slate-400">Mot de passe initial</FormLabel><FormControl><Input type="password" placeholder="••••••••" className="rounded-xl bg-slate-50 border-none h-11 px-4" {...field} /></FormControl><FormMessage /></FormItem>
                            )} />
                            <FormField control={form.control} name="role" render={({ field }) => (
-                              <FormItem><FormLabel className="text-[10px] font-black uppercase text-slate-400">Permission Tier</FormLabel>
+                              <FormItem><FormLabel className="text-[10px] font-black uppercase text-slate-400">Niveau d'accès</FormLabel>
                                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                    <FormControl><SelectTrigger className="rounded-xl bg-slate-50 border-none h-11"><SelectValue placeholder="Role" /></SelectTrigger></FormControl>
+                                    <FormControl><SelectTrigger className="rounded-xl bg-slate-50 border-none h-11"><SelectValue placeholder="Rôle" /></SelectTrigger></FormControl>
                                     <SelectContent className="rounded-xl shadow-xl">
-                                       <SelectItem value="STUDENT">Student</SelectItem>
-                                       <SelectItem value="TEACHER">Teacher</SelectItem>
+                                       <SelectItem value="STUDENT">Élève</SelectItem>
+                                       <SelectItem value="TEACHER">Enseignant</SelectItem>
                                        <SelectItem value="ADMIN">Admin</SelectItem>
-                                       <SelectItem value="ACCOUNTANT">Accountant</SelectItem>
-                                       <SelectItem value="ACCOUNTLEAD">Account Lead</SelectItem>
-                                       <SelectItem value="DRIVER">Driver</SelectItem>
-                                       <SelectItem value="WORKER">Worker</SelectItem>
+                                       <SelectItem value="ACCOUNTANT">Comptable</SelectItem>
+                                       <SelectItem value="ACCOUNTLEAD">Chef Comptable</SelectItem>
+                                       <SelectItem value="DRIVER">Chauffeur</SelectItem>
+                                       <SelectItem value="WORKER">Ouvrier</SelectItem>
                                     </SelectContent>
                                  </Select>
                               </FormItem>
@@ -612,42 +611,42 @@ export default function UserManagement() {
                         </div>
                         <div className="grid grid-cols-2 gap-6">
                            <FormField control={form.control} name="birthDate" render={({ field }) => (
-                              <FormItem><FormLabel className="text-[10px] font-black uppercase text-slate-400">Date of Birth</FormLabel><FormControl><Input type="date" className="rounded-xl bg-slate-50 border-none h-11 px-4" {...field} /></FormControl></FormItem>
+                              <FormItem><FormLabel className="text-[10px] font-black uppercase text-slate-400">Date de naissance</FormLabel><FormControl><Input type="date" className="rounded-xl bg-slate-50 border-none h-11 px-4" {...field} /></FormControl></FormItem>
                            )} />
                            <FormField control={form.control} name="phoneNumber" render={({ field }) => (
-                              <FormItem><FormLabel className="text-[10px] font-black uppercase text-slate-400">Contact Number</FormLabel><FormControl><Input placeholder="+..." className="rounded-xl bg-slate-50 border-none h-11 px-4" {...field} /></FormControl></FormItem>
+                              <FormItem><FormLabel className="text-[10px] font-black uppercase text-slate-400">Numéro de contact</FormLabel><FormControl><Input placeholder="+..." className="rounded-xl bg-slate-50 border-none h-11 px-4" {...field} /></FormControl></FormItem>
                            )} />
                         </div>
                         <div className="grid grid-cols-3 gap-4">
                            <FormField control={form.control} name="birthCountry" render={({ field }) => (
-                              <FormItem><FormLabel className="text-[10px] font-black uppercase text-slate-400">Country</FormLabel><FormControl><Input placeholder="Country" className="rounded-xl bg-slate-50 border-none h-11 px-4" {...field} /></FormControl></FormItem>
+                              <FormItem><FormLabel className="text-[10px] font-black uppercase text-slate-400">Pays</FormLabel><FormControl><Input placeholder="Pays" className="rounded-xl bg-slate-50 border-none h-11 px-4" {...field} /></FormControl></FormItem>
                            )} />
                            <FormField control={form.control} name="birthCity" render={({ field }) => (
-                              <FormItem><FormLabel className="text-[10px] font-black uppercase text-slate-400">City</FormLabel><FormControl><Input placeholder="City" className="rounded-xl bg-slate-50 border-none h-11 px-4" {...field} /></FormControl></FormItem>
+                              <FormItem><FormLabel className="text-[10px] font-black uppercase text-slate-400">Ville</FormLabel><FormControl><Input placeholder="Ville" className="rounded-xl bg-slate-50 border-none h-11 px-4" {...field} /></FormControl></FormItem>
                            )} />
                            <FormField control={form.control} name="gender" render={({ field }) => (
-                              <FormItem><FormLabel className="text-[10px] font-black uppercase text-slate-400">Gender</FormLabel>
+                              <FormItem><FormLabel className="text-[10px] font-black uppercase text-slate-400">Genre</FormLabel>
                                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                    <FormControl><SelectTrigger className="rounded-xl bg-slate-50 border-none h-11"><SelectValue placeholder="Gender" /></SelectTrigger></FormControl>
-                                    <SelectContent className="rounded-xl shadow-xl"><SelectItem value="Male">Male</SelectItem><SelectItem value="Female">Female</SelectItem></SelectContent>
+                                    <FormControl><SelectTrigger className="rounded-xl bg-slate-50 border-none h-11"><SelectValue placeholder="Genre" /></SelectTrigger></FormControl>
+                                    <SelectContent className="rounded-xl shadow-xl"><SelectItem value="Male">Masculin</SelectItem><SelectItem value="Female">Féminin</SelectItem></SelectContent>
                                  </Select>
                               </FormItem>
                            )} />
                         </div>
                         <FormField control={form.control} name="address" render={({ field }) => (
-                           <FormItem><FormLabel className="text-[10px] font-black uppercase text-slate-400">Address</FormLabel><FormControl><Input placeholder="Full Residential Address" className="rounded-xl bg-slate-50 border-none h-11 px-4" {...field} /></FormControl></FormItem>
+                           <FormItem><FormLabel className="text-[10px] font-black uppercase text-slate-400">Adresse complète</FormLabel><FormControl><Input placeholder="Adresse complète" className="rounded-xl bg-slate-50 border-none h-11 px-4" {...field} /></FormControl></FormItem>
                         )} />
-                         <Button
-                            type="submit"
-                            disabled={isSubmitting || !!emailDuplicate}
-                            className="w-full h-12 rounded-xl bg-slate-900 hover:bg-black font-black tracking-[0.3em] text-[10px] uppercase shadow-lg transition-all active:scale-[0.98] mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
-                          >
-                            {isSubmitting ? (
-                              <><Loader2 size={16} className="animate-spin mr-2" /> Verifying... </>
-                            ) : emailDuplicate ? (
-                              <><AlertCircle size={16} className="mr-2" /> Duplicate Email </>
-                            ) : 'Authorize Storage'}
-                          </Button>
+                        <Button
+                           type="submit"
+                           disabled={isSubmitting || !!emailDuplicate}
+                           className="w-full h-12 rounded-xl bg-slate-900 hover:bg-black font-black tracking-[0.3em] text-[10px] uppercase shadow-lg transition-all active:scale-[0.98] mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                           {isSubmitting ? (
+                              <><Loader2 size={16} className="animate-spin mr-2" /> Vérification... </>
+                           ) : emailDuplicate ? (
+                              <><AlertCircle size={16} className="mr-2" /> Email Duplicate </>
+                           ) : 'Autoriser le stockage'}
+                        </Button>
                      </form>
                   </Form>
                </div>
@@ -662,7 +661,7 @@ export default function UserManagement() {
             <DialogContent className="max-w-2xl rounded-3xl border-none p-0 shadow-2xl overflow-hidden bg-white">
                <DialogHeader className="p-6 bg-slate-900 text-white">
                   <DialogTitle className="text-xl font-black uppercase tracking-tighter flex items-center gap-3">
-                     <FileUp className="text-blue-400" /> Registry Bulk Injection
+                     <FileUp className="text-blue-400" /> Injection en masse
                   </DialogTitle>
                </DialogHeader>
 
@@ -674,8 +673,8 @@ export default function UserManagement() {
                            <div className="bg-amber-50 border border-amber-100 rounded-2xl p-4 flex gap-3">
                               <AlertCircle className="text-amber-600 shrink-0" size={20} />
                               <div className="space-y-1">
-                                 <p className="text-[10px] text-amber-800 leading-relaxed font-black uppercase tracking-widest">Format Requirement</p>
-                                 <p className="text-[11px] text-amber-700 font-medium">Dates must be YYYY-MM-DD or MM/DD/YYYY. Roles must be STUDENT, TEACHER, or ADMIN.</p>
+                                 <p className="text-[10px] text-amber-800 leading-relaxed font-black uppercase tracking-widest">Exigence de format</p>
+                                 <p className="text-[11px] text-amber-700 font-medium">Les dates doivent être YYYY-MM-DD ou MM/DD/YYYY. Les rôles doivent être STUDENT, TEACHER, ou ADMIN.</p>
                               </div>
                            </div>
 
@@ -689,7 +688,7 @@ export default function UserManagement() {
                               <div className="w-20 h-20 rounded-2xl bg-white shadow-sm border border-slate-100 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
                                  <Download className="text-primary" size={32} />
                               </div>
-                              <p className="font-black text-slate-700 uppercase text-xs tracking-widest">Select CSV Registry</p>
+                              <p className="font-black text-slate-700 uppercase text-xs tracking-widest">Importer le Registre CSV</p>
                            </div>
                         </motion.div>
 
@@ -697,15 +696,15 @@ export default function UserManagement() {
                         /* PHASE 2: DATA PREVIEW */
                         <motion.div key="preview" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }} className="space-y-4">
                            <div className="flex justify-between items-center">
-                              <h3 className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em]">Scanner: {csvPreview.length} Records Detected</h3>
+                              <h3 className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em]">Scan: {csvPreview.length} Enregistrements détectés</h3>
                               <Button variant="ghost" size="sm" onClick={() => setCsvPreview([])} className="text-rose-500 font-black text-[10px] uppercase h-7 px-2">Clear</Button>
                            </div>
                            <div className="max-h-64 overflow-y-auto border border-slate-100 rounded-2xl bg-slate-50">
                               <Table>
                                  <TableHeader className="sticky top-0 bg-white shadow-sm">
                                     <TableRow className="text-[9px] uppercase font-black tracking-widest border-none">
-                                       <TableHead>Profile</TableHead>
-                                       <TableHead>Registry Email</TableHead>
+                                       <TableHead>Profil</TableHead>
+                                       <TableHead>Email de l'utilisateur</TableHead>
                                        <TableHead>Tier</TableHead>
                                     </TableRow>
                                  </TableHeader>
@@ -721,13 +720,13 @@ export default function UserManagement() {
                               </Table>
                               {csvPreview.length > 5 && (
                                  <div className="p-4 text-center text-[10px] text-slate-400 font-black uppercase tracking-[0.2em] bg-white border-t border-slate-100">
-                                    + {csvPreview.length - 5} additional identities in buffer
+                                    + {csvPreview.length - 5} autres identités en mémoire tampon
                                  </div>
                               )}
                            </div>
                            <Button onClick={processImport} disabled={importing} className="w-full h-14 bg-blue-600 hover:bg-blue-700 text-white font-black uppercase tracking-[0.3em] text-[10px] rounded-2xl shadow-xl shadow-blue-100 transition-all active:scale-95">
                               {importing ? <Loader2 className="animate-spin mr-2" /> : <ShieldCheck className="mr-2" size={18} />}
-                              Authorize Registry Injection
+                              Autoriser l'injection dans le registre
                            </Button>
                         </motion.div>
 
@@ -738,20 +737,20 @@ export default function UserManagement() {
                               <ShieldCheck size={48} />
                            </div>
                            <div>
-                              <h2 className="text-3xl font-black text-slate-900 tracking-tighter uppercase italic">Injection Success</h2>
-                              <p className="text-slate-500 font-bold text-xs uppercase tracking-widest mt-1">Registry ledger has been updated</p>
+                              <h2 className="text-3xl font-black text-slate-900 tracking-tighter uppercase italic">Injection réussie</h2>
+                              <p className="text-slate-500 font-bold text-xs uppercase tracking-widest mt-1">Le registre a été mis à jour</p>
                            </div>
                            <div className="grid grid-cols-2 gap-4">
                               <div className="p-5 bg-emerald-50 rounded-3xl border border-emerald-100">
-                                 <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-1">Injected</p>
+                                 <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-1">Injecté</p>
                                  <p className="text-3xl font-black text-emerald-700 leading-none">{importSummary?.imported}</p>
                               </div>
                               <div className="p-5 bg-slate-50 rounded-3xl border border-slate-100">
-                                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Skipped</p>
+                                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Sauté</p>
                                  <p className="text-3xl font-black text-slate-600 leading-none">{importSummary?.skipped}</p>
                               </div>
                            </div>
-                           <Button onClick={() => setIsImportOpen(false)} className="w-full h-14 bg-slate-900 text-white font-black uppercase tracking-widest text-[10px] rounded-2xl shadow-xl">Return to Command Center</Button>
+                           <Button onClick={() => setIsImportOpen(false)} className="w-full h-14 bg-slate-900 text-white font-black uppercase tracking-widest text-[10px] rounded-2xl shadow-xl">Retour au centre de commandement</Button>
                         </motion.div>
                      )}
                   </AnimatePresence>
@@ -759,7 +758,7 @@ export default function UserManagement() {
                   {!importSummary && (
                      <div className="pt-4 border-t border-slate-100">
                         <Button variant="ghost" onClick={downloadTemplate} className="w-full text-primary hover:bg-blue-50 font-black uppercase text-[10px] tracking-widest h-12 rounded-2xl gap-2 transition-colors">
-                           <Download size={16} /> Download CSV Sample
+                           <Download size={16} /> Télécharger l'échantillon CSV
                         </Button>
                      </div>
                   )}
@@ -767,38 +766,13 @@ export default function UserManagement() {
             </DialogContent>
          </Dialog>
 
-
-         {/* <Dialog open={isImportOpen} onOpenChange={setIsImportOpen}>
-            <DialogContent className="max-w-md rounded-3xl border-none p-0 shadow-2xl overflow-hidden">
-               <DialogHeader className="p-6 bg-slate-900 text-white">
-                  <DialogTitle className="text-xl font-black uppercase tracking-tighter">Bulk Identity Upload</DialogTitle>
-               </DialogHeader>
-               <div className="p-8 space-y-6 text-center">
-                  <div className="bg-amber-50 border border-amber-100 rounded-2xl p-4 flex gap-3 text-left">
-                     <AlertCircle className="text-amber-600 shrink-0" size={20} />
-                     <p className="text-[10px] text-amber-800 leading-relaxed font-bold uppercase">Schema check: headers must include name, email, password, and role.</p>
-                  </div>
-                  <div className="flex flex-col items-center justify-center border-2 border-dashed border-slate-200 rounded-3xl p-10 hover:border-blue-400 transition-colors bg-slate-50/50 relative group">
-                     <Input type="file" accept=".csv" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleFileUpload} disabled={importing} />
-                     <div className="w-16 h-16 rounded-2xl bg-white shadow-sm border border-slate-100 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                        {importing ? <Loader2 className="animate-spin text-primary" /> : <FileUp className="text-primary" size={32} />}
-                     </div>
-                     <p className="font-black text-slate-700 uppercase text-[10px] tracking-widest">Drop CSV Registry</p>
-                  </div>
-                  <Button variant="ghost" onClick={downloadTemplate} className="w-full text-primary hover:bg-blue-50 font-black uppercase text-[10px] tracking-widest h-12 rounded-2xl">
-                     <Download size={16} /> Download Template
-                  </Button>
-               </div>
-            </DialogContent>
-         </Dialog> */}
-
          {/* Edit & Delete Wrappers */}
          {
             selectedUser && (
                <>
                   <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
                      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl p-0 border-none shadow-2xl">
-                        <DialogHeader className="p-6 bg-amber-500 text-white"><DialogTitle className="text-xl font-black uppercase">Edit Identity: {selectedUser.name}</DialogTitle></DialogHeader>
+                        <DialogHeader className="p-6 bg-amber-500 text-white"><DialogTitle className="text-xl font-black uppercase">Modifier l'utilisateur : {selectedUser.name}</DialogTitle></DialogHeader>
                         <div className="p-6"><EditUserForm user={selectedUser} onFinished={async () => { setIsEditOpen(false); await fetchUsers(); }} /></div>
                      </DialogContent>
                   </Dialog>

@@ -39,7 +39,7 @@ export default function StudentTranscriptsPage() {
       const transcriptsRes = await api.get(`/student/transcripts`);
       setTranscripts(transcriptsRes.data || []);
     } catch (error) {
-      toast.error('Failed to retrieve academic transcripts ledger');
+      toast.error('Échec de la récupération du registre des relevés de notes');
       console.error(error);
     } finally {
       setLoading(false);
@@ -62,7 +62,7 @@ export default function StudentTranscriptsPage() {
         const res = await api.get(`/student/transcripts/${selectedTranscriptId}/preview`);
         setTranscriptData(res.data);
       } catch (err) {
-        toast.error('Failed to sync official transcript scoreboard');
+        toast.error('Échec de la synchronisation du relevé de notes officiel');
         console.error(err);
         setSelectedTranscriptId(null);
       } finally {
@@ -80,20 +80,20 @@ export default function StudentTranscriptsPage() {
         name: transcriptData.student.name,
         studentId: transcriptData.student.userId || String(transcriptData.student.id),
         academicYear: transcriptData.metadata.academicYears.join(', '),
-        status: 'Verified by Administration',
+        status: 'Vérifié par l\'Administration',
         referenceNumber: transcriptData.metadata.referenceNumber
       };
-      
-      const qrString = `AMF ACADEMY OFFICIAL TRANSCRIPT\n` +
-        `Ref: ${qrData.referenceNumber}\n` +
-        `Student: ${qrData.name}\n` +
-        `Student ID: ${qrData.studentId}\n` +
-        `Academic Year: ${qrData.academicYear}\n` +
-        `Status: ${qrData.status}`;
+
+      const qrString = `2CS COMPLEXE SCOLAIRE CAMARA SALEMATOU\n` +
+        `Référence: ${qrData.referenceNumber}\n` +
+        `Eleve: ${qrData.name}\n` +
+        `Matricule: ${qrData.studentId}\n` +
+        `Année scolaire: ${qrData.academicYear}\n` +
+        `Statut: ${qrData.status}`;
 
       QRCode.toDataURL(qrString, { margin: 2, scale: 4 })
         .then((url) => setQrCodeUrl(url))
-        .catch((err) => console.error('QR code generation failed', err));
+        .catch((err) => console.error('échec de la génération du QR code', err));
     } else {
       setQrCodeUrl('');
     }
@@ -116,38 +116,38 @@ export default function StudentTranscriptsPage() {
       doc.setTextColor(255, 255, 255);
       doc.setFont('Helvetica', 'bold');
       doc.setFontSize(20);
-      doc.text((sch.name || 'School').toUpperCase(), 14, 18);
+      doc.text((sch.name || ' 2CS COMPLEXE SCOLAIRE CAMARA SALEMATOU').toUpperCase(), 14, 18);
 
       doc.setFont('Helvetica', 'normal');
       doc.setFontSize(9);
       doc.setTextColor(156, 163, 175); // gray-400
-      doc.text(`Official Academic Transcript • Registries System`, 14, 25);
-      doc.text(`Address: ${sch.address || ''} | Email: ${sch.email || ''} | Phone: ${sch.phone || ''}`, 14, 32);
+      doc.text(`Relevé de notes officiel • Système de régistres`, 14, 25);
+      doc.text(`Addresse: ${sch.address || ''} | Email: ${sch.email || ''} | Téléphone: ${sch.phone || ''}`, 14, 32);
 
       // Document Title
       doc.setTextColor(15, 23, 42);
       doc.setFont('Helvetica', 'bold');
       doc.setFontSize(13);
-      doc.text('OFFICIAL STUDENT TRANSCRIPT', 14, 55);
+      doc.text('RELEVÉ DE NOTES OFFICIEL', 14, 55);
       doc.setDrawColor(226, 232, 240); // slate-200
       doc.line(14, 58, 196, 58);
 
       // Student Information Grid
       doc.setFont('Helvetica', 'bold');
       doc.setFontSize(9);
-      doc.text('STUDENT PROFILE', 14, 66);
+      doc.text('PROFIL DE L\'ELEVE', 14, 66);
 
       doc.setFont('Helvetica', 'normal');
       doc.setFontSize(9.5);
-      doc.text(`Name: ${s.name || 'N/A'}`, 14, 72);
-      doc.text(`ID: ${s.userId || 'N/A'}`, 14, 78);
+      doc.text(`Nom: ${s.name || 'N/A'}`, 14, 72);
+      doc.text(`Matricule: ${s.userId || 'N/A'}`, 14, 78);
       doc.text(`Email: ${s.email || 'N/A'}`, 14, 84);
 
       const classNames = (s.classes || []).join(', ') || 'N/A';
-      doc.text(`Class: ${classNames}`, 120, 72);
+      doc.text(`Classe: ${classNames}`, 120, 72);
       const bDate = s.birthDate ? new Date(s.birthDate).toLocaleDateString() : 'N/A';
-      doc.text(`Birth Date: ${bDate}`, 120, 78);
-      doc.text(`Phone: ${s.phoneNumber || 'N/A'}`, 120, 84);
+      doc.text(`Date de naissance: ${bDate}`, 120, 78);
+      doc.text(`Téléphone: ${s.phoneNumber || 'N/A'}`, 120, 84);
 
       // Metadata Grid (Reference Number, Date of Issue, Semesters, Terms)
       doc.setFillColor(248, 250, 252); // slate-50
@@ -158,15 +158,15 @@ export default function StudentTranscriptsPage() {
       doc.setFont('Helvetica', 'bold');
       doc.setFontSize(8);
       doc.setTextColor(100, 116, 139); // slate-500
-      doc.text('REFERENCE NUMBER', 18, 95);
-      doc.text('DATE OF ISSUE', 70, 95);
-      doc.text('SEMESTERS', 110, 95);
-      doc.text('TERMS', 155, 95);
+      doc.text('RÉFÉRENCE', 18, 95);
+      doc.text('DATE DE DÉLIVRANCE', 70, 95);
+      doc.text('SEMESTRES', 110, 95);
+      doc.text('TRIMESTRES', 155, 95);
 
       doc.setTextColor(15, 23, 42); // slate-900
       doc.text(meta.referenceNumber || 'N/A', 18, 101);
       doc.text(meta.generationDate || 'N/A', 70, 101);
-      
+
       const semsText = doc.splitTextToSize((meta.semesters || []).join(', ') || 'N/A', 40);
       const termsText = doc.splitTextToSize((meta.terms || []).join(', ') || 'N/A', 35);
       doc.text(semsText, 110, 101);
@@ -175,7 +175,7 @@ export default function StudentTranscriptsPage() {
       // Results Table
       doc.setFont('Helvetica', 'bold');
       doc.setFontSize(9);
-      doc.text('ACADEMIC PERFORMANCE SUMMARY', 14, 116);
+      doc.text('RÉSUMÉ DES RÉSULTATS SCOLAIRES', 14, 116);
 
       const tableBody = (transcriptData.results || []).map((r: any) => [
         r.subjectName || 'N/A',
@@ -189,7 +189,7 @@ export default function StudentTranscriptsPage() {
 
       autoTable(doc, {
         startY: 120,
-        head: [['Subject Name', 'Class', 'Exam', 'Semester (Term)', 'Score', 'Grade', 'Remarks']],
+        head: [['Matière', 'Classe', 'Examen', 'Semestre (Trimestre)', 'Note', 'Note', 'Remarques']],
         body: tableBody,
         theme: 'striped',
         headStyles: { fillColor: [15, 23, 42] as any, fontSize: 8.5, fontStyle: 'bold' },
@@ -220,9 +220,9 @@ export default function StudentTranscriptsPage() {
       doc.setTextColor(255, 255, 255);
       doc.setFont('Helvetica', 'bold');
       doc.setFontSize(9);
-      doc.text('ROSTER INDEX', 20, currentY + 8);
-      doc.text('AVERAGE PERFORMANCE', 70, currentY + 8);
-      doc.text('CUMULATIVE GPA', 135, currentY + 8);
+      doc.text('INDEX DES MATIERES', 20, currentY + 8);
+      doc.text('PERFORMANCE MOYENNE', 70, currentY + 8);
+      doc.text('GPA CUMULATIF', 135, currentY + 8);
 
       doc.setFontSize(18);
       doc.text(String(sum.totalSubjectsCount || 0), 20, currentY + 18);
@@ -231,38 +231,38 @@ export default function StudentTranscriptsPage() {
 
       doc.setFontSize(7.5);
       doc.setTextColor(156, 163, 175);
-      doc.text('Evaluated Fields', 20, currentY + 24);
-      doc.text('Weighted Average Score', 70, currentY + 24);
-      doc.text('Out of 4.00 max', 135, currentY + 24);
+      doc.text('Champs évalués', 20, currentY + 24);
+      doc.text('Moyenne pondérée', 70, currentY + 24);
+      doc.text('Maximum 4.00', 135, currentY + 24);
 
       // Signatures and QR Code Block
       const sigY = currentY + 42;
       doc.setTextColor(100, 116, 139); // slate-500
       doc.setFont('Helvetica', 'bold');
       doc.setFontSize(8);
-      
+
       // Draw signature lines
       doc.setDrawColor(226, 232, 240);
       doc.line(14, sigY + 14, 74, sigY + 14);
-      doc.text('OFFICE OF THE REGISTRAR', 14, sigY + 19);
+      doc.text('BUREAU DU REGISTRAIRE', 14, sigY + 19);
 
       doc.line(136, sigY + 14, 196, sigY + 14);
-      doc.text('PRINCIPAL / DEAN SIGNATURE', 136, sigY + 19);
+      doc.text('SIGNATURE DU DIRECTEUR', 136, sigY + 19);
 
       // Draw QR Code in the middle
       if (qrCodeUrl) {
         doc.addImage(qrCodeUrl, 'PNG', 93, sigY - 2, 24, 24);
         doc.setFontSize(6.5);
-        doc.text('VERIFY AUTHENTICITY', 105, sigY + 26, { align: 'center' });
+        doc.text('Vérifier l\'authenticité', 105, sigY + 26, { align: 'center' });
       }
 
       // Save
       const safeName = (s.name || 'student').replace(/\s+/g, '_').toLowerCase();
-      doc.save(`transcript_${safeName}.pdf`);
-      toast.success('Official PDF Downloaded');
+      doc.save(`Relevé_de_notes_${safeName}.pdf`);
+      toast.success('Téléchargement du PDF officiel réussi');
     } catch (err) {
-      console.error('PDF generation failed:', err);
-      toast.error('PDF download failed. Please try again.');
+      console.error('Échec de la génération du PDF :', err);
+      toast.error('Échec du téléchargement du PDF. Veuillez réessayer.');
     }
   };
 
@@ -274,7 +274,7 @@ export default function StudentTranscriptsPage() {
     <div className="h-screen flex flex-col items-center justify-center gap-4 bg-[#f8fafc]">
       <Loader2 className="animate-spin text-primary" size={40} />
       <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 text-center leading-relaxed">
-        Synchronizing Registry Logs...
+        Synchronisation des registres...
       </p>
     </div>
   );
@@ -295,10 +295,10 @@ export default function StudentTranscriptsPage() {
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-primary">
                   <GraduationCap size={18} />
-                  <span className="text-[10px] font-black uppercase tracking-[0.4em]">Official Records Center</span>
+                  <span className="text-[10px] font-black uppercase tracking-[0.4em]">Centre des registres officiels</span>
                 </div>
                 <h1 className="text-[clamp(1.4rem,3.5vw,4rem)] font-black text-slate-900 tracking-tighter italic uppercase">
-                  My <span className="text-primary">Transcripts.</span>
+                  Mes <span className="text-primary">Relevés.</span>
                 </h1>
               </div>
               <Button
@@ -306,7 +306,7 @@ export default function StudentTranscriptsPage() {
                 variant="outline"
                 className="rounded-2xl h-14 px-6 border-slate-200 bg-white hover:bg-slate-50 transition-all font-black text-[10px] tracking-widest uppercase"
               >
-                <RefreshCcw size={16} className="mr-2 text-slate-600" /> Refresh Ledger
+                <RefreshCcw size={16} className="mr-2 text-slate-600" /> Actualiser le Registre
               </Button>
             </header>
 
@@ -318,17 +318,17 @@ export default function StudentTranscriptsPage() {
                     <Table>
                       <TableHeader className="bg-slate-900 text-white">
                         <TableRow className="border-none hover:bg-slate-900">
-                          <TableHead className="text-white font-black text-[9px] uppercase tracking-wider py-4 pl-6">Reference No.</TableHead>
-                          <TableHead className="text-white font-black text-[9px] uppercase tracking-wider">Academic Year</TableHead>
+                          <TableHead className="text-white font-black text-[9px] uppercase tracking-wider py-4 pl-6">Référence</TableHead>
+                          <TableHead className="text-white font-black text-[9px] uppercase tracking-wider">Année Académique</TableHead>
                           <TableHead className="text-white font-black text-[9px] uppercase tracking-wider text-center">GPA</TableHead>
-                          <TableHead className="text-white font-black text-[9px] uppercase tracking-wider text-center">Average Score</TableHead>
-                          <TableHead className="text-white font-black text-[9px] uppercase tracking-wider">Date of Issue</TableHead>
+                          <TableHead className="text-white font-black text-[9px] uppercase tracking-wider text-center">Moyenne</TableHead>
+                          <TableHead className="text-white font-black text-[9px] uppercase tracking-wider">Date d'Émission</TableHead>
                           <TableHead className="text-white font-black text-[9px] uppercase tracking-wider text-right pr-6">Action</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
                         {transcripts.map((t: any) => {
-                          const pubDate = t.generationDate 
+                          const pubDate = t.generationDate
                             ? new Date(t.generationDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
                             : 'N/A';
                           return (
@@ -353,7 +353,7 @@ export default function StudentTranscriptsPage() {
                                   onClick={() => setSelectedTranscriptId(String(t.id))}
                                   className="h-10 bg-slate-900 hover:bg-blue-600 text-white rounded-xl font-bold uppercase text-[9px] tracking-wider transition-all"
                                 >
-                                  <Eye size={12} className="mr-1.5" /> View Transcript
+                                  <Eye size={12} className="mr-1.5" /> Voir le Relevé
                                 </Button>
                               </TableCell>
                             </TableRow>
@@ -369,9 +369,9 @@ export default function StudentTranscriptsPage() {
                 <div className="mx-auto p-5 bg-white border border-slate-100 shadow-xl rounded-3xl mb-6 text-slate-400 w-fit">
                   <FileText size={40} />
                 </div>
-                <h3 className="text-lg font-black text-slate-900 uppercase tracking-tight">No Transcripts Issued</h3>
+                <h3 className="text-lg font-black text-slate-900 uppercase tracking-tight">Aucun Relevé Émis</h3>
                 <p className="text-slate-400 text-xs font-bold uppercase tracking-wider text-center mt-2 max-w-md mx-auto leading-relaxed">
-                  The academic registry does not contain any officially generated transcripts for your account yet. Transcripts are calculated and saved by the administration.
+                  Le registre académique ne contient aucun relevé de notes officiel généré pour votre compte. Les relevés sont calculés et enregistrés par l'administration.
                 </p>
               </Card>
             )}
@@ -391,15 +391,15 @@ export default function StudentTranscriptsPage() {
                 variant="outline"
                 className="rounded-2xl h-14 px-6 border-slate-200 bg-white hover:bg-slate-50 font-black text-[10px] tracking-widest uppercase"
               >
-                <ArrowLeft size={16} className="mr-2" /> Back to List
+                <ArrowLeft size={16} className="mr-2" /> Retour
               </Button>
-              
+
               <div className="flex gap-3">
                 <Button onClick={handlePrint} variant="outline" className="rounded-2xl h-14 px-6 border-slate-200 bg-white hover:bg-slate-50 font-black text-[10px] tracking-widest uppercase">
-                  <Printer size={16} className="mr-2 text-slate-600" /> Print
+                  <Printer size={16} className="mr-2 text-slate-600" /> Imprimer
                 </Button>
                 <Button onClick={handleDownloadPDF} className="bg-blue-600 hover:bg-slate-900 text-white rounded-2xl h-14 px-8 font-black uppercase text-[10px] tracking-widest shadow-xl shadow-blue-500/10">
-                  <Download size={16} className="mr-2" /> Download PDF
+                  <Download size={16} className="mr-2" /> Télécharger le PDF
                 </Button>
               </div>
             </div>
@@ -407,7 +407,7 @@ export default function StudentTranscriptsPage() {
             {fetchingDetails || !transcriptData ? (
               <div className="h-[400px] flex flex-col items-center justify-center gap-4 bg-white border border-slate-100 rounded-[2.5rem] shadow-sm">
                 <Loader2 className="animate-spin text-primary" size={32} />
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Loading Official Registry Ledger...</p>
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Chargement du Registre Officiel...</p>
               </div>
             ) : (
               /* Printable Transcript Document (Matches Admin layout perfectly) */
@@ -419,7 +419,7 @@ export default function StudentTranscriptsPage() {
                   </div>
                   <div>
                     <h2 className="text-2xl font-black italic tracking-tighter uppercase">{transcriptData.school.name}</h2>
-                    <p className="text-[10px] text-blue-400 font-bold uppercase tracking-[0.3em] mt-1">Official Academic Registry</p>
+                    <p className="text-[10px] text-blue-400 font-bold uppercase tracking-[0.3em] mt-1">Registre Académique Officiel</p>
                     <div className="flex flex-wrap gap-x-4 gap-y-1 text-[10px] font-bold text-slate-400 mt-4">
                       <span className="flex items-center gap-1"><Building2 size={12} /> {transcriptData.school.address}</span>
                       <span className="flex items-center gap-1"><Phone size={12} /> {transcriptData.school.phone}</span>
@@ -431,14 +431,14 @@ export default function StudentTranscriptsPage() {
                 <CardContent className="p-10 space-y-8">
                   {/* Document Title Header */}
                   <div className="text-center md:text-left">
-                    <h3 className="text-lg font-black text-slate-900 tracking-wider uppercase">Official Student Transcript</h3>
-                    <p className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-400 mt-1">Cumulated Performance Ledger</p>
+                    <h3 className="text-lg font-black text-slate-900 tracking-wider uppercase">Relevé de Notes Officiel</h3>
+                    <p className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-400 mt-1">Ledger de Performance Cumulé</p>
                   </div>
 
                   {/* Student Info Grid */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8 bg-slate-50/50 p-8 rounded-3xl border border-slate-100">
                     <div className="space-y-2">
-                      <p className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Student Profile</p>
+                      <p className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Profil de l'Étudiant</p>
                       <div>
                         <p className="text-sm font-black text-slate-800">{transcriptData.student.name}</p>
                         <p className="text-[10px] text-blue-500 font-bold uppercase tracking-wider mt-0.5">ID: {transcriptData.student.userId || 'N/A'}</p>
@@ -446,13 +446,13 @@ export default function StudentTranscriptsPage() {
                       <p className="text-xs font-semibold text-slate-500">Email: {transcriptData.student.email}</p>
                     </div>
                     <div className="space-y-2">
-                      <p className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Enrolled Record</p>
+                      <p className="text-[10px] font-black uppercase text-slate-400 tracking-wider"> Dossier d'Inscription</p>
                       <div>
-                        <p className="text-xs font-bold text-slate-700">Class: {transcriptData.student.classes.join(', ') || 'N/A'}</p>
+                        <p className="text-xs font-bold text-slate-700">Classe: {transcriptData.student.classes.join(', ') || 'N/A'}</p>
                         <p className="text-xs font-semibold text-slate-500 mt-1">
-                          Birth Date: {transcriptData.student.birthDate ? new Date(transcriptData.student.birthDate).toLocaleDateString() : 'N/A'}
+                          Date de Naissance: {transcriptData.student.birthDate ? new Date(transcriptData.student.birthDate).toLocaleDateString() : 'N/A'}
                         </p>
-                        <p className="text-xs font-semibold text-slate-500 mt-0.5">Phone: {transcriptData.student.phoneNumber || 'N/A'}</p>
+                        <p className="text-xs font-semibold text-slate-500 mt-0.5">Téléphone: {transcriptData.student.phoneNumber || 'N/A'}</p>
                       </div>
                     </div>
                   </div>
@@ -460,35 +460,35 @@ export default function StudentTranscriptsPage() {
                   {/* Transcript Metadata & Scope */}
                   <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-6 bg-slate-50/30 rounded-3xl border border-slate-100/80 text-xs text-slate-600">
                     <div>
-                      <span className="block text-[8px] font-black uppercase tracking-wider text-slate-400 mb-0.5">Reference Number</span>
+                      <span className="block text-[8px] font-black uppercase tracking-wider text-slate-400 mb-0.5">Numéro de Référence</span>
                       <span className="font-mono font-bold text-slate-800 tracking-wide select-all">{transcriptData.metadata.referenceNumber}</span>
                     </div>
                     <div>
-                      <span className="block text-[8px] font-black uppercase tracking-wider text-slate-400 mb-0.5">Date of Issue</span>
+                      <span className="block text-[8px] font-black uppercase tracking-wider text-slate-400 mb-0.5">Date d'Émission</span>
                       <span className="font-bold text-slate-800">{transcriptData.metadata.generationDate}</span>
                     </div>
                     <div>
-                      <span className="block text-[8px] font-black uppercase tracking-wider text-slate-400 mb-0.5">Target Semesters</span>
+                      <span className="block text-[8px] font-black uppercase tracking-wider text-slate-400 mb-0.5">Semestres Visés</span>
                       <span className="font-semibold text-slate-700">{transcriptData.metadata.semesters.join(', ') || 'N/A'}</span>
                     </div>
                     <div>
-                      <span className="block text-[8px] font-black uppercase tracking-wider text-slate-400 mb-0.5">Target Terms</span>
+                      <span className="block text-[8px] font-black uppercase tracking-wider text-slate-400 mb-0.5">Trimestres Visés</span>
                       <span className="font-semibold text-slate-700">{transcriptData.metadata.terms.join(', ') || 'N/A'}</span>
                     </div>
                   </div>
 
                   {/* Performance Table */}
                   <div className="space-y-4">
-                    <h4 className="text-xs font-black uppercase tracking-wider text-slate-400">Academic Scoreboard</h4>
+                    <h4 className="text-xs font-black uppercase tracking-wider text-slate-400">Tableau des Résultats Académiques</h4>
                     <div className="rounded-2xl border overflow-hidden">
                       <Table>
                         <TableHeader className="bg-slate-900 text-white">
                           <TableRow className="border-none hover:bg-slate-900">
-                            <TableHead className="text-white font-black text-[9px] uppercase tracking-wider py-4 pl-6">Subject / Class</TableHead>
-                            <TableHead className="text-white font-black text-[9px] uppercase tracking-wider">Exam / Session</TableHead>
+                            <TableHead className="text-white font-black text-[9px] uppercase tracking-wider py-4 pl-6">Matière / Classe</TableHead>
+                            <TableHead className="text-white font-black text-[9px] uppercase tracking-wider"> Examen / Session</TableHead>
                             <TableHead className="text-white font-black text-[9px] uppercase tracking-wider text-center">Score</TableHead>
-                            <TableHead className="text-white font-black text-[9px] uppercase tracking-wider text-center">Grade</TableHead>
-                            <TableHead className="text-white font-black text-[9px] uppercase tracking-wider py-4 pr-6">Teacher Remarks</TableHead>
+                            <TableHead className="text-white font-black text-[9px] uppercase tracking-wider text-center">Note</TableHead>
+                            <TableHead className="text-white font-black text-[9px] uppercase tracking-wider py-4 pr-6">Commentaires du Professeur</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -523,19 +523,19 @@ export default function StudentTranscriptsPage() {
                   {/* Summary Metric Card */}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6 bg-slate-900 rounded-[2rem] p-8 text-white relative overflow-hidden">
                     <div className="space-y-1">
-                      <p className="text-[9px] font-black uppercase tracking-[0.2em] text-blue-400">Roster Index</p>
+                      <p className="text-[9px] font-black uppercase tracking-[0.2em] text-blue-400">Index des Matières</p>
                       <h4 className="text-4xl font-black italic tracking-tighter">{transcriptData.summary.totalSubjectsCount}</h4>
-                      <p className="text-[10px] font-bold opacity-60">Evaluated Fields</p>
+                      <p className="text-[10px] font-bold opacity-60">Domaines Évalués</p>
                     </div>
                     <div className="space-y-1">
-                      <p className="text-[9px] font-black uppercase tracking-[0.2em] text-blue-400">Average Performance</p>
+                      <p className="text-[9px] font-black uppercase tracking-[0.2em] text-blue-400">Performance Moyenne</p>
                       <h4 className="text-4xl font-black italic tracking-tighter">{transcriptData.summary.weightedAverageScore}%</h4>
-                      <p className="text-[10px] font-bold opacity-60">Weighted Average Score</p>
+                      <p className="text-[10px] font-bold opacity-60">Score Pondéré Moyen</p>
                     </div>
                     <div className="space-y-1 bg-blue-600 rounded-2xl p-6 shadow-lg shadow-blue-900/10">
-                      <p className="text-[9px] font-black uppercase tracking-[0.2em] text-blue-100">Cumulative GPA</p>
+                      <p className="text-[9px] font-black uppercase tracking-[0.2em] text-blue-100">Moyenne Générale</p>
                       <h4 className="text-4xl font-black italic tracking-tighter">{transcriptData.summary.gpa.toFixed(2)}</h4>
-                      <p className="text-[10px] font-bold text-blue-100">Out of 4.00 max</p>
+                      <p className="text-[10px] font-bold text-blue-100">Sur 4.00</p>
                     </div>
                   </div>
 
@@ -543,24 +543,24 @@ export default function StudentTranscriptsPage() {
                   <div className="pt-12 grid grid-cols-1 md:grid-cols-3 gap-8 items-center text-center text-slate-400 font-semibold text-[10px] uppercase tracking-wider">
                     <div className="space-y-2">
                       <div className="border-b border-slate-200 h-16"></div>
-                      <p className="font-bold text-slate-500">Office of the Registrar</p>
+                      <p className="font-bold text-slate-500">Bureau du Registraire</p>
                     </div>
-                    
+
                     <div className="flex flex-col items-center justify-center space-y-1.5 p-2 bg-slate-50 border border-slate-100 rounded-2xl print:bg-white print:border-none">
                       {qrCodeUrl ? (
                         <>
                           <img src={qrCodeUrl} alt="Transcript Verification QR" className="w-20 h-20 object-contain mix-blend-multiply" />
-                          <p className="text-[8px] font-black tracking-widest text-slate-500">VERIFY AUTHENTICITY</p>
+                          <p className="text-[8px] font-black tracking-widest text-slate-500">AUTHENTICITÉ DU RELEVÉ DE NOTES</p>
                           <p className="text-[7px] font-mono text-slate-400 select-all">{transcriptData.metadata.referenceNumber}</p>
                         </>
                       ) : (
                         <div className="w-20 h-20 bg-slate-200 animate-pulse rounded-lg" />
                       )}
                     </div>
-                    
+
                     <div className="space-y-2">
                       <div className="border-b border-slate-200 h-16"></div>
-                      <p className="font-bold text-slate-500">Principal / Dean Signature</p>
+                      <p className="font-bold text-slate-500">Signature du Directeur</p>
                     </div>
                   </div>
                 </CardContent>

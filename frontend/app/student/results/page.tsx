@@ -80,7 +80,7 @@ export default function StudentResultsPage() {
    const highestScore = results.length > 0 ? Math.max(...results.map(r => r.marks)) : 0;
 
    const chartData = results.map(r => ({
-      name: r.examName || 'Exam',
+      name: r.examName || 'Examen',
       myScore: r.marks,
       classAvg: r.classAverage || 0,
    }));
@@ -90,7 +90,7 @@ export default function StudentResultsPage() {
          <div className="flex h-[80vh] items-center justify-center">
             <div className="animate-pulse flex flex-col items-center gap-2">
                <School className="w-8 h-8 text-primary animate-bounce" />
-               <p className="text-muted-foreground font-medium">Loading Academic Profile...</p>
+               <p className="text-muted-foreground font-medium">Chargement de votre profil académique...</p>
             </div>
          </div>
       );
@@ -102,12 +102,12 @@ export default function StudentResultsPage() {
          <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b pb-6">
             <div>
                <h1 className="text-[clamp(1.2rem,2.5vw+1rem,3rem)] font-black text-slate-900 tracking-tighter italic">Academic <span className="text-primary">Portal.</span></h1>
-               <p className="text-muted-foreground">Welcome, {results[0]?.student?.name || 'Student'}. View your growth and performance.</p>
+               <p className="text-muted-foreground">Bienvenue, {results[0]?.student?.name || 'Étudiant'}. Vue sur votre croissance et performance.</p>
             </div>
             <div className="flex items-center flex-wrap gap-4">
                <div className="flex items-center gap-4 bg-primary/5 p-4 rounded-xl border border-primary/10 md:hover:border-primary duration-300">
                   <div className="text-right">
-                     <p className="text-xs uppercase text-muted-foreground font-bold">Overall Average</p>
+                     <p className="text-xs uppercase text-muted-foreground font-bold">Note moyenne globale</p>
                      <p className="text-3xl font-black text-primary">{averageScore}%</p>
                   </div>
                   <Award className="w-8 h-8 text-primary" />
@@ -119,14 +119,14 @@ export default function StudentResultsPage() {
          <div className="flex flex-col md:flex-row items-center gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200">
             <div className="flex items-center gap-2 text-slate-500 min-w-max">
                <Filter className="w-4 h-4" />
-               <span className="text-sm font-bold uppercase">Filter Results:</span>
+               <span className="text-sm font-bold uppercase"> Filtrer les resultats:</span>
             </div>
             <Select value={selectedSemester} onValueChange={(val) => setSelectedSemester(val)}>
                <SelectTrigger className="md:w-[200px] w-full bg-white border border-slate-200 md:hover:border-primary duration-500 transition-colors">
-                  <SelectValue placeholder="All Semesters" />
+                  <SelectValue placeholder="Touts les Semestres" />
                </SelectTrigger>
                <SelectContent>
-                  <SelectItem value="all">All Semesters</SelectItem>
+                  <SelectItem value="all">Touts les Semestres</SelectItem>
                   {uniqueSemesters.map(sem => <SelectItem key={sem} value={sem}>{sem}</SelectItem>)}
                </SelectContent>
             </Select>
@@ -138,7 +138,7 @@ export default function StudentResultsPage() {
                <CardHeader className="flex flex-row items-center justify-between">
                   <div className="flex items-center gap-2">
                      <TrendingUp className="w-5 h-5 text-blue-500" />
-                     <CardTitle className="text-base font-semibold">Score Trends vs. Class Average</CardTitle>
+                     <CardTitle className="text-base font-semibold">Évolution des scores par rapport à la moyenne de la classe</CardTitle>
                   </div>
                </CardHeader>
                <CardContent className="h-[320px]">
@@ -149,8 +149,8 @@ export default function StudentResultsPage() {
                         <YAxis domain={[0, 100]} axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 11 }} />
                         <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }} />
                         <Legend iconType="circle" wrapperStyle={{ paddingTop: '20px' }} />
-                        <Line name="My Score" type="monotone" dataKey="myScore" stroke="#2563eb" strokeWidth={4} dot={{ r: 6, fill: '#2563eb', strokeWidth: 2, stroke: '#fff' }} />
-                        <Line name="Class Mean" type="monotone" dataKey="classAvg" stroke="#cbd5e1" strokeWidth={2} strokeDasharray="6 6" dot={false} />
+                        <Line name="Mon Score" type="monotone" dataKey="myScore" stroke="#2563eb" strokeWidth={4} dot={{ r: 6, fill: '#2563eb', strokeWidth: 2, stroke: '#fff' }} />
+                        <Line name="Moyenne de la classe" type="monotone" dataKey="classAvg" stroke="#cbd5e1" strokeWidth={2} strokeDasharray="6 6" dot={false} />
                      </LineChart>
                   </ResponsiveContainer>
                </CardContent>
@@ -159,21 +159,21 @@ export default function StudentResultsPage() {
             <div className="flex flex-col gap-4">
                <Card className="bg-primary text-primary-foreground border py-2 border-transparent md:hover:border-blue-300 duration-500 transition-colors shadow-lg">
                   <CardHeader className="pb-2">
-                     <CardTitle className="text-primary-foreground/70 text-xs font-bold uppercase">Peak Performance</CardTitle>
+                     <CardTitle className="text-primary-foreground/70 text-xs font-bold uppercase">Meilleure performance</CardTitle>
                   </CardHeader>
                   <CardContent>
                      <h2 className="text-4xl font-black">{highestScore}%</h2>
-                     <p className="text-sm mt-1 opacity-80 font-medium">Highest score achieved to date</p>
+                     <p className="text-sm mt-1 opacity-80 font-medium">Score le plus élevé obtenu à ce jour</p>
                   </CardContent>
                </Card>
 
                <Card className="flex-1 border md:hover:border-primary py-3 duration-500 transition-colors border-dashed">
                   <CardHeader className="pb-2">
-                     <CardTitle className="text-xs font-bold text-muted-foreground uppercase">Evaluations</CardTitle>
+                     <CardTitle className="text-xs font-bold text-muted-foreground uppercase">Évaluations</CardTitle>
                   </CardHeader>
                   <CardContent className="flex items-center gap-4">
                      <BookOpen className="w-8 h-8 text-primary/40" />
-                     <h2 className="text-3xl font-bold">{results.length} Exams</h2>
+                     <h2 className="text-3xl font-bold">{results.length} Examens</h2>
                   </CardContent>
                </Card>
             </div>
@@ -185,11 +185,11 @@ export default function StudentResultsPage() {
                <Table>
                   <TableHeader className="sticky top-0 z-10 bg-white shadow-[0_1px_0_0_#e2e8f0]">
                      <TableRow className="bg-slate-50/50">
-                        <TableHead className="w-[250px] font-bold pl-6">Examination</TableHead>
-                        <TableHead className="font-bold">Term &amp; Semester</TableHead>
-                        <TableHead className="text-center font-bold">Score</TableHead>
-                        <TableHead className="text-center font-bold">Grade</TableHead>
-                        <TableHead className="text-right pr-6 font-bold">Outcome</TableHead>
+                        <TableHead className="w-[250px] font-bold pl-6">Examen</TableHead>
+                        <TableHead className="font-bold">Term &amp; Semestre</TableHead>
+                        <TableHead className="text-center font-bold">Moyen</TableHead>
+                        <TableHead className="text-center font-bold">Note</TableHead>
+                        <TableHead className="text-right pr-6 font-bold">Resultat</TableHead>
                      </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -223,11 +223,11 @@ export default function StudentResultsPage() {
                                  <div className="flex justify-end">
                                     {isPassing ? (
                                        <div className="flex items-center gap-1.5 text-emerald-600 bg-emerald-50 px-3 py-1 rounded-md text-[10px] font-bold border border-emerald-100">
-                                          <CheckCircle2 className="w-3 h-3" /> PASSED
+                                          <CheckCircle2 className="w-3 h-3" /> RÉUSSI
                                        </div>
                                     ) : (
                                        <div className="flex items-center gap-1.5 text-rose-600 bg-rose-50 px-3 py-1 rounded-md text-[10px] font-bold border border-rose-100">
-                                          <AlertCircle className="w-3 h-3" /> FAILED
+                                          <AlertCircle className="w-3 h-3" /> ÉCHOUÉ
                                        </div>
                                     )}
                                  </div>
@@ -237,7 +237,7 @@ export default function StudentResultsPage() {
                      }) : (
                         <TableRow>
                            <TableCell colSpan={5} className="h-32 text-center text-muted-foreground">
-                              No records found for this semester.
+                              Aucun résultat trouvé pour ce semestre.
                            </TableCell>
                         </TableRow>
                      )}

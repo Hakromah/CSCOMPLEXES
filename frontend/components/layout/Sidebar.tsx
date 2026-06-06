@@ -82,7 +82,7 @@ export default function Sidebar({ menuItems }: SidebarProps) {
                setDraftCount(drafts);
             }
          } catch (e) {
-            console.error("Auth sync error:", e);
+            console.error("Erreur de synchronisation d'authentification:", e);
             setIsOnline(false);
          }
       };
@@ -90,7 +90,7 @@ export default function Sidebar({ menuItems }: SidebarProps) {
    }, []);
 
    const handleLogout = async () => {
-      const tid = toast.loading('Terminating session...');
+      const tid = toast.loading('Fin de session...');
       try {
          await api.post('/auth/logout', {});
 
@@ -98,32 +98,32 @@ export default function Sidebar({ menuItems }: SidebarProps) {
          Cookies.remove('accessToken', { path: '/' });
          Cookies.remove('userRole', { path: '/' });
 
-         toast.success('Signed out safely', { id: tid });
+         toast.success('Fin de session réussie', { id: tid });
          window.location.href = '/login';
       } catch (error) {
-         toast.error('Sign out failed', { id: tid });
+         toast.error('Fin de session échouée', { id: tid });
          console.log(error)
       }
    };
 
    const finalMenuItems = userData?.role === 'ACCOUNTANT' ? [
-      { name: 'Finance Dashboard', href: '/admin/finance' },
-      { name: 'Student Finance', href: '/admin/finance/students' },
-      { name: 'Staff Finance', href: '/admin/finance/staff' },
-      { name: 'Reports', href: '/admin/finance/reports' }
+      { name: 'Tablea de bord financier', href: '/admin/finance' },
+      { name: 'Finance des étudiants', href: '/admin/finance/students' },
+      { name: 'Finance du personnel', href: '/admin/finance/staff' },
+      { name: 'Rapports', href: '/admin/finance/reports' }
    ] : userData?.role === 'ACCOUNTLEAD' ? [
-      { name: 'Finance Dashboard', href: '/admin/finance' },
-      { name: 'Student Finance', href: '/admin/finance/students' },
-      { name: 'Staff Finance', href: '/admin/finance/staff' },
-      { name: 'Reports', href: '/admin/finance/reports' },
-      { name: 'Utilities', href: '/admin/finance/utilities' }
+      { name: 'Tablea de bord financier', href: '/admin/finance' },
+      { name: 'Finance des étudiants', href: '/admin/finance/students' },
+      { name: 'Finance du personnel', href: '/admin/finance/staff' },
+      { name: 'Rapports', href: '/admin/finance/reports' },
+      { name: 'Utilitaires', href: '/admin/finance/utilities' }
    ] : userData?.role === 'ADMIN' ? [
       ...menuItems,
-      { name: 'Finance Dashboard', href: '/admin/finance' },
-      { name: 'Student Finance', href: '/admin/finance/students' },
-      { name: 'Staff Finance', href: '/admin/finance/staff' },
-      { name: 'Financial Reports', href: '/admin/finance/reports' },
-      { name: 'Finance Utilities', href: '/admin/finance/utilities' }
+      { name: 'Tablea de bord financier', href: '/admin/finance' },
+      { name: 'Finance des étudiants', href: '/admin/finance/students' },
+      { name: 'Finance du personnel', href: '/admin/finance/staff' },
+      { name: 'Rapports financiers', href: '/admin/finance/reports' },
+      { name: 'Utilitaires financiers', href: '/admin/finance/utilities' }
    ] : menuItems;
 
    const renderContent = () => (
@@ -135,8 +135,8 @@ export default function Sidebar({ menuItems }: SidebarProps) {
                   <School className="h-6 w-6 text-white" />
                </div>
                <div className="flex flex-col">
-                  <span className="font-black text-xl tracking-tighter text-slate-900 leading-none italic">AMF</span>
-                  <span className="text-[10px] font-black text-primary uppercase tracking-widest mt-1">Registry.</span>
+                  <span className="font-black text-xl tracking-tighter text-slate-900 leading-none italic">2CS</span>
+                  <span className="text-[10px] font-black text-primary uppercase tracking-widest mt-1">Registre.</span>
                </div>
             </div>
             <div className="relative p-2 bg-slate-50 rounded-xl">
@@ -153,7 +153,7 @@ export default function Sidebar({ menuItems }: SidebarProps) {
                   {/* Section Header */}
                   <div className="px-3">
                      <p className="text-[10px] font-extrabold tracking-widest text-slate-400 uppercase">
-                        {userData?.role || 'Guest'} Menu
+                        {userData?.role || 'Invité'} Menu
                      </p>
                   </div>
 
@@ -200,9 +200,9 @@ export default function Sidebar({ menuItems }: SidebarProps) {
                      <div className="bg-amber-50 border border-amber-100/50 rounded-3xl p-5 flex gap-4">
                         <AlertCircle className="w-5 h-5 text-amber-600 shrink-0" />
                         <div className="space-y-1">
-                           <p className="text-[10px] font-black text-amber-800 uppercase tracking-widest">Pending Uploads</p>
+                           <p className="text-[10px] font-black text-amber-800 uppercase tracking-widest">UPLOADS EN ATTENTE</p>
                            <p className="text-[11px] text-amber-700 font-medium leading-relaxed">
-                              You have <span className="font-black underline">{draftCount} grades</span> awaiting final publication.
+                              Vous avez <span className="font-black underline">{draftCount} notes</span> en attente de publication.
                            </p>
                         </div>
                      </div>
@@ -239,7 +239,7 @@ export default function Sidebar({ menuItems }: SidebarProps) {
                   onClick={handleLogout}
                   className="w-full justify-center gap-2 bg-white/5 md:hover:bg-primary md:hover:text-white text-slate-400 border duration-500 border-white/10 rounded-2xl transition-all h-11 text-[10px] font-black uppercase tracking-[0.2em]"
                >
-                  <LogOut className="w-3.5 h-3.5" /> Close Session
+                  <LogOut className="w-3.5 h-3.5" /> Fermer la Session
                </Button>
             </div>
          </div>
@@ -260,7 +260,7 @@ export default function Sidebar({ menuItems }: SidebarProps) {
                   <div className="bg-blue-600 p-2 rounded-xl">
                      <School className="h-5 w-5 text-white" />
                   </div>
-                  <span className="font-black text-lg tracking-tighter uppercase italic">AMF</span>
+                  <span className="font-black text-lg tracking-tighter uppercase italic">2CS</span>
                </div>
                <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
                   <SheetTrigger asChild>

@@ -38,7 +38,7 @@ export default function DeleteUserAlert({
 
     try {
       await api.delete(`/admin/users/${userId}`);
-      toast.success('Identity purged from registry');
+      toast.success('Identité purgée du registre');
 
       // Close dialog first
       onOpenChange(false);
@@ -47,9 +47,9 @@ export default function DeleteUserAlert({
       await onFinished();
     } catch (error: any) {
       if (error.response?.status === 409) {
-        toast.error('Integrity Error: User is still linked to active classes.');
+        toast.error('Erreur d\'intégrité : L\'utilisateur est toujours lié à des classes actives.');
       } else {
-        toast.error('Registry purge failed. System link active.');
+        toast.error('La purge du registre a échoué. Lien système actif.');
       }
     } finally {
       setIsDeleting(false);
@@ -64,16 +64,16 @@ export default function DeleteUserAlert({
             <Trash2 className="text-rose-600" size={24} />
           </div>
           <AlertDialogTitle className="text-xl font-black tracking-tight">
-            Confirm Deletion
+            Confirmation de Suppression
           </AlertDialogTitle>
           <AlertDialogDescription className="text-slate-500 font-medium">
-            This action will permanently remove this identity from the AMF Registry.
-            Historical data like grades may be archived, but the account will be inaccessible.
+            Cette action supprimera définitivement cette identité du registre AMF.
+            Les données historiques comme les notes peuvent être archivées, mais le compte sera inaccessible.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter className="mt-6">
           <AlertDialogCancel className="rounded-xl border-slate-200 font-bold">
-            Abort
+            Annuler
           </AlertDialogCancel>
           <AlertDialogAction
             onClick={handleDelete}
@@ -83,10 +83,10 @@ export default function DeleteUserAlert({
             {isDeleting ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Purging...
+                Suppression...
               </>
             ) : (
-              'Confirm Purge'
+              'Confirmation de Suppression'
             )}
           </AlertDialogAction>
         </AlertDialogFooter>
@@ -94,69 +94,4 @@ export default function DeleteUserAlert({
     </AlertDialog>
   );
 }
-
-// /* eslint-disable @typescript-eslint/no-explicit-any */
-// 'use client';
-
-// import {
-//   AlertDialog,
-//   AlertDialogAction,
-//   AlertDialogCancel,
-//   AlertDialogContent,
-//   AlertDialogDescription,
-//   AlertDialogFooter,
-//   AlertDialogHeader,
-//   AlertDialogTitle,
-// } from '@/components/ui/alert-dialog';
-// import { toast } from 'sonner';
-// import api from '@/lib/api';
-
-// interface DeleteUserAlertProps {
-//   userId: number;
-//   open: boolean;
-//   onOpenChange: (open: boolean) => void;
-//   onFinished: () => Promise<void>;
-// }
-
-// export default function DeleteUserAlert({
-//   userId,
-//   open,
-//   onOpenChange,
-//   onFinished,
-// }: DeleteUserAlertProps) {
-
-//   const handleDelete = async () => {
-//     try {
-//       await api.delete(`/admin/users/${userId}`);
-//       toast.success('User deleted successfully');
-//       onOpenChange(false);
-//       await onFinished();
-//     } catch (error: any) {
-//       if (error.response?.status === 409) {
-//         toast.error('Cannot delete: User is still assigned to active classes.');
-//       } else {
-//         toast.error('An unexpected error occurred.');
-//       }
-//     }
-//   };
-
-//   return (
-//     <AlertDialog open={open} onOpenChange={onOpenChange}>
-//       <AlertDialogContent>
-//         <AlertDialogHeader>
-//           <AlertDialogTitle>Delete user</AlertDialogTitle>
-//           <AlertDialogDescription>
-//             This action cannot be undone. This will permanently delete the user.
-//           </AlertDialogDescription>
-//         </AlertDialogHeader>
-//         <AlertDialogFooter>
-//           <AlertDialogCancel>Cancel</AlertDialogCancel>
-//           <AlertDialogAction onClick={handleDelete}>
-//             Delete
-//           </AlertDialogAction>
-//         </AlertDialogFooter>
-//       </AlertDialogContent>
-//     </AlertDialog>
-//   );
-// }
 

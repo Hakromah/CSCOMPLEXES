@@ -32,7 +32,7 @@ export default () => ({
           `Email "${data.email}" is already registered. Each user must have a unique email address.`
         );
         err.status = 400;
-        err.name   = 'DuplicateEmailError';
+        err.name = 'DuplicateEmailError';
         throw err;
       }
     }
@@ -93,7 +93,7 @@ export default () => ({
     if (username) cleanData.username = username;
     const schoolRole = data.role || data.schoolRole;
     if (schoolRole) cleanData.schoolRole = schoolRole;
-    
+
     delete cleanData.name;
     delete cleanData.role;
 
@@ -199,7 +199,7 @@ export default () => ({
   async getMaterialAnalytics() {
     const classes = await strapi.entityService.findMany('api::school-class.school-class') as any[];
     const materials = await strapi.entityService.findMany('api::learning-material.learning-material', { populate: ['classe'] }) as any[];
-    
+
     return classes.map(c => {
       const count = materials.filter(m => m.classe?.id === c.id).length;
       return { className: c.name, downloads: count };
@@ -389,7 +389,7 @@ export default () => ({
     const isMatch = await strapi.plugin('users-permissions')
       .service('user').validatePassword(currentPassword, user.password);
 
-    if (!isMatch) throw new Error('Current password is incorrect');
+    if (!isMatch) throw new Error('Le mot de passe actuel est incorrect');
 
     const hashed = await strapi.plugin('users-permissions')
       .service('user').hashPassword({ password: newPassword });
@@ -410,22 +410,22 @@ export default () => ({
       fields: ['id', 'userId', 'username', 'email', 'birthDate', 'phoneNumber'] as any,
       populate: ['enrolledClasses'] as any
     }) as any;
-    if (!student) throw new Error('Student not found');
+    if (!student) throw new Error('Etudiant non trouvé');
 
     // 2. Fetch School / Institutional Details (Contact Info + Navbar)
-    let schoolInfo = { name: 'AMF Academy', address: '', email: '', phone: '' };
+    let schoolInfo = { name: '2CS COMPEXES', address: '', email: '', phone: '' };
     try {
       const contactInfo = await strapi.entityService.findMany('api::contact-info.contact-info' as any, {
         populate: ['phones', 'email'] as any
       }) as any;
-      
+
       const realContact = Array.isArray(contactInfo) ? contactInfo[0] : contactInfo;
       if (realContact) {
         schoolInfo.address = realContact.address || '';
         schoolInfo.phone = realContact.phones?.[0]?.phones || '';
         schoolInfo.email = realContact.email?.[0]?.address || '';
       }
-      
+
       const navbar = await strapi.entityService.findMany('api::navbar.navbar' as any) as any;
       const realNavbar = Array.isArray(navbar) ? navbar[0] : navbar;
       if (realNavbar) {
@@ -520,8 +520,8 @@ export default () => ({
     const gpa = gpaCount > 0 ? (totalGPA / gpaCount).toFixed(2) : '0.00';
 
     // Save/Update in DB dynamically to register the official transcript
-    const sortedSemesterIds = (filters.semesterIds || []).slice().sort((a,b) => a - b).join(',');
-    const sortedTermIds = (filters.termIds || []).slice().sort((a,b) => a - b).join(',');
+    const sortedSemesterIds = (filters.semesterIds || []).slice().sort((a, b) => a - b).join(',');
+    const sortedTermIds = (filters.termIds || []).slice().sort((a, b) => a - b).join(',');
     const crypto = require('crypto');
     const hashInput = `${studentId}-${filters.academicYearId || 'all'}-${filters.classId || 'all'}-${sortedSemesterIds}-${sortedTermIds}`;
     const hash = crypto.createHash('md5').update(hashInput).digest('hex').substring(0, 8).toUpperCase();
@@ -592,7 +592,7 @@ export default () => ({
   async getAttendanceSessions({ classId, date }: { classId?: number; date?: string }) {
     const filters: any = {};
     if (classId) filters.classe = { id: classId };
-    if (date)    filters.date = date;
+    if (date) filters.date = date;
 
     const sessions = await (strapi.entityService.findMany as any)('api::attendance-session.attendance-session', {
       filters,
@@ -603,28 +603,28 @@ export default () => ({
     return sessions.map((s) => {
       const records = s.records || [];
       const presentCount = records.filter((r: any) => r.status === 'PRESENT').length;
-      const lateCount    = records.filter((r: any) => r.status === 'LATE').length;
+      const lateCount = records.filter((r: any) => r.status === 'LATE').length;
       return {
-        id:           s.id,
-        date:         s.date,
-        sessionTime:  s.sessionTime || null,
-        subjectName:  s.subject?.name || null,
-        notes:        s.notes || null,
-        className:    s.classe?.name || 'N/A',
-        classId:      s.classe?.id,
-        totalCount:   records.length,
+        id: s.id,
+        date: s.date,
+        sessionTime: s.sessionTime || null,
+        subjectName: s.subject?.name || null,
+        notes: s.notes || null,
+        className: s.classe?.name || 'N/A',
+        classId: s.classe?.id,
+        totalCount: records.length,
         presentCount,
         lateCount,
-        absentCount:  records.filter((r: any) => r.status === 'ABSENT').length,
+        absentCount: records.filter((r: any) => r.status === 'ABSENT').length,
         excusedCount: records.filter((r: any) => r.status === 'EXCUSED' || r.status === 'SICK').length,
         attendanceRate: records.length > 0
           ? Math.round(((presentCount + lateCount) / records.length) * 100)
           : 0,
         records: records.map((r: any) => ({
-          studentId:   r.student?.id,
+          studentId: r.student?.id,
           studentName: r.student?.username || r.student?.name,
-          userId:      r.student?.userId,
-          status:      r.status,
+          userId: r.student?.userId,
+          status: r.status,
         })),
       };
     });
@@ -635,12 +635,12 @@ export default () => ({
       populate: ['student', 'session', 'session.classe'],
     }) as any[];
 
-    const totalRecords  = records.length;
-    const presentCount  = records.filter((r: any) => r.status === 'PRESENT').length;
-    const absentCount   = records.filter((r: any) => r.status === 'ABSENT').length;
-    const lateCount     = records.filter((r: any) => r.status === 'LATE').length;
-    const excusedCount  = records.filter((r: any) => r.status === 'EXCUSED' || r.status === 'SICK').length;
-    const overallRate   = totalRecords > 0 ? Math.round(((presentCount + lateCount) / totalRecords) * 100) : 0;
+    const totalRecords = records.length;
+    const presentCount = records.filter((r: any) => r.status === 'PRESENT').length;
+    const absentCount = records.filter((r: any) => r.status === 'ABSENT').length;
+    const lateCount = records.filter((r: any) => r.status === 'LATE').length;
+    const excusedCount = records.filter((r: any) => r.status === 'EXCUSED' || r.status === 'SICK').length;
+    const overallRate = totalRecords > 0 ? Math.round(((presentCount + lateCount) / totalRecords) * 100) : 0;
 
     // Per-class breakdown
     const classMap = new Map<string, { name: string; total: number; present: number; late: number }>();

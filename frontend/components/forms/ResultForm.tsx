@@ -27,12 +27,12 @@ import { useEffect, useState, useMemo } from 'react';
 import { Loader2, AlertTriangle } from 'lucide-react';
 
 const formSchema = z.object({
-  classId: z.string().min(1, { message: 'Class is required' }),
-  studentId: z.string().min(1, { message: 'Student is required' }),
-  examId: z.string().min(1, { message: 'Exam is required' }),
+  classId: z.string().min(1, { message: 'La classe est requise' }),
+  studentId: z.string().min(1, { message: 'L\'élève est requis' }),
+  examId: z.string().min(1, { message: 'L\'examen est requis' }),
   marks: z.string()
-    .refine((val) => !isNaN(Number(val)), { message: 'Score must be a number' })
-    .refine((val) => Number(val) <= 100 && Number(val) >= 0, { message: 'Score must be 0-100' }),
+    .refine((val) => !isNaN(Number(val)), { message: 'La note doit être un nombre' })
+    .refine((val) => Number(val) <= 100 && Number(val) >= 0, { message: 'La note doit être comprise entre 0 et 100' }),
   grade: z.string().optional(),
   remarks: z.string().optional(),
 });
@@ -126,15 +126,15 @@ export default function ResultForm({ result, existingResults, onFinished }: Resu
 
       if (result) {
         await api.put(`/teacher/results/${result.id}`, payload);
-        toast.success('Record updated');
+        toast.success('Enregistrement mis à jour avec succès');
       } else {
         await api.post('/teacher/results', payload);
-        toast.success('Draft saved successfully');
+        toast.success('Enregistrement enregistré avec succès');
       }
       onFinished();
     } catch (error: any) {
       // Backend error message for duplicate (from our saveResult update)
-      const errorMsg = error.response?.data?.message || 'Failed to save record';
+      const errorMsg = error.response?.data?.message || 'Erreur d\'enregistrement';
       toast.error(errorMsg);
     } finally {
       setLoading(false);
@@ -168,7 +168,7 @@ export default function ResultForm({ result, existingResults, onFinished }: Resu
           name="examId"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Assessment Period</FormLabel>
+              <FormLabel>Période d'évaluation</FormLabel>
               <Select
                 onValueChange={field.onChange}
                 defaultValue={field.value}
@@ -176,7 +176,7 @@ export default function ResultForm({ result, existingResults, onFinished }: Resu
               >
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select Exam" />
+                    <SelectValue placeholder="Sélectionner l'examen" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
@@ -187,7 +187,7 @@ export default function ResultForm({ result, existingResults, onFinished }: Resu
                         <div className="flex flex-col">
                           <span className="font-medium">{e.name}</span>
                           <span className="text-[10px] text-muted-foreground uppercase font-bold">
-                            {e.term} — {e.weight}% weight
+                            {e.term} — {e.weight}% Poids
                           </span>
                         </div>
                       </SelectItem>
@@ -206,7 +206,7 @@ export default function ResultForm({ result, existingResults, onFinished }: Resu
                           {selected.term}
                         </span>
                         <span>
-                          This entry accounts for <strong>{selected.weight}%</strong> of the semester grade.
+                          Cet enregistrement représente <strong>{selected.weight}%</strong> de la note du semestre.
                         </span>
                       </div>
                     ) : null;
@@ -224,22 +224,22 @@ export default function ResultForm({ result, existingResults, onFinished }: Resu
           name="studentId"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Student Name</FormLabel>
+              <FormLabel>Nom de l'étudiant</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value} disabled={!!result || !watchExamId}>
-                <FormControl><SelectTrigger><SelectValue placeholder={watchExamId ? "Select Student" : "Select Exam First"} /></SelectTrigger></FormControl>
+                <FormControl><SelectTrigger><SelectValue placeholder={watchExamId ? "Sélectionner l'étudiant" : "Sélectionner l'examen d'abord"} /></SelectTrigger></FormControl>
                 <SelectContent>
                   {filteredStudents.length > 0 ? (
                     filteredStudents.map((s) => (
                       <SelectItem key={s.id} value={String(s.id)}>{s.username || s.name}</SelectItem>
                     ))
                   ) : (
-                    <div className="p-2 text-xs text-center text-muted-foreground">All students in this class are already graded for this exam.</div>
+                    <div className="p-2 text-xs text-center text-muted-foreground">Tous les étudiants de cette classe ont déjà une note pour cet examen.</div>
                   )}
                 </SelectContent>
               </Select>
               {filteredStudents.length === 0 && watchExamId && !result && (
                 <p className="text-[10px] text-amber-600 flex items-center gap-1 mt-1">
-                  <AlertTriangle className="w-3 h-3" /> No ungraded students remaining.
+                  <AlertTriangle className="w-3 h-3" /> Aucun étudiant sans note n'est disponible.
                 </p>
               )}
               <FormMessage />
@@ -253,7 +253,7 @@ export default function ResultForm({ result, existingResults, onFinished }: Resu
             name="marks"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Marks (%)</FormLabel>
+                <FormLabel>Points (%)</FormLabel>
                 <FormControl><Input type="number" {...field} /></FormControl>
                 <FormMessage />
               </FormItem>
@@ -285,8 +285,8 @@ export default function ResultForm({ result, existingResults, onFinished }: Resu
           name="remarks"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Teacher Remarks</FormLabel>
-              <FormControl><Input placeholder="Provide feedback or notes" {...field} /></FormControl>
+              <FormLabel>Commentaires de l'enseignant</FormLabel>
+              <FormControl><Input placeholder="Fournir des commentaires ou des notes" {...field} /></FormControl>
               <FormMessage />
             </FormItem>
           )}
@@ -294,7 +294,7 @@ export default function ResultForm({ result, existingResults, onFinished }: Resu
 
         <Button type="submit" className="w-full" disabled={loading}>
           {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          {result ? 'Update Record' : 'Save as Draft'}
+          {result ? 'Modifier l\'enregistrement' : 'Enregistrer comme brouillon'}
         </Button>
       </form>
     </Form>

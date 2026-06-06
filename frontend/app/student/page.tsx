@@ -71,16 +71,16 @@ export default function StudentDashboard() {
       <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-[clamp(1.2rem,2.5vw+1rem,3rem)] font-black text-slate-900 tracking-tighter">
-            Welcome back, <span className="text-primary">{(studentName || 'Student').split(' ')[0]}</span> 👋
+            Bon retour,<span className="text-primary">{(studentName || 'Student').split(' ')[0]}</span> 👋
           </h1>
           <p className="text-slate-500 font-medium mt-1 uppercase text-[10px] tracking-[0.2em]">
-            System Status: <span className="text-emerald-500">Active</span> • Term 2 Year 2026
+            Statut du système: <span className="text-emerald-500">Actif</span> • Semestre 2 Année 2026
           </p>
         </div>
         <div className="flex gap-3">
           <Button className="bg-white border border-primary/0 md:hover:border-primary duration-500 hover:bg-slate-50 text-slate-900 rounded-2xl px-6 h-12 font-bold shadow-sm">
             <CalendarIcon size={18} className="mr-1 text-primary" />
-            Schedule
+            Emploi du temps
           </Button>
         </div>
       </header>
@@ -88,10 +88,10 @@ export default function StudentDashboard() {
       {/* Stats Grid */}
       <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         {[
-          { label: 'Active Courses', value: stats.courseCount, icon: BookOpen, color: 'text-primary', bg: 'bg-blue-50' },
-          { label: 'Attendance', value: `${stats.attendance}%`, icon: CheckCircle, color: 'text-emerald-600', bg: 'bg-emerald-50' },
-          { label: 'Resources', value: stats.materials, icon: FileText, color: 'text-amber-600', bg: 'bg-amber-50' },
-          { label: 'Avg. Grade', value: stats.averageGrade, icon: Award, color: 'text-indigo-600', bg: 'bg-indigo-50' },
+          { label: 'Cours Actifs', value: stats.courseCount, icon: BookOpen, color: 'text-primary', bg: 'bg-blue-50' },
+          { label: 'Présence', value: `${stats.attendance}%`, icon: CheckCircle, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+          { label: 'Ressources', value: stats.materials, icon: FileText, color: 'text-amber-600', bg: 'bg-amber-50' },
+          { label: 'Moy. Générale', value: stats.averageGrade, icon: Award, color: 'text-indigo-600', bg: 'bg-indigo-50' },
         ].map((item, i) => (
           <motion.div
             key={item.label}
@@ -122,8 +122,8 @@ export default function StudentDashboard() {
         <Card className="lg:col-span-2 shadow-sm rounded-4 md:rounded-3xl border border-primary/0 md:hover:border-primary duration-500 bg-white p-4 md:p-[clamp(1rem,2.5vw+1rem,2rem)]">
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h2 className="text-xl font-black text-slate-900  uppercase tracking-tight">Attendance Pulse</h2>
-              <p className="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">Weekly consistency track</p>
+              <h2 className="text-xl font-black text-slate-900  uppercase tracking-tight">Pouls de présence</h2>
+              <p className="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">Suivi de la cohérence hebdomadaire</p>
             </div>
             <TrendingUp className="text-emerald-500" />
           </div>
@@ -164,7 +164,7 @@ export default function StudentDashboard() {
         <div className="space-y-6">
           <Card className="border border-slate-800 md:hover:border-primary duration-500 transition-colors shadow-sm rounded-4 md:rounded-3xl bg-slate-900 text-white p-4 md:p-[clamp(1rem,2.5vw+1rem,2rem)] overflow-hidden relative group">
             <div className="relative z-10">
-              <h2 className="text-lg font-black uppercase tracking-widest mb-4">Exam Reminder</h2>
+              <h2 className="text-lg font-black uppercase tracking-widest mb-4">Rappel d'examen</h2>
 
               {stats.upcomingExam ? (
                 <div className="group/calendar flex items-center gap-4 bg-white/10 p-4 rounded-2xl backdrop-blur-sm border border-white/10 md:hover:border-white duration-500">
@@ -182,21 +182,21 @@ export default function StudentDashboard() {
                     <CheckCircle size={20} className="text-slate-400" />
                   </div>
                   <div>
-                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">No Upcoming Exams</p>
-                    <p className="text-sm font-medium text-slate-500">You're all caught up!</p>
+                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Aucun examen à venir</p>
+                    <p className="text-sm font-medium text-slate-500">Vous êtes à jour !</p>
                   </div>
                 </div>
               )}
 
               <Button className="w-full mt-6 bg-white text-slate-900 md:hover:bg-primary md:hover:text-white rounded-2xl h-12 font-black uppercase text-[10px] tracking-widest transition-all duration-500">
-                Study Guide
+                Guide d'étude
               </Button>
             </div>
             <BookOpen className="absolute -right-8 -bottom-8 text-white/5" size={180} />
           </Card>
 
           <Card className="group/card border border-primary/0 md:hover:border-primary duration-500 shadow-sm rounded-4 md:rounded-3xl bg-white p-4 md:p-[clamp(1rem,2.5vw+1rem,2rem)]">
-            <h2 className="text-xs font-black uppercase text-slate-400 group-hover/card:text-primary duration-500 tracking-widest mb-6">Recent Activity</h2>
+            <h2 className="text-xs font-black uppercase text-slate-400 group-hover/card:text-primary duration-500 tracking-widest mb-6">Activités récentes</h2>
             <div className="space-y-6">
               {stats.recentActivity.length > 0 ? (
                 stats.recentActivity.map((activity, i) => (
@@ -214,7 +214,7 @@ export default function StudentDashboard() {
                   </div>
                 ))
               ) : (
-                <div className="text-center py-4 text-slate-400 text-sm font-medium">No recent activity</div>
+                <div className="text-center py-4 text-slate-400 text-sm font-medium">Aucune activité récente</div>
               )}
             </div>
           </Card>
@@ -223,61 +223,3 @@ export default function StudentDashboard() {
     </div>
   );
 }
-
-
-// 'use client';
-
-// import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-// import { BookOpen, CheckCircle, FileText } from 'lucide-react';
-
-// export default function StudentDashboard() {
-//   return (
-//     <div className="p-8">
-//       <h1 className="text-3xl font-bold mb-8">Student Dashboard</h1>
-//       <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-//         <Card>
-//           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-//             <CardTitle className="text-sm font-medium">
-//               Enrolled Courses
-//             </CardTitle>
-//             <BookOpen className="h-4 w-4 text-muted-foreground" />
-//           </CardHeader>
-//           <CardContent>
-//             <div className="text-2xl font-bold">6</div>
-//             <p className="text-xs text-muted-foreground">
-//               courses this semester
-//             </p>
-//           </CardContent>
-//         </Card>
-//         <Card>
-//           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-//             <CardTitle className="text-sm font-medium">
-//               Overall Attendance
-//             </CardTitle>
-//             <CheckCircle className="h-4 w-4 text-muted-foreground" />
-//           </CardHeader>
-//           <CardContent>
-//             <div className="text-2xl font-bold">95%</div>
-//             <p className="text-xs text-muted-foreground">
-//               Great work!
-//             </p>
-//           </CardContent>
-//         </Card>
-//         <Card>
-//           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-//             <CardTitle className="text-sm font-medium">
-//               Downloaded Materials
-//             </CardTitle>
-//             <FileText className="h-4 w-4 text-muted-foreground" />
-//           </CardHeader>
-//           <CardContent>
-//             <div className="text-2xl font-bold">15</div>
-//             <p className="text-xs text-muted-foreground">
-//               files downloaded
-//             </p>
-//           </CardContent>
-//         </Card>
-//       </div>
-//     </div>
-//   );
-// }
