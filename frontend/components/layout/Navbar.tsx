@@ -170,8 +170,8 @@ export default function Navbar({ navbarData, contactInfo }: NavbarProps) {
                 {/* Dynamic Logo */}
                 <div className="relative w-10 h-10 md:w-[57px] md:h-[57px]">
                   <StrapiImage
-                    src={navbarData?.logo || "/logo/fofana.png"}
-                    alt="A.M. Fofana Logo"
+                    src={navbarData?.logo || "/logo/2cslogo.jpeg"}
+                    alt="2 CS Complexes Logo"
                     fill
                     className="object-contain"
                     unoptimized
@@ -179,7 +179,7 @@ export default function Navbar({ navbarData, contactInfo }: NavbarProps) {
                 </div>
                 <div>
                   <h2 className="text-[18px] xl:text-[clamp(18px,2.5vw,24px)] font-semibold text-primary mb-[-3px]">
-                    {navbarData?.title || "A.M. FOFANA"}
+                    {navbarData?.title || "2 CS COMPLEXES"}
                   </h2>
                   <p className=" text-[12px] md:text-[8px] xl:text-[clamp(9px,1.2vw,12px)] text-black tracking-widest uppercase">
                     {navbarData?.subtitle || "Islamic & English High School"}
@@ -191,7 +191,7 @@ export default function Navbar({ navbarData, contactInfo }: NavbarProps) {
             {/* Unified Menu Wrapper */}
             <div
               className={`
-                        menu-wrapper 
+                        menu-wrapper
                         absolute top-full left-0 w-full
                         flex flex-col md:flex-row items-center max-md:bg-primary gap-5 lg:gap-10
                         transition-all duration-300 ease-in-out
@@ -231,18 +231,18 @@ export default function Navbar({ navbarData, contactInfo }: NavbarProps) {
                             className={`
                                            gap-from-15 gap-to-20 z-100! grid md:grid-cols-1  scale-100 opacity-100
                                            max-md:grid-rows-[0fr] duration-500
-                                            md:group-not-[&:hover]/sub:scale-90 
-                                            md:group-not-[&:hover]/sub:opacity-0 
-                                              md:group-hover/sub:opacity-100 
-                                              md:group-hover/sub:pointer-events-auto 
-                                              md:group-hover/sub:scale-100 
-                                            md:group-not-[&:hover]/sub:pointer-events-none  
-                                             md:group-hover/sub:delay-200 
+                                            md:group-not-[&:hover]/sub:scale-90
+                                            md:group-not-[&:hover]/sub:opacity-0
+                                              md:group-hover/sub:opacity-100
+                                              md:group-hover/sub:pointer-events-auto
+                                              md:group-hover/sub:scale-100
+                                            md:group-not-[&:hover]/sub:pointer-events-none
+                                             md:group-hover/sub:delay-200
                                               relative max-md:w-full
                                                md:absolute md:top-full
                                                 md:w-[277px] md:z-150 md:left-1/2 h-full md:-translate-x-1/2
                                             ${mobileSubmenu === (item.label || item.name) ? "max-md:grid max-md:grid-rows-[1fr] max-md:opacity-100 max-md:mt-2 max-md:relative max-md:h-full max-md:w-full" : "max-md:grid max-md:grid-rows-[0fr] max-md:opacity-0 max-md:mt-0 max-md:px-0 max-md:w-full"}
-                                        
+
                                         `}
                           >
                             <div className="h-full w-full max-md:overflow-hidden md:bg-white md:relative md:rounded-bl-[10px] md:shadow-sm md:rounded-br-[10px]">

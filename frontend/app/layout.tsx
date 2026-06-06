@@ -20,13 +20,13 @@ const fontSans = FontSans({
 
 export const metadata: Metadata = {
   title: {
-    default: "AMFOFANA HIGH SCHOOL",
-    template: "%s | AM Fofana",
+    default: "2 CS COMPLEXES",
+    template: "%s | 2 CS Complexes",
   },
   description: "Excellence in Education. Future Leaders in the Making.",
   icons: {
-    icon: "/logo/fofana.png",
-    apple: "/logo/fofana.png",
+    icon: "/logo/2cslogo.jpeg",
+    apple: "/logo/2cslogo.jpeg",
   },
 };
 

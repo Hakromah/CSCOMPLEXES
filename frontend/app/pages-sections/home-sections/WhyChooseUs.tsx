@@ -71,7 +71,7 @@ export default function WhyChooseUs({ whyChooseUsData }: WhyChooseUsProps) {
                 // Hold the logo for a moment so user sees it clearly
                 .to({}, { duration: 1.5 })
 
-            // 6. Finally, Logo Fades OUT before unpinning 
+            // 6. Finally, Logo Fades OUT before unpinning
             // .to(bgRef.current, { opacity: 0, scale: 1.2, duration: 1.5 });
         });
 
@@ -84,7 +84,7 @@ export default function WhyChooseUs({ whyChooseUsData }: WhyChooseUsProps) {
             <div ref={bgRef} className="absolute max-sm:hidden inset-0 flex items-center justify-center pointer-events-none z-0 opacity-10 md:opacity-100">
                 <div className="relative w-[300px] h-[300px] md:w-[600px] md:h-[600px]">
                     <StrapiImage
-                        src={whyChooseUsData?.image || "/logo/fofana.png"}
+                        src={whyChooseUsData?.image || "/logo/2cslogo.jpeg"}
                         alt="Background Logo"
                         fill
                         className="object-cover"

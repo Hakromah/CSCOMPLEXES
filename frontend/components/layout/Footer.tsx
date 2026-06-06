@@ -27,7 +27,7 @@ interface FooterProps {
 
 export default function Footer({ footerData, contactInfo }: FooterProps) {
   const socialLinks = contactInfo?.socialLinks ?? fallbackSocialLinks;
-  
+
   const [email, setEmail] = React.useState('');
   const [isSubscribing, setIsSubscribing] = React.useState(false);
 
@@ -37,7 +37,7 @@ export default function Footer({ footerData, contactInfo }: FooterProps) {
 
     setIsSubscribing(true);
     const tid = toast.loading("Subscribing...");
-    
+
     try {
       await api.post('/newsletter-subscriptions', {
         data: { email }
@@ -47,9 +47,9 @@ export default function Footer({ footerData, contactInfo }: FooterProps) {
     } catch (err: any) {
       console.error(err);
       if (err.response?.status === 400 && err.response?.data?.error?.message?.includes('unique')) {
-         toast.error("This email is already subscribed!", { id: tid });
+        toast.error("This email is already subscribed!", { id: tid });
       } else {
-         toast.error("Failed to subscribe. Please try again.", { id: tid });
+        toast.error("Failed to subscribe. Please try again.", { id: tid });
       }
     } finally {
       setIsSubscribing(false);
@@ -66,8 +66,8 @@ export default function Footer({ footerData, contactInfo }: FooterProps) {
             {/* Placeholder Logo */}
             <div className="relative w-16 h-16 md:w-20 md:h-20">
               <StrapiImage
-                src={footerData?.logo || "/logo/fofana.png"}
-                alt="A.M. Fofana Logo"
+                src={footerData?.logo || "/logo/2cslogo.jpeg"}
+                alt="2 CS Complexes Logo"
                 fill
                 className="object-contain"
                 unoptimized
@@ -125,15 +125,15 @@ export default function Footer({ footerData, contactInfo }: FooterProps) {
               <h3 className="text-xl font-bold mb-6">Quick Links</h3>
               <ul className="space-y-4 max-sm:space-y-2 text-white/80 text-sm">
                 {(footerData && footerData.quickLinks.length > 0) ? footerData.quickLinks.map(link => (
-                    <li key={link.id}><Link href={link.url} className="hover:text-white transition-colors">{link.label}</Link></li>
+                  <li key={link.id}><Link href={link.url} className="hover:text-white transition-colors">{link.label}</Link></li>
                 )) : (
-                    <>
-                        <li><Link href="#" className="hover:text-white transition-colors">Admission Requirements</Link></li>
-                        <li><Link href="#" className="hover:text-white transition-colors">Tuition & Fees</Link></li>
-                        <li><Link href="#" className="hover:text-white transition-colors">School News</Link></li>
-                        <li><Link href="#" className="hover:text-white transition-colors">Gallery</Link></li>
-                        <li><Link href="#" className="hover:text-white transition-colors">Opportunities</Link></li>
-                    </>
+                  <>
+                    <li><Link href="#" className="hover:text-white transition-colors">Admission Requirements</Link></li>
+                    <li><Link href="#" className="hover:text-white transition-colors">Tuition & Fees</Link></li>
+                    <li><Link href="#" className="hover:text-white transition-colors">School News</Link></li>
+                    <li><Link href="#" className="hover:text-white transition-colors">Gallery</Link></li>
+                    <li><Link href="#" className="hover:text-white transition-colors">Opportunities</Link></li>
+                  </>
                 )}
               </ul>
             </div>
@@ -145,14 +145,14 @@ export default function Footer({ footerData, contactInfo }: FooterProps) {
               <h3 className="text-xl font-bold mb-6">Academics</h3>
               <ul className="space-y-4 max-sm:space-y-2 text-white/80 text-sm">
                 {(footerData && footerData.academicsLinks.length > 0) ? footerData.academicsLinks.map(link => (
-                    <li key={link.id}><Link href={link.url} className="hover:text-white transition-colors">{link.label}</Link></li>
+                  <li key={link.id}><Link href={link.url} className="hover:text-white transition-colors">{link.label}</Link></li>
                 )) : (
-                    <>
-                        <li><Link href="#" className="hover:text-white transition-colors">Curriculum</Link></li>
-                        <li><Link href="#" className="hover:text-white transition-colors">Academic Calendar</Link></li>
-                        <li><Link href="#" className="hover:text-white transition-colors">Programs</Link></li>
-                        <li><Link href="#" className="hover:text-white transition-colors">Scholarships</Link></li>
-                    </>
+                  <>
+                    <li><Link href="#" className="hover:text-white transition-colors">Curriculum</Link></li>
+                    <li><Link href="#" className="hover:text-white transition-colors">Academic Calendar</Link></li>
+                    <li><Link href="#" className="hover:text-white transition-colors">Programs</Link></li>
+                    <li><Link href="#" className="hover:text-white transition-colors">Scholarships</Link></li>
+                  </>
                 )}
               </ul>
             </div>
