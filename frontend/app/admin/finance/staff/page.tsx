@@ -16,6 +16,7 @@ import { toast } from 'sonner';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import QRCode from 'qrcode';
+import { SCHOOL_CONFIG } from '@/lib/school-config';
 
 // ─── Searchable Staff Combobox ────────────────────────────────────────────────────
 function StaffCombobox({ staff, value, onChange }: {
@@ -293,7 +294,13 @@ export default function StaffFinance() {
   // ─── Payout Disbursement ───────────────────────────────────────────────────
   const openPayoutDialog = (rec: any) => {
     setPayoutTargetRecord(rec);
-    setPayoutAmount(Number(rec.netSalary || 0));
+    // For PARTIALLY_PAID records, pre-fill with outstanding balance only
+    const recordPayments = salaryPayments.filter(
+      (p: any) => p.salaryRecordId === rec.id && p.status === 'APPROVED'
+    );
+    const totalDisbursed = recordPayments.reduce((s: number, p: any) => s + Number(p.amount || 0), 0);
+    const outstanding = Math.max(0, Number(rec.netSalary || 0) - totalDisbursed);
+    setPayoutAmount(rec.status === 'PARTIALLY_PAID' ? outstanding : Number(rec.netSalary || 0));
     setPayoutMethod('BANK');
     setPayoutNotes('');
     setIsPayoutOpen(true);
@@ -351,26 +358,25 @@ export default function StaffFinance() {
 
       const doc = new jsPDF();
 
-      // Border
-      doc.setDrawColor(37, 99, 235);
+      doc.setDrawColor(...SCHOOL_CONFIG.accentColor);
       doc.setLineWidth(1.5);
       doc.rect(5, 5, 200, 287);
 
       // Header banner
-      doc.setFillColor(15, 23, 42);
+      doc.setFillColor(...SCHOOL_CONFIG.primaryColor);
       doc.rect(5, 5, 200, 45, 'F');
       doc.setTextColor(255, 255, 255);
       doc.setFont('Helvetica', 'bold');
       doc.setFontSize(22);
-      doc.text('AMFOFANA ACADEMY', 15, 23);
+      doc.text(SCHOOL_CONFIG.name, 15, 23);
       doc.setFontSize(9);
       doc.setFont('Helvetica', 'normal');
-      doc.text('EMPLOYEE SALARY PAYSLIP STATEMENT', 15, 30);
-      doc.text('Conakry, Guinea | accounts@amfofana.edu', 15, 36);
+      doc.text(`${SCHOOL_CONFIG.subtitle} — EMPLOYEE SALARY PAYSLIP STATEMENT`, 15, 30);
+      doc.text(SCHOOL_CONFIG.contact, 15, 36);
       doc.text(`Generated: ${new Date().toLocaleDateString()}`, 150, 22);
 
       // Title
-      doc.setTextColor(15, 23, 42);
+      doc.setTextColor(...SCHOOL_CONFIG.primaryColor);
       doc.setFontSize(20);
       doc.setFont('Helvetica', 'bold');
       doc.text('SALARY PAYSLIP', 15, 70);
@@ -406,7 +412,7 @@ export default function StaffFinance() {
           ['Outstanding Balance', outstanding.toLocaleString()]
         ],
         theme: 'striped',
-        headStyles: { fillColor: [15, 23, 42] },
+        headStyles: { fillColor: SCHOOL_CONFIG.primaryColor },
         bodyStyles: { fontSize: 10 },
         didParseCell: (data: any) => {
           if (data.row.index === 3) data.cell.styles.fontStyle = 'bold';
@@ -415,7 +421,7 @@ export default function StaffFinance() {
       });
 
       // QR Code — anchored to bottom-right corner
-      const qrContent = `AMFOFANA ACADEMY\nSalary Payslip\nRecord: ${rec.recordNumber}\nEmployee: ${staffName}\nPeriod: ${rec.month} ${rec.year}\nNet Salary: ${net.toLocaleString()} GNF\nStatus: ${rec.status}`;
+      const qrContent = `${SCHOOL_CONFIG.name}\nSalary Payslip\nRecord: ${rec.recordNumber}\nEmployee: ${staffName}\nPeriod: ${rec.month} ${rec.year}\nNet Salary: ${net.toLocaleString()} GNF\nStatus: ${rec.status}\nVerify: ${SCHOOL_CONFIG.verifyUrl}`;
       const qrDataUrl = await QRCode.toDataURL(qrContent);
       // Fixed bottom-right position
       doc.addImage(qrDataUrl, 'PNG', 155, 242, 42, 42);
@@ -787,7 +793,7 @@ export default function StaffFinance() {
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-2">
                         {/* Lead/Admin: disburse remaining amount if still outstanding */}
-                        {(role === 'ACCOUNTLEAD' || role === 'ADMIN') && rec.status === 'APPROVED' && (
+                        {(role === 'ACCOUNTLEAD' || role === 'ADMIN') && (rec.status === 'APPROVED' || rec.status === 'PARTIALLY_PAID') && (
                           <Button
                             onClick={() => openPayoutDialog(rec)}
                             size="sm"

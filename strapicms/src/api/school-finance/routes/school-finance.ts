@@ -19,6 +19,12 @@ export default {
     },
     {
       method: 'GET',
+      path: '/school-finance/data/my-payroll',
+      handler: 'school-finance.getMyPayroll',
+      config: { middlewares: [] }
+    },
+    {
+      method: 'GET',
       path: '/school-finance/stats',
       handler: 'school-finance.getStats',
       config: { middlewares: [] }

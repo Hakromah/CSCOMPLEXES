@@ -478,5 +478,60 @@ export default {
       await strapi.service('api::school-finance.school-finance').syncSalaryRecordStatus(oldSalaryRecordId);
     }
     ctx.body = result;
+  },
+
+  // ─── My Payroll — accessible by any authenticated staff (DRIVER, WORKER, TEACHER, etc.) ──
+  async getMyPayroll(ctx: any) {
+    const user = ctx.state.user;
+    if (!user) return ctx.unauthorized('Authentication required');
+
+    const allowedRoles = ['DRIVER', 'WORKER', 'TEACHER', 'ACCOUNTANT', 'ACCOUNTLEAD', 'ADMIN'];
+    if (!allowedRoles.includes(user.schoolRole)) {
+      return ctx.forbidden('Access denied');
+    }
+
+    const [salaryRecords, salaryPayments] = await Promise.all([
+      (strapi.entityService.findMany as any)('api::salary-record.salary-record' as any, {
+        filters: { staff: { id: user.id } },
+        sort: [{ createdAt: 'desc' }]
+      }) as Promise<any[]>,
+      (strapi.entityService.findMany as any)('api::salary-payment.salary-payment' as any, {
+        filters: { staff: { id: user.id } },
+        populate: ['salaryRecord'],
+        sort: [{ createdAt: 'desc' }]
+      }) as Promise<any[]>
+    ]);
+
+    const flatRecords = salaryRecords.map((rec: any) => ({
+      id: rec.id,
+      recordNumber: rec.recordNumber,
+      month: rec.month,
+      year: rec.year,
+      baseSalary: rec.baseSalary,
+      allowances: rec.allowances,
+      deductions: rec.deductions,
+      netSalary: rec.netSalary,
+      status: rec.status,
+      notes: rec.notes,
+      createdAt: rec.createdAt
+    }));
+
+    const flatPayments = salaryPayments.map((pay: any) => ({
+      id: pay.id,
+      paymentNumber: pay.paymentNumber,
+      amount: pay.amount,
+      paymentDate: pay.paymentDate,
+      paymentMethod: pay.paymentMethod,
+      status: pay.status,
+      notes: pay.notes,
+      createdAt: pay.createdAt,
+      salaryRecordId: pay.salaryRecord?.id || null,
+      salaryRecordNumber: pay.salaryRecord?.recordNumber || null,
+      month: pay.salaryRecord?.month || null,
+      year: pay.salaryRecord?.year || null,
+      netSalary: pay.salaryRecord?.netSalary || null
+    }));
+
+    ctx.body = { salaryRecords: flatRecords, salaryPayments: flatPayments };
   }
 };

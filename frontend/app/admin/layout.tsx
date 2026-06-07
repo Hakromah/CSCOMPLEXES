@@ -1,4 +1,5 @@
 import Sidebar from '@/components/layout/Sidebar';
+import SessionGuard from '@/components/SessionGuard';
 
 export default function AdminLayout({
   children,
@@ -12,7 +13,7 @@ export default function AdminLayout({
     { name: 'Subject Management', href: '/admin/subjects' },
     { name: 'Exam Management', href: '/admin/exams' },
     { name: 'Materials Management', href: '/admin/materials' },
-    { name: 'Results Management', href: '/admin/results' }, // Added
+    { name: 'Results Management', href: '/admin/results' },
     { name: 'Attendance', href: '/admin/attendance' },
     { name: 'Teacher Assignment', href: '/admin/assign-teacher' },
     { name: 'Student Assignment', href: '/admin/assign-student' },
@@ -23,9 +24,11 @@ export default function AdminLayout({
   ];
 
   return (
-    <div className="flex max-md:flex-col">
-      <Sidebar menuItems={menuItems} />
-      <main className="flex-1">{children}</main>
-    </div>
+    <SessionGuard>
+      <div className="flex max-md:flex-col">
+        <Sidebar menuItems={menuItems} />
+        <main className="flex-1">{children}</main>
+      </div>
+    </SessionGuard>
   );
 }
