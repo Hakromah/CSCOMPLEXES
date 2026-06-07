@@ -63,7 +63,7 @@ export default function AdvancedAssignTeacherPage() {
       setTeachers(teachersRes.data);
       setClasses(classesRes.data);
     } catch (error) {
-      toast.error('Failed to sync administrative records');
+      toast.error("Échec de la synchronisation des données administratives");
       console.log(error);
     } finally {
       setDataLoading(false);
@@ -74,17 +74,17 @@ export default function AdvancedAssignTeacherPage() {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsLoading(true);
-    const tid = toast.loading('Establishing academic link...');
+    const tid = toast.loading("En cours de chargement, veuillez patienter ");
     try {
       await api.post('/admin/assign-teacher', {
         teacherId: parseInt(values.teacherId),
         classId: parseInt(values.classId),
       });
-      toast.success('Assignment Finalized', { id: tid });
+      toast.success('Affectation réussie', { id: tid });
       form.reset();
       fetchData(); // Refresh to show updated assignments if your API returns them
     } catch (error: any) {
-      toast.error('Deployment Failed', { id: tid, description: error.response?.data?.message });
+      toast.error('Affectation échouée', { id: tid, description: error.response?.data?.message });
       console.log(error);
     } finally {
       setIsLoading(false);
@@ -94,7 +94,7 @@ export default function AdvancedAssignTeacherPage() {
   if (dataLoading) return (
     <div className="h-screen flex flex-col items-center justify-center gap-4 bg-[#f8fafc]">
       <Loader2 className="animate-spin text-primary" size={40} />
-      <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Loading Registry...</p>
+      <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Chargement du registre...</p>
     </div>
   );
 
@@ -108,13 +108,13 @@ export default function AdvancedAssignTeacherPage() {
           className="flex items-center justify-center gap-2 text-primary"
         >
           <ShieldCheck size={18} />
-          <span className="text-[10px] font-black uppercase tracking-[0.4em]">Administrative Authority</span>
+          <span className="text-[10px] font-black uppercase tracking-[0.4em]">L'autorité d'enregistrement</span>
         </motion.div>
         <h1 className="text-[clamp(1.4rem,3.5vw,4rem)] font-black text-slate-900 tracking-tighter sm:text-7xl italic uppercase">
-          Teacher <span className="text-primary">Deployment.</span>
+          Professeur <span className="text-primary">Attribution.</span>
         </h1>
         <p className="text-slate-400 font-bold text-sm uppercase tracking-widest max-w-xl mx-auto leading-loose">
-          Establish links between academic staff and class registries to authorize exam management.
+          Établir des liens entre le personnel enseignant et les registres de classes pour autoriser la gestion des examens.
         </p>
       </header>
 
@@ -129,7 +129,7 @@ export default function AdvancedAssignTeacherPage() {
           <Card className="rounded-[clamp(1rem,2vw+1rem,2rem)] border border-slate-100 md:hover:border-primary duration-500 transition-colors shadow-2xl overflow-hidden bg-white">
             <CardContent className="p-[clamp(0rem,2vw+1rem,2rem)] space-y-[clamp(0rem,2vw+1rem,2rem)]">
               <div className="space-y-2">
-                <h2 className="text-[clamp(16px,3vw,24px)] font-black text-slate-900 italic tracking-tight uppercase">New Assignment</h2>
+                <h2 className="text-[clamp(16px,3vw,24px)] font-black text-slate-900 italic tracking-tight uppercase">Nouvelle attribution</h2>
                 <div className="h-1 w-12 bg-primary rounded-full" />
               </div>
               <Form {...form}>
@@ -139,11 +139,11 @@ export default function AdvancedAssignTeacherPage() {
                     name="teacherId"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Select Faculty Member</FormLabel>
+                        <FormLabel className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Choisir un membre du corps professoral</FormLabel>
                         <Select onValueChange={field.onChange} value={field.value}>
                           <FormControl>
                             <SelectTrigger className="h-14 rounded-[clamp(1rem,2vw+1rem,2rem)] bg-slate-50 border-none font-bold text-slate-700 shadow-sm transition-all focus:ring-2 focus:ring-blue-600/20">
-                              <SelectValue placeholder="Choose Instructor" />
+                              <SelectValue placeholder="Choisir un instructeur" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent className="rounded-[clamp(1rem,2vw+1rem,2rem)] border-slate-100 shadow-2xl">
@@ -170,11 +170,11 @@ export default function AdvancedAssignTeacherPage() {
                     name="classId"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Target Classroom</FormLabel>
+                        <FormLabel className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Classe cible</FormLabel>
                         <Select onValueChange={field.onChange} value={field.value}>
                           <FormControl>
                             <SelectTrigger className="h-14 rounded-2xl bg-slate-50 border-none font-bold text-slate-700 shadow-sm transition-all focus:ring-2 focus:ring-blue-600/20">
-                              <SelectValue placeholder="Choose Class" />
+                              <SelectValue placeholder="Choisir une classe" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent className="rounded-2xl border-slate-100 shadow-2xl">
@@ -198,7 +198,7 @@ export default function AdvancedAssignTeacherPage() {
                       <Loader2 className="animate-spin" />
                     ) : (
                       <>
-                        CONFIRM DEPLOYMENT
+                        Confirmer l'affectation
                         <UserPlus className="ml-2 group-hover:scale-110 transition-transform" size={18} />
                       </>
                     )}
@@ -218,7 +218,7 @@ export default function AdvancedAssignTeacherPage() {
           <div className="bg-white rounded-[clamp(1rem,2vw+1rem,2rem)] p-[clamp(0rem,2vw+1rem,2rem)] border border-slate-100 md:hover:border-primary duration-500 transition-colors shadow-sm h-full flex flex-col justify-between">
             <div className="space-y-6">
               <div className="flex items-center justify-between">
-                <h2 className="text-[clamp(16px,3vw,24px)] font-black text-slate-900 italic tracking-tight uppercase">Quick Intelligence</h2>
+                <h2 className="text-[clamp(16px,3vw,24px)] font-black text-slate-900 italic tracking-tight uppercase">Informations rapides</h2>
                 <Badge className="bg-emerald-100 text-emerald-600 border-none font-black text-[9px] px-3 tracking-widest uppercase">Live Registry</Badge>
               </div>
 
@@ -226,23 +226,23 @@ export default function AdvancedAssignTeacherPage() {
                 <div className="p-6 bg-slate-50 rounded-4xl border border-slate-100 space-y-2">
                   <Users className="text-primary" size={24} />
                   <p className="text-3xl font-black text-slate-900 tracking-tighter italic">{teachers.length}</p>
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Active Faculty</p>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Corps professoral actif</p>
                 </div>
                 <div className="p-6 bg-slate-50 rounded-4xl border border-slate-100 space-y-2">
                   <Landmark className="text-primary" size={24} />
                   <p className="text-3xl font-black text-slate-900 tracking-tighter italic">{classes.length}</p>
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Available Classes</p>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Classes disponibles</p>
                 </div>
               </div>
 
               <div className="space-y-4">
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Deployment Impact</p>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2">Impact de l'attribution</p>
                 <ul className="space-y-3">
                   {[
-                    "Granting exam management permissions",
-                    "Enabling result entry for designated classes",
-                    "Providing attendance tracking authority",
-                    "Syncing student timetables with instructor"
+                    "Accorder les autorisations de gestion des examens",
+                    "Activer la saisie des résultats pour les classes désignées",
+                    "Fournir l'autorité de suivi des présences",
+                    "Synchronisation des horaires des étudiants avec l'instructeur"
                   ].map((text, i) => (
                     <li key={i} className="flex items-center gap-3 p-4 bg-white border border-slate-50 rounded-2xl shadow-sm">
                       <CheckCircle2 className="text-primary shrink-0" size={18} />
@@ -254,8 +254,8 @@ export default function AdvancedAssignTeacherPage() {
             </div>
             <div className="mt-8 p-6 bg-primary rounded-4xl text-white flex items-center justify-between shadow-xl shadow-blue-200">
               <div>
-                <p className="font-black italic text-lg leading-none">Need bulk assignment?</p>
-                <p className="text-[10px] opacity-80 font-bold uppercase tracking-widest mt-1">Contact System Architect</p>
+                <p className="font-black italic text-lg leading-none">Besoin d'une attribution en masse?</p>
+                <p className="text-[10px] opacity-80 font-bold uppercase tracking-widest mt-1">Contacter l'architecte système</p>
               </div>
               <Briefcase size={32} className="opacity-20" />
             </div>

@@ -35,7 +35,7 @@ export default function AdminDashboard() {
         const response = await api.get('/admin/reports/summary');
         setReport(response.data);
       } catch (error) {
-        toast.error('Failed to sync administrative data');
+        toast.error('Données administratives non synchronisées.');
       } finally {
         setLoading(false);
       }
@@ -54,7 +54,7 @@ export default function AdminDashboard() {
       <div className="flex items-center justify-center min-h-screen bg-slate-50">
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
-          <p className="font-bold text-slate-500 animate-pulse">Synchronizing Global Registry...</p>
+          <p className="font-bold text-slate-500 animate-pulse">Synchronisation du registre mondial...</p>
         </div>
       </div>
     );
@@ -66,34 +66,34 @@ export default function AdminDashboard() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
           <h1 className="text-[clamp(1.2rem,2vw+1rem,2rem)] font-black text-slate-900 tracking-tight flex items-center gap-3">
-            Admin Console <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+            Console administrative <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
           </h1>
-          <p className="text-slate-500 font-medium">Global Administrative Control Panel</p>
+          <p className="text-slate-500 font-medium">Tableau de bord administratif.</p>
         </motion.div>
 
         <div className="flex gap-3">
           <div className="flex items-center gap-2 px-4 py-2 bg-white text-slate-700 rounded-2xl border border-slate-200 shadow-sm font-bold text-sm">
-            <Globe className="w-4 h-4 text-blue-500" /> System: Online
+            <Globe className="w-4 h-4 text-blue-500" /> Système : En ligne
           </div>
           <div className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-2xl border border-slate-800 shadow-lg font-bold text-sm">
-            <ShieldCheck className="w-4 h-4 text-emerald-400" /> Root Verified
+            <ShieldCheck className="w-4 h-4 text-emerald-400" /> Root Vérifié
           </div>
         </div>
       </div>
 
       {/* PRIMARY STATS GRID */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <StatCard title="Enrollment" value={report?.totalStudents} icon={Users} color="blue" sub="Active Students" />
-        <StatCard title="Faculty" value={report?.totalTeachers} icon={UserCog} color="emerald" sub="Teaching Staff" />
-        <StatCard title="Classrooms" value={report?.totalClasses} icon={School} color="amber" sub="Active Classes" />
-        <StatCard title="Assessments" value={report?.totalExams} icon={BookOpen} color="rose" sub="Total Exams" />
+        <StatCard title="Inscription" value={report?.totalStudents} icon={Users} color="blue" sub="Élèves actifs" />
+        <StatCard title="Corps enseignant" value={report?.totalTeachers} icon={UserCog} color="emerald" sub="Corps enseignant" />
+        <StatCard title="Classes" value={report?.totalClasses} icon={School} color="amber" sub="Classes actives" />
+        <StatCard title="Évaluations" value={report?.totalExams} icon={BookOpen} color="rose" sub="Total des examens" />
       </div>
 
       <div className="grid lg:grid-cols-3 gap-[clamp(1.2rem,2vw+1rem,2rem)]">
         {/* ANALYTICS: USER DISTRIBUTION */}
         <Card className="lg:col-span-1 py-3 border border-slate-100 md:hover:border-primary duration-500 transition-colors shadow-sm rounded-3xl overflow-hidden bg-white">
           <CardHeader className="border-b border-slate-50">
-            <CardTitle className="text-lg font-bold">User Matrix</CardTitle>
+            <CardTitle className="text-lg font-bold">Matrice des utilisateurs</CardTitle>
           </CardHeader>
           <CardContent className="pt-6">
             <div className="h-[280px] w-full">
@@ -132,7 +132,7 @@ export default function AdminDashboard() {
         {/* BAR CHART - INFRASTRUCTURE */}
         <Card className="lg:col-span-2 border py-3 border-slate-100 md:hover:border-primary duration-500 transition-colors shadow-sm rounded-3xl overflow-hidden bg-white">
           <CardHeader className="border-b border-slate-50">
-            <CardTitle className="text-lg font-bold">Academic Infrastructure</CardTitle>
+            <CardTitle className="text-lg font-bold">Infrastructure académique</CardTitle>
           </CardHeader>
           <CardContent className="pt-8">
             <div className="h-[380px] w-full">
@@ -159,14 +159,14 @@ export default function AdminDashboard() {
           <CardHeader>
             <CardTitle className="text-white flex items-center gap-2">
               <Activity className="w-5 h-5 text-blue-400" />
-              Management Quick-Links
+              Liens rapides de gestion
             </CardTitle>
           </CardHeader>
           <CardContent className="grid grid-cols-2 gap-4">
-            <QuickAction href="/admin/users" label="User Audit" color="blue" />
-            <QuickAction href="/admin/timetable" label="Schedules" color="emerald" />
-            <QuickAction href="/admin/reports" label="Analytics" color="amber" />
-            <QuickAction href="/admin/settings" label="Network" color="rose" />
+            <QuickAction href="/admin/users" label="Audit utilisateur" color="blue" />
+            <QuickAction href="/admin/timetable" label="Horaires" color="emerald" />
+            <QuickAction href="/admin/reports" label="Analyses" color="amber" />
+            <QuickAction href="/admin/settings" label="Réseau" color="rose" />
           </CardContent>
         </Card>
 
@@ -176,13 +176,13 @@ export default function AdminDashboard() {
         >
           <ArrowUpRight className="absolute right-[-20px] top-[-20px] w-48 h-48 opacity-10 rotate-12" />
           <div className="relative z-10">
-            <h3 className="text-2xl font-black mb-4">Registry Integrity</h3>
+            <h3 className="text-2xl font-black mb-4">Intégrité du registre</h3>
             <p className="text-indigo-100 mb-8 leading-relaxed max-w-sm">
-              All academic records are currently verified and synchronized with the secure cloud ledger.
+              Tous les dossiers académiques sont actuellement vérifiés et synchronisés avec le grand livre cloud sécurisé.
             </p>
             <div className="flex flex-wrap gap-3">
               <div className="px-4 py-2 bg-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest border border-white/20 backdrop-blur-sm">
-                Database: 100% Synced
+                Base de données : 100% synchronisée
               </div>
             </div>
           </div>
@@ -241,118 +241,3 @@ function QuickAction({ href, label, color }: { href: string, label: string, colo
     </a>
   );
 }
-
-// 'use client';
-
-// import { useEffect, useState } from 'react';
-// import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-// import { Users, School, BookOpen, FileText } from 'lucide-react';
-// import { toast } from 'sonner';
-// import api from '@/lib/api';
-
-// interface ReportDTO {
-//   totalStudents: number;
-//   totalTeachers: number;
-//   totalAdmins: number;
-//   totalClasses: number;
-//   totalExams: number;
-//   totalSubjects: number;
-// }
-
-// export default function AdminDashboard() {
-//   const [report, setReport] = useState<ReportDTO | null>(null);
-
-//   useEffect(() => {
-//     const fetchReport = async () => {
-//       try {
-//         const response = await api.get('/admin/reports/summary');
-//         setReport(response.data);
-//       } catch (error) {
-//         toast.error('Failed to fetch dashboard data');
-//         console.log(error);
-//       }
-//     };
-
-//     fetchReport();
-//   }, []);
-
-//   if (!report) {
-//     return <div className="p-8">Loading dashboard...</div>;
-//   }
-
-//   return (
-//     <div className="p-8">
-//       <h1 className="text-3xl font-bold mb-8">Admin Dashboard</h1>
-//       <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-//         <Card>
-//           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-//             <CardTitle className="text-sm font-medium">
-//               Total Students
-//             </CardTitle>
-//             <Users className="h-4 w-4 text-muted-foreground" />
-//           </CardHeader>
-//           <CardContent>
-//             <div className="text-2xl font-bold">{report.totalStudents}</div>
-//             <p className="text-xs text-muted-foreground">
-//               Active students
-//             </p>
-//           </CardContent>
-//         </Card>
-//         <Card>
-//           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-//             <CardTitle className="text-sm font-medium">
-//               Total Teachers
-//             </CardTitle>
-//             <Users className="h-4 w-4 text-muted-foreground" />
-//           </CardHeader>
-//           <CardContent>
-//             <div className="text-2xl font-bold">{report.totalTeachers}</div>
-//             <p className="text-xs text-muted-foreground">
-//               Active teachers
-//             </p>
-//           </CardContent>
-//         </Card>
-//         <Card>
-//           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-//             <CardTitle className="text-sm font-medium">Total Classes</CardTitle>
-//             <School className="h-4 w-4 text-muted-foreground" />
-//           </CardHeader>
-//           <CardContent>
-//             <div className="text-2xl font-bold">{report.totalClasses}</div>
-//             <p className="text-xs text-muted-foreground">
-//               Active classes
-//             </p>
-//           </CardContent>
-//         </Card>
-//         <Card>
-//           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-//             <CardTitle className="text-sm font-medium">
-//               Total Exams
-//             </CardTitle>
-//             <BookOpen className="h-4 w-4 text-muted-foreground" />
-//           </CardHeader>
-//           <CardContent>
-//             <div className="text-2xl font-bold">{report.totalExams}</div>
-//             <p className="text-xs text-muted-foreground">
-//               Scheduled exams
-//             </p>
-//           </CardContent>
-//         </Card>
-//         <Card>
-//           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-//             <CardTitle className="text-sm font-medium">
-//               Total Subjects
-//             </CardTitle>
-//             <FileText className="h-4 w-4 text-muted-foreground" />
-//           </CardHeader>
-//           <CardContent>
-//             <div className="text-2xl font-bold">{report.totalSubjects}</div>
-//             <p className="text-xs text-muted-foreground">
-//               Active subjects
-//             </p>
-//           </CardContent>
-//         </Card>
-//       </div>
-//     </div>
-//   );
-// }

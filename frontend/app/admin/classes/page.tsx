@@ -79,7 +79,7 @@ export default function AdvancedClassesPage() {
       });
     } catch (error) {
       if (!isMounted.current) return;
-      toast.error('Failed to sync institutional records');
+      toast.error('Synchronisation institutionnelle échouée.');
       console.error('fetchClasses error:', error);
     }
   }, []);
@@ -91,15 +91,15 @@ export default function AdvancedClassesPage() {
   }, [fetchClasses]);
 
   const handleCreateSubmit = async (values: z.infer<typeof formSchema>) => {
-    const tid = toast.loading('Establishing new class unit...');
+    const tid = toast.loading('Enregistrement de la nouvelle unité de classe...');
     try {
       await api.post('/admin/classes', values);
-      toast.success('Class successfully registered', { id: tid });
+      toast.success('Nouvelle classe enregistrée avec succès', { id: tid });
       await fetchClasses();
       setIsCreateDialogOpen(false);
       form.reset();
     } catch (error) {
-      toast.error('Registration failed', { id: tid });
+      toast.error('Enregistrement échoué', { id: tid });
       console.error('handleCreateSubmit error:', error);
     }
   };

@@ -69,7 +69,7 @@ export default function AdminExamsPage() {
   if (loading) return (
     <div className="h-screen flex flex-col items-center justify-center gap-4">
       <Loader2 className="animate-spin text-primary" size={40} />
-      <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Loading Master Registry...</p>
+      <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Chargement du registre principal...</p>
     </div>
   );
 
@@ -80,9 +80,9 @@ export default function AdminExamsPage() {
         <div>
           <div className="flex items-center gap-2 mb-2">
             <ShieldCheck className="text-primary" size={20} />
-            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Authority Access</span>
+            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Accès d'autorité</span>
           </div>
-          <h1 className="text-[clamp(1.2rem,2vw+1rem,2rem)] font-black text-slate-900 tracking-tighter italic">Global <span className="text-primary">Exams.</span></h1>
+          <h1 className="text-[clamp(1.2rem,2vw+1rem,2rem)] font-black text-slate-900 tracking-tighter italic">Registres d'examens</h1>
         </div>
 
         <div className="flex gap-3 max-xs:flex-wrap">
@@ -90,7 +90,7 @@ export default function AdminExamsPage() {
             <Download size={18} className="mr-2" /> EXPORT PDF
           </Button>
           <Button onClick={handleLockSemester} className="bg-rose-600 hover:bg-rose-700 text-white rounded-[clamp(1rem,2vw+1rem,2rem)] h-12 px-6 font-black shadow-lg shadow-rose-200">
-            <Lock size={18} className="mr-2" /> FINALIZE SEMESTER
+            <Lock size={18} className="mr-2" /> FINALISER LE SEMESTRE
           </Button>
         </div>
       </div>
@@ -111,11 +111,11 @@ export default function AdminExamsPage() {
         <Table>
           <TableHeader className="bg-slate-50/50">
             <TableRow className="border-none">
-              <TableHead className="py-8 pl-10 font-black text-[10px] uppercase tracking-widest text-slate-400">Exam & Class</TableHead>
-              <TableHead className="font-black text-[10px] uppercase tracking-widest text-slate-400">Instructor</TableHead>
-              <TableHead className="font-black text-[10px] uppercase tracking-widest text-slate-400 text-center">Weight</TableHead>
-              <TableHead className="font-black text-[10px] uppercase tracking-widest text-slate-400">Status</TableHead>
-              <TableHead className="text-right pr-10 font-black text-[10px] uppercase tracking-widest text-slate-400">Control</TableHead>
+              <TableHead className="py-8 pl-10 font-black text-[10px] uppercase tracking-widest text-slate-400">EXAMEN & CLASSE</TableHead>
+              <TableHead className="font-black text-[10px] uppercase tracking-widest text-slate-400">ENSEIGNANT</TableHead>
+              <TableHead className="font-black text-[10px] uppercase tracking-widest text-slate-400 text-center">POIDS</TableHead>
+              <TableHead className="font-black text-[10px] uppercase tracking-widest text-slate-400">STATUT</TableHead>
+              <TableHead className="text-right pr-10 font-black text-[10px] uppercase tracking-widest text-slate-400">CONTRÔLE</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -150,7 +150,7 @@ export default function AdminExamsPage() {
                 <TableCell className="text-right pr-10">
                   {exam.locked ? (
                     <Badge className="bg-rose-50 text-rose-600 border-rose-100 font-black text-[9px] px-3">
-                      <Lock size={10} className="mr-1" /> RECORDS LOCKED
+                      <Lock size={10} className="mr-1" /> RECORDS BLOQUÉS
                     </Badge>
                   ) : (
                     <Badge className="bg-emerald-50 text-emerald-600 border-emerald-100 font-black text-[9px] px-3">
@@ -166,7 +166,7 @@ export default function AdminExamsPage() {
         {/* Admin Pagination */}
         <div className="p-8 bg-slate-50/30 flex items-center justify-between border-t border-slate-100">
           <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic">
-            Displaying {currentExams.length} results of {filteredExams.length} in registry
+            Affichage de {currentExams.length} résultats sur {filteredExams.length} dans le registre
           </p>
           <div className="flex gap-2">
             <Button variant="outline" className="rounded-xl h-10 w-10 p-0" onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1}><ChevronLeft size={16} /></Button>
@@ -180,8 +180,8 @@ export default function AdminExamsPage() {
         <div className="max-w-7xl mx-auto flex items-center gap-4 bg-amber-50 border border-amber-100 p-6 rounded-4xl text-amber-700">
           <AlertTriangle size={24} className="shrink-0" />
           <p className="text-xs font-bold leading-relaxed">
-            <span className="font-black uppercase tracking-wider block mb-1 underline">Security Notice:</span>
-            All assessment records are currently modifiable by teachers. It is recommended to lock records after the final exam period to ensure data integrity for report cards.
+            <span className="font-black uppercase tracking-wider block mb-1 underline">Avis de sécurité :</span>
+            Tous les relevés d'évaluation sont actuellement modifiables par les enseignants. Il est recommandé de verrouiller les relevés après la période d'examens finaux pour garantir l'intégrité des données pour les bulletins.
           </p>
         </div>
       )}

@@ -49,10 +49,10 @@ interface Analytics {
 
 const STATUS_STYLE: Record<string, { bg: string; text: string; label: string }> = {
   PRESENT: { bg: 'bg-emerald-50', text: 'text-emerald-700', label: 'Present' },
-  ABSENT:  { bg: 'bg-rose-50',    text: 'text-rose-700',    label: 'Absent'  },
-  LATE:    { bg: 'bg-amber-50',   text: 'text-amber-700',   label: 'Late'    },
-  EXCUSED: { bg: 'bg-blue-50',    text: 'text-blue-700',    label: 'Excused' },
-  SICK:    { bg: 'bg-purple-50',  text: 'text-purple-700',  label: 'Sick'    },
+  ABSENT: { bg: 'bg-rose-50', text: 'text-rose-700', label: 'Absent' },
+  LATE: { bg: 'bg-amber-50', text: 'text-amber-700', label: 'Late' },
+  EXCUSED: { bg: 'bg-blue-50', text: 'text-blue-700', label: 'Excused' },
+  SICK: { bg: 'bg-purple-50', text: 'text-purple-700', label: 'Sick' },
 };
 
 function StatCard({ label, value, icon: Icon, color, sub }: { label: string; value: string | number; icon: any; color: string; sub?: string }) {
@@ -70,15 +70,15 @@ function StatCard({ label, value, icon: Icon, color, sub }: { label: string; val
 
 // ══════════════════════════════════════════════════════════════════════════════
 export default function AdminAttendancePage() {
-  const [sessions, setSessions]   = useState<AttendanceSession[]>([]);
+  const [sessions, setSessions] = useState<AttendanceSession[]>([]);
   const [analytics, setAnalytics] = useState<Analytics | null>(null);
-  const [classes, setClasses]     = useState<any[]>([]);
+  const [classes, setClasses] = useState<any[]>([]);
   const [classFilter, setClassFilter] = useState<string>('all');
-  const [dateFilter, setDateFilter]   = useState<string>('');   // ISO date string YYYY-MM-DD
-  const [loading, setLoading]     = useState(true);
-  const [tab, setTab]             = useState<'sessions' | 'analytics'>('analytics');
+  const [dateFilter, setDateFilter] = useState<string>('');   // ISO date string YYYY-MM-DD
+  const [loading, setLoading] = useState(true);
+  const [tab, setTab] = useState<'sessions' | 'analytics'>('analytics');
   const [expandedId, setExpandedId] = useState<number | null>(null);
-  const [deleting, setDeleting]   = useState<number | null>(null);
+  const [deleting, setDeleting] = useState<number | null>(null);
 
   const fetchData = async () => {
     setLoading(true);
@@ -92,7 +92,7 @@ export default function AdminAttendancePage() {
       setAnalytics(analyticsRes.data);
       setClasses(Array.isArray(classesRes.data) ? classesRes.data : []);
     } catch (err: any) {
-      toast.error('Failed to load attendance data');
+      toast.error('Échec du chargement des données de présence');
       console.error(err);
     } finally {
       setLoading(false);
@@ -105,21 +105,21 @@ export default function AdminAttendancePage() {
   const filtered = useMemo(() => {
     return sessions.filter(s => {
       const matchClass = classFilter === 'all' || String(s.classId) === classFilter;
-      const matchDate  = !dateFilter || s.date === dateFilter;
+      const matchDate = !dateFilter || s.date === dateFilter;
       return matchClass && matchDate;
     });
   }, [sessions, classFilter, dateFilter]);
 
   // ── Delete session ───────────────────────────────────────────────────────────
   const handleDelete = async (id: number) => {
-    if (!confirm('Delete this session? All student records for this session will also be deleted.')) return;
+    if (!confirm('Supprimer cette session? Tous les enregistrements des étudiants pour cette session seront également supprimés.')) return;
     setDeleting(id);
     try {
       await api.delete(`/admin/attendance/${id}`);
       setSessions(prev => prev.filter(s => s.id !== id));
-      toast.success('Session deleted');
+      toast.success('Session supprimée');
     } catch {
-      toast.error('Failed to delete session');
+      toast.error('Échec de la suppression de la session');
     } finally {
       setDeleting(null);
     }
@@ -129,7 +129,7 @@ export default function AdminAttendancePage() {
     return (
       <div className="h-[80vh] flex flex-col items-center justify-center gap-4">
         <Loader2 size={40} className="animate-spin text-primary" />
-        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Loading Attendance Data...</p>
+        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Chargement des données de présence...</p>
       </div>
     );
   }
@@ -145,10 +145,10 @@ export default function AdminAttendancePage() {
             <span className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">Admin</span>
           </div>
           <h1 className="text-[clamp(1.4rem,3vw,2.5rem)] font-black tracking-tighter text-slate-900 italic">
-            Attendance <span className="text-primary">Control.</span>
+            Présence <span className="text-primary">Control.</span>
           </h1>
           <p className="text-slate-400 font-bold text-[10px] uppercase tracking-widest mt-0.5">
-            School-wide attendance visibility &amp; management
+            Visibilité et gestion de la présence à l'échelle de l'école
           </p>
         </div>
         <Button
@@ -156,7 +156,7 @@ export default function AdminAttendancePage() {
           className="h-11 rounded-2xl gap-2 font-bold text-sm border-slate-200 hover:border-primary"
           onClick={fetchData}
         >
-          <RefreshCw size={14} /> Refresh
+          <RefreshCw size={14} /> Actualiser
         </Button>
       </div>
 
@@ -164,19 +164,17 @@ export default function AdminAttendancePage() {
       <div className="flex gap-3">
         <Button
           onClick={() => setTab('analytics')}
-          className={`rounded-2xl font-black text-[10px] uppercase tracking-widest px-6 h-10 gap-2 transition-all ${
-            tab === 'analytics' ? 'bg-slate-900 text-white shadow-md' : 'bg-white text-slate-600 border border-slate-200'
-          }`}
+          className={`rounded-2xl font-black text-[10px] uppercase tracking-widest px-6 h-10 gap-2 transition-all ${tab === 'analytics' ? 'bg-slate-900 text-white shadow-md' : 'bg-white text-slate-600 border border-slate-200'
+            }`}
         >
           <BarChart2 size={13} /> Analytics
         </Button>
         <Button
           onClick={() => setTab('sessions')}
-          className={`rounded-2xl font-black text-[10px] uppercase tracking-widest px-6 h-10 gap-2 transition-all ${
-            tab === 'sessions' ? 'bg-primary text-white shadow-md' : 'bg-white text-slate-600 border border-slate-200'
-          }`}
+          className={`rounded-2xl font-black text-[10px] uppercase tracking-widest px-6 h-10 gap-2 transition-all ${tab === 'sessions' ? 'bg-primary text-white shadow-md' : 'bg-white text-slate-600 border border-slate-200'
+            }`}
         >
-          <ClipboardList size={13} /> All Sessions
+          <ClipboardList size={13} /> Toutes les sessions
         </Button>
       </div>
 
@@ -188,20 +186,20 @@ export default function AdminAttendancePage() {
             <CardContent className="p-8 relative">
               <div className="flex justify-between items-start mb-6">
                 <div>
-                  <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400">School-Wide Attendance Rate</p>
+                  <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400">Taux de présence à l'échelle de l'école</p>
                   <h2 className={`text-7xl font-black italic tracking-tighter mt-1 ${analytics.overallRate >= 75 ? 'text-white' : 'text-rose-400'}`}>
                     {analytics.overallRate}%
                   </h2>
                 </div>
                 <Badge className="bg-primary/20 text-blue-400 border-none font-black px-4 py-1 uppercase text-[9px]">
-                  {analytics.totalRecords} Total Records
+                  {analytics.totalRecords} Total des données
                 </Badge>
               </div>
               <div className="space-y-2">
                 <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
-                  <span className="text-slate-500">Overall Attendance</span>
+                  <span className="text-slate-500">Taux de présence</span>
                   <span className={analytics.overallRate >= 75 ? 'text-emerald-400' : 'text-rose-400'}>
-                    {analytics.presentCount + analytics.lateCount} / {analytics.totalRecords} Present
+                    {analytics.presentCount + analytics.lateCount} / {analytics.totalRecords} Présent
                   </span>
                 </div>
                 <Progress value={analytics.overallRate} className="h-2.5 bg-white/10" />
@@ -212,27 +210,27 @@ export default function AdminAttendancePage() {
 
           {/* Stat cards */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <StatCard label="Present"       value={analytics.presentCount}  icon={CheckCircle2} color="border-emerald-100 hover:border-emerald-300" />
-            <StatCard label="Absent"        value={analytics.absentCount}   icon={XCircle}      color="border-rose-100 hover:border-rose-300"     />
-            <StatCard label="Late"          value={analytics.lateCount}     icon={Clock}        color="border-amber-100 hover:border-amber-300"    />
-            <StatCard label="Excused/Sick"  value={analytics.excusedCount}  icon={ShieldAlert}  color="border-blue-100 hover:border-blue-300"     />
+            <StatCard label="Présent" value={analytics.presentCount} icon={CheckCircle2} color="border-emerald-100 hover:border-emerald-300" />
+            <StatCard label="Absent" value={analytics.absentCount} icon={XCircle} color="border-rose-100 hover:border-rose-300" />
+            <StatCard label="En retard" value={analytics.lateCount} icon={Clock} color="border-amber-100 hover:border-amber-300" />
+            <StatCard label="Excusé/Malade" value={analytics.excusedCount} icon={ShieldAlert} color="border-blue-100 hover:border-blue-300" />
           </div>
 
           {/* Per-class breakdown */}
           {analytics.byClass.length > 0 && (
             <Card className="border border-slate-100 rounded-3xl overflow-hidden shadow-sm">
               <CardHeader className="border-b border-slate-50 px-8 py-5">
-                <p className="font-black text-xs uppercase tracking-widest text-slate-900">Attendance by Class</p>
+                <p className="font-black text-xs uppercase tracking-widest text-slate-900">Taux de présence par classe</p>
               </CardHeader>
               <CardContent className="p-0">
                 <Table>
                   <TableHeader className="bg-slate-50/80">
                     <TableRow className="hover:bg-transparent">
-                      <TableHead className="pl-8 font-black text-[9px] uppercase tracking-widest text-slate-400">Class</TableHead>
+                      <TableHead className="pl-8 font-black text-[9px] uppercase tracking-widest text-slate-400">Classe</TableHead>
                       <TableHead className="text-center font-black text-[9px] uppercase tracking-widest text-slate-400">Total</TableHead>
-                      <TableHead className="text-center font-black text-[9px] uppercase tracking-widest text-slate-400">Present</TableHead>
-                      <TableHead className="text-center font-black text-[9px] uppercase tracking-widest text-slate-400">Late</TableHead>
-                      <TableHead className="pr-8 font-black text-[9px] uppercase tracking-widest text-slate-400">Rate</TableHead>
+                      <TableHead className="text-center font-black text-[9px] uppercase tracking-widest text-slate-400">Présent</TableHead>
+                      <TableHead className="text-center font-black text-[9px] uppercase tracking-widest text-slate-400">En retard</TableHead>
+                      <TableHead className="pr-8 font-black text-[9px] uppercase tracking-widest text-slate-400">Taux</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -272,10 +270,10 @@ export default function AdminAttendancePage() {
             {/* Class filter */}
             <Select value={classFilter} onValueChange={setClassFilter}>
               <SelectTrigger className="w-[200px] h-11 rounded-2xl bg-white border-slate-100 font-bold shadow-sm hover:border-primary transition-colors">
-                <SelectValue placeholder="Filter by Class" />
+                <SelectValue placeholder="Filtrer par classe" />
               </SelectTrigger>
               <SelectContent className="rounded-2xl border-none shadow-2xl">
-                <SelectItem value="all" className="font-bold">All Classes</SelectItem>
+                <SelectItem value="all" className="font-bold">Toutes les classes</SelectItem>
                 {classes.map((c: any) => (
                   <SelectItem key={c.id} value={String(c.id)} className="font-bold">{c.name}</SelectItem>
                 ))}
@@ -290,13 +288,13 @@ export default function AdminAttendancePage() {
                 value={dateFilter}
                 onChange={e => setDateFilter(e.target.value)}
                 className="text-sm font-bold text-slate-700 bg-transparent outline-none w-[140px]"
-                placeholder="Filter by date"
+                placeholder="Filtrer par date"
               />
               {dateFilter && (
                 <button
                   onClick={() => setDateFilter('')}
                   className="text-slate-300 hover:text-rose-400 transition-colors ml-1"
-                  title="Clear date filter"
+                  title="Supprimer le filtre par date"
                 >
                   <X size={13} />
                 </button>
@@ -311,12 +309,12 @@ export default function AdminAttendancePage() {
                 className="h-11 rounded-2xl font-bold text-[11px] text-slate-400 hover:text-rose-500 hover:bg-rose-50 px-4"
                 onClick={() => { setClassFilter('all'); setDateFilter(''); }}
               >
-                <X size={12} className="mr-1" /> Clear Filters
+                <X size={12} className="mr-1" /> Supprimer les filtres
               </Button>
             )}
 
             <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-auto">
-              {filtered.length} session{filtered.length !== 1 ? 's' : ''} found
+              {filtered.length} session{filtered.length !== 1 ? 's' : ''} trouvées
             </p>
           </div>
 
@@ -325,7 +323,7 @@ export default function AdminAttendancePage() {
             <div className="h-64 flex flex-col items-center justify-center rounded-3xl border-2 border-dashed border-slate-200 bg-white">
               <Users size={40} className="text-slate-200 mb-3" />
               <p className="text-slate-400 font-black text-xs uppercase tracking-widest">
-                {dateFilter || classFilter !== 'all' ? 'No sessions match your filters.' : 'No sessions found.'}
+                {dateFilter || classFilter !== 'all' ? 'Aucune session ne correspond à votre recherche.' : 'Aucune session trouvée.'}
               </p>
             </div>
           ) : (
@@ -374,14 +372,14 @@ export default function AdminAttendancePage() {
                       <div className="flex items-center gap-6 flex-wrap">
                         <div className="flex gap-4">
                           <span className="text-[10px] font-black text-slate-500 flex items-center gap-1.5">
-                            <span className="w-2 h-2 rounded-full bg-emerald-400" />{session.presentCount} Present
+                            <span className="w-2 h-2 rounded-full bg-emerald-400" />{session.presentCount} Présent
                           </span>
                           <span className="text-[10px] font-black text-slate-500 flex items-center gap-1.5">
                             <span className="w-2 h-2 rounded-full bg-rose-400" />{session.absentCount} Absent
                           </span>
                           {session.lateCount > 0 && (
                             <span className="text-[10px] font-black text-slate-500 flex items-center gap-1.5">
-                              <span className="w-2 h-2 rounded-full bg-amber-400" />{session.lateCount} Late
+                              <span className="w-2 h-2 rounded-full bg-amber-400" />{session.lateCount} En retard
                             </span>
                           )}
                         </div>
@@ -406,9 +404,9 @@ export default function AdminAttendancePage() {
                         <Table>
                           <TableHeader className="bg-slate-50">
                             <TableRow className="hover:bg-transparent">
-                              <TableHead className="pl-8 font-black text-[9px] uppercase tracking-widest text-slate-400">Student</TableHead>
+                              <TableHead className="pl-8 font-black text-[9px] uppercase tracking-widest text-slate-400">Etudiant</TableHead>
                               <TableHead className="font-black text-[9px] uppercase tracking-widest text-slate-400">ID</TableHead>
-                              <TableHead className="pr-8 text-right font-black text-[9px] uppercase tracking-widest text-slate-400">Status</TableHead>
+                              <TableHead className="pr-8 text-right font-black text-[9px] uppercase tracking-widest text-slate-400">Statut</TableHead>
                             </TableRow>
                           </TableHeader>
                           <TableBody>

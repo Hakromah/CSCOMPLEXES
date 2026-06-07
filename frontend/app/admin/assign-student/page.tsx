@@ -40,8 +40,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 
 const formSchema = z.object({
-  studentId: z.string().min(1, { message: 'Please select a student for enrollment' }),
-  classId: z.string().min(1, { message: 'Please select a target class' }),
+  studentId: z.string().min(1, { message: "Choisir un étudiant pour l'inscription" }),
+  classId: z.string().min(1, { message: 'Veuillez sélectionner une classe cible' }),
 });
 
 export default function AdvancedAssignStudentPage() {
@@ -64,7 +64,7 @@ export default function AdvancedAssignStudentPage() {
       setStudents(studentsRes.data);
       setClasses(classesRes.data);
     } catch (error) {
-      toast.error('Failed to sync student registry');
+      toast.error("Échec de la synchronisation du registre des étudiants");
       console.log(error);
     } finally {
       setDataLoading(false);
@@ -75,17 +75,17 @@ export default function AdvancedAssignStudentPage() {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsLoading(true);
-    const tid = toast.loading('Processing enrollment...');
+    const tid = toast.loading("Traitement de l'inscription...");
     try {
       await api.post('/admin/assign-student', {
         studentId: parseInt(values.studentId),
         classId: parseInt(values.classId),
       });
-      toast.success('Enrollment Finalized', { id: tid });
+      toast.success("Inscription finalisée", { id: tid });
       form.reset();
     } catch (error: any) {
-      const errorMessage = error.response?.data?.message || 'Enrollment rejected by system.';
-      toast.error('Enrollment Failed', {
+      const errorMessage = error.response?.data?.message || "Inscription rejetée par le système.";
+      toast.error("Inscription échouée", {
         id: tid,
         description: <span className="text-rose-500 font-bold">{errorMessage}</span>,
       });
@@ -97,7 +97,7 @@ export default function AdvancedAssignStudentPage() {
   if (dataLoading) return (
     <div className="h-screen flex flex-col items-center justify-center gap-4 bg-[#f8fafc]">
       <Loader2 className="animate-spin text-primary" size={40} />
-      <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Loading Academic Data...</p>
+      <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Chargement des données académiques...</p>
     </div>
   );
 
@@ -114,7 +114,7 @@ export default function AdvancedAssignStudentPage() {
           <span className="text-[10px] font-black uppercase tracking-[0.4em]">L'autorité d'enregistrement</span>
         </motion.div>
         <h1 className="text-[clamp(1.2rem,3.5vw,4rem)] font-black text-slate-900 tracking-tighter italic uppercase">
-          Student <span className="text-primary">L'inscription.</span>
+          Inscription <span className="text-primary">des étudiants</span>
         </h1>
         <p className="text-slate-400 font-bold text-sm uppercase tracking-widest max-w-2xl mx-auto leading-loose">
           Attribuer des étudiants à leurs groupes universitaires respectifs pour activer la synchronisation des horaires et le suivi des notes.

@@ -55,7 +55,7 @@ function StaffCombobox({ staff, value, onChange }: {
         className="w-full h-11 flex items-center justify-between gap-2 px-3 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium text-slate-700 hover:bg-slate-100 transition-colors"
       >
         <span className={selected ? 'text-slate-900' : 'text-slate-400'}>
-          {selected ? `${selected.name}${selected.userId ? ` (${selected.userId})` : ''}` : 'Search employee name or ID...'}
+          {selected ? `${selected.name}${selected.userId ? ` (${selected.userId})` : ''}` : 'Nom ou ID de l\'employé...'}
         </span>
         <ChevronDown className="w-4 h-4 text-slate-400 shrink-0" />
       </button>
@@ -66,7 +66,7 @@ function StaffCombobox({ staff, value, onChange }: {
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
               <input
                 autoFocus
-                placeholder="Search by name or employee ID..."
+                placeholder="Rechercher par nom ou ID d'employé..."
                 value={query}
                 onChange={e => setQuery(e.target.value)}
                 className="w-full pl-8 pr-3 h-8 text-xs rounded-xl bg-slate-50 border border-slate-100 outline-none focus:ring-2 focus:ring-blue-500"
@@ -75,7 +75,7 @@ function StaffCombobox({ staff, value, onChange }: {
           </div>
           <div className="max-h-[220px] overflow-y-auto">
             {filtered.length === 0 ? (
-              <p className="text-center text-xs text-slate-400 py-4">No staff found</p>
+              <p className="text-center text-xs text-slate-400 py-4">Aucun membre du personnel trouvé</p>
             ) : filtered.map(s => (
               <button
                 key={s.id}
@@ -153,7 +153,7 @@ export default function StaffFinance() {
       setSalaryRecords(financeRes.data?.salaryRecords || []);
       setSalaryPayments(financeRes.data?.salaryPayments || []);
     } catch (e: any) {
-      toast.error('Failed to sync staff payroll ledger');
+      toast.error('Échec de la synchronisation du grand livre de paie du personnel');
       console.error(e);
     } finally {
       setLoading(false);
@@ -168,10 +168,10 @@ export default function StaffFinance() {
 
   // ─── Salary Record CRUD ────────────────────────────────────────────────────
   const handleCreateOrEditSalaryRecord = async () => {
-    if (!selectedStaffId) { toast.error('Please select a staff member'); return; }
-    if (Number(baseSalary) <= 0) { toast.error('Please specify a positive base salary'); return; }
+    if (!selectedStaffId) { toast.error('Veuillez sélectionner un membre du personnel'); return; }
+    if (Number(baseSalary) <= 0) { toast.error('Veuillez spécifier un salaire de base positif'); return; }
 
-    const tid = toast.loading(editingRecord ? 'Saving changes...' : 'Generating record...');
+    const tid = toast.loading(editingRecord ? 'Enregistrement des modifications...' : 'Génération de l\'enregistrement...');
     try {
       if (editingRecord) {
         await api.put(`/school-finance/salaries/${editingRecord.id}/update`, {
@@ -183,7 +183,7 @@ export default function StaffFinance() {
           deductions: Number(deductions),
           notes: salaryNotes
         });
-        toast.success('Payroll statement updated successfully', { id: tid });
+        toast.success('Mise à jour réussie de la déclaration de salaire', { id: tid });
       } else {
         await api.post('/school-finance/salaries', {
           staffId: Number(selectedStaffId),
@@ -194,14 +194,14 @@ export default function StaffFinance() {
           deductions: Number(deductions),
           notes: salaryNotes
         });
-        toast.success('Salary record generated in DRAFT state', { id: tid });
+        toast.success('Dossier de salaire généré à l\'état DRAFT', { id: tid });
       }
 
       setIsSalaryOpen(false);
       resetSalaryForm();
       fetchAllData();
     } catch (e: any) {
-      toast.error('Payroll operation failed', { id: tid });
+      toast.error('Échec de l\'opération de paie', { id: tid });
     }
   };
 
@@ -228,47 +228,47 @@ export default function StaffFinance() {
   };
 
   const handleDeleteRecord = async (rec: any) => {
-    if (!confirm('Are you sure you want to delete this salary record?')) return;
-    const tid = toast.loading('Deleting salary record...');
+    if (!confirm('Voulez-vous vraiment supprimer ce dossier de salaire ?')) return;
+    const tid = toast.loading('Suppression du dossier de salaire...');
     try {
       await api.delete(`/school-finance/salaries/${rec.id}`);
-      toast.success('Salary record deleted successfully', { id: tid });
+      toast.success('Dossier de salaire supprimé avec succès', { id: tid });
       setSelectedRecordIds(prev => prev.filter(x => x !== rec.id));
       fetchAllData();
     } catch (e) {
-      toast.error('Failed to delete salary record', { id: tid });
+      toast.error('Échec de la suppression du dossier de salaire', { id: tid });
     }
   };
 
   // Submit record(s) — Accountant only
   const handleSubmitRecords = async (recordIds: number[]) => {
     if (recordIds.length === 0) return;
-    const tid = toast.loading(`Submitting ${recordIds.length} salary record${recordIds.length > 1 ? 's' : ''}...`);
+    const tid = toast.loading(`Enregistrement de ${recordIds.length} dossier de salaire...`);
     try {
       await Promise.all(recordIds.map(id =>
         api.put(`/school-finance/salaries/${id}/update`, { status: 'SUBMITTED' })
       ));
-      toast.success('Salary records submitted for review', { id: tid });
+      toast.success('Enregistrement réussi des dossiers de salaire', { id: tid });
       setSelectedRecordIds([]);
       fetchAllData();
     } catch (e) {
-      toast.error('Failed to submit selected records', { id: tid });
+      toast.error('Échec de l\'enregistrement des dossiers sélectionnés', { id: tid });
     }
   };
 
   // Approve record(s) — AccountLead / Admin
   const handleApproveRecords = async (recordIds: number[]) => {
     if (recordIds.length === 0) return;
-    const tid = toast.loading(`Approving ${recordIds.length} salary record${recordIds.length > 1 ? 's' : ''}...`);
+    const tid = toast.loading(`Validation de ${recordIds.length} dossier de salaire...`);
     try {
       await Promise.all(recordIds.map(id =>
         api.put(`/school-finance/salaries/${id}/approve`)
       ));
-      toast.success('Salary records approved successfully', { id: tid });
+      toast.success('Validation réussie des dossiers de salaire', { id: tid });
       setSelectedRecordIds([]);
       fetchAllData();
     } catch (e) {
-      toast.error('Failed to approve selected records', { id: tid });
+      toast.error('Échec de la validation des dossiers sélectionnés', { id: tid });
     }
   };
 
@@ -279,15 +279,15 @@ export default function StaffFinance() {
   };
 
   const handleRejectSubmit = async () => {
-    if (!rejectionReason) { toast.error('Please provide a reason'); return; }
-    const tid = toast.loading('Rejecting salary record...');
+    if (!rejectionReason) { toast.error('Veuillez fournir une raison'); return; }
+    const tid = toast.loading('Rejet du dossier de salaire...');
     try {
       await api.put(`/school-finance/salaries/${selectedRecordId}/reject`, { reason: rejectionReason });
-      toast.success('Salary record rejected', { id: tid });
+      toast.success('Dossier de salaire rejeté', { id: tid });
       setIsRejectOpen(false);
       fetchAllData();
     } catch (e: any) {
-      toast.error('Rejection failed', { id: tid });
+      toast.error('Échec du rejet', { id: tid });
     }
   };
 
@@ -307,10 +307,10 @@ export default function StaffFinance() {
   };
 
   const handleDisbursePayout = async () => {
-    if (!payoutTargetRecord) { toast.error('No salary record selected'); return; }
-    if (Number(payoutAmount) <= 0) { toast.error('Please specify a positive payout amount'); return; }
+    if (!payoutTargetRecord) { toast.error('Veuillez sélectionner un dossier de salaire'); return; }
+    if (Number(payoutAmount) <= 0) { toast.error('Veuillez spécifier un montant de paiement positif'); return; }
 
-    const tid = toast.loading('Processing payout disbursement...');
+    const tid = toast.loading('Traitement du décaissement de salaire...');
     try {
       // Step 1: Create the salary payment (returns payment with its ID)
       const createRes = await api.post('/school-finance/salary-payments', {
@@ -327,22 +327,22 @@ export default function StaffFinance() {
         await api.put(`/school-finance/salary-payments/${newPaymentId}/approve`);
       }
 
-      toast.success('Payout disbursed and approved successfully', { id: tid });
+      toast.success('Le paiement a été effectué et approuvé avec succès', { id: tid });
       setIsPayoutOpen(false);
       setPayoutTargetRecord(null);
       fetchAllData();
     } catch (e: any) {
-      toast.error('Payout disbursement failed', { id: tid });
+      toast.error('Échec du décaissement de salaire', { id: tid });
       console.error(e);
     }
   };
 
   // ─── PDF Payslip from Salary RECORD ────────────────────────────────────────
   const downloadPayslip = async (rec: any) => {
-    const tid = toast.loading('Compiling payslip PDF...');
+    const tid = toast.loading('Création du bulletin de paie en PDF...');
     try {
-      const staffName = rec.staffName || 'Employee';
-      const staffRole = rec.staffRole || 'Staff';
+      const staffName = rec.staffName || 'Employé';
+      const staffRole = rec.staffRole || 'Personnel';
       const staffEmail = rec.staffEmail || 'N/A';
       const base = Number(rec.baseSalary || 0);
       const allow = Number(rec.allowances || 0);
@@ -371,45 +371,45 @@ export default function StaffFinance() {
       doc.text(SCHOOL_CONFIG.name, 15, 23);
       doc.setFontSize(9);
       doc.setFont('Helvetica', 'normal');
-      doc.text(`${SCHOOL_CONFIG.subtitle} — EMPLOYEE SALARY PAYSLIP STATEMENT`, 15, 30);
+      doc.text(`${SCHOOL_CONFIG.subtitle} — BULLETIN DE PAIE DU PERSONNEL`, 15, 30);
       doc.text(SCHOOL_CONFIG.contact, 15, 36);
-      doc.text(`Generated: ${new Date().toLocaleDateString()}`, 150, 22);
+      doc.text(`Généré le: ${new Date().toLocaleDateString()}`, 150, 22);
 
       // Title
       doc.setTextColor(...SCHOOL_CONFIG.primaryColor);
       doc.setFontSize(20);
       doc.setFont('Helvetica', 'bold');
-      doc.text('SALARY PAYSLIP', 15, 70);
+      doc.text('BULLETIN DE PAIE DU PERSONNEL', 15, 70);
       doc.setFontSize(10);
       doc.setFont('Helvetica', 'normal');
 
       // Record info
-      doc.text(`Record ID: ${rec.recordNumber || 'N/A'}`, 15, 80);
-      doc.text(`Pay Period: ${rec.month} ${rec.year}`, 15, 87);
-      doc.text(`Status: ${rec.status}`, 15, 94);
+      doc.text(`ID dossier: ${rec.recordNumber || 'N/A'}`, 15, 80);
+      doc.text(`Période de paie: ${rec.month} ${rec.year}`, 15, 87);
+      doc.text(`Statut: ${rec.status}`, 15, 94);
       if (rec.notes) {
         doc.text(`Notes: ${rec.notes}`, 15, 101);
       }
 
       // Employee info
       doc.setFont('Helvetica', 'bold');
-      doc.text('Employee Profile:', 120, 80);
+      doc.text('Profil de l\'employé:', 120, 80);
       doc.setFont('Helvetica', 'normal');
-      doc.text(`Name: ${staffName}`, 120, 87);
-      doc.text(`Role: ${staffRole}`, 120, 94);
+      doc.text(`Nom: ${staffName}`, 120, 87);
+      doc.text(`Rôle: ${staffRole}`, 120, 94);
       doc.text(`Email: ${staffEmail}`, 120, 101);
 
       // Payroll breakdown
       autoTable(doc, {
         startY: 115,
-        head: [['Payroll Component', 'Amount (GNF)']],
+        head: [['Composant de la paie', 'Montant (GNF)']],
         body: [
-          ['Base Salary', base.toLocaleString()],
-          ['Allowances (+)', `+ ${allow.toLocaleString()}`],
-          ['Deductions (−)', `− ${ded.toLocaleString()}`],
-          ['Net Salary Due', net.toLocaleString()],
-          ['Total Disbursed', totalDisbursed.toLocaleString()],
-          ['Outstanding Balance', outstanding.toLocaleString()]
+          ['Salaire de base', base.toLocaleString()],
+          ['Allocations (+)', `+ ${allow.toLocaleString()}`],
+          ['Retenues (−)', `− ${ded.toLocaleString()}`],
+          ['Solde net dû', net.toLocaleString()],
+          ['Total décaissé', totalDisbursed.toLocaleString()],
+          ['Solde restant', outstanding.toLocaleString()]
         ],
         theme: 'striped',
         headStyles: { fillColor: SCHOOL_CONFIG.primaryColor },
@@ -421,18 +421,18 @@ export default function StaffFinance() {
       });
 
       // QR Code — anchored to bottom-right corner
-      const qrContent = `${SCHOOL_CONFIG.name}\nSalary Payslip\nRecord: ${rec.recordNumber}\nEmployee: ${staffName}\nPeriod: ${rec.month} ${rec.year}\nNet Salary: ${net.toLocaleString()} GNF\nStatus: ${rec.status}\nVerify: ${SCHOOL_CONFIG.verifyUrl}`;
+      const qrContent = `${SCHOOL_CONFIG.name}\nBULLETIN DE PAIE DU PERSONNEL\nRecord: ${rec.recordNumber}\nEmployé: ${staffName}\nPériode: ${rec.month} ${rec.year}\nSalaire net: ${net.toLocaleString()} GNF\nStatut: ${rec.status}\nVérifier: ${SCHOOL_CONFIG.verifyUrl}`;
       const qrDataUrl = await QRCode.toDataURL(qrContent);
       // Fixed bottom-right position
       doc.addImage(qrDataUrl, 'PNG', 155, 242, 42, 42);
       doc.setFontSize(7);
       doc.setTextColor(148, 163, 184);
-      doc.text('Scan to verify payslip', 155, 286);
+      doc.text('Scannez pour vérifier le bulletin de paie', 155, 286);
 
-      doc.save(`Payslip-${rec.recordNumber || rec.id}.pdf`);
-      toast.success('Payslip PDF compiled successfully', { id: tid });
+      doc.save(`bulletin-${rec.recordNumber || rec.id}.pdf`);
+      toast.success('Le bulletin de paie a été compilé avec succès', { id: tid });
     } catch (e: any) {
-      toast.error('Payslip generation failed', { id: tid });
+      toast.error('La génération du bulletin de paie a échoué', { id: tid });
       console.error(e);
     }
   };
@@ -440,25 +440,25 @@ export default function StaffFinance() {
   // ─── Derived Lists ─────────────────────────────────────────────────────────
   const submittedRecords = useMemo(() =>
     salaryRecords.filter((r: any) => r.status === 'SUBMITTED'),
-  [salaryRecords]);
+    [salaryRecords]);
 
   const approvedPendingPayout = useMemo(() =>
     salaryRecords.filter((r: any) => r.status === 'APPROVED'),
-  [salaryRecords]);
+    [salaryRecords]);
 
   const approvedLedger = useMemo(() =>
     salaryRecords.filter((r: any) => ['APPROVED', 'PAID', 'PARTIALLY_PAID'].includes(r.status)),
-  [salaryRecords]);
+    [salaryRecords]);
 
   // ─── Status Badge Helper ───────────────────────────────────────────────────
   const statusBadge = (status: string) => {
     const cls =
       status === 'PAID' ? 'bg-emerald-500 hover:bg-emerald-600' :
-      status === 'PARTIALLY_PAID' ? 'bg-amber-500 hover:bg-amber-600' :
-      status === 'APPROVED' ? 'bg-blue-600 hover:bg-blue-700' :
-      status === 'SUBMITTED' ? 'bg-violet-500 hover:bg-violet-600' :
-      status === 'REJECTED' ? 'bg-rose-500 hover:bg-rose-600' :
-      'bg-slate-300 text-slate-800 hover:bg-slate-400';
+        status === 'PARTIALLY_PAID' ? 'bg-amber-500 hover:bg-amber-600' :
+          status === 'APPROVED' ? 'bg-blue-600 hover:bg-blue-700' :
+            status === 'SUBMITTED' ? 'bg-violet-500 hover:bg-violet-600' :
+              status === 'REJECTED' ? 'bg-rose-500 hover:bg-rose-600' :
+                'bg-slate-300 text-slate-800 hover:bg-slate-400';
     return <Badge className={cls}>{status}</Badge>;
   };
 
@@ -469,8 +469,8 @@ export default function StaffFinance() {
       {/* ── Header ── */}
       <div className="flex items-center justify-between">
         <div className="space-y-1">
-          <h1 className="text-3xl font-black tracking-tight text-slate-900 italic uppercase">Staff Payroll & Finance</h1>
-          <p className="text-sm text-slate-500 font-medium">Manage monthly salaries and payout disbursements for teachers, drivers, and workers</p>
+          <h1 className="text-3xl font-black tracking-tight text-slate-900 italic uppercase"> Paie & Finances RH</h1>
+          <p className="text-sm text-slate-500 font-medium">Gérer les salaires mensuels et les décaissements pour les enseignants, chauffeurs et travailleurs</p>
         </div>
 
         <div className="flex items-center gap-3">
@@ -480,7 +480,7 @@ export default function StaffFinance() {
               onClick={() => handleSubmitRecords(selectedRecordIds)}
               className="bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold uppercase tracking-wider text-xs px-5 duration-300"
             >
-              Submit Selected ({selectedRecordIds.length})
+              Soumettre la sélection ({selectedRecordIds.length})
             </Button>
           )}
 
@@ -490,7 +490,7 @@ export default function StaffFinance() {
               onClick={() => handleApproveRecords(selectedRecordIds)}
               className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold uppercase tracking-wider text-xs px-5 duration-300"
             >
-              Approve Selected ({selectedRecordIds.length})
+              Approuver la sélection ({selectedRecordIds.length})
             </Button>
           )}
 
@@ -498,7 +498,7 @@ export default function StaffFinance() {
             onClick={() => { resetSalaryForm(); setIsSalaryOpen(true); }}
             className="flex items-center gap-2 px-5 bg-slate-900 text-white rounded-xl font-bold uppercase tracking-wider text-xs duration-300"
           >
-            <Plus className="w-4 h-4" /> Create Salary Record
+            <Plus className="w-4 h-4" /> Créer un dossier de salaire
           </Button>
         </div>
       </div>
@@ -506,167 +506,167 @@ export default function StaffFinance() {
       {/* ── TABLE 1: Employee Monthly Payroll Accounts ── */}
       <Card className="border-0 shadow-xl shadow-slate-100/50 bg-white rounded-3xl overflow-hidden">
         <CardHeader className="px-6 py-5 border-b border-slate-50">
-          <CardTitle className="text-sm font-black uppercase tracking-wider text-slate-500">Employee Monthly Payroll Accounts</CardTitle>
+          <CardTitle className="text-sm font-black uppercase tracking-wider text-slate-500">Comptes de paie mensuels du personnel</CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           <div className="overflow-y-auto" style={{ maxHeight: '340px' }}>
-          <Table>
-            <TableHeader>
-              <TableRow className="bg-slate-50/50 hover:bg-slate-50/50">
-                <TableHead className="w-12"></TableHead>
-                <TableHead className="font-bold text-slate-700">Record ID</TableHead>
-                <TableHead className="font-bold text-slate-700">Employee</TableHead>
-                <TableHead className="font-bold text-slate-700">Role</TableHead>
-                <TableHead className="font-bold text-slate-700">Period</TableHead>
-                <TableHead className="font-bold text-slate-700">Base Salary</TableHead>
-                <TableHead className="font-bold text-slate-700">Net Salary</TableHead>
-                <TableHead className="font-bold text-slate-700">Notes</TableHead>
-                <TableHead className="font-bold text-slate-700">Status</TableHead>
-                <TableHead className="text-right font-bold text-slate-700">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {loading ? (
-                <TableRow><TableCell colSpan={10} className="text-center text-slate-400 py-10">Loading payroll data...</TableCell></TableRow>
-              ) : salaryRecords.length === 0 ? (
-                <TableRow><TableCell colSpan={10} className="text-center text-slate-400 py-10">No payroll records found</TableCell></TableRow>
-              ) : salaryRecords.map((rec: any) => {
-                const isDraftOrRejected = rec.status === 'DRAFT' || rec.status === 'REJECTED';
-                const isSubmitted = rec.status === 'SUBMITTED';
-                const isApprovedOrPaid = rec.status === 'APPROVED' || rec.status === 'PAID' || rec.status === 'PARTIALLY_PAID';
-                const isLeadOrAdmin = role === 'ACCOUNTLEAD' || role === 'ADMIN';
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-slate-50/50 hover:bg-slate-50/50">
+                  <TableHead className="w-12"></TableHead>
+                  <TableHead className="font-bold text-slate-700">ID Dossier</TableHead>
+                  <TableHead className="font-bold text-slate-700">Personnel</TableHead>
+                  <TableHead className="font-bold text-slate-700">Rôle</TableHead>
+                  <TableHead className="font-bold text-slate-700">Période</TableHead>
+                  <TableHead className="font-bold text-slate-700">Salaire de base</TableHead>
+                  <TableHead className="font-bold text-slate-700">Salaire net</TableHead>
+                  <TableHead className="font-bold text-slate-700">Notes</TableHead>
+                  <TableHead className="font-bold text-slate-700">Statut</TableHead>
+                  <TableHead className="text-right font-bold text-slate-700">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {loading ? (
+                  <TableRow><TableCell colSpan={10} className="text-center text-slate-400 py-10">Chargement des données de paie...</TableCell></TableRow>
+                ) : salaryRecords.length === 0 ? (
+                  <TableRow><TableCell colSpan={10} className="text-center text-slate-400 py-10">Aucun dossier de paie trouvé</TableCell></TableRow>
+                ) : salaryRecords.map((rec: any) => {
+                  const isDraftOrRejected = rec.status === 'DRAFT' || rec.status === 'REJECTED';
+                  const isSubmitted = rec.status === 'SUBMITTED';
+                  const isApprovedOrPaid = rec.status === 'APPROVED' || rec.status === 'PAID' || rec.status === 'PARTIALLY_PAID';
+                  const isLeadOrAdmin = role === 'ACCOUNTLEAD' || role === 'ADMIN';
 
-                // Checkbox: accountant selects DRAFT/REJECTED to submit; lead/admin selects SUBMITTED to approve
-                const canCheck =
-                  (role === 'ACCOUNTANT' && isDraftOrRejected) ||
-                  (isLeadOrAdmin && isSubmitted);
+                  // Checkbox: accountant selects DRAFT/REJECTED to submit; lead/admin selects SUBMITTED to approve
+                  const canCheck =
+                    (role === 'ACCOUNTANT' && isDraftOrRejected) ||
+                    (isLeadOrAdmin && isSubmitted);
 
-                // Edit: accountant → DRAFT/REJECTED only; lead/admin → anything except PAID
-                const canEdit =
-                  (role === 'ACCOUNTANT' && isDraftOrRejected) ||
-                  (isLeadOrAdmin && rec.status !== 'PAID');
+                  // Edit: accountant → DRAFT/REJECTED only; lead/admin → anything except PAID
+                  const canEdit =
+                    (role === 'ACCOUNTANT' && isDraftOrRejected) ||
+                    (isLeadOrAdmin && rec.status !== 'PAID');
 
-                // Delete: accountant → DRAFT/REJECTED; lead/admin → any
-                const canDelete =
-                  (role === 'ACCOUNTANT' && isDraftOrRejected) ||
-                  isLeadOrAdmin;
+                  // Delete: accountant → DRAFT/REJECTED; lead/admin → any
+                  const canDelete =
+                    (role === 'ACCOUNTANT' && isDraftOrRejected) ||
+                    isLeadOrAdmin;
 
-                const canApprove = isLeadOrAdmin && (isSubmitted || isDraftOrRejected);
-                const canReject = isLeadOrAdmin && (isSubmitted || rec.status === 'APPROVED');
-                const canDownload = isApprovedOrPaid;
+                  const canApprove = isLeadOrAdmin && (isSubmitted || isDraftOrRejected);
+                  const canReject = isLeadOrAdmin && (isSubmitted || rec.status === 'APPROVED');
+                  const canDownload = isApprovedOrPaid;
 
-                return (
-                  <TableRow key={rec.id} className="hover:bg-slate-50/50 duration-200">
-                    <TableCell className="w-12">
-                      {canCheck && (
-                        <input
-                          type="checkbox"
-                          checked={selectedRecordIds.includes(rec.id)}
-                          onChange={(e) => {
-                            if (e.target.checked) setSelectedRecordIds(prev => [...prev, rec.id]);
-                            else setSelectedRecordIds(prev => prev.filter(id => id !== rec.id));
-                          }}
-                          className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
-                        />
-                      )}
-                    </TableCell>
+                  return (
+                    <TableRow key={rec.id} className="hover:bg-slate-50/50 duration-200">
+                      <TableCell className="w-12">
+                        {canCheck && (
+                          <input
+                            type="checkbox"
+                            checked={selectedRecordIds.includes(rec.id)}
+                            onChange={(e) => {
+                              if (e.target.checked) setSelectedRecordIds(prev => [...prev, rec.id]);
+                              else setSelectedRecordIds(prev => prev.filter(id => id !== rec.id));
+                            }}
+                            className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                          />
+                        )}
+                      </TableCell>
 
-                    <TableCell className="font-bold text-slate-900 text-xs">{rec.recordNumber}</TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <UserCircle2 className="w-5 h-5 text-slate-400 shrink-0" />
-                        <div>
-                          <p className="font-semibold text-slate-800 text-sm">{rec.staffName || 'Unknown'}</p>
-                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{rec.staffUserId || '—'}</p>
+                      <TableCell className="font-bold text-slate-900 text-xs">{rec.recordNumber}</TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <UserCircle2 className="w-5 h-5 text-slate-400 shrink-0" />
+                          <div>
+                            <p className="font-semibold text-slate-800 text-sm">{rec.staffName || 'Unknown'}</p>
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{rec.staffUserId || '—'}</p>
+                          </div>
                         </div>
-                      </div>
-                    </TableCell>
-                    <TableCell><Badge variant="secondary" className="font-bold text-[10px] uppercase tracking-wider">{rec.staffRole || 'N/A'}</Badge></TableCell>
-                    <TableCell className="font-medium text-slate-600 text-sm">{rec.month} {rec.year}</TableCell>
-                    <TableCell className="font-black text-slate-900">{Number(rec.baseSalary || 0).toLocaleString()} <span className="text-[10px] text-slate-400">GNF</span></TableCell>
-                    <TableCell className="font-black text-blue-600">{Number(rec.netSalary || 0).toLocaleString()} <span className="text-[10px] text-blue-300">GNF</span></TableCell>
-                    <TableCell className="text-xs text-slate-500 max-w-[120px] truncate" title={rec.notes || ''}>
-                      {rec.notes ? <span className="italic">{rec.notes}</span> : <span className="text-slate-300">—</span>}
-                    </TableCell>
-                    <TableCell>{statusBadge(rec.status)}</TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex items-center justify-end gap-1.5">
-                        {canEdit && (
-                          <Button
-                            onClick={() => startEditRecord(rec)}
-                            size="icon" variant="ghost"
-                            className="rounded-xl border border-amber-100 bg-amber-50/50 hover:bg-amber-100 text-amber-700 h-8 w-8"
-                            title="Edit Record"
-                          >
-                            <Edit className="w-3.5 h-3.5" />
-                          </Button>
-                        )}
+                      </TableCell>
+                      <TableCell><Badge variant="secondary" className="font-bold text-[10px] uppercase tracking-wider">{rec.staffRole || 'N/A'}</Badge></TableCell>
+                      <TableCell className="font-medium text-slate-600 text-sm">{rec.month} {rec.year}</TableCell>
+                      <TableCell className="font-black text-slate-900">{Number(rec.baseSalary || 0).toLocaleString()} <span className="text-[10px] text-slate-400">GNF</span></TableCell>
+                      <TableCell className="font-black text-blue-600">{Number(rec.netSalary || 0).toLocaleString()} <span className="text-[10px] text-blue-300">GNF</span></TableCell>
+                      <TableCell className="text-xs text-slate-500 max-w-[120px] truncate" title={rec.notes || ''}>
+                        {rec.notes ? <span className="italic">{rec.notes}</span> : <span className="text-slate-300">—</span>}
+                      </TableCell>
+                      <TableCell>{statusBadge(rec.status)}</TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex items-center justify-end gap-1.5">
+                          {canEdit && (
+                            <Button
+                              onClick={() => startEditRecord(rec)}
+                              size="icon" variant="ghost"
+                              className="rounded-xl border border-amber-100 bg-amber-50/50 hover:bg-amber-100 text-amber-700 h-8 w-8"
+                              title="Modifier le dossier"
+                            >
+                              <Edit className="w-3.5 h-3.5" />
+                            </Button>
+                          )}
 
-                        {canDelete && (
-                          <Button
-                            onClick={() => handleDeleteRecord(rec)}
-                            size="icon" variant="ghost"
-                            className="rounded-xl border border-rose-100 bg-rose-50/50 hover:bg-rose-100 text-rose-600 h-8 w-8"
-                            title="Delete Record"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </Button>
-                        )}
+                          {canDelete && (
+                            <Button
+                              onClick={() => handleDeleteRecord(rec)}
+                              size="icon" variant="ghost"
+                              className="rounded-xl border border-rose-100 bg-rose-50/50 hover:bg-rose-100 text-rose-600 h-8 w-8"
+                              title="Supprimer le dossier"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </Button>
+                          )}
 
-                        {/* Accountant: Submit single record */}
-                        {role === 'ACCOUNTANT' && isDraftOrRejected && (
-                          <Button
-                            onClick={() => handleSubmitRecords([rec.id])}
-                            size="sm"
-                            className="bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 rounded-xl text-xs h-8 px-3 font-bold"
-                            title="Submit for Approval"
-                          >
-                            Submit
-                          </Button>
-                        )}
+                          {/* Accountant: Submit single record */}
+                          {role === 'ACCOUNTANT' && isDraftOrRejected && (
+                            <Button
+                              onClick={() => handleSubmitRecords([rec.id])}
+                              size="sm"
+                              className="bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 rounded-xl text-xs h-8 px-3 font-bold"
+                              title="Soumettre à l'approbation"
+                            >
+                              Soumettre
+                            </Button>
+                          )}
 
-                        {/* AccountLead/Admin: Approve */}
-                        {canApprove && (
-                          <Button
-                            onClick={() => handleApproveRecords([rec.id])}
-                            size="icon"
-                            className="bg-emerald-50 text-emerald-600 hover:bg-emerald-100 border border-emerald-200 rounded-xl h-8 w-8"
-                            title="Approve Record"
-                          >
-                            <Check className="w-3.5 h-3.5" />
-                          </Button>
-                        )}
+                          {/* AccountLead/Admin: Approve */}
+                          {canApprove && (
+                            <Button
+                              onClick={() => handleApproveRecords([rec.id])}
+                              size="icon"
+                              className="bg-emerald-50 text-emerald-600 hover:bg-emerald-100 border border-emerald-200 rounded-xl h-8 w-8"
+                              title="Approuver le dossier"
+                            >
+                              <Check className="w-3.5 h-3.5" />
+                            </Button>
+                          )}
 
-                        {/* AccountLead/Admin: Reject */}
-                        {canReject && (
-                          <Button
-                            onClick={() => handleOpenReject(rec.id)}
-                            size="icon"
-                            className="bg-rose-50 text-rose-600 hover:bg-rose-100 border border-rose-200 rounded-xl h-8 w-8"
-                            title="Reject Record"
-                          >
-                            <X className="w-3.5 h-3.5" />
-                          </Button>
-                        )}
+                          {/* AccountLead/Admin: Reject */}
+                          {canReject && (
+                            <Button
+                              onClick={() => handleOpenReject(rec.id)}
+                              size="icon"
+                              className="bg-rose-50 text-rose-600 hover:bg-rose-100 border border-rose-200 rounded-xl h-8 w-8"
+                              title="Rejeter le dossier"
+                            >
+                              <X className="w-3.5 h-3.5" />
+                            </Button>
+                          )}
 
-                        {/* Download Payslip — for APPROVED/PAID records — all roles */}
-                        {canDownload && (
-                          <Button
-                            onClick={() => downloadPayslip(rec)}
-                            size="icon" variant="ghost"
-                            className="rounded-xl border hover:bg-slate-50 h-8 w-8"
-                            title="Download Payslip PDF"
-                          >
-                            <Download className="w-3.5 h-3.5 text-slate-600" />
-                          </Button>
-                        )}
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
+                          {/* Download Payslip — for APPROVED/PAID records — all roles */}
+                          {canDownload && (
+                            <Button
+                              onClick={() => downloadPayslip(rec)}
+                              size="icon" variant="ghost"
+                              className="rounded-xl border hover:bg-slate-50 h-8 w-8"
+                              title="Télécharger le PDF du bulletin de paie"
+                            >
+                              <Download className="w-3.5 h-3.5 text-slate-600" />
+                            </Button>
+                          )}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
           </div>
         </CardContent>
       </Card>
@@ -676,25 +676,25 @@ export default function StaffFinance() {
         <Card className="border-0 shadow-xl shadow-slate-100/50 bg-white rounded-3xl overflow-hidden">
           <CardHeader className="px-6 py-5 border-b border-slate-50">
             <CardTitle className="text-sm font-black uppercase tracking-wider text-slate-500 flex items-center gap-2">
-              <Clock className="w-4 h-4 text-amber-500" /> Salary Payouts Pending Disbursement
+              <Clock className="w-4 h-4 text-amber-500" /> Versement de salaires en attente
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="font-bold text-slate-700">Record ID</TableHead>
-                  <TableHead className="font-bold text-slate-700">Employee</TableHead>
-                  <TableHead className="font-bold text-slate-700">Role</TableHead>
-                  <TableHead className="font-bold text-slate-700">Period</TableHead>
-                  <TableHead className="font-bold text-slate-700">Net Salary Due</TableHead>
-                  <TableHead className="font-bold text-slate-700">Status</TableHead>
+                  <TableHead className="font-bold text-slate-700">ID Dossier</TableHead>
+                  <TableHead className="font-bold text-slate-700">Personnel</TableHead>
+                  <TableHead className="font-bold text-slate-700">Rôle</TableHead>
+                  <TableHead className="font-bold text-slate-700">Période</TableHead>
+                  <TableHead className="font-bold text-slate-700">Salaire net dû</TableHead>
+                  <TableHead className="font-bold text-slate-700">Statut</TableHead>
                   <TableHead className="text-right font-bold text-slate-700">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {approvedPendingPayout.length === 0 ? (
-                  <TableRow><TableCell colSpan={7} className="text-center text-slate-400 py-8">No approved payouts pending disbursement</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={7} className="text-center text-slate-400 py-8">Aucun versement de salaire approuvé en attente de décaissement</TableCell></TableRow>
                 ) : approvedPendingPayout.map((rec: any) => (
                   <TableRow key={rec.id} className="hover:bg-slate-50/50 duration-200">
                     <TableCell className="font-bold text-slate-900 text-xs">{rec.recordNumber}</TableCell>
@@ -710,7 +710,7 @@ export default function StaffFinance() {
                     <TableCell><Badge variant="secondary" className="font-bold text-[10px] uppercase">{rec.staffRole || 'N/A'}</Badge></TableCell>
                     <TableCell className="text-sm text-slate-600">{rec.month} {rec.year}</TableCell>
                     <TableCell className="font-black text-blue-600">{Number(rec.netSalary || 0).toLocaleString()} <span className="text-[10px] text-blue-300">GNF</span></TableCell>
-                    <TableCell><Badge className="bg-blue-600 hover:bg-blue-700">APPROVED</Badge></TableCell>
+                    <TableCell><Badge className="bg-blue-600 hover:bg-blue-700">APProuvé</Badge></TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-2">
                         <Button
@@ -718,7 +718,7 @@ export default function StaffFinance() {
                           size="sm"
                           className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs gap-1.5"
                         >
-                          <CreditCard className="w-3.5 h-3.5" /> Disburse Pay
+                          <CreditCard className="w-3.5 h-3.5" /> Versement
                         </Button>
                         <Button
                           onClick={() => downloadPayslip(rec)}
@@ -742,80 +742,80 @@ export default function StaffFinance() {
       <Card className="border-0 shadow-xl shadow-slate-100/50 bg-white rounded-3xl overflow-hidden">
         <CardHeader className="px-6 py-5 border-b border-slate-50">
           <CardTitle className="text-sm font-black uppercase tracking-wider text-slate-500 flex items-center gap-2">
-            <UserCheck className="w-4 h-4 text-emerald-500" /> Approved Payslips &amp; Payout Ledger
+            <UserCheck className="w-4 h-4 text-emerald-500" /> Bulletins de paie approuvés et grand livre de paiement
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           <div className="overflow-y-auto" style={{ maxHeight: '340px' }}>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="font-bold text-slate-700">Record ID</TableHead>
-                <TableHead className="font-bold text-slate-700">Employee</TableHead>
-                <TableHead className="font-bold text-slate-700">Period</TableHead>
-                <TableHead className="font-bold text-slate-700">Net Salary</TableHead>
-                <TableHead className="font-bold text-slate-700">Disbursed</TableHead>
-                <TableHead className="font-bold text-slate-700">Outstanding</TableHead>
-                <TableHead className="font-bold text-slate-700">Status</TableHead>
-                <TableHead className="text-right font-bold text-slate-700">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {approvedLedger.length === 0 ? (
-                <TableRow><TableCell colSpan={8} className="text-center text-slate-400 py-10">No approved payslips yet</TableCell></TableRow>
-              ) : approvedLedger.map((rec: any) => {
-                const recordPayments = salaryPayments.filter((p: any) =>
-                  p.salaryRecordId === rec.id && p.status === 'APPROVED'
-                );
-                const totalDisbursed = recordPayments.reduce((s: number, p: any) => s + Number(p.amount || 0), 0);
-                const netSalary = Number(rec.netSalary || 0);
-                const outstanding = Math.max(0, netSalary - totalDisbursed);
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="font-bold text-slate-700">ID Dossier</TableHead>
+                  <TableHead className="font-bold text-slate-700">Personnel</TableHead>
+                  <TableHead className="font-bold text-slate-700">Période</TableHead>
+                  <TableHead className="font-bold text-slate-700">Salaire net</TableHead>
+                  <TableHead className="font-bold text-slate-700">Versé</TableHead>
+                  <TableHead className="font-bold text-slate-700">Restant</TableHead>
+                  <TableHead className="font-bold text-slate-700">Statut</TableHead>
+                  <TableHead className="text-right font-bold text-slate-700">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {approvedLedger.length === 0 ? (
+                  <TableRow><TableCell colSpan={8} className="text-center text-slate-400 py-10">Aucun bulletin de paie approuvé</TableCell></TableRow>
+                ) : approvedLedger.map((rec: any) => {
+                  const recordPayments = salaryPayments.filter((p: any) =>
+                    p.salaryRecordId === rec.id && p.status === 'APPROVED'
+                  );
+                  const totalDisbursed = recordPayments.reduce((s: number, p: any) => s + Number(p.amount || 0), 0);
+                  const netSalary = Number(rec.netSalary || 0);
+                  const outstanding = Math.max(0, netSalary - totalDisbursed);
 
-                return (
-                  <TableRow key={rec.id} className="hover:bg-slate-50/50 duration-200">
-                    <TableCell className="font-bold text-slate-900 text-xs">{rec.recordNumber}</TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <UserCircle2 className="w-4 h-4 text-slate-400" />
-                        <div>
-                          <p className="font-semibold text-slate-800">{rec.staffName || 'N/A'}</p>
-                          <p className="text-[10px] text-slate-400">{rec.staffUserId || '—'}</p>
+                  return (
+                    <TableRow key={rec.id} className="hover:bg-slate-50/50 duration-200">
+                      <TableCell className="font-bold text-slate-900 text-xs">{rec.recordNumber}</TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <UserCircle2 className="w-4 h-4 text-slate-400" />
+                          <div>
+                            <p className="font-semibold text-slate-800">{rec.staffName || 'N/A'}</p>
+                            <p className="text-[10px] text-slate-400">{rec.staffUserId || '—'}</p>
+                          </div>
                         </div>
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-sm text-slate-600">{rec.month} {rec.year}</TableCell>
-                    <TableCell className="font-black text-slate-900">{netSalary.toLocaleString()} <span className="text-[10px] text-slate-400">GNF</span></TableCell>
-                    <TableCell className="font-bold text-emerald-600">{totalDisbursed.toLocaleString()} <span className="text-[10px] text-emerald-300">GNF</span></TableCell>
-                    <TableCell className={`font-bold ${outstanding > 0 ? 'text-amber-600' : 'text-slate-400'}`}>
-                      {outstanding > 0 ? `${outstanding.toLocaleString()} GNF` : '—'}
-                    </TableCell>
-                    <TableCell>{statusBadge(rec.status)}</TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        {/* Lead/Admin: disburse remaining amount if still outstanding */}
-                        {(role === 'ACCOUNTLEAD' || role === 'ADMIN') && (rec.status === 'APPROVED' || rec.status === 'PARTIALLY_PAID') && (
+                      </TableCell>
+                      <TableCell className="text-sm text-slate-600">{rec.month} {rec.year}</TableCell>
+                      <TableCell className="font-black text-slate-900">{netSalary.toLocaleString()} <span className="text-[10px] text-slate-400">GNF</span></TableCell>
+                      <TableCell className="font-bold text-emerald-600">{totalDisbursed.toLocaleString()} <span className="text-[10px] text-emerald-300">GNF</span></TableCell>
+                      <TableCell className={`font-bold ${outstanding > 0 ? 'text-amber-600' : 'text-slate-400'}`}>
+                        {outstanding > 0 ? `${outstanding.toLocaleString()} GNF` : '—'}
+                      </TableCell>
+                      <TableCell>{statusBadge(rec.status)}</TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          {/* Lead/Admin: disburse remaining amount if still outstanding */}
+                          {(role === 'ACCOUNTLEAD' || role === 'ADMIN') && (rec.status === 'APPROVED' || rec.status === 'PARTIALLY_PAID') && (
+                            <Button
+                              onClick={() => openPayoutDialog(rec)}
+                              size="sm"
+                              className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs gap-1.5"
+                            >
+                              <CreditCard className="w-3.5 h-3.5" /> Verser
+                            </Button>
+                          )}
                           <Button
-                            onClick={() => openPayoutDialog(rec)}
-                            size="sm"
-                            className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs gap-1.5"
+                            onClick={() => downloadPayslip(rec)}
+                            size="sm" variant="outline"
+                            className="rounded-xl gap-2 text-xs"
                           >
-                            <CreditCard className="w-3.5 h-3.5" /> Disburse
+                            <Download className="w-3.5 h-3.5" /> PDF Bulletin
                           </Button>
-                        )}
-                        <Button
-                          onClick={() => downloadPayslip(rec)}
-                          size="sm" variant="outline"
-                          className="rounded-xl gap-2 text-xs"
-                        >
-                          <Download className="w-3.5 h-3.5" /> PDF Payslip
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
           </div>
         </CardContent>
       </Card>
@@ -825,12 +825,12 @@ export default function StaffFinance() {
         <DialogContent className="max-w-md bg-white rounded-3xl">
           <DialogHeader>
             <DialogTitle className="text-lg font-black uppercase tracking-wide">
-              {editingRecord ? 'Edit Staff Salary Payroll Record' : 'Generate Staff Salary Statement'}
+              {editingRecord ? 'Modifier le bulletin de paie' : 'Générer le bulletin de paie'}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-1">
-              <label className="text-xs font-black uppercase text-slate-400">Select Employee</label>
+              <label className="text-xs font-black uppercase text-slate-400">Personnel</label>
               <StaffCombobox
                 staff={staff}
                 value={selectedStaffId}
@@ -840,20 +840,20 @@ export default function StaffFinance() {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1">
-                <label className="text-xs font-black uppercase text-slate-400">Month</label>
+                <label className="text-xs font-black uppercase text-slate-400">Mois</label>
                 <Select value={salaryMonth} onValueChange={setSalaryMonth}>
                   <SelectTrigger className="h-11 rounded-xl bg-slate-50">
-                    <SelectValue placeholder="Month" />
+                    <SelectValue placeholder="Mois" />
                   </SelectTrigger>
                   <SelectContent>
-                    {['January','February','March','April','May','June','July','August','September','October','November','December'].map((m) => (
+                    {['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'].map((m) => (
                       <SelectItem key={m} value={m}>{m}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-1">
-                <label className="text-xs font-black uppercase text-slate-400">Year</label>
+                <label className="text-xs font-black uppercase text-slate-400">Année</label>
                 <Input
                   type="number"
                   value={salaryYear}
@@ -864,7 +864,7 @@ export default function StaffFinance() {
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-black uppercase text-slate-400">Base Salary (GNF)</label>
+              <label className="text-xs font-black uppercase text-slate-400">Salaire de base (GNF)</label>
               <Input
                 type="number"
                 value={baseSalary || ''}
@@ -875,7 +875,7 @@ export default function StaffFinance() {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1">
-                <label className="text-xs font-black uppercase text-slate-400">Allowances (GNF)</label>
+                <label className="text-xs font-black uppercase text-slate-400">Indemnités (GNF)</label>
                 <Input
                   type="number"
                   value={allowances || ''}
@@ -884,7 +884,7 @@ export default function StaffFinance() {
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-xs font-black uppercase text-slate-400">Deductions (GNF)</label>
+                <label className="text-xs font-black uppercase text-slate-400">Retenues (GNF)</label>
                 <Input
                   type="number"
                   value={deductions || ''}
@@ -895,12 +895,12 @@ export default function StaffFinance() {
             </div>
 
             <div className="p-4 bg-slate-50 border rounded-2xl flex justify-between items-center">
-              <span className="text-xs font-black text-slate-400 uppercase tracking-widest">Net Salary Payout</span>
+              <span className="text-xs font-black text-slate-400 uppercase tracking-widest">Salaire net à verser</span>
               <span className="text-lg font-black text-blue-600">{computedNetSalary.toLocaleString()} GNF</span>
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-black uppercase text-slate-400">Payroll Notes</label>
+              <label className="text-xs font-black uppercase text-slate-400">Notes de paie</label>
               <Input
                 value={salaryNotes}
                 onChange={(e) => setSalaryNotes(e.target.value)}
@@ -914,7 +914,7 @@ export default function StaffFinance() {
               onClick={handleCreateOrEditSalaryRecord}
               className="w-full h-11 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-bold uppercase tracking-wider text-xs duration-300"
             >
-              {editingRecord ? 'Save Payroll Changes' : 'Generate Payroll Record'}
+              {editingRecord ? 'Enregistrer les modifications' : 'Générer le bulletin de paie'}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -925,21 +925,21 @@ export default function StaffFinance() {
         <DialogContent className="max-w-md bg-white rounded-3xl">
           <DialogHeader>
             <DialogTitle className="text-lg font-black uppercase tracking-wide">
-              Disburse Salary Payout
+              Verser le salaire
             </DialogTitle>
           </DialogHeader>
           {payoutTargetRecord && (
             <div className="space-y-4 py-4">
               {/* Record summary */}
               <div className="p-4 bg-slate-50 rounded-2xl border space-y-1">
-                <p className="text-xs font-black uppercase text-slate-400 tracking-widest">Salary Record</p>
+                <p className="text-xs font-black uppercase text-slate-400 tracking-widest">Dossier de paie</p>
                 <p className="font-bold text-slate-900">{payoutTargetRecord.recordNumber}</p>
                 <p className="text-sm text-slate-600">{payoutTargetRecord.staffName} — {payoutTargetRecord.month} {payoutTargetRecord.year}</p>
-                <p className="text-xs text-slate-500">Net Salary Due: <span className="font-black text-blue-600">{Number(payoutTargetRecord.netSalary || 0).toLocaleString()} GNF</span></p>
+                <p className="text-xs text-slate-500">Salaire net dû: <span className="font-black text-blue-600">{Number(payoutTargetRecord.netSalary || 0).toLocaleString()} GNF</span></p>
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-black uppercase text-slate-400">Disbursed Amount (GNF)</label>
+                <label className="text-xs font-black uppercase text-slate-400">Montant à verser (GNF)</label>
                 <Input
                   type="number"
                   value={payoutAmount || ''}
@@ -949,26 +949,26 @@ export default function StaffFinance() {
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-black uppercase text-slate-400">Disbursement Method</label>
+                <label className="text-xs font-black uppercase text-slate-400">Mode de versement</label>
                 <Select value={payoutMethod} onValueChange={setPayoutMethod}>
                   <SelectTrigger className="h-11 rounded-xl bg-slate-50">
-                    <SelectValue placeholder="Method" />
+                    <SelectValue placeholder="Mode" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="CASH">Cash</SelectItem>
-                    <SelectItem value="BANK">Bank Transfer</SelectItem>
+                    <SelectItem value="CASH">Espèces</SelectItem>
+                    <SelectItem value="BANK">Transfert bancaire</SelectItem>
                     <SelectItem value="MOBILE_MONEY">Mobile Money</SelectItem>
-                    <SelectItem value="CARD">Debit Card</SelectItem>
+                    <SelectItem value="CARD">Carte de débit</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-black uppercase text-slate-400">Disbursement Notes</label>
+                <label className="text-xs font-black uppercase text-slate-400">Notes de versement</label>
                 <Input
                   value={payoutNotes}
                   onChange={(e) => setPayoutNotes(e.target.value)}
-                  placeholder="Reference numbers, transaction details..."
+                  placeholder="Référence, détails de la transaction..."
                   className="h-11 rounded-xl bg-slate-50"
                 />
               </div>
@@ -979,7 +979,7 @@ export default function StaffFinance() {
               onClick={handleDisbursePayout}
               className="w-full h-11 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold uppercase tracking-wider text-xs duration-300"
             >
-              <DollarSign className="w-4 h-4 mr-2" /> Confirm Disbursement
+              <DollarSign className="w-4 h-4 mr-2" /> Confirmer le versement
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -989,15 +989,15 @@ export default function StaffFinance() {
       <Dialog open={isRejectOpen} onOpenChange={setIsRejectOpen}>
         <DialogContent className="max-w-sm bg-white rounded-3xl">
           <DialogHeader>
-            <DialogTitle className="text-md font-black uppercase tracking-wide text-rose-600">Reject Salary Record</DialogTitle>
+            <DialogTitle className="text-md font-black uppercase tracking-wide text-rose-600">Rejet de dossier de paie</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-3">
             <div className="space-y-1">
-              <label className="text-xs font-black uppercase text-slate-400">Rejection Reason</label>
+              <label className="text-xs font-black uppercase text-slate-400">Motif du rejet</label>
               <Input
                 value={rejectionReason}
                 onChange={(e) => setRejectionReason(e.target.value)}
-                placeholder="Specify reason for audit trail..."
+                placeholder="Spécifier le motif du rejet..."
                 className="h-11 rounded-xl bg-slate-50"
               />
             </div>
@@ -1007,7 +1007,7 @@ export default function StaffFinance() {
               onClick={handleRejectSubmit}
               className="w-full h-11 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-bold uppercase tracking-wider text-xs duration-300"
             >
-              Confirm Rejection
+              Confirmer le rejet
             </Button>
           </DialogFooter>
         </DialogContent>
