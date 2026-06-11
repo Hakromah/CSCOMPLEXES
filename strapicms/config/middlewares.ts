@@ -11,6 +11,8 @@ const config: Core.Config.Middlewares = [
         'https://2cscomplexes.com',
         'https://www.2cscomplexes.com',
         'https://api.2cscomplexes.com',
+        'http://localhost:3000',      // <-- ADD THIS (Your Next.js local dev default)
+        'http://127.0.0.1:3000',
         'http://localhost:3001',
         'http://127.0.0.1:3001',
         'http://192.168.1.137:3001',

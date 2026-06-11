@@ -50,7 +50,7 @@ const exportGradebookPDF = (
   reportData: any[],
   exams: any[],
   className: string,
-  schoolName = 'A.M. FOFANA ISLAMIC & ENGLISH HIGH SCHOOL',
+  schoolName = '2CS COMPLEXE SCOLAIRE CAMARA SALEMATOU',
 ) => {
   if (reportData.length === 0) {
     toast.error('Aucune donnée du carnet de notes à exporter.');
@@ -198,8 +198,8 @@ const exportGradebookPDF = (
     doc.save(`Rapport de notes_${className.replace(/\s+/g, '_')}_${new Date().getFullYear()}.pdf`);
     toast.success('Rapport de notes PDF exporté avec succès !');
   } catch (err) {
-    console.error('PDF generation failed:', err);
-    toast.error('Export failed. Please try again.');
+    console.error('Génération du PDF échouée :', err);
+    toast.error('Export échoué. Veuillez réessayer.');
   }
 };
 
@@ -246,7 +246,7 @@ export default function AdminResultsPage() {
       const res = await api.get(`/admin/results/filter?${params.toString()}`);
       setResults(Array.isArray(res.data) ? res.data : []);
     } catch (err: any) {
-      toast.error('Failed to fetch results.');
+      toast.error('Échec de la récupération des résultats.');
       console.error(err);
     } finally {
       setLoading(false);
@@ -271,7 +271,7 @@ export default function AdminResultsPage() {
       const studentMap: any = {};
       (Array.isArray(resultsRes.data) ? resultsRes.data : []).forEach((r: any) => {
         const sId = r?.student?.userId || r?.student?.id || `unknown-${r?.id}`;
-        const studentName = r.student?.username || r.student?.name || 'Unknown Student';
+        const studentName = r.student?.username || r.student?.name || 'Élève Inconnu';
         const studentId = r?.student?.id || null;
         const examId = r?.exam?.id;
         if (!examId) return;
@@ -416,13 +416,13 @@ export default function AdminResultsPage() {
               <Table>
                 <TableHeader className="sticky top-0 z-10">
                   <TableRow className="bg-slate-900 hover:bg-slate-900 border-none">
-                    <TableHead className="text-white font-black text-[9px] uppercase tracking-wider py-4 pl-6">Étudiant</TableHead>
-                    <TableHead className="text-white font-black text-[9px] uppercase tracking-wider">Classe</TableHead>
-                    <TableHead className="text-white font-black text-[9px] uppercase tracking-wider">Évaluation</TableHead>
-                    <TableHead className="text-white font-black text-[9px] uppercase tracking-wider text-center">Poids</TableHead>
-                    <TableHead className="text-white font-black text-[9px] uppercase tracking-wider text-center">Note</TableHead>
-                    <TableHead className="text-white font-black text-[9px] uppercase tracking-wider text-center">Mention</TableHead>
-                    <TableHead className="text-white font-black text-[9px] uppercase tracking-wider text-right pr-6">Statut</TableHead>
+                    <TableHead className="text-white font-black text-[9px] uppercase tracking-wider py-4 pl-6">ETUDIANT</TableHead>
+                    <TableHead className="text-white font-black text-[9px] uppercase tracking-wider">CLASSE</TableHead>
+                    <TableHead className="text-white font-black text-[9px] uppercase tracking-wider">ÉVALUATION</TableHead>
+                    <TableHead className="text-white font-black text-[9px] uppercase tracking-wider text-center">POIDS</TableHead>
+                    <TableHead className="text-white font-black text-[9px] uppercase tracking-wider text-center">NOTE</TableHead>
+                    <TableHead className="text-white font-black text-[9px] uppercase tracking-wider text-center">MENTION</TableHead>
+                    <TableHead className="text-white font-black text-[9px] uppercase tracking-wider text-right pr-6">STATUT</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -618,8 +618,8 @@ export default function AdminResultsPage() {
                             <TableRow
                               key={student.id}
                               className={`border-slate-100 cursor-pointer transition-colors ${isSelected
-                                  ? 'bg-blue-50 hover:bg-blue-100'
-                                  : 'hover:bg-slate-50/80'
+                                ? 'bg-blue-50 hover:bg-blue-100'
+                                : 'hover:bg-slate-50/80'
                                 }`}
                               onClick={() => setSelectedStudentForChart(isSelected ? null : student)}
                               title="Cliquez pour afficher le graphique des performances"

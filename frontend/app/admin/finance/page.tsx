@@ -54,7 +54,7 @@ const BarTooltip = ({ active, payload, label }: any) => {
   );
 };
 
-const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const MONTHS = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
 
 export default function FinanceDashboard() {
   const [stats, setStats] = useState<any>(null);
@@ -71,7 +71,7 @@ export default function FinanceDashboard() {
       const res = await api.get(`/school-finance/stats?year=${yr}`);
       setStats(res.data);
     } catch (e: any) {
-      toast.error('Failed to sync financial analytics ledger');
+      toast.error('Échec de la synchronisation du grand livre d\'analyse financière');
       console.error(e);
     } finally {
       setLoading(false);
@@ -101,12 +101,12 @@ export default function FinanceDashboard() {
     if (barMonth === 'ALL') {
       // All-time annual totals for selected year
       return [
-        { name: 'Tuition', value: stats.tuitionRevenue || 0, fill: '#3b82f6' },
+        { name: 'Scolarité', value: stats.tuitionRevenue || 0, fill: '#3b82f6' },
         { name: 'Transport', value: stats.transportationRevenue || 0, fill: '#10b981' },
         { name: 'T-Shirt / Uniform', value: stats.tshirtRevenue || 0, fill: '#8b5cf6' },
-        { name: 'Registration', value: stats.registrationRevenue || 0, fill: '#f59e0b' },
-        { name: 'Other', value: stats.otherRevenue || 0, fill: '#64748b' },
-        { name: 'Salary Expenses', value: stats.salaryExpenses || 0, fill: '#f43f5e' },
+        { name: 'Inscription', value: stats.registrationRevenue || 0, fill: '#f59e0b' },
+        { name: 'Autre', value: stats.otherRevenue || 0, fill: '#64748b' },
+        { name: 'Dépenses de salaire', value: stats.salaryExpenses || 0, fill: '#f43f5e' },
       ];
     }
 
@@ -115,12 +115,12 @@ export default function FinanceDashboard() {
     const m = stats.yearlyTrends?.[monthIndex];
     if (!m) return [];
     return [
-      { name: 'Tuition', value: m.tuition || 0, fill: '#3b82f6' },
+      { name: 'Scolarité', value: m.tuition || 0, fill: '#3b82f6' },
       { name: 'Transport', value: m.transport || 0, fill: '#10b981' },
-      { name: 'T-Shirt / Uniform', value: m.tshirt || 0, fill: '#8b5cf6' },
-      { name: 'Registration', value: m.registration || 0, fill: '#f59e0b' },
-      { name: 'Other', value: m.other || 0, fill: '#64748b' },
-      { name: 'Salary Expenses', value: m.salary || 0, fill: '#f43f5e' },
+      { name: 'T-Shirt/Uniform', value: m.tshirt || 0, fill: '#8b5cf6' },
+      { name: 'Inscription', value: m.registration || 0, fill: '#f59e0b' },
+      { name: 'Autre', value: m.other || 0, fill: '#64748b' },
+      { name: 'Dépenses de salaire', value: m.salary || 0, fill: '#f43f5e' },
     ];
   }, [stats, barMonth]);
 
@@ -132,36 +132,36 @@ export default function FinanceDashboard() {
 
   const kpis = [
     {
-      title: 'Annual Revenue',
+      title: 'Chiffre d\'affaire annuel',
       value: `${fmtGNF(stats?.monthlyRevenue || 0)} GNF`,
-      desc: `All approved payments for ${barYear}`,
+      desc: `Toutes les paiements approuvés pour ${barYear}`,
       icon: DollarSign,
       color: 'text-emerald-600 bg-emerald-50 border-emerald-100'
     },
     {
-      title: 'Outstanding Debt',
+      title: 'Dette impayée',
       value: `${fmtGNF(stats?.outstandingDebt || 0)} GNF`,
-      desc: 'Remaining unpaid invoice balances',
+      desc: 'Solde des factures impayées',
       icon: ShieldAlert,
       color: 'text-rose-600 bg-rose-50 border-rose-100'
     },
     {
-      title: 'Salary Expenses',
+      title: 'Dépenses de salaire',
       value: `${fmtGNF(stats?.salaryExpenses || 0)} GNF`,
-      desc: 'Disbursed payroll payments',
+      desc: 'Dépenses de salaire',
       icon: CreditCard,
       color: 'text-blue-600 bg-blue-50 border-blue-100'
     },
     {
-      title: 'Payment Completion Ratio',
+      title: 'Pourcentage de paiement',
       value: `${paidRatio}%`,
-      desc: `${stats?.paidStudents || 0} of ${stats?.billedStudents || 0} billed students fully paid`,
+      desc: `${stats?.paidStudents || 0} des ${stats?.billedStudents || 0} élèves facturés entièrement payés`,
       icon: Percent,
       color: paidRatio >= 75
         ? 'text-emerald-600 bg-emerald-50 border-emerald-100'
         : paidRatio >= 40
-        ? 'text-amber-600 bg-amber-50 border-amber-100'
-        : 'text-rose-600 bg-rose-50 border-rose-100'
+          ? 'text-amber-600 bg-amber-50 border-amber-100'
+          : 'text-rose-600 bg-rose-50 border-rose-100'
     }
   ];
 
@@ -169,7 +169,7 @@ export default function FinanceDashboard() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[80vh] gap-4">
         <RefreshCw className="w-8 h-8 text-blue-600 animate-spin" />
-        <p className="text-sm font-semibold tracking-wide text-slate-500 uppercase">Synchronizing Accounting Ledger...</p>
+        <p className="text-sm font-semibold tracking-wide text-slate-500 uppercase">Synchronisation de la balance comptable...</p>
       </div>
     );
   }
@@ -179,14 +179,14 @@ export default function FinanceDashboard() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="space-y-1">
-          <h1 className="text-3xl font-black tracking-tight text-slate-900 leading-none italic uppercase">Finance Command Center</h1>
-          <p className="text-sm text-slate-500 font-medium">Real-time ledger audit totals and payment completion analytics</p>
+          <h1 className="text-3xl font-black tracking-tight text-slate-900 leading-none italic uppercase">Centre de commande de la finance</h1>
+          <p className="text-sm text-slate-500 font-medium">Total des audits du grand livre en temps réel et analyse de l'achèvement des paiements</p>
         </div>
         <button
           onClick={() => fetchStats(barYear)}
           className="flex items-center gap-2 px-4 h-11 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl transition-all duration-300 shadow-sm text-xs font-black uppercase tracking-wider text-slate-700"
         >
-          <RefreshCw className="w-3.5 h-3.5" /> Refresh Ledger
+          <RefreshCw className="w-3.5 h-3.5" /> Synchroniser le grand livre
         </button>
       </div>
 
@@ -208,7 +208,7 @@ export default function FinanceDashboard() {
                   <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">{kpi.desc}</p>
                 </div>
                 {/* Progress bar for payment ratio */}
-                {kpi.title === 'Payment Completion Ratio' && (
+                {kpi.title === 'Pourcentage de paiement' && (
                   <div className="mt-3">
                     <div className="h-2 rounded-full bg-slate-100 overflow-hidden">
                       <div
@@ -231,7 +231,7 @@ export default function FinanceDashboard() {
         <Card className="border-0 shadow-xl shadow-slate-100/50 rounded-3xl bg-white overflow-hidden">
           <CardHeader className="border-b border-slate-50 px-6 py-5">
             <CardTitle className="text-sm font-black uppercase tracking-wider text-slate-500 flex items-center gap-2">
-              <TrendingUp className="w-4 h-4 text-blue-600" /> Revenue &amp; Debt Dynamics ({barYear})
+              <TrendingUp className="w-4 h-4 text-blue-600" /> Dynamiques des revenus et des dettes ({barYear})
             </CardTitle>
           </CardHeader>
           <CardContent className="p-6">
@@ -287,16 +287,16 @@ export default function FinanceDashboard() {
           <CardHeader className="border-b border-slate-50 px-6 py-5">
             <div className="flex items-center justify-between gap-3 flex-wrap">
               <CardTitle className="text-sm font-black uppercase tracking-wider text-slate-500 flex items-center gap-2">
-                <Landmark className="w-4 h-4 text-emerald-600" /> Revenue Allocations (GNF)
+                <Landmark className="w-4 h-4 text-emerald-600" /> Répartition des revenus (GNF)
               </CardTitle>
               {/* Filters */}
               <div className="flex items-center gap-2">
                 <Select value={barMonth} onValueChange={setBarMonth}>
                   <SelectTrigger className="h-8 w-[110px] rounded-xl bg-slate-50 border-slate-100 text-[11px] font-bold">
-                    <SelectValue placeholder="All Months" />
+                    <SelectValue placeholder="Tous les mois" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="ALL">All Months</SelectItem>
+                    <SelectItem value="ALL">Tous les mois</SelectItem>
                     {MONTHS.map((m, i) => (
                       <SelectItem key={m} value={String(i + 1)}>{m}</SelectItem>
                     ))}
@@ -304,7 +304,7 @@ export default function FinanceDashboard() {
                 </Select>
                 <Select value={barYear} onValueChange={setBarYear}>
                   <SelectTrigger className="h-8 w-[90px] rounded-xl bg-slate-50 border-slate-100 text-[11px] font-bold">
-                    <SelectValue placeholder="Year" />
+                    <SelectValue placeholder="Année" />
                   </SelectTrigger>
                   <SelectContent>
                     {[2024, 2025, 2026, 2027].map(y => (

@@ -33,7 +33,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 
 const formSchema = z.object({
-  name: z.string().min(1, { message: 'Subject name is required' }),
+  name: z.string().min(1, { message: 'Le nom de la matière est requis' }),
 });
 
 interface Subject {
@@ -58,7 +58,7 @@ export default function AdvancedSubjectsPage() {
       const response = await api.get('/admin/subjects');
       setSubjects(response.data);
     } catch (error) {
-      toast.error('Failed to sync curriculum data');
+      toast.error('Échec de la synchronisation des données du programme');
       console.log(error)
     } finally {
       setLoading(false);
@@ -69,22 +69,22 @@ export default function AdvancedSubjectsPage() {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     const isEditing = !!editingSubject;
-    const tid = toast.loading(isEditing ? 'Refining subject...' : 'Cataloging new subject...');
+    const tid = toast.loading(isEditing ? 'Raffinement de la matière...' : 'Catalogage de nouvelle matière...');
 
     try {
       if (isEditing) {
         await api.put(`/admin/subjects/${editingSubject.id}`, values);
-        toast.success('Subject details updated', { id: tid });
+        toast.success('Détails de la matière mis à jour', { id: tid });
       } else {
         await api.post('/admin/subjects', values);
-        toast.success('Subject added to registry', { id: tid });
+        toast.success('Sujet ajouté au registre', { id: tid });
       }
       fetchSubjects();
       setIsDialogOpen(false);
       setEditingSubject(null);
       form.reset();
     } catch (error) {
-      toast.error('Operation failed', { id: tid });
+      toast.error('Échec de l\'opération', { id: tid });
       console.log(error)
     }
   };
@@ -96,14 +96,14 @@ export default function AdvancedSubjectsPage() {
   };
 
   const handleDelete = async (id: number) => {
-    if (!confirm("Are you sure? This will remove the subject from all academic records.")) return;
-    const tid = toast.loading('Removing from catalog...');
+    if (!confirm("Êtes-vous sûr ? Cela supprimera la matière de tous les dossiers académiques.")) return;
+    const tid = toast.loading('Retrait du catalogue...');
     try {
       await api.delete(`/admin/subjects/${id}`);
-      toast.success('Subject removed', { id: tid });
+      toast.success('Matière supprimée', { id: tid });
       fetchSubjects();
     } catch (error) {
-      toast.error('Action denied. Subject may be in use.', { id: tid });
+      toast.error('Action denied. La matière peut être en cours d\'utilisation.', { id: tid });
       console.log(error)
     }
   };
@@ -115,7 +115,7 @@ export default function AdvancedSubjectsPage() {
   if (loading) return (
     <div className="h-screen flex flex-col items-center justify-center gap-4 bg-[#f8fafc]">
       <Loader2 className="animate-spin text-primary" size={40} />
-      <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Syncing Catalog...</p>
+      <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Synchronisation du Catalogue...</p>
     </div>
   );
 
@@ -128,17 +128,17 @@ export default function AdvancedSubjectsPage() {
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-primary">
               <Library size={18} />
-              <span className="text-[10px] font-black uppercase tracking-[0.3em]">Curriculum Master</span>
+              <span className="text-[10px] font-black uppercase tracking-[0.3em]">Programme d'études principal</span>
             </div>
             <h1 className="text-[clamp(1.2rem,2vw+1rem,2rem)] font-black text-slate-900 tracking-tighter sm:text-6xl italic">
-              Academic <span className="text-primary">Catalog.</span>
+              Catalogue des <span className="text-primary">matières.</span>
             </h1>
           </div>
           <Button
             onClick={() => openDialog()}
             className="bg-slate-900 hover:bg-blue-600 text-white rounded-3xl h-14 px-8 font-black transition-all shadow-xl shadow-slate-200"
           >
-            <Plus size={20} className="mr-2" /> CREATE SUBJECT
+            <Plus size={20} className="mr-2" />AJOUTER UN SUJET
           </Button>
         </div>
 
@@ -146,7 +146,7 @@ export default function AdvancedSubjectsPage() {
         <div className="relative group max-w-2xl">
           <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors" size={20} />
           <Input
-            placeholder="Search catalog by subject name..."
+            placeholder="Rechercher dans le catalogue par nom de matière..."
             className="h-16 pl-16 pr-8 rounded-4xl border border-primary/0 lg:hover:border-primary duration-500  shadow-sm bg-white font-bold text-slate-600 focus-visible:ring-blue-600"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -182,10 +182,10 @@ export default function AdvancedSubjectsPage() {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="rounded-2xl p-2 shadow-2xl border-slate-100 min-w-[140px]">
                         <DropdownMenuItem onClick={() => openDialog(subject)} className="rounded-xl font-bold text-[10px] uppercase tracking-widest p-3 cursor-pointer">
-                          <Pencil size={14} className="mr-2 text-amber-500" /> Edit
+                          <Pencil size={14} className="mr-2 text-amber-500" /> Modifier
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => handleDelete(subject.id)} className="rounded-xl font-bold text-[10px] uppercase tracking-widest p-3 cursor-pointer text-rose-600 focus:bg-rose-50 focus:text-rose-600">
-                          <Trash2 size={14} className="mr-2" /> Delete
+                          <Trash2 size={14} className="mr-2" /> Supprimer
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -203,7 +203,7 @@ export default function AdvancedSubjectsPage() {
                         <GraduationCap size={12} /> Standard
                       </div>
                       <div className="flex items-center gap-1.5 text-[9px] font-black text-blue-500 uppercase tracking-widest">
-                        <Sparkles size={12} /> Unified
+                        <Sparkles size={12} /> Unifié
                       </div>
                     </div>
                   </div>
@@ -221,7 +221,7 @@ export default function AdvancedSubjectsPage() {
             className="h-96 flex flex-col items-center justify-center bg-white rounded-[3rem] border-2 border-dashed border-slate-100"
           >
             <Box size={48} className="text-slate-200 mb-4" />
-            <p className="text-slate-400 font-bold text-sm tracking-tight italic">No subjects found in the current registry.</p>
+            <p className="text-slate-400 font-bold text-sm tracking-tight italic">Aucune matière trouvée dans le registre actuel.</p>
           </motion.div>
         )}
       </div>
@@ -231,10 +231,10 @@ export default function AdvancedSubjectsPage() {
         <DialogContent className="rounded-[3rem] p-10 border-none shadow-2xl sm:max-w-[450px]">
           <DialogHeader>
             <DialogTitle className="text-3xl font-black italic tracking-tighter text-slate-900">
-              {editingSubject ? 'Edit' : 'Create'} <span className="text-primary">Subject.</span>
+              {editingSubject ? 'Modifier' : 'Créer'} <span className="text-primary">Matière.</span>
             </DialogTitle>
             <DialogDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mt-2">
-              Configuration for curriculum identification.
+              Configuration pour l'identification du programme.
             </DialogDescription>
           </DialogHeader>
 
@@ -245,10 +245,10 @@ export default function AdvancedSubjectsPage() {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-[10px] font-black uppercase tracking-widest text-slate-400">Academic Name</FormLabel>
+                    <FormLabel className="text-[10px] font-black uppercase tracking-widest text-slate-400">Nom Académique</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="e.g. Quantum Physics"
+                        placeholder="Exemple : Physique Quantique"
                         {...field}
                         className="h-14 rounded-2xl bg-slate-50 border-none font-bold text-slate-700 placeholder:text-slate-300 focus-visible:ring-blue-600"
                       />
@@ -258,7 +258,7 @@ export default function AdvancedSubjectsPage() {
                 )}
               />
               <Button type="submit" className="w-full h-14 bg-blue-600 hover:bg-slate-900 text-white font-black rounded-2xl transition-all shadow-xl shadow-blue-500/20 uppercase text-[11px] tracking-[0.2em]">
-                {editingSubject ? 'Commit Changes' : 'Save to Registry'}
+                {editingSubject ? 'Confirmer les modifications' : 'Sauvegarder dans le registre'}
               </Button>
             </form>
           </Form>

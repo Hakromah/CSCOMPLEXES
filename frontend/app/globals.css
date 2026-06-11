@@ -1,9 +1,8 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-@tailwind utilities;
 
 .linear-swiper-transition .swiper-wrapper {
-  transition-timing-function: linear !important;
+  /* transition-timing-function: linear !important; */
 }
 
 @custom-variant dark (&:is(.dark *));
@@ -272,7 +271,7 @@ body::-webkit-scrollbar-thumb {
     margin-top: 1rem !important;
     margin-bottom: 1rem !important;
   }
-  .printable-transcript table th, 
+  .printable-transcript table th,
   .printable-transcript table td {
     padding: 8px 12px !important;
   }

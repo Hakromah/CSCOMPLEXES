@@ -24,12 +24,15 @@
     ],
     "paths": {
       "@/*": [
-        "./*"
+        "./app/*",
+    "./components/*",
+    "./*"
       ]
     }
   },
   "include": [
     "next-env.d.ts",
+    "next.config.ts",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",

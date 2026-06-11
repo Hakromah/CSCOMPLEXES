@@ -8,10 +8,14 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
 import {
    Menu, School, LogOut, LayoutDashboard, GraduationCap, Calendar,
-   Users, Settings, ChevronRight, UserCircle, Activity, Bell,
+   Users, Settings, UserCircle, Activity, Bell,
    AlertCircle, MessageSquare, FileUp, UserCheck, BookOpen,
    Clock, UserPlus, BookOpenText, BarChart4, UsersRound, Landmark,
-   FileText
+   FileText,
+   Receipt,
+   BadgeDollarSign,
+   Calculator,
+   type LucideIcon,
 } from 'lucide-react';
 import api from '@/lib/api';
 import { toast } from 'sonner';
@@ -21,6 +25,7 @@ import Cookies from 'js-cookie';
 interface MenuItem {
    name: string;
    href: string;
+   icon?: LucideIcon;
 }
 
 interface SidebarProps {
@@ -106,25 +111,109 @@ export default function Sidebar({ menuItems }: SidebarProps) {
       }
    };
 
-   const finalMenuItems = userData?.role === 'ACCOUNTANT' ? [
-      { name: 'Tablea de bord financier', href: '/admin/finance' },
-      { name: 'Finance des étudiants', href: '/admin/finance/students' },
-      { name: 'Finance du personnel', href: '/admin/finance/staff' },
-      { name: 'Rapports', href: '/admin/finance/reports' }
-   ] : userData?.role === 'ACCOUNTLEAD' ? [
-      { name: 'Tablea de bord financier', href: '/admin/finance' },
-      { name: 'Finance des étudiants', href: '/admin/finance/students' },
-      { name: 'Finance du personnel', href: '/admin/finance/staff' },
-      { name: 'Rapports', href: '/admin/finance/reports' },
-      { name: 'Utilitaires', href: '/admin/finance/utilities' }
-   ] : userData?.role === 'ADMIN' ? [
-      ...menuItems,
-      { name: 'Tablea de bord financier', href: '/admin/finance' },
-      { name: 'Finance des étudiants', href: '/admin/finance/students' },
-      { name: 'Finance du personnel', href: '/admin/finance/staff' },
-      { name: 'Rapports financiers', href: '/admin/finance/reports' },
-      { name: 'Utilitaires financiers', href: '/admin/finance/utilities' }
-   ] : menuItems;
+   /*    const finalMenuItems = userData?.role === 'ACCOUNTANT' ? [
+         { name: 'Tablea de bord financier', href: '/admin/finance', icon: LayoutDashboard },
+         { name: 'Finance des étudiants', href: '/admin/finance/students', icon: Receipt },
+         { name: 'Finance du personnel', href: '/admin/finance/staff', icon: BadgeDollarSign },
+         { name: 'Rapports', href: '/admin/finance/reports', icon: BarChart4 }
+      ] : userData?.role === 'ACCOUNTLEAD' ? [
+         { name: 'Tablea de bord financier', href: '/admin/finance', icon: LayoutDashboard },
+         { name: 'Finance des étudiants', href: '/admin/finance/students', icon: Receipt },
+         { name: 'Finance du personnel', href: '/admin/finance/staff', icon: BadgeDollarSign },
+         { name: 'Rapports', href: '/admin/finance/reports', icon: BarChart4 },
+         { name: 'Utilitaires', href: '/admin/finance/utilities', icon: Calculator }
+      ] : userData?.role === 'ADMIN' ? [
+         ...menuItems,
+         { name: 'Tablea de bord financier', href: '/admin/finance', icon: LayoutDashboard },
+         { name: 'Finance des étudiants', href: '/admin/finance/students', icon: Receipt },
+         { name: 'Finance du personnel', href: '/admin/finance/staff', icon: BadgeDollarSign },
+         { name: 'Rapports financiers', href: '/admin/finance/reports', icon: BarChart4 },
+         { name: 'Utilitaires financiers', href: '/admin/finance/utilities', icon: Calculator }
+      ] : menuItems; */
+
+   const finalMenuItems: MenuItem[] =
+      userData?.role === 'ACCOUNTANT'
+         ? [
+            {
+               name: 'Tableau de bord financier',
+               href: '/admin/finance',
+               icon: LayoutDashboard,
+            },
+            {
+               name: 'Finance des étudiants',
+               href: '/admin/finance/students',
+               icon: Receipt,
+            },
+            {
+               name: 'Finance du personnel',
+               href: '/admin/finance/staff',
+               icon: BadgeDollarSign,
+            },
+            {
+               name: 'Rapports',
+               href: '/admin/finance/reports',
+               icon: BarChart4,
+            },
+         ]
+         : userData?.role === 'ACCOUNTLEAD'
+            ? [
+               {
+                  name: 'Tableau de bord financier',
+                  href: '/admin/finance',
+                  icon: LayoutDashboard,
+               },
+               {
+                  name: 'Finance des étudiants',
+                  href: '/admin/finance/students',
+                  icon: Receipt,
+               },
+               {
+                  name: 'Finance du personnel',
+                  href: '/admin/finance/staff',
+                  icon: BadgeDollarSign,
+               },
+               {
+                  name: 'Rapports',
+                  href: '/admin/finance/reports',
+                  icon: BarChart4,
+               },
+               {
+                  name: 'Utilitaires',
+                  href: '/admin/finance/utilities',
+                  icon: Calculator,
+               },
+            ]
+            : userData?.role === 'ADMIN'
+               ? [
+                  ...menuItems,
+                  {
+                     name: 'Tableau de bord financier',
+                     href: '/admin/finance',
+                     icon: LayoutDashboard,
+                  },
+                  {
+                     name: 'Finance des étudiants',
+                     href: '/admin/finance/students',
+                     icon: Receipt,
+                  },
+                  {
+                     name: 'Finance du personnel',
+                     href: '/admin/finance/staff',
+                     icon: BadgeDollarSign,
+                  },
+                  {
+                     name: 'Rapports financiers',
+                     href: '/admin/finance/reports',
+                     icon: BarChart4,
+                  },
+                  {
+                     name: 'Utilitaires financiers',
+                     href: '/admin/finance/utilities',
+                     icon: Calculator,
+                  },
+               ]
+               : menuItems;
+
 
    const renderContent = () => (
       <div className="flex flex-col h-full bg-white">
@@ -161,6 +250,7 @@ export default function Sidebar({ menuItems }: SidebarProps) {
                   <nav className="flex flex-col gap-1">
                      {finalMenuItems.map((item) => {
                         const isActive = pathname === item.href;
+                        const Icon = item.icon;
 
                         return (
                            <Link key={item.name} href={item.href} className="group">
@@ -176,11 +266,23 @@ export default function Sidebar({ menuItems }: SidebarProps) {
                                     <span className="absolute left-0 top-1/2 -translate-y-1/2 h-6 w-1 rounded-full bg-primary" />
                                  )}
 
-                                 <span
+                                 {/*  <span
                                     className={`transition-colors ${isActive ? 'text-blue-400' : 'text-slate-400 group-hover:text-slate-700'
                                        }`}
                                  >
                                     {getIcon(item.name)}
+                                 </span> */}
+                                 <span
+                                    className={`transition-colors ${isActive
+                                       ? 'text-blue-400'
+                                       : 'text-slate-400 group-hover:text-slate-700'
+                                       }`}
+                                 >
+                                    {Icon ? (
+                                       <Icon className="w-4 h-4" />
+                                    ) : (
+                                       getIcon(item.name)
+                                    )}
                                  </span>
                                  <span className="text-sm font-medium">
                                     {item.name}

@@ -66,7 +66,7 @@ export default function AdminTranscriptsPage() {
       setSemesters(semestersRes.data.data || []);
       setTerms(termsRes.data.data || []);
     } catch (error) {
-      toast.error('Failed to synchronize registry databases');
+      toast.error('Échec de la synchronisation des bases de données du registre');
       console.error(error);
     } finally {
       setLoading(false);
@@ -88,7 +88,7 @@ export default function AdminTranscriptsPage() {
       const res = await api.get(`/admin/transcripts/student/${studentId}`);
       setIssuedTranscripts(res.data || []);
     } catch (err) {
-      toast.error('Failed to load issued transcripts ledger');
+      toast.error('Échec du chargement du registre des relevés de notes');
       console.error(err);
     } finally {
       setLoadingLedger(false);
@@ -159,13 +159,13 @@ export default function AdminTranscriptsPage() {
     setTranscriptData(null);
     setIssuedTranscripts([]);
     setActiveTab('ledger');
-    toast.success('Filters reset successfully');
+    toast.success('Les filtres ont été réinitialisés avec succès');
   };
 
   // --- TRANSCRIPT GENERATION ---
   const handleGenerate = async () => {
     if (!selectedStudentId) {
-      toast.error('Please select a student first');
+      toast.error('Veuillez sélectionner un étudiant en premier');
       return;
     }
     setGenerating(true);
@@ -179,13 +179,13 @@ export default function AdminTranscriptsPage() {
 
       const response = await api.get(`/admin/transcripts/generate?${params.toString()}`);
       setTranscriptData(response.data);
-      toast.success('Transcript compiled and registered successfully');
+      toast.success('Le relevé de notes a été compilé et enregistré avec succès');
 
       // Reload ledger and switch to preview
       await loadIssuedTranscripts(selectedStudentId);
       setActiveTab('preview');
     } catch (error) {
-      toast.error('Compilation failed');
+      toast.error('Échec de la compilation');
       console.error(error);
     } finally {
       setGenerating(false);
@@ -210,7 +210,7 @@ export default function AdminTranscriptsPage() {
       setTranscriptData(response.data);
       setActiveTab('preview');
     } catch (err) {
-      toast.error('Failed to render transcript details');
+      toast.error('Erreur lors du rendu des détails du relevé de notes');
       console.error(err);
     } finally {
       setGenerating(false);
@@ -224,20 +224,20 @@ export default function AdminTranscriptsPage() {
         name: transcriptData.student.name,
         studentId: transcriptData.student.userId || String(transcriptData.student.id),
         academicYear: transcriptData.metadata.academicYears.join(', '),
-        status: 'Verified by Administration',
+        status: 'Validé par l\'administration',
         referenceNumber: transcriptData.metadata.referenceNumber
       };
 
-      const qrString = `AMF ACADEMY OFFICIAL TRANSCRIPT\n` +
+      const qrString = `RELEVE DE NOTES OFFICIEL DE 2CS COMPLEXE SCOLAIRE\n` +
         `Ref: ${qrData.referenceNumber}\n` +
-        `Student: ${qrData.name}\n` +
-        `Student ID: ${qrData.studentId}\n` +
-        `Academic Year: ${qrData.academicYear}\n` +
-        `Status: ${qrData.status}`;
+        `Nom et prénoms: ${qrData.name}\n` +
+        `Matricule: ${qrData.studentId}\n` +
+        `Année scolaire: ${qrData.academicYear}\n` +
+        `Statut: ${qrData.status}`;
 
       QRCode.toDataURL(qrString, { margin: 2, scale: 4 })
         .then((url) => setQrCodeUrl(url))
-        .catch((err) => console.error('QR code generation failed', err));
+        .catch((err) => console.error('Erreur lors de la génération du QR code', err));
     } else {
       setQrCodeUrl('');
     }
@@ -260,38 +260,38 @@ export default function AdminTranscriptsPage() {
       doc.setTextColor(255, 255, 255);
       doc.setFont('Helvetica', 'bold');
       doc.setFontSize(20);
-      doc.text((sch.name || 'School').toUpperCase(), 14, 18);
+      doc.text((sch.name || '2CS COMPLEXE SCOLAIRE').toUpperCase(), 14, 18);
 
       doc.setFont('Helvetica', 'normal');
       doc.setFontSize(9);
       doc.setTextColor(156, 163, 175); // gray-400
-      doc.text(`Official Academic Transcript • Registries System`, 14, 25);
-      doc.text(`Address: ${sch.address || ''} | Email: ${sch.email || ''} | Phone: ${sch.phone || ''}`, 14, 32);
+      doc.text(`Relevé de notes officiel • Registries System`, 14, 25);
+      doc.text(`Adresse: ${sch.address || ''} | Email: ${sch.email || ''} | Téléphone: ${sch.phone || ''}`, 14, 32);
 
       // Document Title
       doc.setTextColor(15, 23, 42);
       doc.setFont('Helvetica', 'bold');
       doc.setFontSize(13);
-      doc.text('OFFICIAL STUDENT TRANSCRIPT', 14, 55);
+      doc.text('RELEVE DE NOTES OFFICIEL', 14, 55);
       doc.setDrawColor(226, 232, 240); // slate-200
       doc.line(14, 58, 196, 58);
 
       // Student Information Grid
       doc.setFont('Helvetica', 'bold');
       doc.setFontSize(9);
-      doc.text('STUDENT PROFILE', 14, 66);
+      doc.text('PROFIL DE L\'ÉTUDIANT', 14, 66);
 
       doc.setFont('Helvetica', 'normal');
       doc.setFontSize(9.5);
-      doc.text(`Name: ${s.name || 'N/A'}`, 14, 72);
+      doc.text(`Nom: ${s.name || 'N/A'}`, 14, 72);
       doc.text(`ID: ${s.userId || 'N/A'}`, 14, 78);
       doc.text(`Email: ${s.email || 'N/A'}`, 14, 84);
 
       const classNames = (s.classes || []).join(', ') || 'N/A';
-      doc.text(`Class: ${classNames}`, 120, 72);
+      doc.text(`Classe: ${classNames}`, 120, 72);
       const bDate = s.birthDate ? new Date(s.birthDate).toLocaleDateString() : 'N/A';
-      doc.text(`Birth Date: ${bDate}`, 120, 78);
-      doc.text(`Phone: ${s.phoneNumber || 'N/A'}`, 120, 84);
+      doc.text(`Date de naissance: ${bDate}`, 120, 78);
+      doc.text(`Téléphone: ${s.phoneNumber || 'N/A'}`, 120, 84);
 
       // Metadata Grid (Reference Number, Date of Issue, Semesters, Terms)
       doc.setFillColor(248, 250, 252); // slate-50
@@ -302,10 +302,10 @@ export default function AdminTranscriptsPage() {
       doc.setFont('Helvetica', 'bold');
       doc.setFontSize(8);
       doc.setTextColor(100, 116, 139); // slate-500
-      doc.text('REFERENCE NUMBER', 18, 95);
-      doc.text('DATE OF ISSUE', 70, 95);
-      doc.text('SEMESTERS', 110, 95);
-      doc.text('TERMS', 155, 95);
+      doc.text('NUMÉRO DE RÉFÉRENCE', 18, 95);
+      doc.text('DATE D\'ÉMISSION', 70, 95);
+      doc.text('SEMESTRES', 110, 95);
+      doc.text('TERMES', 155, 95);
 
       doc.setTextColor(15, 23, 42); // slate-900
       doc.text(meta.referenceNumber || 'N/A', 18, 101);
@@ -319,7 +319,7 @@ export default function AdminTranscriptsPage() {
       // Results Table
       doc.setFont('Helvetica', 'bold');
       doc.setFontSize(9);
-      doc.text('ACADEMIC PERFORMANCE SUMMARY', 14, 116);
+      doc.text('RESUME DES PERFORMANCES ACADEMIQUE', 14, 116);
 
       const tableBody = (transcriptData.results || []).map((r: any) => [
         r.subjectName || 'N/A',
@@ -401,7 +401,7 @@ export default function AdminTranscriptsPage() {
       }
 
       // Save
-      const safeName = (s.name || 'student').replace(/\s+/g, '_').toLowerCase();
+      const safeName = (s.name || 'etudiant').replace(/\s+/g, '_').toLowerCase();
       doc.save(`transcript_${safeName}.pdf`);
       toast.success('Le relevé de notes officiel a été téléchargé avec succès');
     } catch (err) {
