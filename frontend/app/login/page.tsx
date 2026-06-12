@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useState } from 'react';
@@ -9,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
    Form,
-   FormControl,
+   FormControl, 
    FormField,
    FormItem,
    FormLabel,
@@ -63,29 +64,29 @@ export default function LoginPage() {
          });
 
          setTimeout(() => {
-             switch (role) {
-                case 'ADMIN':
-                   router.push('/admin');
-                   break;
-                case 'ACCOUNTANT':
-                case 'ACCOUNTLEAD':
-                   router.push('/admin/finance');
-                   break;
-                case 'TEACHER':
-                   router.push('/teacher');
-                   break;
-                case 'STUDENT':
-                   router.push('/student');
-                   break;
-                case 'DRIVER':
-                   router.push('/driver');
-                   break;
-                case 'WORKER':
-                   router.push('/worker');
-                   break;
-                default:
-                   router.push('/');
-             }
+            switch (role) {
+               case 'ADMIN':
+                  router.push('/admin');
+                  break;
+               case 'ACCOUNTANT':
+               case 'ACCOUNTLEAD':
+                  router.push('/admin/finance');
+                  break;
+               case 'TEACHER':
+                  router.push('/teacher');
+                  break;
+               case 'STUDENT':
+                  router.push('/student');
+                  break;
+               case 'DRIVER':
+                  router.push('/driver');
+                  break;
+               case 'WORKER':
+                  router.push('/worker');
+                  break;
+               default:
+                  router.push('/');
+            }
          }, 1000);
 
       } catch (error: any) {
@@ -141,7 +142,7 @@ export default function LoginPage() {
                            <FormItem>
                               <FormLabel>Password</FormLabel>
                               <FormControl>
-                                 <Input type="password" placeholder="Your password" {...field} />
+                                 <Input type="password" placeholder="Your Password" {...field} />
                               </FormControl>
                               <FormMessage />
                            </FormItem>

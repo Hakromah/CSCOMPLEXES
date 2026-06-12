@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useEffect, useState, useMemo, useRef } from 'react';
@@ -773,7 +774,7 @@ export default function StudentFinance() {
       <div className="flex items-center justify-between">
         <div className="space-y-1">
           <h1 className="text-3xl font-black tracking-tight text-slate-900 italic uppercase">Grand Livre des Finances des Élèves</h1>
-          <p className="text-sm text-slate-500 font-medium">Gérer la facturation des élèves, les catégories de facturation et les flux d'approbation</p>
+          <p className="text-sm text-slate-500 font-medium">Gérer la facturation des élèves, les catégories de facturation et les flux d approbation</p>
         </div>
 
         <div className="flex items-center gap-3">
@@ -894,7 +895,7 @@ export default function StudentFinance() {
                     {(role === 'ACCOUNTANT' || role === 'ACCOUNTLEAD' || role === 'ADMIN') && (
                       <TableCell className="w-12">
                         {canCheckInvoice(inv) && (
-                          <input
+                          <Input
                             type="checkbox"
                             checked={selectedInvoiceIds.includes(inv.id)}
                             onChange={(e) => {
@@ -1131,7 +1132,7 @@ export default function StudentFinance() {
                     {(role === 'ACCOUNTANT' || role === 'ACCOUNTLEAD' || role === 'ADMIN') && (
                       <TableCell className="w-12">
                         {canCheckPayment(p) && (
-                          <input
+                          <Input
                             type="checkbox"
                             checked={selectedPaymentIds.includes(p.id)}
                             onChange={(e) => {
@@ -1263,7 +1264,7 @@ export default function StudentFinance() {
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-1">
-              <label className="text-xs font-black uppercase text-slate-400">Sélectionner l'élève</label>
+              <label className="text-xs font-black uppercase text-slate-400">Sélectionner l élève</label>
               <StudentCombobox
                 students={students}
                 value={selectedStudentId}
@@ -1272,7 +1273,7 @@ export default function StudentFinance() {
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-black uppercase text-slate-400">Classe de l'élève (optionnel)</label>
+              <label className="text-xs font-black uppercase text-slate-400">Classe de l élève (optionnel)</label>
               <Select value={invoiceClassId} onValueChange={setInvoiceClassId}>
                 <SelectTrigger className="h-11 rounded-xl bg-slate-50">
                   <SelectValue placeholder="Sélectionner une classe..." />
@@ -1410,7 +1411,7 @@ export default function StudentFinance() {
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-1">
-              <label className="text-xs font-black uppercase text-slate-400">Classe de l'élève (optionnel)</label>
+              <label className="text-xs font-black uppercase text-slate-400">Classe de l élève (optionnel)</label>
               <Select value={paymentClassId} onValueChange={setPaymentClassId}>
                 <SelectTrigger className="h-11 rounded-xl bg-slate-50">
                   <SelectValue placeholder="Sélectionner une classe..." />

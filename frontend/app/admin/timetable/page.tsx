@@ -11,8 +11,6 @@ import {
   Clock,
   BookOpen,
   Layers,
-  MoreVertical,
-  Filter
 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -45,7 +43,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
-const DAYS = ['LUNDI', 'MARDI', 'MERCREDI', 'JEUDI', 'VENDREDI'];
+const DAYS = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY'];
 
 const formSchema = z.object({
   classId: z.string().min(1, "Classe requise"),
@@ -61,7 +59,7 @@ export default function TimetableManagement() {
   const [subjects, setSubjects] = useState<any[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingEntry, setEditingEntry] = useState<any>(null);
-  const [selectedDay, setSelectedDay] = useState<string>('LUNDI');
+  const [selectedDay, setSelectedDay] = useState<string>('MONDAY');
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -205,7 +203,7 @@ export default function TimetableManagement() {
                               form.reset({
                                 classId: entry.classe?.id ? String(entry.classe.id) : '',
                                 subjectId: entry.subject?.id ? String(entry.subject.id) : '',
-                                dayOfWeek: entry.dayOfWeek || 'LUNDI',
+                                dayOfWeek: entry.dayOfWeek || 'MONDAY',
                                 startTime: entry.startTime,
                                 endTime: entry.endTime,
                               });
@@ -251,7 +249,7 @@ export default function TimetableManagement() {
               {editingEntry ? 'Modifier' : 'Nouvelle'} <span className="text-primary">Entrée</span>
             </DialogTitle>
             <DialogDescription className="text-xs font-bold uppercase tracking-widest text-slate-400">
-              Configurer les paramètres de session pour l'emploi du temps.
+              Configurer les paramètres de session pour l emploi du temps.
             </DialogDescription>
           </DialogHeader>
 

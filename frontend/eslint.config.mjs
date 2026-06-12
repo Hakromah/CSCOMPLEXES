@@ -13,6 +13,12 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
   ]),
+  {
+    rules: {
+      "react/no-unescaped-entities": "off",
+      "react/no-unstable-nested-components": "off",
+    },
+  },
 ]);
 
 export default eslintConfig;

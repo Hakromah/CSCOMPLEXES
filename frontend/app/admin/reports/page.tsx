@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
@@ -27,6 +28,7 @@ interface ReportDTO {
 export default function ReportsPage() {
   const [report, setReport] = useState<ReportDTO | null>(null);
   const [loading, setLoading] = useState(true);
+  const [currentYear, setCurrentYear] = useState <number | string> ('');
 
   const fetchReport = async () => {
     setLoading(true);
@@ -42,6 +44,9 @@ export default function ReportsPage() {
   };
 
   useEffect(() => { fetchReport(); }, []);
+  useEffect(() => {
+    setCurrentYear(new Date().getFullYear())
+  }, []);
 
   if (loading) return (
     <div className="h-screen flex flex-col items-center justify-center gap-4 bg-[#f8fafc]">
@@ -136,7 +141,7 @@ export default function ReportsPage() {
                 <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Évaluations académiques</p>
                 <h3 className="text-5xl font-black text-slate-900 tracking-tighter italic">{report?.totalExams}</h3>
               </div>
-              <Badge className="w-fit bg-blue-100 text-primary border-none mt-6 font-black text-[9px] tracking-widest">SESSION 2026 ACTIVE</Badge>
+              <Badge className="w-fit bg-blue-100 text-primary border-none mt-6 font-black text-[9px] tracking-widest">SESSION {currentYear || '2026'}  ACTIVE</Badge>
             </div>
 
             <div className="bg-white rounded-[3rem] p-10 shadow-sm border border-slate-100 md:hover:border-primary duration-500 transition-colors flex flex-col justify-between">

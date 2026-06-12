@@ -217,40 +217,6 @@ export default function UserManagement() {
       }
    };
 
-   // const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-   //    const file = e.target.files?.[0];
-   //    if (!file) return;
-
-   //    Papa.parse(file, {
-   //       header: true,
-   //       skipEmptyLines: true,
-   //       complete: (results) => {
-   //          // Set preview so the Admin can verify before hitting the backend
-   //          setCsvPreview(results.data);
-   //          setImportSummary(null); // Clear previous reports
-   //       }
-   //    });
-   // };
-
-   // const processImport = async () => {
-   //    if (csvPreview.length === 0) return;
-
-   //    const tid = toast.loading("Processing registry injection...");
-   //    setImporting(true);
-
-   //    try {
-   //       const response = await api.post('/admin/users/bulk', csvPreview);
-   //       setImportSummary(response.data);
-   //       toast.success("Injection successful", { id: tid });
-   //       fetchUsers(); // Refresh the main table
-   //    } catch (error) {
-   //       toast.error("Registry mismatch: Check CSV headers", { id: tid });
-   //       console.log(error)
-   //    } finally {
-   //       setImporting(false);
-   //    }
-   // };
-
    const downloadTemplate = () => {
       const csv = "name,email,password,role,birthDate,birthCountry,birthCity,address,gender,phoneNumber\nJohn Doe,john@amf.edu,pass123,STUDENT,2005-12-01,USA,New York,123 Broadway,Male,+123456";
       const blob = new Blob([csv], { type: 'text/csv' });
@@ -268,12 +234,6 @@ export default function UserManagement() {
       } catch (e) { toast.error('Retrieval failed'); console.log(e) }
       finally { setIsLoadingClasses(false); }
    };
-
-   // const filteredUsers = users.filter(u => {
-   //    const matchesSearch = u.name.toLowerCase().includes(search.toLowerCase()) || u.userId.toLowerCase().includes(search.toLowerCase());
-   //    const matchesRole = roleFilter === 'ALL' || u.role === roleFilter;
-   //    return matchesSearch && matchesRole;
-   // });
 
    const filteredUsers = users.filter(u => {
       // Use optional chaining (?.) and provide a fallback empty string ('')
