@@ -84,7 +84,7 @@ export default function TeacherDashboard() {
         setRecentResults(resultsList.slice(0, 5));
         setUpcomingExams(upcoming);
       } catch (error) {
-        console.error("Dashboard Sync Error", error);
+        console.error("Erreur de synchro du tableau de bord", error);
       } finally {
         setLoading(false);
       }

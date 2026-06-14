@@ -43,9 +43,9 @@ export default function TeacherMaterialsPage() {
       setClasses(classRes.data);
     } catch (e: any) {
       // Log the specific error to help with debugging
-      console.error("Sync Error Status:", e.response?.status);
-      console.error("Sync Error Data:", e.response?.data);
-      toast.error("Failed to sync classroom resources");
+      console.error("Statut : Erreur de synchronisation", e.response?.status);
+      console.error("Data : Erreur de synchronisation", e.response?.data);
+      toast.error("Echec de la synchronisation des ressources de la classe");
     } finally {
       setLoading(false);
     }
@@ -55,7 +55,7 @@ export default function TeacherMaterialsPage() {
 
   const handleUpload = async () => {
     if (!file || !title || selectedClasses.length === 0) {
-      return toast.error("Please complete all required fields");
+      return toast.error("Veuillez remplir tous les champs requis");
     }
 
     const formData = new FormData();
@@ -72,13 +72,14 @@ export default function TeacherMaterialsPage() {
         },
       });
 
-      toast.success("Material Published Successfully");
+      toast.success("Matériau publié avec succès");
       setIsUploadOpen(false);
       resetForm();
       fetchData(); // Refresh the list
     } catch (e: any) {
-      console.error("Upload Error:", e.response?.data);
-      toast.error("Upload failed. Check console for details.");
+      console.error("Statut : Echec du telechargement", e.response?.status);
+      console.error("Data : Echec du telechargement", e.response?.data);
+      toast.error("Echec du telechargement");
     } finally {
       setUploading(false);
     }
@@ -100,13 +101,13 @@ export default function TeacherMaterialsPage() {
   };
 
   const handleDelete = async (id: number) => {
-    const tid = toast.loading("Removing resource...");
+    const tid = toast.loading("Suppression de la ressource...");
     try {
       await api.delete(`/teacher/materials/${id}`);
-      toast.success("Resource deleted", { id: tid });
+      toast.success("Suppression réussie", { id: tid });
       fetchData();
     } catch (e) {
-      toast.error("Action denied", { id: tid });
+      toast.error("Action impossible", { id: tid });
       console.log(e);
     }
   };
@@ -120,13 +121,13 @@ export default function TeacherMaterialsPage() {
 
   const handleDownload = async (mat: any) => {
     if (!mat.fileUrl) return;
-    const tid = toast.loading("Preparing download...");
+    const tid = toast.loading("Préparation du téléchargement...");
 
     try {
       const fullUrl = getFullUrl(mat.fileUrl);
       // 1. Fetch the file data directly
       const response = await fetch(fullUrl);
-      if (!response.ok) throw new Error('Network response was not ok');
+      if (!response.ok) throw new Error('La réponse du réseau n\'était pas correcte');
 
       const blob = await response.blob();
 
@@ -147,9 +148,9 @@ export default function TeacherMaterialsPage() {
       // 4. Cleanup
       link.parentNode?.removeChild(link);
       window.URL.revokeObjectURL(url);
-      toast.success("Download started", { id: tid });
+      toast.success("Téléchargement commencé", { id: tid });
     } catch (err) {
-      console.error("Download error:", err);
+      console.error("Erreur de téléchargement", err);
       // Fallback: just open the URL in a new tab if fetch fails
       window.open(getFullUrl(mat.fileUrl), '_blank');
       toast.dismiss(tid);
@@ -163,14 +164,14 @@ export default function TeacherMaterialsPage() {
       <header className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-end gap-[clamp(1rem,2vw+0.5rem,3rem)]">
         <div className="space-y-2">
           <div className="flex items-center gap-2 text-primary font-black text-[10px] uppercase tracking-[0.4em]">
-            <Monitor size={14} /> Curriculum Management
+            <Monitor size={14} /> Gestion du curriculum
           </div>
-          <h1 className="text-[clamp(1.3rem,2vw+0.5rem,3rem)] font-black text-slate-900 tracking-tighter italic uppercase">
-            Learning <span className="text-primary">Assets.</span>
+          <h1 className="text-[clamp(1.2rem,2vw+0.5rem,2.2rem)] font-black text-slate-900 tracking-tighter italic uppercase">
+            Ressources d'apprentissage <span className="text-primary">.</span>
           </h1>
         </div>
         <Button onClick={() => setIsUploadOpen(true)} className="bg-slate-900 hover:bg-blue-600 text-white rounded-[clamp(1rem,2vw+0.5rem,3rem)] h-14 px-8 font-black shadow-xl">
-          <Plus size={20} className="mr-2" /> PUBLISH RESOURCE
+          <Plus size={20} className="mr-2" /> PUBLIER RESSOURCE
         </Button>
       </header>
 
@@ -226,13 +227,13 @@ export default function TeacherMaterialsPage() {
                         }}
                         className="rounded-2xl border-slate-100 text-slate-400 hover:text-primary font-black text-[10px] tracking-widest h-10 px-4 uppercase"
                       >
-                        <Eye size={14} className="mr-2" /> Preview
+                        <Eye size={14} className="mr-2" /> Aperçu
                       </Button>
                       <Button
                         onClick={() => handleDownload(mat)}
                         className="flex-1 h-12 rounded-2xl bg-rose-600 text-white font-black italic uppercase text-[10px] hover:bg-slate-900 shadow-xl shadow-rose-200 transition-all"
                       >
-                        <Download size={14} className="mr-2" /> Download
+                        <Download size={14} className="mr-2" /> Télécharger
                       </Button>
                     </div>
                   </div>
@@ -247,16 +248,16 @@ export default function TeacherMaterialsPage() {
       <Dialog open={isUploadOpen} onOpenChange={setIsUploadOpen}>
         <DialogContent className="rounded-[3rem] p-10 sm:max-w-[500px] border-none shadow-2xl">
           <DialogHeader>
-            <DialogTitle className="text-3xl font-black italic tracking-tighter uppercase">Upload <span className="text-primary">Resource.</span></DialogTitle>
-            <DialogDescription className="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-2 italic">Select files for classroom deployment.</DialogDescription>
+            <DialogTitle className="text-3xl font-black italic tracking-tighter uppercase">Publier une <span className="text-primary">Ressource.</span></DialogTitle>
+            <DialogDescription className="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-2 italic">Sélectionnez les fichiers à déployer en classe.</DialogDescription>
           </DialogHeader>
 
           <div className="space-y-6 mt-6">
-            <Input placeholder="Resource Title" value={title} onChange={(e) => setTitle(e.target.value)} className="h-14 rounded-2xl bg-slate-50 border-none font-bold text-slate-900 focus-visible:ring-2 focus-visible:ring-primary/20" />
-            <textarea placeholder="Instructional details..." value={description} onChange={(e) => setDescription(e.target.value)} className="w-full rounded-2xl bg-slate-50 border-none p-4 font-bold text-sm min-h-[120px] text-slate-900 focus:outline-none focus:ring-2 focus:ring-primary/20 placeholder:text-slate-400 resize-none" />
+            <Input placeholder="Titre de la ressource" value={title} onChange={(e) => setTitle(e.target.value)} className="h-14 rounded-2xl bg-slate-50 border-none font-bold text-slate-900 focus-visible:ring-2 focus-visible:ring-primary/20" />
+            <textarea placeholder="Détails pédagogiques..." value={description} onChange={(e) => setDescription(e.target.value)} className="w-full rounded-2xl bg-slate-50 border-none p-4 font-bold text-sm min-h-[120px] text-slate-900 focus:outline-none focus:ring-2 focus:ring-primary/20 placeholder:text-slate-400 resize-none" />
 
             <div className="space-y-3">
-              <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">Deploy to Classes</p>
+              <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">Déployer en classe</p>
               <div className="flex flex-wrap gap-2">
                 {classes.map(c => (
                   <Badge
@@ -274,7 +275,7 @@ export default function TeacherMaterialsPage() {
               <div className="flex flex-col items-center justify-center pt-5 pb-6 px-4 text-center max-w-full">
                 <FileUp className={`w-10 h-10 mb-2 ${file ? 'text-primary' : 'text-slate-200 group-hover:text-primary'}`} />
                 <p className="text-[11px] font-black uppercase text-slate-400 tracking-tighter italic truncate w-full max-w-[250px]">
-                  {file ? file.name : 'Select PDF, DOCX, or Image'}
+                  {file ? file.name : 'Sélectionner PDF, DOCX, ou Image'}
                 </p>
               </div>
               <input type="file" className="hidden" onChange={(e) => setFile(e.target.files?.[0] || null)} />
@@ -283,7 +284,7 @@ export default function TeacherMaterialsPage() {
 
           <DialogFooter className="mt-8">
             <Button disabled={uploading} onClick={handleUpload} className="w-full h-16 bg-blue-600 hover:bg-slate-900 text-white font-black rounded-3xl transition-all shadow-xl uppercase text-[11px] tracking-[0.2em]">
-              {uploading ? <Loader2 className="animate-spin" /> : 'AUTHORIZE PUBLICATION'}
+              {uploading ? <Loader2 className="animate-spin" /> : 'AUTHORISER LA PUBLICATION'}
             </Button>
           </DialogFooter>
         </DialogContent>

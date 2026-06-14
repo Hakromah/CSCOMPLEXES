@@ -6,15 +6,15 @@ export default function StudentLayout({
   children: React.ReactNode;
 }) {
   const menuItems = [
-    { name: 'Dashboard', href: '/student' },
-    { name: 'My Classes', href: '/student/classes' },
-    { name: 'Timetable', href: '/student/timetable' },
-    { name: 'Attendance', href: '/student/attendance' },
-    { name: 'Exams', href: '/student/exams' },
-    { name: 'Exam Results', href: '/student/results' },
-    { name: 'Materials', href: '/student/materials' },
-    { name: 'Transcripts', href: '/student/transcripts' },
-    { name: 'Profile', href: '/student/profile' },
+    { name: 'Tableau de bord', href: '/student' },
+    { name: 'Mes classes', href: '/student/classes' },
+    { name: 'Emploi Du Temps', href: '/student/timetable' },
+    { name: 'Gestion des présences', href: '/student/attendance' },
+    { name: 'Gestion des examens', href: '/student/exams' },
+    { name: 'Gestion des résultats', href: '/student/results' },
+    { name: 'Matériel pédagogique', href: '/student/materials' },
+    { name: 'Relevés de notes', href: '/student/transcripts' },
+    { name: 'Paramètres', href: '/student/profile' },
   ];
 
   return (

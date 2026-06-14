@@ -9,7 +9,7 @@ import {
   GraduationCap,
   Loader2,
   LayoutGrid,
-    Calendar as CalendarIcon,
+  Calendar as CalendarIcon,
   List as ListIcon
 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -41,8 +41,8 @@ export default function StudentClassesPage() {
         const response = await api.get('/student/classes');
         setClasses(response.data);
       } catch (error) {
-        toast.error('Connection Lost', {
-          description: 'Unable to reach the academy servers.',
+        toast.error('Echec de connexion', {
+          description: 'Impossible de se connecter aux serveurs.',
         });
         console.log(error);
       } finally {
@@ -56,7 +56,7 @@ export default function StudentClassesPage() {
     return (
       <div className="h-screen w-full flex flex-col items-center justify-center space-y-4 bg-slate-50/50">
         <Loader2 className="animate-spin text-primary" size={40} />
-        <p className="text-xs font-black uppercase tracking-widest text-slate-400">Synchronizing Registry...</p>
+        <p className="text-xs font-black uppercase tracking-widest text-slate-400">Synchronisation en cours...</p>
       </div>
     );
   }
@@ -68,19 +68,19 @@ export default function StudentClassesPage() {
         <div className="space-y-2">
           <div className="flex items-center gap-2 text-primary font-black text-[10px] uppercase tracking-[0.3em]">
             <GraduationCap size={16} />
-            Academic Portal
+            Portal Académique
           </div>
           <h1 className="text-[clamp(1.2rem,2.5vw+1rem,3rem)] font-black text-slate-900 tracking-tighter">
-            My <span className="text-primary">Curriculum</span>
+            Mon <span className="text-primary">Curriculum</span>
           </h1>
           <p className="text-slate-500 font-medium max-w-md">
-            View your active enrollments and connect with your course instructors.
+            Visualisez vos inscriptions actives et connectez-vous avec vos instructeurs.
           </p>
         </div>
-         <div className="flex gap-3">
+        <div className="flex gap-3">
           <Button className="bg-white border border-primary/0 md:hover:border-primary duration-500 hover:bg-slate-50 text-slate-900 rounded-2xl px-6 h-12 font-bold shadow-sm">
             <CalendarIcon size={18} className="mr-1 text-primary" />
-            Schedule
+            Emploi du temps
           </Button>
         </div>
       </div>
@@ -103,7 +103,7 @@ export default function StudentClassesPage() {
                       <div className="h-32 bg-slate-900 p-8 flex justify-between items-start relative overflow-hidden">
                         <div className="z-10">
                           <Badge className="bg-primary/20 text-blue-400 border-none mb-3 backdrop-blur-md font-bold">
-                            Active Session
+                            Session active
                           </Badge>
                           <h3 className="text-white text-xl font-black tracking-tight leading-none uppercase">
                             {c.name}
@@ -115,38 +115,38 @@ export default function StudentClassesPage() {
                       {/* Card Bottom: Content */}
                       <div className="p-8 space-y-6">
                         <div className="space-y-4">
-                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Instructors</p>
+                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Enseignants</p>
 
                           <div className="space-y-3">
                             {c.teachers && c.teachers.length > 0 ? (
                               c.teachers.map((teacher) => (
                                 <div key={teacher.id} className="flex items-center justify-between p-3 rounded-2xl bg-slate-50 border border-primary/20 group-hover:bg-blue-50/50 md:hover:border-primary cursor-pointer duration-500 transition-colors">
                                   <a href="mailto:{teacher.email}" className='flex items-center w-full justify-between'>
-                                  <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-400 group-hover:text-primary transition-colors">
-                                      <User size={18} />
+                                    <div className="flex items-center gap-3">
+                                      <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-400 group-hover:text-primary transition-colors">
+                                        <User size={18} />
+                                      </div>
+                                      <div>
+                                        <p className="text-sm font-black text-slate-800 tracking-tight">{teacher.name}</p>
+                                        <p className="text-[10px] font-medium text-slate-500">{teacher.email}</p>
+                                      </div>
                                     </div>
-                                    <div>
-                                      <p className="text-sm font-black text-slate-800 tracking-tight">{teacher.name}</p>
-                                      <p className="text-[10px] font-medium text-slate-500">{teacher.email}</p>
-                                    </div>
-                                  </div>
-                                  <Button variant="ghost" size="icon" className="rounded-full hover:bg-white hover:text-primary">
-                                    <Mail size={16} />
-                                  </Button>
+                                    <Button variant="ghost" size="icon" className="rounded-full hover:bg-white hover:text-primary">
+                                      <Mail size={16} />
+                                    </Button>
                                   </a>
                                 </div>
                               ))
                             ) : (
                               <div className="py-4 text-center border-2 border-dashed border-slate-100 rounded-2xl">
-                                <p className="text-[10px] font-bold text-slate-400 uppercase">No Tutor Assigned</p>
+                                <p className="text-[10px] font-bold text-slate-400 uppercase">Aucun Enseignant Attribué</p>
                               </div>
                             )}
                           </div>
                         </div>
 
                         <Button className="w-full bg-slate-100 md:hover:bg-primary duration-500 hover:text-white text-slate-600 font-black uppercase text-[10px] tracking-[0.2em] h-12 rounded-2xl transition-all border-none">
-                          Course Materials
+                          Matériels de Cours
                         </Button>
                       </div>
                     </CardContent>
@@ -164,8 +164,8 @@ export default function StudentClassesPage() {
               <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6">
                 <LayoutGrid className="text-slate-300" size={32} />
               </div>
-              <h2 className="text-xl font-black text-slate-800 uppercase tracking-tighter">No Classes Found</h2>
-              <p className="text-slate-500 text-sm mt-2">You have not been assigned to any curriculum yet.</p>
+              <h2 className="text-xl font-black text-slate-800 uppercase tracking-tighter">Aucune Classe Trouvée</h2>
+              <p className="text-slate-500 text-sm mt-2">Vous n'avez pas été assigné à un curriculum pour le moment.</p>
             </motion.div>
           )}
         </AnimatePresence>

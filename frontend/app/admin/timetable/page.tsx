@@ -45,6 +45,17 @@ import {
 
 const DAYS = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY'];
 
+// French display labels — backend always receives the English key
+const DAY_LABELS: Record<string, string> = {
+  MONDAY:    'LUNDI',
+  TUESDAY:   'MARDI',
+  WEDNESDAY: 'MERCREDI',
+  THURSDAY:  'JEUDI',
+  FRIDAY:    'VENDREDI',
+  SATURDAY:  'SAMEDI',
+  SUNDAY:    'DIMANCHE',
+};
+
 const formSchema = z.object({
   classId: z.string().min(1, "Classe requise"),
   subjectId: z.string().min(1, "Sujet requis"),
@@ -61,10 +72,37 @@ export default function TimetableManagement() {
   const [editingEntry, setEditingEntry] = useState<any>(null);
   const [selectedDay, setSelectedDay] = useState<string>('MONDAY');
 
+  // State to hold the dynamic semester text to prevent hydration mismatches
+  const [semesterText, setSemesterText] = useState<string>('');
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: { classId: '', subjectId: '', dayOfWeek: '', startTime: '', endTime: '' }
   });
+
+  const getDynamicSemester = () => {
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth(); // 0 = January, 11 = December
+
+    let semester = 1;
+
+    // Semester 1: September (8) to January (0)
+    // Semester 2: February (1) to August (7)
+    if (month >= 1 && month <= 7) {
+      semester = 2;
+    } else {
+      semester = 1;
+    }
+
+    // Get the current month name in French (e.g., "juin")
+    const monthName = currentDate.toLocaleDateString('fr-FR', { month: 'long' });
+
+    // Capitalize the first letter of the month name (e.g., "Juin")
+    const capitalizedMonth = monthName.charAt(0).toUpperCase() + monthName.slice(1);
+
+    return `Semestre ${semester}, ${capitalizedMonth} - Année ${year}`;
+  };
 
   const fetchData = async () => {
     try {
@@ -84,13 +122,14 @@ export default function TimetableManagement() {
 
   useEffect(() => {
     const loadInitial = async () => {
-      await fetchData()
+      await fetchData();
+      // Set the semester string safely on the client side
+      setSemesterText(getDynamicSemester());
     };
     loadInitial();
   }, []);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    // Strapi `time` field requires HH:MM:SS — browser <input type="time"> only gives HH:MM
     const toStrapiTime = (t: string) => (t && t.length === 5 ? `${t}:00` : t);
 
     const payload = {
@@ -127,7 +166,7 @@ export default function TimetableManagement() {
             Emploi du temps <span className="text-primary">par semaine</span>
           </h1>
           <p className="text-slate-500 font-bold text-[10px] uppercase tracking-[0.3em] mt-2">
-            Portail Administrateur • Semestre 2 2026
+            Portail Administrateur • {semesterText || 'Chargement...'}
           </p>
         </div>
         <Button
@@ -144,12 +183,12 @@ export default function TimetableManagement() {
           <button
             key={day}
             onClick={() => setSelectedDay(day)}
-            className={`px-8 py-3 rounded-[clamp(1rem,2vw+1rem,2rem)] font-black text-[11px] tracking-widest transition-all ${selectedDay === day
+            className={`px-8 py-3 rounded-[clamp(1rem,2vw+1rem,2rem)] font-black cursor-pointer text-[11px] tracking-widest transition-all ${selectedDay === day
               ? 'bg-blue-600 text-white shadow-md shadow-blue-200'
               : 'bg-white text-slate-400 hover:text-slate-600'
               }`}
           >
-            {day}
+            {DAY_LABELS[day] ?? day}
           </button>
         ))}
       </div>
@@ -234,7 +273,7 @@ export default function TimetableManagement() {
             {timetable.filter(item => item.dayOfWeek === selectedDay).length === 0 && (
               <div className="h-64 flex flex-col items-center justify-center border-2 border-dashed border-slate-100 md:hover:border-primary duration-500 transition-colors rounded-[3rem] text-slate-300">
                 <CalendarIcon size={48} className="mb-4 opacity-20" />
-                <p className="font-black uppercase text-xs tracking-widest">Aucun cours prévu pour {selectedDay}</p>
+                <p className="font-black uppercase text-xs tracking-widest">Aucun cours prévu pour {DAY_LABELS[selectedDay] ?? selectedDay}</p>
               </div>
             )}
           </motion.div>
@@ -286,7 +325,7 @@ export default function TimetableManagement() {
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl><SelectTrigger className="rounded-xl border-slate-100 bg-slate-50 font-bold"><SelectValue placeholder="Choisir un jour" /></SelectTrigger></FormControl>
                     <SelectContent className="rounded-xl border-none shadow-xl">
-                      {DAYS.map(day => <SelectItem key={day} value={day} className="font-bold">{day}</SelectItem>)}
+                      {DAYS.map(day => <SelectItem key={day} value={day} className="font-bold">{DAY_LABELS[day] ?? day}</SelectItem>)}
                     </SelectContent>
                   </Select>
                 </FormItem>

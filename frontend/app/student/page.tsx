@@ -47,22 +47,68 @@ export default function StudentDashboard() {
   const [studentName, setStudentName] = useState('Student');
   const [loading, setLoading] = useState(true);
 
+  // State to hold the dynamic semester text to prevent hydration mismatches
+  const [semesterText, setSemesterText] = useState<string>('');
+
+
+
+  /*   const getDynamicSemester = () => {
+      const currentDate = new Date();
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+
+      // Assuming Semester 1 is Jan-June (0 to 5) and Semester 2 is July-Dec (6 to 11)
+      const semester = month >= 6 ? 2 : 1;
+
+      return `Semestre ${semester} - Année ${year}`;
+    }; */
+    
+  const getDynamicSemester = () => {
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth(); // 0 = January, 11 = December
+
+    let semester = 1;
+
+    // Semester 1: September (8) to January (0)
+    // Semester 2: February (1) to August (7)
+    if (month >= 1 && month <= 7) {
+      semester = 2;
+    } else {
+      semester = 1;
+    }
+
+    // Get the current month name in French (e.g., "juin")
+    const monthName = currentDate.toLocaleDateString('fr-FR', { month: 'long' });
+
+    // Capitalize the first letter of the month name (e.g., "Juin")
+    const capitalizedMonth = monthName.charAt(0).toUpperCase() + monthName.slice(1);
+
+    return `Semestre ${semester}, ${capitalizedMonth} - Année ${year}`;
+  };
+
   useEffect(() => {
     const fetchDashboardData = async () => {
+      // Use the same pattern as student/profile/page.tsx (line 58) — proven to work
       try {
-        const [statsRes, userRes] = await Promise.all([
-          api.get('/student/dashboard-stats'),
-          api.get('/auth/me') // Assuming you have an endpoint for user profile
-        ]);
-        setStats(statsRes.data);
-        setStudentName(userRes.data.name);
+        const userRes = await api.get('/auth/me');
+        if (userRes.data?.name) setStudentName(userRes.data.name);
       } catch (error) {
-        console.error("Dashboard sync error", error);
+        console.error("Failed to fetch student profile:", error);
+      }
+      // Fetch dashboard stats separately
+      try {
+        const statsRes = await api.get('/student/dashboard-stats');
+        setStats(statsRes.data);
+      } catch (error) {
+        console.error("Failed to fetch dashboard stats:", error);
       } finally {
         setLoading(false);
       }
     };
     fetchDashboardData();
+    // Set the semester string safely on the client side
+    setSemesterText(getDynamicSemester());
   }, []);
 
   return (
@@ -71,10 +117,10 @@ export default function StudentDashboard() {
       <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-[clamp(1.2rem,2.5vw+1rem,3rem)] font-black text-slate-900 tracking-tighter">
-            Bon retour,<span className="text-primary">{(studentName || 'Student').split(' ')[0]}</span> 👋
+            Bienvenue ! <span className="text-primary">{(studentName || 'Student').split(' ')[0]}</span> 👋
           </h1>
           <p className="text-slate-500 font-medium mt-1 uppercase text-[10px] tracking-[0.2em]">
-            Statut du système: <span className="text-emerald-500">Actif</span> • Semestre 2 Année 2026
+            Statut du système: <span className="text-emerald-500">Actif</span> • {semesterText || 'Chargement...'}
           </p>
         </div>
         <div className="flex gap-3">

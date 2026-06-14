@@ -36,25 +36,26 @@ interface SidebarProps {
 // --- ICON MAPPING LOGIC ---
 const getIcon = (name: string) => {
    const n = name.toLowerCase();
-   if (n.includes('dashboard')) return <LayoutDashboard className="w-4 h-4" />;
-   if (n.includes('result') || n.includes('grade')) return <GraduationCap className="w-4 h-4" />;
-   if (n.includes('exam') || n.includes('schedule')) return <Calendar className="w-4 h-4" />;
-   if (n.includes('timetable')) return <Clock className="w-4 h-4" />;
-   if (n.includes('users management')) return <UsersRound className="w-4 h-4" />;
-   if (n.includes('subject management')) return <BookOpen className="w-4 h-4" />;
-   if (n.includes('teacher assignment')) return <UserPlus className="w-4 h-4" />;
-   if (n.includes('class management')) return <Landmark className="w-4 h-4" />;
-   if (n.includes('student assignment')) return <BookOpenText className="w-4 h-4" />;
-   if (n.includes('report')) return <BarChart4 className="w-4 h-4" />;
+   if (n.includes('tableau de bord')) return <LayoutDashboard className="w-4 h-4" />;
+   if (n.includes('gestion des résultats') || n.includes('grade')) return <GraduationCap className="w-4 h-4" />;
+   if (n.includes('gestion des examens') || n.includes('schedule')) return <Calendar className="w-4 h-4" />;
+   if (n.includes('emploi du temps')) return <Clock className="w-4 h-4" />;
+   if (n.includes('gestion des utilisateurs')) return <UsersRound className="w-4 h-4" />;
+   if (n.includes('gestion des sujets')) return <BookOpen className="w-4 h-4" />;
+   if (n.includes('affectation enseignants')) return <UserPlus className="w-4 h-4" />;
+   if (n.includes('gestion des classes')) return <Landmark className="w-4 h-4" />;
+   if (n.includes('affectation étudiants')) return <BookOpenText className="w-4 h-4" />;
+   if (n.includes('rapports')) return <BarChart4 className="w-4 h-4" />;
    if (n.includes('message')) return <MessageSquare className="w-4 h-4" />;
-   if (n.includes('material') || n.includes('upload')) return <FileUp className="w-4 h-4" />;
-   if (n.includes('attendance')) return <UserCheck className="w-4 h-4" />;
-   if (n.includes('student') || n.includes('class')) return <Users className="w-4 h-4" />;
-   if (n.includes('transcripts')) return <FileText className="w-4 h-4" />;
+   if (n.includes('matériel pédagogique') || n.includes('upload')) return <FileUp className="w-4 h-4" />;
+   if (n.includes('gestion des présences')) return <UserCheck className="w-4 h-4" />;
+   if (n.includes('étudiants')) return <Users className="w-4 h-4" />;
+   if (n.includes('relevés de notes')) return <FileText className="w-4 h-4" />;
    if (n.includes('staff')) return <UsersRound className="w-4 h-4" />;
    if (n.includes('utility')) return <Landmark className="w-4 h-4" />;
    return <Settings className="w-4 h-4" />;
 };
+
 
 export default function Sidebar({ menuItems }: SidebarProps) {
    const pathname = usePathname();
@@ -280,7 +281,7 @@ export default function Sidebar({ menuItems }: SidebarProps) {
                                        }`}
                                  >
                                     {Icon ? (
-                                       <Icon className="w-4 h-4" />
+                                       <Icon className="w-4 h-4 text-indigo-600" />
                                     ) : (
                                        getIcon(item.name)
                                     )}

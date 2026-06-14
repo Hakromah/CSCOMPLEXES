@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
    Form,
-   FormControl, 
+   FormControl,
    FormField,
    FormItem,
    FormLabel,
@@ -24,8 +24,8 @@ import { AxiosError } from 'axios';
 import Cookies from 'js-cookie';
 
 const formSchema = z.object({
-   email: z.string().email({ message: 'Please enter a valid email.' }),
-   password: z.string().min(1, { message: 'Password is required' }),
+   email: z.string().email({ message: 'Veuillez entrer un email valide.' }),
+   password: z.string().min(1, { message: 'Le mot de passe est requis' }),
 });
 
 export default function LoginPage() {
@@ -56,11 +56,11 @@ export default function LoginPage() {
 
          const role = getUserRole();
          if (!role) {
-            throw new Error("Login succeeded, but no user role found in cookies.");
+            throw new Error("Connexion réussie, mais aucun rôle utilisateur trouvé dans les cookies.");
          }
 
-         toast.success('Login Successful', {
-            description: `Welcome! Redirecting to your dashboard...`,
+         toast.success('Connexion réussie', {
+            description: `Bienvenue ! Redirection vers votre tableau de bord...`,
          });
 
          setTimeout(() => {
@@ -94,18 +94,18 @@ export default function LoginPage() {
 
          if (error instanceof AxiosError && (error.response?.status === 400 || error.response?.status === 401)) {
             // Handle "Bad credentials" specifically without logging the full error
-            toast.error('Login Failed', {
-               description: strapiError || 'Invalid email or password. Please try again.',
+            toast.error('Échec de la connexion', {
+               description: strapiError || 'Email ou mot de passe invalide. Veuillez réessayer.',
             });
          } else if (error instanceof AxiosError && error.response?.status === 403) {
-            toast.error('Access Forbidden (403)', {
-               description: strapiError || 'Your account may be blocked, unconfirmed, or the server CORS policy rejected the request.',
+            toast.error('Accès Interdit (403)', {
+               description: strapiError || 'Votre compte est peut-être bloqué, non confirmé, ou la politique CORS du serveur a rejeté la demande.',
             });
          } else {
             // Log other, unexpected errors
             console.error("Login failed:", error);
-            toast.error('Login Error', {
-               description: strapiError || 'An unexpected error occurred. Please try again later.',
+            toast.error('Erreur de connexion', {
+               description: strapiError || 'Une erreur inattendue s\'est produite. Veuillez réessayer plus tard.',
             });
          }
       } finally {
@@ -129,7 +129,7 @@ export default function LoginPage() {
                            <FormItem>
                               <FormLabel>Email</FormLabel>
                               <FormControl>
-                                 <Input placeholder="your.email@example.com" {...field} />
+                                 <Input placeholder="votre.email@example.com" {...field} />
                               </FormControl>
                               <FormMessage />
                            </FormItem>
@@ -140,16 +140,16 @@ export default function LoginPage() {
                         name="password"
                         render={({ field }) => (
                            <FormItem>
-                              <FormLabel>Password</FormLabel>
+                              <FormLabel>Mot de passe</FormLabel>
                               <FormControl>
-                                 <Input type="password" placeholder="Your Password" {...field} />
+                                 <Input type="password" placeholder="Votre Mot de passe" {...field} />
                               </FormControl>
                               <FormMessage />
                            </FormItem>
                         )}
                      />
                      <Button type="submit" className="w-full" disabled={isLoading}>
-                        {isLoading ? 'Logging in...' : 'Login'}
+                        {isLoading ? 'Connexion...' : 'Login'}
                      </Button>
                   </form>
                </Form>

@@ -6,17 +6,17 @@ export default function TeacherLayout({
   children: React.ReactNode;
 }) {
   const menuItems = [
-    { name: 'Dashboard', href: '/teacher' },
-    { name: 'My Classes', href: '/teacher/classes' },
-    { name: 'Students', href: '/teacher/students' },
-    { name: 'Attendance', href: '/teacher/attendance' },
-    { name: 'Timetable', href: '/teacher/timetable' },
-    { name: 'Exams', href: '/teacher/exams' },
-    { name: 'Results Management', href: '/teacher/results' }, // Added
-    { name: 'Upload Materials', href: '/teacher/materials' },
-    { name: 'Student Transcripts', href: '/teacher/transcripts' },
-//    { name: 'Messages', href: '/teacher/messages' },
-    { name: 'Profile', href: '/teacher/profile' },
+    { name: 'Tableau de bord', href: '/teacher' },
+    { name: 'Gestion des classes', href: '/teacher/classes' },
+    { name: 'Étudiants', href: '/teacher/students' },
+    { name: 'Gestion des présences', href: '/teacher/attendance' },
+    { name: 'Emploi du temps', href: '/teacher/timetable' },
+    { name: 'Gestion des Examens', href: '/teacher/exams' },
+    { name: 'Gestion des Résultats', href: '/teacher/results' }, // Added
+    { name: 'Upload des Matériels', href: '/teacher/materials' },
+    { name: 'Relevés de notes', href: '/teacher/transcripts' },
+    //    { name: 'Messages', href: '/teacher/messages' },
+    { name: 'Profil', href: '/teacher/profile' },
   ];
 
   return (

@@ -34,8 +34,8 @@ export default function StudentMaterialsPage() {
         const res = await api.get('/student/classes');
         setClasses(res.data || []);
       } catch (err) {
-        console.error("Failed to load classes:", err);
-        toast.error("Could not sync your classroom registry");
+        console.error("Echec de connexion", err);
+        toast.error("Impossible de se connecter aux serveurs");
       } finally {
         setLoading(false);
       }
@@ -53,8 +53,8 @@ export default function StudentMaterialsPage() {
       const res = await api.get(`/student/materials/${classId}`);
       setMaterials(res.data);
     } catch (error: any) {
-      console.error("Material Fetch Error:", error);
-      toast.error("Failed to retrieve materials for this unit");
+      console.error("Echec de connexion", error);
+      toast.error("Impossible de se connecter aux serveurs");
       setMaterials([]);
     } finally {
       setFetchingMaterials(false);
@@ -94,13 +94,13 @@ export default function StudentMaterialsPage() {
 
   const handleDownload = async (mat: any) => {
     if (!mat.fileUrl) return;
-    const tid = toast.loading("Preparing download...");
+    const tid = toast.loading("Préparation du téléchargement...");
 
     try {
       const fullUrl = getFullUrl(mat.fileUrl);
       // 1. Fetch the file data directly
       const response = await fetch(fullUrl);
-      if (!response.ok) throw new Error('Network response was not ok');
+      if (!response.ok) throw new Error('La réponse du serveur n\'était pas valide');
 
       const blob = await response.blob();
 
@@ -122,9 +122,9 @@ export default function StudentMaterialsPage() {
       // 4. Cleanup
       link.parentNode?.removeChild(link);
       window.URL.revokeObjectURL(url);
-      toast.success("Download started", { id: tid });
+      toast.success("Connexion interrompue,Téléchargement lancé", { id: tid });
     } catch (err) {
-      console.error("Download error:", err);
+      console.error("Echec de connexion:", err);
       // Fallback: just open the URL in a new tab if fetch fails
       const fullUrl = getFullUrl(mat.fileUrl);
       window.open(fullUrl, '_blank');
@@ -139,16 +139,16 @@ export default function StudentMaterialsPage() {
       <header className="md:max-w-6xl mx-auto flex flex-col md:flex-row justify-between md:items-end gap-6">
         <div className="space-y-2">
           <div className="flex items-center gap-2 text-indigo-600 font-black text-[10px] uppercase tracking-[0.4em]">
-            <Archive size={14} /> Knowledge Repository
+            <Archive size={14} /> Répertoire des connaissances
           </div>
           <h1 className="text-[clamp(1.2rem,2.5vw+1rem,3rem)] font-black text-slate-900 tracking-tighter sm:text-7xl italic uppercase">
-            Study <span className="text-indigo-600">Assets.</span>
+            Ressources <span className="text-indigo-600">pédagogiques.</span>
           </h1>
         </div>
 
         <Select onValueChange={handleClassChange}>
           <SelectTrigger className="w-72 h-16 rounded-4xl bg-white border border-slate-100 md:hover:border-primary shadow-xl font-black italic uppercase text-xs px-8 ring-offset-indigo-600 focus:ring-indigo-600 transition-all duration-500">
-            <SelectValue placeholder="SELECT SUBJECT GROUP" />
+            <SelectValue placeholder="CHOISIR LE GROUPE DE SUJETS" />
           </SelectTrigger>
           <SelectContent className="rounded-2xl border-none shadow-2xl">
             {classes.length > 0 ? (
@@ -159,7 +159,7 @@ export default function StudentMaterialsPage() {
               ))
             ) : (
               <div className="p-4 text-xs font-bold text-slate-400 uppercase italic text-center">
-                No Enrolled Classes Found
+                Aucune classe inscrite trouvée
               </div>
             )}
           </SelectContent>
@@ -171,7 +171,7 @@ export default function StudentMaterialsPage() {
         {fetchingMaterials ? (
           <div className="h-64 flex flex-col items-center justify-center gap-4">
             <Loader2 className="animate-spin text-indigo-300" size={40} />
-            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 italic">Accessing Archives...</p>
+            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 italic">Accès aux archives...</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -182,7 +182,7 @@ export default function StudentMaterialsPage() {
                   animate={{ opacity: 1, scale: 1 }}
                   className="col-span-full h-96 flex flex-col items-center justify-center bg-white rounded-[4rem] border-2 border-dashed border-slate-100 md:hover:border-primary duration-500 transition-colors italic font-black text-slate-200 uppercase tracking-tighter text-4xl"
                 >
-                  Empty Unit Archives
+                  Aucune ressource pédagogique trouvée
                 </motion.div>
               )}
 
@@ -209,7 +209,7 @@ export default function StudentMaterialsPage() {
                             variant="outline"
                             onClick={() => {
                               if (!mat.fileUrl) {
-                                toast.error("File URL is missing for this material.");
+                                toast.error("L'URL du fichier est manquante pour ce matériel.");
                                 return;
                               }
                               const isPdf = mat.fileType?.includes('pdf') || mat.fileName?.toLowerCase().endsWith('.pdf');
@@ -221,14 +221,14 @@ export default function StudentMaterialsPage() {
                             }}
                             className="rounded-2xl border-slate-100 text-slate-400 md:hover:border-primary md:hover:text-primary duration-500 transition-colors font-black text-[10px] tracking-widest h-10 px-4 uppercase"
                           >
-                            <Eye size={14} className="mr-2" /> Preview
+                            <Eye size={14} className="mr-2" /> Aperçu
                           </Button>
 
                           <Button
                             onClick={() => handleDownload(mat)}
                             className="flex-1 h-12 rounded-2xl bg-rose-600 text-white font-black italic uppercase text-[10px] md:hover:bg-primary duration-500 shadow-xl shadow-rose-200 transition-all"
                           >
-                            <Download size={14} className="mr-2" /> Get
+                            <Download size={14} className="mr-2" /> Obtenir
                           </Button>
 
                         </div>
@@ -239,7 +239,7 @@ export default function StudentMaterialsPage() {
                           {mat.title}
                         </h3>
                         <p className="text-slate-400 font-bold text-sm leading-relaxed italic line-clamp-2">
-                          {mat.description || "Official course material for your curriculum."}
+                          {mat.description || "Ressource pédagogique officielle pour votre programme."}
                         </p>
                       </div>
                     </div>
@@ -252,9 +252,9 @@ export default function StudentMaterialsPage() {
                           </div>
                           <div className="flex flex-col">
                             <span className="text-[10px] font-black text-slate-900 uppercase tracking-widest italic leading-none">
-                              {mat.uploadedBy?.name || "Faculty Member"}
+                              {mat.uploadedBy?.name || "Professeur"}
                             </span>
-                            <span className="text-[9px] font-bold text-slate-300 uppercase mt-1">Instructor</span>
+                            <span className="text-[9px] font-bold text-slate-300 uppercase mt-1">Professeur</span>
                           </div>
                         </div>
                       </div>

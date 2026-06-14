@@ -29,11 +29,40 @@ export default function AdminDashboard() {
   const [report, setReport] = useState<ReportDTO | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // State to hold the dynamic semester text to prevent hydration mismatches
+  const [semesterText, setSemesterText] = useState<string>('');
+
+
+  const getDynamicSemester = () => {
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth(); // 0 = January, 11 = December
+
+    let semester = 1;
+
+    // Semester 1: September (8) to January (0)
+    // Semester 2: February (1) to August (7)
+    if (month >= 1 && month <= 7) {
+      semester = 2;
+    } else {
+      semester = 1;
+    }
+
+    // Get the current month name in French (e.g., "juin")
+    const monthName = currentDate.toLocaleDateString('fr-FR', { month: 'long' });
+
+    // Capitalize the first letter of the month name (e.g., "Juin")
+    const capitalizedMonth = monthName.charAt(0).toUpperCase() + monthName.slice(1);
+
+    return `Semestre ${semester}, ${capitalizedMonth} - Année ${year}`;
+  };
+
   useEffect(() => {
     const fetchReport = async () => {
       try {
         const response = await api.get('/admin/reports/summary');
         setReport(response.data);
+        setSemesterText(getDynamicSemester());
       } catch (error) {
         toast.error('Données administratives non synchronisées.');
       } finally {
@@ -41,7 +70,9 @@ export default function AdminDashboard() {
       }
     };
     fetchReport();
+
   }, []);
+
 
   const userData = report ? [
     { name: 'Students', value: report.totalStudents, color: '#3b82f6' },
@@ -68,7 +99,7 @@ export default function AdminDashboard() {
           <h1 className="text-[clamp(1.2rem,2vw+1rem,2rem)] font-black text-slate-900 tracking-tight flex items-center gap-3">
             Console administrative <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
           </h1>
-          <p className="text-slate-500 font-medium">Tableau de bord administratif.</p>
+          <p className="text-slate-500 font-medium">Tableau de bord administratif • <span className="text-emerald-500">Actif</span> • {semesterText || 'Chargement...'}</p>
         </motion.div>
 
         <div className="flex gap-3">

@@ -48,11 +48,11 @@ interface Analytics {
 }
 
 const STATUS_STYLE: Record<string, { bg: string; text: string; label: string }> = {
-  PRESENT: { bg: 'bg-emerald-50', text: 'text-emerald-700', label: 'Present' },
-  ABSENT: { bg: 'bg-rose-50', text: 'text-rose-700', label: 'Absent' },
-  LATE: { bg: 'bg-amber-50', text: 'text-amber-700', label: 'Late' },
-  EXCUSED: { bg: 'bg-blue-50', text: 'text-blue-700', label: 'Excused' },
-  SICK: { bg: 'bg-purple-50', text: 'text-purple-700', label: 'Sick' },
+  PRESENT: { bg: 'bg-emerald-50', text: 'text-emerald-700', label: 'Présent'  },
+  ABSENT:  { bg: 'bg-rose-50',    text: 'text-rose-700',    label: 'Absent'   },
+  LATE:    { bg: 'bg-amber-50',   text: 'text-amber-700',   label: 'Retard'   },
+  EXCUSED: { bg: 'bg-blue-50',    text: 'text-blue-700',    label: 'Justifié' },
+  SICK:    { bg: 'bg-purple-50',  text: 'text-purple-700',  label: 'Malade'   },
 };
 
 function StatCard({ label, value, icon: Icon, color, sub }: { label: string; value: string | number; icon: any; color: string; sub?: string }) {
