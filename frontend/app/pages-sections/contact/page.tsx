@@ -21,7 +21,7 @@ import { Loader2 } from 'lucide-react';
 
 const Map = dynamic(() => import('./Map'), {
     ssr: false,
-    loading: () => <div className="h-full w-full bg-gray-100 flex items-center justify-center">Loading Map...</div>
+    loading: () => <div className="h-full w-full bg-gray-100 flex items-center justify-center">Chargement de la carte...</div>
 });
 
 const fallbackSocialLinks = [
@@ -55,16 +55,16 @@ export default function ContactPage({ contactInfo }: ContactPageProps) {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
-        const tid = toast.loading("Sending your message...");
+        const tid = toast.loading("Envoi de votre message...");
         try {
             await api.post('/contact-messages', {
                 data: formData
             });
-            toast.success("Message sent successfully! We will get back to you shortly.", { id: tid });
+            toast.success("Message envoyé avec succès ! Nous vous répondrons dans les plus brefs délais.", { id: tid });
             setFormData({ firstName: '', lastName: '', email: '', subject: '', message: '' });
         } catch (error) {
             console.error("Failed to submit contact form:", error);
-            toast.error("Failed to send message. Please try again later.", { id: tid });
+            toast.error("Échec de l'envoi du message. Veuillez réessayer plus tard.", { id: tid });
         } finally {
             setIsSubmitting(false);
         }
@@ -169,9 +169,9 @@ export default function ContactPage({ contactInfo }: ContactPageProps) {
                         {/* Connect With Us */}
                         <div className="space-y-8">
                             <div>
-                                <h2 className="text-2xl font-bold text-gray-900 mb-4">Connect With Us</h2>
+                                <h2 className="text-2xl font-bold text-gray-900 mb-4">Suivez-nous</h2>
                                 <p className="text-gray-600">
-                                    Follow us on social media for updates, news, and student highlights.
+                                    Suivez-nous sur les réseaux sociaux pour obtenir des mises à jour, des nouvelles et des informations sur nos élèves.
                                 </p>
                             </div>
 
@@ -190,25 +190,25 @@ export default function ContactPage({ contactInfo }: ContactPageProps) {
                             <Sheet>
                                 <SheetTrigger asChild>
                                     <Button className="bg-[#2857AE] cursor-pointer hover:bg-[#1e408a] text-white px-8 py-6 rounded-lg text-base font-medium w-full sm:w-auto">
-                                        Contact Form
+                                        Formulaire de contact
                                     </Button>
                                 </SheetTrigger>
                                 <SheetContent side="bottom" className="sm:max-w-xl w-[calc(100%-2rem)] px-0 overflow-y-auto">
                                     <div className="px-6 py-6 h-full overflow-y-auto">
                                         <SheetHeader className="mb-6 text-left">
-                                            <SheetTitle className="text-2xl font-bold text-[#2857AE]">Send us a Message</SheetTitle>
+                                            <SheetTitle className="text-2xl font-bold text-[#2857AE]">Envoyez-nous un message</SheetTitle>
                                             <SheetDescription>
-                                                Fill out the form below and our team will get back to you shortly.
+                                                Remplissez le formulaire ci-dessous et notre équipe vous répondra dans les plus brefs délais.
                                             </SheetDescription>
                                         </SheetHeader>
 
                                         <form onSubmit={handleSubmit} className="space-y-6">
                                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                                 <div className="space-y-2">
-                                                    <Input id="firstName" placeholder="First Name" required value={formData.firstName} onChange={(e) => setFormData({ ...formData, firstName: e.target.value })} disabled={isSubmitting} />
+                                                    <Input id="firstName" placeholder="Prénom" required value={formData.firstName} onChange={(e) => setFormData({ ...formData, firstName: e.target.value })} disabled={isSubmitting} />
                                                 </div>
                                                 <div className="space-y-2">
-                                                    <Input id="lastName" placeholder="Last Name" required value={formData.lastName} onChange={(e) => setFormData({ ...formData, lastName: e.target.value })} disabled={isSubmitting} />
+                                                    <Input id="lastName" placeholder="Nom" required value={formData.lastName} onChange={(e) => setFormData({ ...formData, lastName: e.target.value })} disabled={isSubmitting} />
                                                 </div>
                                             </div>
 
@@ -217,14 +217,14 @@ export default function ContactPage({ contactInfo }: ContactPageProps) {
                                             </div>
 
                                             <div className="space-y-2">
-                                                <Input id="subject" placeholder="Inquiry about admissions" required value={formData.subject} onChange={(e) => setFormData({ ...formData, subject: e.target.value })} disabled={isSubmitting} />
+                                                <Input id="subject" placeholder="Sujet de votre message" required value={formData.subject} onChange={(e) => setFormData({ ...formData, subject: e.target.value })} disabled={isSubmitting} />
                                             </div>
 
                                             <div className="space-y-2">
                                                 <textarea
                                                     id="message"
                                                     className="flex min-h-[120px] max-h-40 w-full rounded-md border border-primary/20 lg:hover:border-primary duration-500 focus:duration-500 focus:border-primary bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-                                                    placeholder="Write your message here"
+                                                    placeholder="Écrivez votre message ici"
                                                     required
                                                     value={formData.message}
                                                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
@@ -234,9 +234,9 @@ export default function ContactPage({ contactInfo }: ContactPageProps) {
 
                                             <Button type="submit" className="w-full cursor-pointer bg-[#2857AE] hover:bg-[#1e408a] py-6 text-base transition-all" disabled={isSubmitting}>
                                                 {isSubmitting ? (
-                                                    <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Sending...</>
+                                                    <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Envoi en cours...</>
                                                 ) : (
-                                                    <><Send className="mr-2 h-4 w-4" /> Send Message</>
+                                                    <><Send className="mr-2 h-4 w-4" /> Envoyer le message</>
                                                 )}
                                             </Button>
                                         </form>

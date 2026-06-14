@@ -70,7 +70,7 @@ export default function GalleryPage({ items = [] }: GalleryPageProps) {
                   : "text-gray-500 hover:text-gray-900 bg-transparent"
                   }`}
               >
-                Image Gallery
+                Galerie Photos
               </button>
               <button
                 onClick={() => setActiveMediaType("video")}
@@ -79,7 +79,7 @@ export default function GalleryPage({ items = [] }: GalleryPageProps) {
                   : "text-gray-500 hover:text-gray-900 bg-transparent"
                   }`}
               >
-                Video Gallery
+                Galerie Vidéos
               </button>
             </div>
           </div>

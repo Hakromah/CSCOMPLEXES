@@ -81,11 +81,11 @@ export default function StaffSection({ staffMembers: staffProp }: StaffSectionPr
             <div className="container overflow-hidden mx-auto max-w-[1920px] px-5 md:px-[clamp(20px,5vw,60px)]">
                 <div className="sm:grid max-sm:grid-cols-1 sm:grid-cols-4 gap-10 lg:gap-[clamp(15px,3vw,80px)] items-center">
                     <div className="staff-content cols-pan-1 w-full flex flex-col items-start text-left">
-                        <h2 className="text-[clamp(20px,4vw,60px)] font-bold mb-3 sm:mb-6 text-black">STAFF</h2>
+                        <h2 className="text-[clamp(20px,4vw,50px)] font-bold mb-3 sm:mb-6 text-black leading-tight">NOTRE ÉQUIPE</h2>
                         <p className="text-black text-[clamp(16px,2vw,18px)] w-full leading-relaxed mb-4 md:mb-10">
-                            Stay updated with academic milestones, spiritual growth, and student achievements across all levels.
+                            Restez informé des étapes académiques, du développement personnel et des réussites des élèves à tous les niveaux.
                         </p>
-                        <div className="flex gap-4 mt-auto">
+                        <div className="flex gap-4 md:gap-6 mt-auto">
                             <Button
                                 variant="outline"
                                 size="icon"

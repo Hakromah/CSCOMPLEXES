@@ -85,13 +85,13 @@ export default function Footer({ footerData, contactInfo }: FooterProps) {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter Your E-mail"
+              placeholder="Entrez votre e-mail"
               disabled={isSubscribing}
               required
               className="border-0 bg-transparent text-black focus-visible:ring-0 placeholder:text-gray-400"
             />
             <Button type="submit" disabled={isSubscribing} className="bg-[#2857AE] hover:bg-[#1e4287] text-white px-6 py-2 rounded-md transition-all">
-              {isSubscribing ? <Loader2 className="h-4 w-4 animate-spin" /> : "Subscribe"}
+              {isSubscribing ? <Loader2 className="h-4 w-4 animate-spin" /> : "S'abonner"}
             </Button>
           </form>
         </div>
@@ -105,7 +105,7 @@ export default function Footer({ footerData, contactInfo }: FooterProps) {
               {footerData?.description || "Serving the community of Monrovia since 1977. We believe that education is the ultimate key to unlocking a bright future."}
             </p>
             <div className="space-y-2">
-              <p className="text-xs text-white/60">Follow us on Social Media</p>
+              <p className="text-xs text-white/60">Suivez-nous sur les réseaux sociaux</p>
               <div className="flex gap-2 max-md:gap-2 pt-1">
                 {socialLinks.map((social) => (
                   <Link
@@ -122,17 +122,17 @@ export default function Footer({ footerData, contactInfo }: FooterProps) {
           {/* Column 2: Quick Links */}
           <div className="lg:col-span-1 lg:border-l max-xs:hidden border-white/20 lg:flex lg:justify-center">
             <div className="lg:py-5 lg:px-5">
-              <h3 className="text-xl font-bold mb-6">Quick Links</h3>
+              <h3 className="text-xl font-bold mb-6">Liens rapides</h3>
               <ul className="space-y-4 max-sm:space-y-2 text-white/80 text-sm">
                 {(footerData && footerData.quickLinks.length > 0) ? footerData.quickLinks.map(link => (
                   <li key={link.id}><Link href={link.url} className="hover:text-white transition-colors">{link.label}</Link></li>
                 )) : (
                   <>
-                    <li><Link href="#" className="hover:text-white transition-colors">Admission Requirements</Link></li>
-                    <li><Link href="#" className="hover:text-white transition-colors">Tuition & Fees</Link></li>
-                    <li><Link href="#" className="hover:text-white transition-colors">School News</Link></li>
-                    <li><Link href="#" className="hover:text-white transition-colors">Gallery</Link></li>
-                    <li><Link href="#" className="hover:text-white transition-colors">Opportunities</Link></li>
+                    <li><Link href="#" className="hover:text-white transition-colors">Conditions d'admission</Link></li>
+                    <li><Link href="#" className="hover:text-white transition-colors">Frais de scolarité</Link></li>
+                    <li><Link href="#" className="hover:text-white transition-colors">Actualités de l'école</Link></li>
+                    <li><Link href="#" className="hover:text-white transition-colors">Galerie</Link></li>
+                    <li><Link href="#" className="hover:text-white transition-colors">Opportunités</Link></li>
                   </>
                 )}
               </ul>
@@ -142,16 +142,16 @@ export default function Footer({ footerData, contactInfo }: FooterProps) {
           {/* Column 3: Academics */}
           <div className="lg:col-span-1 lg:border-l max-xs:hidden border-white/20 lg:flex lg:justify-center">
             <div className="lg:py-5 lg:px-5">
-              <h3 className="text-xl font-bold mb-6">Academics</h3>
+              <h3 className="text-xl font-bold mb-6">Scolarité</h3>
               <ul className="space-y-4 max-sm:space-y-2 text-white/80 text-sm">
                 {(footerData && footerData.academicsLinks.length > 0) ? footerData.academicsLinks.map(link => (
                   <li key={link.id}><Link href={link.url} className="hover:text-white transition-colors">{link.label}</Link></li>
                 )) : (
                   <>
-                    <li><Link href="#" className="hover:text-white transition-colors">Curriculum</Link></li>
-                    <li><Link href="#" className="hover:text-white transition-colors">Academic Calendar</Link></li>
-                    <li><Link href="#" className="hover:text-white transition-colors">Programs</Link></li>
-                    <li><Link href="#" className="hover:text-white transition-colors">Scholarships</Link></li>
+                    <li><Link href="#" className="hover:text-white transition-colors">Programme d'études</Link></li>
+                    <li><Link href="#" className="hover:text-white transition-colors">Calendrier scolaire</Link></li>
+                    <li><Link href="#" className="hover:text-white transition-colors">Programmes</Link></li>
+                    <li><Link href="#" className="hover:text-white transition-colors">Bourses d'études</Link></li>
                   </>
                 )}
               </ul>
@@ -161,7 +161,7 @@ export default function Footer({ footerData, contactInfo }: FooterProps) {
           {/* Column 4: Contact Us */}
           <div className="lg:col-span-1 lg:border-l border-white/20 lg:flex lg:justify-center">
             <div className="lg:py-5 lg:px-5">
-              <h3 className="text-xl font-bold mb-6">Contact Us</h3>
+              <h3 className="text-xl font-bold mb-6">Nous contacter</h3>
               <div className="space-y-4 max-sm:space-y-2 text-white/80 text-sm leading-relaxed whitespace-pre-line">
                 <p>{contactInfo?.address || "Fish Market Monrovia,\nLiberia."}</p>
                 {contactInfo?.phones && contactInfo.phones.length > 0 ? (
@@ -172,7 +172,7 @@ export default function Footer({ footerData, contactInfo }: FooterProps) {
                 {contactInfo?.emails && contactInfo.emails.length > 0 ? (
                   <a href={`mailto:${contactInfo.emails[0]}`} className="block hover:text-white transition-colors">{contactInfo.emails[0]}</a>
                 ) : (
-                  <a href="mailto:info@amfofana.com" className="block hover:text-white transition-colors">info@amfofana.com</a>
+                  <a href="mailto:2complexes@gmail.com" className="block hover:text-white transition-colors">2complexes@gmail.com</a>
                 )}
               </div>
             </div>
@@ -183,7 +183,7 @@ export default function Footer({ footerData, contactInfo }: FooterProps) {
         {/* Bottom Bar */}
         <div className="pt-[clamp(10px,3vw,32px)] border-t border-white/10 text-center">
           <p className="text-xs text-white/50">
-            © {new Date().getFullYear()} A.M. Fofana Islamic & English High School. All Rights Reserved.
+            © {new Date().getFullYear()} Complexe Scolaire Camara Salemtou. All Rights Reserved.
           </p>
         </div>
 

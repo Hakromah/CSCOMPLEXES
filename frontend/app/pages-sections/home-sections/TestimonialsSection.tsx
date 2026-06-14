@@ -60,17 +60,16 @@ export default function TestimonialsSection({ testimonials: testimonialsProp }: 
                 {/* Header Section */}
                 <div className="testimonial-header flex flex-col lg:flex-row justify-between items-start lg:items-end mb-16 max-md:mb-6 gap-8 max-md:gap-5">
                     <div>
-                        <h2 className="text-[clamp(30px,4vw,50px)] font-bold text-[#2857AE] mb-2">
-                            Testimonials
+                        <h2 className="text-[clamp(30px,4vw,50px)] font-bold text-[#2857AE] mb-2 leading-tight">
+                            Témoignages
                         </h2>
                         <h3 className="text-xl max-md:[&_br]:hidden md:text-2xl text-black font-medium">
-                            Voices of Our <br /> Distinguished Community
+                            Les voix de notre  <br /> communauté
                         </h3>
                     </div>
                     <div className="lg:max-w-lg lg:text-left">
                         <p className="text-gray-600 text-lg leading-relaxed">
-                            Excellence in education is measured not by awards alone, but by the lives we touch and the futures we shape. Here are the stories that define our legacy.
-                        </p>
+                            L'excellence dans l'éducation ne se mesure pas seulement par des récompenses  </p>
                     </div>
                 </div>
 
@@ -85,7 +84,7 @@ export default function TestimonialsSection({ testimonials: testimonialsProp }: 
                         {allTestimonials.map((testimonial, index) => (
                             <div
                                 key={`${testimonial.id}-${index}`}
-                                className="flex-shrink-0 w-[400px] md:w-[450px] testimonial-card-anim"
+                                className="shrink-0 w-[400px] md:w-[450px] testimonial-card-anim"
                             >
                                 <div className="testimonial-card bg-[#2857AE] text-white rounded-3xl p-8 flex flex-col h-full shadow-lg transition-transform duration-300 hover:-translate-y-2 h-[400px]">
                                     {/* Tag */}
