@@ -21,7 +21,7 @@ export default function Map({ lat, lng }: MapProps) {
     const position: [number, number] = [latitude, longitude];
 
     if (!isMounted) {
-        return <div className="h-full w-full bg-gray-100 flex items-center justify-center">Loading Map...</div>;
+        return <div className="h-full w-full bg-gray-100 flex items-center justify-center">Chargement de la carte...</div>;
     }
 
     const customIcon = L.divIcon({
@@ -59,14 +59,14 @@ export default function Map({ lat, lng }: MapProps) {
             <Marker position={position} icon={customIcon}>
                 <Popup>
                     <div className="text-center">
-                        <h3 className="font-bold text-[#2857AE]">A.M. Fofana High School</h3>
-                        <p>Fish Market, Monrovia</p>
+                        <h3 className="font-bold text-[#2857AE]">Complex Scolaire Camara salemtou</h3>
+                        <p>Moribayah Coyah, Guinee</p>
                         {/* <a href="https://maps.google.com/?q=6.280628622957243,-10.766005500256005" target="_blank" rel="noopener noreferrer" className="text-xs text-primary underline mt-1 block">
                             Get Directions
                         </a> */}
 
                         <a href={`https://maps.google.com/?q=${latitude},${longitude}`} target="_blank" rel="noopener noreferrer" className="text-xs text-primary underline mt-1 block">
-                            Get Directions
+                            Obtenir l'itinéraire
                         </a>
                     </div>
                 </Popup>

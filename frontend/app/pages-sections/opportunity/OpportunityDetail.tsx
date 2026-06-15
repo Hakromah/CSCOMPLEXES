@@ -53,13 +53,13 @@ export default function OpportunityDetail({
               {opportunity.index}
             </span>
             <span className="flex items-center gap-1">
-              <Calendar className="w-4 h-4" /> Published:{" "}
+              <Calendar className="w-4 h-4" /> Publié le :{" "}
               {opportunity.publishedDate}
             </span>
             <span className="flex items-center gap-1 text-red-200">
-              <Clock className="w-4 h-4" /> Deadline:{" "}
+              <Clock className="w-4 h-4" /> Date limite :{" "}
               <div>
-                Deadline {opportunity.deadline}{" "}
+                Date limite {opportunity.deadline}{" "}
                 <span className="text-white">{opportunity.dateNumber}</span>
               </div>
             </span>
@@ -79,18 +79,18 @@ export default function OpportunityDetail({
               href="/opportunities"
               className="inline-flex items-center text-white duration-500 bg-primary py-2 px-5 rounded-full lg:hover:text-primary lg:hover:bg-white border border-primary/0 lg:hover:border-primary transition-colors mb-6"
             >
-              <ArrowLeft className="w-5 h-5 mr-2" /> Back to Opportunities
+              <ArrowLeft className="w-5 h-5 mr-2" /> Retour aux opportunités
             </Link>
             <div className="prose prose-lg max-w-none text-gray-600">
               <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                Overview
+                Aperçu
               </h3>
               <p className="leading-relaxed mb-6">
                 {opportunity.details.intro}
               </p>
 
               <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                Eligibility Requirements
+                Critères d'éligibilité
               </h3>
               <ul className="space-y-3 mb-6">
                 {opportunity.details.requirements.map((req, i) => (
@@ -102,7 +102,7 @@ export default function OpportunityDetail({
               </ul>
 
               <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                Benefits
+                Avantages
               </h3>
               <ul className="space-y-3 mb-6">
                 {opportunity.details.benefits.map((ben, i) => (
@@ -114,7 +114,7 @@ export default function OpportunityDetail({
               </ul>
 
               <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                How to Apply
+                Comment postuler
               </h3>
               <p className="leading-relaxed bg-blue-50 p-6 rounded-xl border border-blue-100">
                 {opportunity.details.howToApply}
@@ -126,19 +126,19 @@ export default function OpportunityDetail({
           <div className="lg:w-1/3">
             <div className="sticky top-24 bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
               <h3 className="text-xl font-bold mb-2">
-                Ready to take the next step?
+                Prêt à franchir le pas ?
               </h3>
               <p className="text-gray-500 mb-8 text-sm">
-                Don&apos;t miss this chance. Applications are open until
+                Ne manquez pas cette chance. Les candidatures sont ouvertes jusqu'au{" "}
                 {opportunity.deadline}.
               </p>
 
               <Button className="w-full bg-primary hover:bg-[#1e408a] py-6 text-lg shadow-blue-200 shadow-xl">
-               <a href=""> Apply Now</a>
+               <a href=""> Postuler maintenant</a>
               </Button>
 
               <div className="mt-6 text-center text-xs text-gray-400">
-                By applying, you agree to our Terms & Privacy Policy.
+                En postulant, vous acceptez nos conditions et notre politique de confidentialité.
               </div>
             </div>
           </div>

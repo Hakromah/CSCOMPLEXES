@@ -429,8 +429,8 @@ export default function TeacherTranscriptsPage() {
                       key={student.id}
                       onClick={() => setSelectedStudentId(String(student.id))}
                       className={`w-full text-left p-3 rounded-lg text-xs font-bold transition-all flex items-center justify-between ${selectedStudentId === String(student.id)
-                          ? 'bg-slate-900 text-white shadow-md shadow-slate-950/10'
-                          : 'hover:bg-slate-100 text-slate-700'
+                        ? 'bg-slate-900 text-white shadow-md shadow-slate-950/10'
+                        : 'hover:bg-slate-100 text-slate-700'
                         }`}
                     >
                       <div>

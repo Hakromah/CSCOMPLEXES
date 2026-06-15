@@ -8,30 +8,30 @@ import type { AcademicSection, AcademicResource, SchoolCalendar } from '@/types/
 
 const fallbackSections: AcademicSection[] = [
     {
-        id: 1, sectionId: 'elementary', title: 'Elementary (K-5)',
-        content: 'Core focus on Literacy, Math, and Social-Emotional development using inquiry-based learning.',
+        id: 1, sectionId: 'elementary', title: 'École primaire',
+        content: 'Accent sur l\'alphabétisation, les mathématiques et le développement socio-émotionnel grâce à un apprentissage par l\'investigation.',
         image: '/home/classmate.jpg',
-        details: ["Inquiry-based learning approach", "Strong focus on literacy and numeracy", "Safe and nurturing environment"],
-        header: "Elementary (K-5)",
-        subheader: "Core focus on Literacy, Math, and Social-Emotional development using inquiry-based learning.",
+        details: ["Approche d'apprentissage par l'investigation", "Forte concentration sur l'alphabétisation et le calcul", "Environnement sûr et bienveillant"],
+        header: "École primaire",
+        subheader: "Accent sur l'alphabétisation, les mathématiques et le développement socio-émotionnel grâce à un apprentissage par l'investigation.",
         breadcrumb_item: []
     },
     {
-        id: 2, sectionId: 'junior', title: 'Junior High (6-8)',
-        content: 'Introduction to specialized subjects, lab sciences, and organizational skills for independence.',
+        id: 2, sectionId: 'junior', title: 'Collège',
+        content: 'Introduction à des matières spécialisées, aux sciences en laboratoire et aux compétences organisationnelles pour l\'autonomie.',
         image: '/home/intro2.png',
-        details: ["Specialized subject teachers", "Introduction to lab sciences", "Development of organizational skills"],
-        header: "Junior High (6-8)",
-        subheader: "Introduction to specialized subjects, lab sciences, and organizational skills for independence.",
+        details: ["Enseignants spécialisés par matière", "Introduction aux sciences en laboratoire", "Développement des compétences organisationnelles"],
+        header: "Collège",
+        subheader: "Introduction à des matières spécialisées, aux sciences en laboratoire et aux compétences organisationnelles pour l'autonomie.",
         breadcrumb_item: []
     },
     {
-        id: 3, sectionId: 'highschool', title: 'High School (9-12)',
-        content: 'Advanced Placement (AP) courses, Honors tracks, and College & Career Readiness programs.',
+        id: 3, sectionId: 'highschool', title: 'Lycée',
+        content: 'Cours avancés, parcours d\'excellence et programmes de préparation à l\'université et à la vie active.',
         image: '/home/am1.png',
-        details: ["Advanced Placement (AP) courses", "College & Career Readiness programs", "Leadership opportunities"],
-        header: "High School (9-12)",
-        subheader: "Advanced Placement (AP) courses, Honors tracks, and College & Career Readiness programs.",
+        details: ["Cours avancés (AP)", "Programmes de préparation à l'université et à la vie active", "Opportunités de leadership"],
+        header: "Lycée",
+        subheader: "Cours avancés, parcours d'excellence et programmes de préparation à l'université et à la vie active.",
         breadcrumb_item: []
     },
 ];
@@ -95,10 +95,10 @@ export default function AcademicPage({ sections: sectionsProp, resources: resour
     return (
         <div className="w-full min-h-screen bg-background">
             <Breadcrumb
-                title={breadcrumbData?.breadcrumb_title || "Academic Excellence"}
-                description={breadcrumbData?.description || "Empowering students with comprehensive education and innovative learning approaches"}
+                title={breadcrumbData?.breadcrumb_title || "Excellence académique"}
+                description={breadcrumbData?.description || "Donner aux étudiants les moyens de réussir grâce à une éducation complète et des approches d'apprentissage innovantes"}
                 image={breadcrumbData?.imageUrl || "https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=2070&auto=format&fit=crop"}
-                alt={breadcrumbData?.breadcrumb_title || "Academic Excellence"}
+                alt={breadcrumbData?.breadcrumb_title || "Excellence académique"}
             />
 
             <section className="py-[clamp(25px,3vw,80px)]">
@@ -108,20 +108,20 @@ export default function AcademicPage({ sections: sectionsProp, resources: resour
                     <div className="max-w-4xl mb-[clamp(20px,4vw,50px)]">
                         <div className="flex items-center gap-4 mb-[clamp(12px,3vw,25px)]">
                             <div className="h-12 w-1 bg-[#2857AE]"></div>
-                            <h2 className="text-xl md:text-4xl font-bold text-gray-900">Academic Excellence</h2>
+                            <h2 className="text-xl md:text-4xl font-bold text-gray-900">Excellence académique</h2>
                         </div>
                         <h3 className="text-md md:text-xl font-semibold mb-4 max-sm:mb-2">
-                            {activeData.header || 'Empowering students with comprehensive education and innovative learning approaches'}
+                            {activeData.header || 'Donner aux étudiants les moyens de réussir grâce à une éducation complète et des approches d\'apprentissage innovantes'}
                         </h3>
                         <p className="text-gray-600 leading-relaxed">
-                            {activeData.subheader || 'Our curriculum is designed to meet national education standards and global best practices. We connect outstanding students with local and international scholarship opportunities. Students receive mentorship and guidance to help them choose future careers and university paths.'}
+                            {activeData.subheader || 'Notre programme est conçu pour répondre aux normes éducatives nationales et aux meilleures pratiques mondiales. Nous mettons en relation les étudiants exceptionnels avec des opportunités de bourses locales et internationales. Les étudiants reçoivent un mentorat et des conseils pour les aider à choisir leurs futures carrières et parcours universitaires.'}
                         </p>
                     </div>
 
                     <div className="flex flex-col md:flex-row gap-[clamp(20px,3.5vw,50px)] relative">
                         {/* Left Column: Scrollable Content */}
                         <div className="w-full lg:w-1/2 space-y-[clamp(30px,3vw,60px)]">
-                            <h2 className="text-[clamp(20px,3vw,32px)] font-bold text-gray-900 mb-[clamp(10px,3vw,26px)] border-b pb-4 max-sm:text-[20px] inline-block">Learning Pathways</h2>
+                            <h2 className="text-[clamp(20px,3vw,32px)] font-bold text-gray-900 mb-[clamp(10px,3vw,26px)] border-b pb-4 max-sm:text-[20px] inline-block">Parcours d'apprentissage</h2>
 
                             {academicSections.map((section) => (
                                 <div
@@ -183,7 +183,7 @@ export default function AcademicPage({ sections: sectionsProp, resources: resour
                                         <h3 className="text-xl max-md:text-sm font-bold text-gray-900">{cal.label}</h3>
                                     </div>
                                     <Button variant="outline" className="gap-2 max-xs:w-full cursor-pointer border-gray-300 hover:border-[#2857AE] hover:text-[#2857AE]">
-                                        Download <FileText className="w-4 h-4" />
+                                        Télécharger <FileText className="w-4 h-4" />
                                     </Button>
                                 </div>
                             </a>
@@ -195,10 +195,10 @@ export default function AcademicPage({ sections: sectionsProp, resources: resour
                                     <div className="bg-blue-50 p-4 rounded-lg text-[#2857AE] font-bold text-xl max-md:text-sm">
                                         —
                                     </div>
-                                    <h3 className="text-xl max-md:text-sm font-bold text-gray-900">School Calendar</h3>
+                                    <h3 className="text-xl max-md:text-sm font-bold text-gray-900">Calendrier scolaire</h3>
                                 </div>
                                 <Button variant="outline" className="gap-2 max-xs:w-full cursor-pointer border-gray-300 hover:border-[#2857AE] hover:text-[#2857AE]">
-                                    Download <FileText className="w-4 h-4" />
+                                    Télécharger <FileText className="w-4 h-4" />
                                 </Button>
                             </div>
                         </a>
@@ -210,7 +210,7 @@ export default function AcademicPage({ sections: sectionsProp, resources: resour
             <section className="py-[clamp(20px,3vw,80px)] bg-gray-50">
                 <div className="container mx-auto px-5 max-w-[1920px] md:px-[clamp(20px,5vw,60px)]">
                     <div className="bg-[#f0f4f8] p-[clamp(12px,4vw,40px)] rounded-[clamp(12px,4vw,30px)]">
-                        <h2 className="text-[clamp(20px,3vw,32px)] font-bold text-gray-900 mb-[clamp(10px,3vw,26px)] border-b pb-4 max-sm:text-[20px]">Useful Academic Resources</h2>
+                        <h2 className="text-[clamp(20px,3vw,32px)] font-bold text-gray-900 mb-[clamp(10px,3vw,26px)] border-b pb-4 max-sm:text-[20px]">Ressources académiques utiles</h2>
                         <div className="space-y-1">
                             {resourcesProp && resourcesProp.length > 0 ? (
                                 resourcesProp.map((resource) => (
@@ -225,7 +225,7 @@ export default function AcademicPage({ sections: sectionsProp, resources: resour
                                             <div className="flex items-center justify-between py-[clamp(12px,3vw,24px)] border-b border-gray-200 last:border-0 hover:bg-white/50 px-4 rounded-lg max-md:rounded-sm transition-colors cursor-pointer group">
                                                 <span className="text-gray-700 font-medium">{resource.name}</span>
                                                 <div className="flex items-center gap-2 text-[#2857AE] opacity-70 max-md:opacity-100 group-hover:opacity-100 transition-opacity">
-                                                    <span className="text-sm font-semibold">Download</span>
+                                                    <span className="text-sm font-semibold">Télécharger</span>
                                                     <FileText className="w-5 h-5" />
                                                 </div>
                                             </div>
@@ -233,7 +233,7 @@ export default function AcademicPage({ sections: sectionsProp, resources: resour
                                     </div>
                                 ))
                             ) : (
-                                <p className="text-gray-500 py-4 px-4">No resources available at this time.</p>
+                                <p className="text-gray-500 py-4 px-4">Aucune ressource disponible pour le moment.</p>
                             )}
                         </div>
                     </div>

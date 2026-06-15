@@ -54,7 +54,7 @@ export default function StudentResultsPage() {
             const response = await api.get('/student/results');
             setResults(response.data);
          } catch (error) {
-            toast.error('Failed to load your academic records');
+            toast.error('Echec lors du chargement de vos résultats');
             console.error(error);
          } finally {
             setLoading(false);

@@ -19,6 +19,17 @@ import { Button } from '@/components/ui/button';
 
 const DAYS = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY'];
 
+// French display labels — backend always receives the English key
+const DAY_LABELS: Record<string, string> = {
+  MONDAY:    'LUNDI',
+  TUESDAY:   'MARDI',
+  WEDNESDAY: 'MERCREDI',
+  THURSDAY:  'JEUDI',
+  FRIDAY:    'VENDREDI',
+  SATURDAY:  'SAMEDI',
+  SUNDAY:    'DIMANCHE',
+};
+
 interface TimetableEntry {
    id: number;
    dayOfWeek: string;
@@ -32,11 +43,39 @@ export default function UserTimetablePage() {
    const [timetable, setTimetable] = useState<TimetableEntry[]>([]);
    const [loading, setLoading] = useState(true);
 
+   // State to hold the dynamic semester text to prevent hydration mismatches
+   const [semesterText, setSemesterText] = useState<string>('');
+
    // FIXED: Correct TypeScript implementation for uppercase weekday
    const [activeDay, setActiveDay] = useState(() => {
+      // Use English locale so the result matches DAYS (MONDAY, TUESDAY, ...)
       const today = new Date().toLocaleDateString('en-US', { weekday: 'long' }).toUpperCase();
       return DAYS.includes(today) ? today : 'MONDAY';
    });
+
+   const getDynamicSemester = () => {
+      const currentDate = new Date();
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth(); // 0 = January, 11 = December
+
+      let semester = 1;
+
+      // Semester 1: September (8) to January (0)
+      // Semester 2: February (1) to August (7)
+      if (month >= 1 && month <= 7) {
+         semester = 2;
+      } else {
+         semester = 1;
+      }
+
+      // Get the current month name in French (e.g., "juin")
+      const monthName = currentDate.toLocaleDateString('fr-FR', { month: 'long' });
+
+      // Capitalize the first letter of the month name (e.g., "Juin")
+      const capitalizedMonth = monthName.charAt(0).toUpperCase() + monthName.slice(1);
+
+      return `Semestre ${semester}, ${capitalizedMonth} - Année ${year}`;
+   };
 
    useEffect(() => {
       const fetchTimetable = async () => {
@@ -44,6 +83,8 @@ export default function UserTimetablePage() {
             // The endpoint should be specific to the role (e.g., /student/timetables)
             const response = await api.get('/student/timetables');
             setTimetable(Array.isArray(response.data) ? response.data : []);
+            // Set the semester string safely on the client side
+            setSemesterText(getDynamicSemester());
          } catch (error) {
             console.error("Schedule Fetch Error:", error);
          } finally {
@@ -73,10 +114,10 @@ export default function UserTimetablePage() {
          <header className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
             <div>
                <Badge className="bg-blue-600/10 text-primary hover:bg-blue-600/10 border-none px-4 py-1 mb-4 rounded-full text-[10px] font-black uppercase tracking-widest">
-                  Registry Active • 2026
+                  Registre actif • {semesterText || 'Chargement...'}
                </Badge>
                <h1 className="text-[clamp(1.2rem,2.5vw+1rem,3rem)] font-black text-slate-900 tracking-tighter">
-                  Weekly <span className="text-primary italic">Schedule.</span>
+                  Emploi du temps <span className="text-primary italic">hebdomadaire.</span>
                </h1>
             </div>
 
@@ -85,8 +126,8 @@ export default function UserTimetablePage() {
                   <Calendar size={20} />
                </div>
                <div>
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Today&apos;s Date</p>
-                  <p className="font-bold text-slate-700">{new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long' })}</p>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Date d&apos;aujourd&apos;hui</p>
+                  <p className="font-bold text-slate-700">{new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}</p>
                </div>
             </div>
          </header>
@@ -98,12 +139,12 @@ export default function UserTimetablePage() {
                   <Button
                      key={day}
                      onClick={() => setActiveDay(day)}
-                     className={`px-8 py-4 rounded-3xl font-black text-[11px] tracking-[0.2em] transition-all whitespace-nowrap border-2 ${activeDay === day
+                     className={`px-8 py-4 rounded-3xl font-black text-[11px] cursor-pointer tracking-[0.2em] transition-all whitespace-nowrap border-2 ${activeDay === day
                         ? 'bg-slate-900 text-white border-slate-900 shadow-xl shadow-slate-200 scale-105'
                         : 'bg-white text-slate-400 border-transparent hover:border-slate-100 md:hover:text-white duration-500'
                         }`}
                   >
-                     {day}
+                     {DAY_LABELS[day] ?? day}
                   </Button>
                ))}
             </div>
@@ -143,7 +184,7 @@ export default function UserTimetablePage() {
                                        <div>
                                           <div className="flex items-center gap-2 mb-2">
                                              <Badge className="bg-emerald-50 text-emerald-600 hover:bg-emerald-50 border-none font-black text-[9px] px-2">LECTURE</Badge>
-                                             <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest italic">Room 404</span>
+                                             <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest italic">Room 400</span>
                                           </div>
                                           <h3 className="text-2xl font-black text-slate-900 tracking-tight uppercase italic mb-1">
                                              {session.subject.name}
@@ -155,7 +196,7 @@ export default function UserTimetablePage() {
                                              </span>
                                              <span className="flex items-center gap-1.5 text-[11px] font-black uppercase tracking-widest">
                                                 <MapPin size={14} className="text-blue-500" />
-                                                Main Building
+                                                Bâtiment principal
                                              </span>
                                           </div>
                                        </div>
@@ -181,10 +222,10 @@ export default function UserTimetablePage() {
                      <div className="w-24 h-24 bg-primary rounded-3xl flex items-center justify-center mb-8">
                         <Calendar className="text-white" size={48} />
                      </div>
-                     <h3 className="text-2xl font-black text-slate-900 tracking-tight mb-3">SCHEDULE EMPTY</h3>
+                     <h3 className="text-2xl font-black text-slate-900 tracking-tight mb-3">EMPLOI DU TEMPS VIDE</h3>
                      <p className="text-slate-400 font-bold max-w-sm text-sm uppercase tracking-widest leading-loose">
-                        No classes registered for {activeDay.toLowerCase()}.
-                        Enjoy your academic break.
+                        Aucune classe enregistrée pour le {(DAY_LABELS[activeDay] ?? activeDay).toLowerCase()}.
+                        Profitez de votre pause académique.
                      </p>
                   </motion.div>
                )}

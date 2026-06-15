@@ -111,15 +111,15 @@ export default function NewsSection({ newsItems: newsItemsProp }: NewsSectionPro
 
                 <div className="news-header flex flex-col md:flex-row justify-between md:items-end md:mb-12 mb-6 gap-8">
                     <div>
-                        <h2 className="text-[clamp(20px,4vw,50px)] font-bold text-black mb-4">
-                            Latest from our Campus
+                        <h2 className="text-[clamp(20px,4vw,50px)] font-bold text-black mb-4 leading-tight">
+                            Dernières actualités du campus
                         </h2>
                         <p className="text-black text-[clamp(16px,3vw,18px)] lg:max-w-2xl">
-                            Stay updated with academic milestones, spiritual growth, and student achievements across all levels.
+                            Restez informé des étapes académiques, du développement personnel et des réussites des élèves à tous les niveaux.
                         </p>
                     </div>
 
-                    <div className="flex items-center gap-6">
+                    <div className="flex items-center gap-6 md:gap-7">
                         <div className="flex gap-2">
                             {/* FIX 2: Replaced refs with CSS classes 'news-prev' and 'news-next' to avoid render access errors */}
                             <Button
@@ -138,8 +138,8 @@ export default function NewsSection({ newsItems: newsItemsProp }: NewsSectionPro
                             </Button>
                         </div>
 
-                        <Link href="/blog" className="flex items-center gap-2 text-primary font-medium hover:underline">
-                            All News <ArrowUpRight className="h-4 w-4" />
+                        <Link href="/blog" className="flex text-nowrap items-center gap-2 text-primary font-medium hover:underline">
+                            Toutes les actualités <ArrowUpRight className="h-4 w-4" />
                         </Link>
                     </div>
                 </div>

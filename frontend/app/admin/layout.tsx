@@ -7,20 +7,20 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const menuItems = [
-    { name: 'Dashboard', href: '/admin' },
-    { name: 'Users Management', href: '/admin/users' },
-    { name: 'Class Management', href: '/admin/classes' },
-    { name: 'Subject Management', href: '/admin/subjects' },
-    { name: 'Exam Management', href: '/admin/exams' },
-    { name: 'Materials Management', href: '/admin/materials' },
-    { name: 'Results Management', href: '/admin/results' },
-    { name: 'Attendance', href: '/admin/attendance' },
-    { name: 'Teacher Assignment', href: '/admin/assign-teacher' },
-    { name: 'Student Assignment', href: '/admin/assign-student' },
-    { name: 'Timetable', href: '/admin/timetable' },
-    { name: 'Reports', href: '/admin/reports' },
-    { name: 'Transcripts', href: '/admin/transcripts' },
-    { name: 'Settings', href: '/admin/settings' },
+    { name: 'Tableau de bord', href: '/admin' },
+    { name: 'Gestion des utilisateurs', href: '/admin/users' },
+    { name: 'Gestion des classes', href: '/admin/classes' },
+    { name: 'Gestion des sujets', href: '/admin/subjects' },
+    { name: 'Gestion des examens', href: '/admin/exams' },
+    { name: 'Matériel pédagogique', href: '/admin/materials' },
+    { name: 'Gestion des résultats', href: '/admin/results' },
+    { name: 'Gestion des présences', href: '/admin/attendance' },
+    { name: 'Affectation enseignants', href: '/admin/assign-teacher' },
+    { name: 'Affectation étudiants', href: '/admin/assign-student' },
+    { name: 'Emploi du temps', href: '/admin/timetable' },
+    { name: 'Rapports', href: '/admin/reports' },
+    { name: 'Relevés de notes', href: '/admin/transcripts' },
+    { name: 'Paramètres', href: '/admin/settings' },
   ];
 
   return (

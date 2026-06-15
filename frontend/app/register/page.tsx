@@ -20,9 +20,9 @@ import api from '@/lib/api';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 const formSchema = z.object({
-  username: z.string().min(1, { message: 'Username is required' }),
-  email: z.string().email({ message: 'Invalid email address' }),
-  password: z.string().min(6, { message: 'Password must be at least 6 characters' }),
+  username: z.string().min(1, { message: 'Nom d\'utilisateur requis' }),
+  email: z.string().email({ message: 'Adresse e-mail invalide' }),
+  password: z.string().min(6, { message: 'Le mot de passe doit contenir au moins 6 caractères' }),
 });
 
 export default function RegisterPage() {
@@ -40,16 +40,16 @@ export default function RegisterPage() {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsLoading(true);
-    toast.loading('Creating your account...');
+    toast.loading('Création de votre compte...');
     try {
       await api.post('/auth/local/register', values);
-      toast.success('Registration Successful', {
-        description: 'Please login with your new credentials.',
+      toast.success('Inscription réussie', {
+        description: 'Veuillez vous connecter avec vos nouvelles identifiants.',
       });
       router.push('/login');
     } catch (error) {
-      toast.error('Registration Failed', {
-        description: 'Something went wrong. Please try again.',
+      toast.error('Inscription échouée', {
+        description: 'Une erreur s\'est produite. Veuillez réessayer.',
       });
       console.log(error);
     } finally {
@@ -61,7 +61,7 @@ export default function RegisterPage() {
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Register</CardTitle>
+          <CardTitle>Inscription</CardTitle>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -71,9 +71,9 @@ export default function RegisterPage() {
                 name="username"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Username</FormLabel>
+                    <FormLabel>Nom d'utilisateur</FormLabel>
                     <FormControl>
-                      <Input placeholder="Your username" {...field} />
+                      <Input placeholder="Votre nom d'utilisateur" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -86,7 +86,7 @@ export default function RegisterPage() {
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input placeholder="Your email" {...field} />
+                      <Input placeholder="Votre email" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -97,16 +97,16 @@ export default function RegisterPage() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel>Mot de passe</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="Your password" {...field} />
+                      <Input type="password" placeholder="Votre mot de passe" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
               <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? 'Registering...' : 'Register'}
+                {isLoading ? 'Inscription...' : 'S\'inscrire'}
               </Button>
             </form>
           </Form>

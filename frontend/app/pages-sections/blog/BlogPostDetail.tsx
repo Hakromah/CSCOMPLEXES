@@ -115,7 +115,7 @@ export default function BlogPostDetail({ post }: BlogPostDetailProps) {
                 <div className="absolute inset-0 flex items-center justify-center">
                     <div className="container mx-auto px-4 text-center text-white">
                         <p className="text-sm md:text-base font-medium mb-4 uppercase tracking-widest opacity-90">
-                            Home / <Link href="/blog" className="hover:underline">Blog</Link> / <span className="text-white font-bold">News Detail</span>
+                            Accueil / <Link href="/blog" className="hover:underline">Blog</Link> / <span className="text-white font-bold">Détails de l'article</span>
                         </p>
                         <h1 className="text-3xl md:text-5xl font-bold max-w-4xl mx-auto leading-tight">
                             {post.title}
@@ -131,14 +131,14 @@ export default function BlogPostDetail({ post }: BlogPostDetailProps) {
 
                         <Link href="/blog">
                             <Button variant="ghost" className="gap-2 pl-0 text-white bg-primary rounded-full duration-500 cursor-pointer">
-                                <ArrowLeft className="w-4 h-4" /> Back to News
+                                <ArrowLeft className="w-4 h-4" /> Retour aux actualités
                             </Button>
                         </Link>
                     </div>
 
                     {/* Meta Info */}
                     <div className="mb-[clamp(20px,3vw,35px)]">
-                        <span className="text-[#2857AE] font-bold">Published</span>
+                        <span className="text-[#2857AE] font-bold">Publié le</span>
                         <span className="text-gray-600 ml-2">{post.date}</span>
                     </div>
 

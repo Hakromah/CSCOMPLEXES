@@ -102,17 +102,17 @@ export default function OpportunitiesPage({ opportunities = [] }: OpportunitiesP
                       </p>
 
                       <div className="flex flex-wrap items-center justify-between gap-4 text-sm text-gray-500 border-b border-gray-100 pb-[clamp(12px,3.5vw,24px)] pt-2">
-                        <span>published {opp.publishedDate}</span>
+                        <span>publié le {opp.publishedDate}</span>
                         <div className="h-px bg-primary grow mx-4 hidden sm:block"></div>
                         <div>
-                          Deadline {opp.deadline}{" "}
+                          Date limite : {opp.deadline}{" "}
                           <span className="text-primary">{opp.dateNumber}</span>
                         </div>
                       </div>
 
                       <div>
                         <Button className="bg-[#2857AE] hover:bg-[#1e408a] cursor-pointer lg:hover:bg-secondary duration-500 lg:hover:text-primary border border-primary/0 lg:hover:border-primary rounded-full px-8">
-                          See details
+                          Voir les détails
                         </Button>
                       </div>
                     </div>

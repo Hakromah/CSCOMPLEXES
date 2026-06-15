@@ -19,6 +19,17 @@ import { Button } from '@/components/ui/button';
 
 const DAYS = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY'];
 
+// French display labels — backend always receives the English key
+const DAY_LABELS: Record<string, string> = {
+  MONDAY:    'Lundi',
+  TUESDAY:   'Mardi',
+  WEDNESDAY: 'Mercredi',
+  THURSDAY:  'Jeudi',
+  FRIDAY:    'Vendredi',
+  SATURDAY:  'Samedi',
+  SUNDAY:    'Dimanche',
+};
+
 interface TimetableEntry {
   id: number;
   dayOfWeek: string;
@@ -62,7 +73,7 @@ export default function UserTimetablePage() {
     return (
       <div className="h-screen w-full flex flex-col items-center justify-center space-y-4 bg-slate-50/50">
         <Loader2 className="animate-spin text-primary" size={40} />
-        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Syncing Schedule...</p>
+        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Synchronisation de l&apos;emploi du temps...</p>
       </div>
     );
   }
@@ -73,10 +84,10 @@ export default function UserTimetablePage() {
       <header className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-end gap-[clamp(1.3rem,1vw+0.5rem,2rem)]">
         <div>
           <Badge className="bg-blue-600/10 text-primary hover:bg-blue-600/10 border-none px-4 py-1 mb-4 rounded-full text-[10px] font-black uppercase tracking-widest">
-            Registry Active • 2026
+            Registre actif • 2026
           </Badge>
           <h1 className="text-[clamp(1.3rem,2.5vw+1rem,2rem)] font-black text-slate-900 tracking-tighter sm:text-[clamp(1.3rem,2.5vw+1rem,2rem)]">
-            Weekly <span className="text-primary italic">Schedule.</span>
+            Emploi du temps <span className="text-primary italic">hebdomadaire.</span>
           </h1>
         </div>
 
@@ -85,8 +96,8 @@ export default function UserTimetablePage() {
             <Calendar size={20} />
           </div>
           <div>
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Today&apos;s Date</p>
-            <p className="font-bold text-slate-700">{new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long' })}</p>
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Date d&apos;aujourd&apos;hui</p>
+            <p className="font-bold text-slate-700">{new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}</p>
           </div>
         </div>
       </header>
@@ -98,12 +109,12 @@ export default function UserTimetablePage() {
             <Button
               key={day}
               onClick={() => setActiveDay(day)}
-              className={`px-8 py-4 rounded-3xl font-black text-[11px] tracking-[0.2em] transition-all whitespace-nowrap border-2  ${activeDay === day
+              className={`px-8 py-4 rounded-3xl font-black text-[11px] cursor-pointer tracking-[0.2em] transition-all whitespace-nowrap border-2  ${activeDay === day
                 ? 'bg-slate-900 text-white border-slate-900 shadow-xl shadow-slate-200 scale-105'
                 : 'bg-white text-slate-400 border-transparent hover:border-slate-100 hover:text-slate-600'
                 }`}
             >
-              {day}
+              {DAY_LABELS[day] ?? day}
             </Button>
           ))}
         </div>
@@ -155,7 +166,7 @@ export default function UserTimetablePage() {
                               </span>
                               <span className="flex items-center gap-1.5 text-[11px] font-black uppercase tracking-widest">
                                 <MapPin size={14} className="text-blue-500" />
-                                Main Building
+                                Bâtiment principal
                               </span>
                             </div>
                           </div>
@@ -181,10 +192,10 @@ export default function UserTimetablePage() {
               <div className="w-24 h-24 bg-slate-50 rounded-[2.5rem] flex items-center justify-center mb-8">
                 <Calendar className="text-slate-200" size={48} />
               </div>
-              <h3 className="text-[clamp(1.3rem,2.5vw+1rem,2rem)] font-black text-slate-900 tracking-tight mb-3">SCHEDULE EMPTY</h3>
+              <h3 className="text-[clamp(1.3rem,2.5vw+1rem,2rem)] font-black text-slate-900 tracking-tight mb-3">EMPLOI DU TEMPS VIDE</h3>
               <p className="text-slate-400 font-bold max-w-sm text-sm uppercase tracking-widest leading-loose">
-                No classes registered for {activeDay.toLowerCase()}.
-                Enjoy your academic break.
+                Aucune classe enregistrée pour le {(DAY_LABELS[activeDay] ?? activeDay).toLowerCase()}.
+                Profitez de votre pause académique.
               </p>
             </motion.div>
           )}

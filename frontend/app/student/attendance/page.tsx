@@ -37,11 +37,11 @@ interface AttendanceRecord {
 type AStatus = 'PRESENT' | 'ABSENT' | 'LATE' | 'EXCUSED' | 'SICK';
 
 const STATUS_DISPLAY: Record<AStatus, { label: string; icon: any; bg: string; text: string; border: string }> = {
-  PRESENT: { label: 'Present',  icon: CheckCircle2, bg: 'bg-emerald-50', text: 'text-emerald-700', border: 'border-emerald-200' },
+  PRESENT: { label: 'Présent',  icon: CheckCircle2, bg: 'bg-emerald-50', text: 'text-emerald-700', border: 'border-emerald-200' },
   ABSENT:  { label: 'Absent',   icon: XCircle,      bg: 'bg-rose-50',    text: 'text-rose-700',    border: 'border-rose-200'    },
-  LATE:    { label: 'Late',     icon: Clock,        bg: 'bg-amber-50',   text: 'text-amber-700',   border: 'border-amber-200'   },
-  EXCUSED: { label: 'Excused',  icon: ShieldAlert,  bg: 'bg-blue-50',    text: 'text-blue-700',    border: 'border-blue-200'    },
-  SICK:    { label: 'Sick',     icon: ShieldAlert,  bg: 'bg-purple-50',  text: 'text-purple-700',  border: 'border-purple-200'  },
+  LATE:    { label: 'Retard',   icon: Clock,        bg: 'bg-amber-50',   text: 'text-amber-700',   border: 'border-amber-200'   },
+  EXCUSED: { label: 'Justifié', icon: ShieldAlert,  bg: 'bg-blue-50',    text: 'text-blue-700',    border: 'border-blue-200'    },
+  SICK:    { label: 'Malade',   icon: ShieldAlert,  bg: 'bg-purple-50',  text: 'text-purple-700',  border: 'border-purple-200'  },
 };
 
 const resolveStatus = (status: string): AStatus => {
@@ -50,12 +50,12 @@ const resolveStatus = (status: string): AStatus => {
 };
 
 const MONTHS = [
-  { value: '0', label: 'January'  }, { value: '1', label: 'February' },
-  { value: '2', label: 'March'    }, { value: '3', label: 'April'    },
-  { value: '4', label: 'May'      }, { value: '5', label: 'June'     },
-  { value: '6', label: 'July'     }, { value: '7', label: 'August'   },
-  { value: '8', label: 'September'}, { value: '9', label: 'October'  },
-  { value: '10', label: 'November' }, { value: '11', label: 'December' },
+  { value: '0', label: 'Janvier' }, { value: '1', label: 'Fevrier' },
+  { value: '2', label: 'Mars' }, { value: '3', label: 'Avril' },
+  { value: '4', label: 'Mai' }, { value: '5', label: 'Juin' },
+  { value: '6', label: 'Juillet' }, { value: '7', label: 'Aout' },
+  { value: '8', label: 'Septembre' }, { value: '9', label: 'Octobre' },
+  { value: '10', label: 'Novembre' }, { value: '11', label: 'Decembre' },
 ];
 
 // ── Stat card ─────────────────────────────────────────────────────────────────
@@ -79,7 +79,7 @@ const downloadAttendancePDF = (records: AttendanceRecord[], stats: any, studentN
   try {
     const doc = new jsPDF({ unit: 'mm', format: 'a4' }) as any;
     const pageW = doc.internal.pageSize.getWidth();
-    const date  = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
     // Header bar
     doc.setFillColor(15, 23, 42);
@@ -87,12 +87,12 @@ const downloadAttendancePDF = (records: AttendanceRecord[], stats: any, studentN
     doc.setTextColor(255, 255, 255);
     doc.setFont('Helvetica', 'bold');
     doc.setFontSize(14);
-    doc.text('A.M. FOFANA ISLAMIC & ENGLISH HIGH SCHOOL', 14, 12);
+    doc.text('2CS COMPLLEXES SCOLAIRE CAMARA SALEMATOU', 14, 12);
     doc.setFont('Helvetica', 'normal');
     doc.setFontSize(7.5);
     doc.setTextColor(156, 163, 175);
-    doc.text('Official Attendance Report  •  Student Registry', 14, 19);
-    doc.text(`Generated: ${date}`, 14, 25);
+    doc.text('Rapport de présence officiel  •  Registre des inscriptions', 14, 19);
+    doc.text(`Généré le: ${date}`, 14, 25);
 
     // Student badge (right side)
     doc.setFillColor(37, 99, 235);
@@ -104,23 +104,23 @@ const downloadAttendancePDF = (records: AttendanceRecord[], stats: any, studentN
     doc.setFont('Helvetica', 'normal');
     doc.setFontSize(7);
     doc.setTextColor(180, 210, 255);
-    doc.text('Student', pageW - 40, 23, { align: 'center' });
+    doc.text('Etudiant', pageW - 40, 23, { align: 'center' });
 
     // Attendance Summary section
     doc.setTextColor(15, 23, 42);
     doc.setFont('Helvetica', 'bold');
     doc.setFontSize(10);
-    doc.text('ATTENDANCE SUMMARY', 14, 48);
+    doc.text('RESUME DE PRESENCE', 14, 48);
 
     // Stat boxes
     const statsY = 53;
     const bw = 37;
     const statItems = [
-      { label: 'Total Sessions', value: String(stats.total) },
-      { label: 'Present',        value: String(stats.present) },
-      { label: 'Absent',         value: String(stats.absent) },
-      { label: 'Late',           value: String(stats.late) },
-      { label: 'Attendance Rate', value: `${stats.rate}%` },
+      { label: 'Total des Seances', value: String(stats.total) },
+      { label: 'Present', value: String(stats.present) },
+      { label: 'Absent', value: String(stats.absent) },
+      { label: 'Retard', value: String(stats.late) },
+      { label: 'Taux de présence', value: `${stats.rate}%` },
     ];
     statItems.forEach((item, i) => {
       const x = 14 + i * (bw + 2);
@@ -141,7 +141,7 @@ const downloadAttendancePDF = (records: AttendanceRecord[], stats: any, studentN
     doc.setFont('Helvetica', 'bold');
     doc.setFontSize(10);
     doc.setTextColor(15, 23, 42);
-    doc.text('DETAILED ATTENDANCE RECORDS', 14, 83);
+    doc.text('RELEVE DES PRESENCES DETAILLE', 14, 83);
 
     autoTable(doc, {
       startY: 87,
@@ -159,7 +159,7 @@ const downloadAttendancePDF = (records: AttendanceRecord[], stats: any, studentN
       bodyStyles: { fontSize: 8, cellPadding: 3 },
       alternateRowStyles: { fillColor: [248, 250, 252] as any },
       columnStyles: {
-        0: { cellWidth: 8,  halign: 'center' },
+        0: { cellWidth: 8, halign: 'center' },
         1: { cellWidth: 33 },
         2: { cellWidth: 18 },
         3: { cellWidth: 40 },
@@ -184,22 +184,22 @@ const downloadAttendancePDF = (records: AttendanceRecord[], stats: any, studentN
     doc.setFontSize(7);
     doc.setTextColor(156, 163, 175);
     doc.text(
-      'A.M. FOFANA ISLAMIC & ENGLISH HIGH SCHOOL  •  Official Attendance Report  •  Confidential',
+      'CSCOMPLEXES SCOLAIRE CAMARA SALEMATOU  •  Rapport de présence officiel  •  Confidentiel',
       pageW / 2, finalY + 20, { align: 'center' }
     );
 
     doc.save(`Attendance_${studentName.replace(/\s+/g, '_')}_${new Date().getFullYear()}.pdf`);
-    toast.success('Attendance report downloaded!');
+    toast.success('Rapport de présence téléchargé!');
   } catch (err) {
-    console.error('PDF generation error:', err);
-    toast.error('Failed to generate PDF — please try again.');
+    console.error('Erreur de génération PDF:', err);
+    toast.error('Échec de la génération du rapport PDF — veuillez réessayer.');
   }
 };
 
 // ══════════════════════════════════════════════════════════════════════════════
 export default function StudentAttendancePage() {
-  const [records, setRecords]         = useState<AttendanceRecord[]>([]);
-  const [loading, setLoading]         = useState(true);
+  const [records, setRecords] = useState<AttendanceRecord[]>([]);
+  const [loading, setLoading] = useState(true);
   const [monthFilter, setMonthFilter] = useState<string>('all');
   const [studentName, setStudentName] = useState('Student');
 
@@ -217,7 +217,7 @@ export default function StudentAttendancePage() {
           // Backend returns: [{ id, date, className, status }, ...]
           setRecords(Array.isArray(data) ? data : []);
         } else {
-          toast.error('Failed to load attendance records.');
+          toast.error('Échec du chargement des relevés de présence.');
         }
 
         if (profileRes.status === 'fulfilled') {
@@ -225,7 +225,7 @@ export default function StudentAttendancePage() {
           setStudentName(p?.name || p?.username || 'Student');
         }
       } catch (err: any) {
-        toast.error('Registry sync failed. Please check your connection.');
+        toast.error('Échec de la synchronisation du registre. Vérifiez votre connexion.');
         console.error(err);
       } finally {
         setLoading(false);
@@ -245,12 +245,12 @@ export default function StudentAttendancePage() {
 
   // ── Stats ───────────────────────────────────────────────────────────────────
   const stats = useMemo(() => {
-    const total   = filtered.length;
+    const total = filtered.length;
     const present = filtered.filter(r => resolveStatus(r.status) === 'PRESENT').length;
-    const absent  = filtered.filter(r => resolveStatus(r.status) === 'ABSENT').length;
-    const late    = filtered.filter(r => resolveStatus(r.status) === 'LATE').length;
+    const absent = filtered.filter(r => resolveStatus(r.status) === 'ABSENT').length;
+    const late = filtered.filter(r => resolveStatus(r.status) === 'LATE').length;
     const excused = filtered.filter(r => ['EXCUSED', 'SICK'].includes(resolveStatus(r.status))).length;
-    const rate    = total > 0 ? Math.round(((present + late) / total) * 100) : 0;
+    const rate = total > 0 ? Math.round(((present + late) / total) * 100) : 0;
     return { total, present, absent, late, excused, rate };
   }, [filtered]);
 
@@ -260,7 +260,7 @@ export default function StudentAttendancePage() {
     return (
       <div className="h-[80vh] w-full flex flex-col items-center justify-center gap-4">
         <Loader2 size={40} className="animate-spin text-primary" />
-        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Syncing Registry...</p>
+        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400"> Synchronisation du registre en cours...</p>
       </div>
     );
   }
@@ -273,13 +273,13 @@ export default function StudentAttendancePage() {
         <div>
           <div className="flex items-center gap-2 mb-1">
             <Calendar size={14} className="text-primary" />
-            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">Attendance</span>
+            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">Présence</span>
           </div>
           <h1 className="text-[clamp(1.4rem,3vw,2.8rem)] font-black tracking-tighter text-slate-900 italic">
-            Registry <span className="text-primary">Pulse.</span>
+            CSCOMPLEXES <span className="text-primary">Registre.</span>
           </h1>
           <p className="text-slate-400 font-bold text-[10px] uppercase tracking-widest mt-0.5">
-            {studentName} • Academic Tracking
+            {studentName} • Suivi Académique
           </p>
         </div>
 
@@ -287,10 +287,10 @@ export default function StudentAttendancePage() {
         <div className="flex items-center gap-3 flex-wrap">
           <Select value={monthFilter} onValueChange={setMonthFilter}>
             <SelectTrigger className="w-[170px] h-11 rounded-2xl bg-white shadow-sm font-bold text-sm border-slate-100 hover:border-primary transition-colors duration-300">
-              <SelectValue placeholder="All Months" />
+              <SelectValue placeholder="Tous les mois" />
             </SelectTrigger>
             <SelectContent className="rounded-2xl border-none shadow-2xl">
-              <SelectItem value="all" className="font-bold">All Months</SelectItem>
+              <SelectItem value="all" className="font-bold">Tous les mois</SelectItem>
               {MONTHS.map(m => (
                 <SelectItem key={m.value} value={m.value} className="font-bold">{m.label}</SelectItem>
               ))}
@@ -302,7 +302,7 @@ export default function StudentAttendancePage() {
             className="h-11 rounded-2xl gap-2 font-bold text-sm border-slate-200 hover:border-primary transition-colors"
             onClick={() => window.print()}
           >
-            <Printer size={14} /> Print
+            <Printer size={14} /> Imprimer
           </Button>
 
           <Button
@@ -310,7 +310,7 @@ export default function StudentAttendancePage() {
             onClick={() => downloadAttendancePDF(filtered, stats, studentName)}
             disabled={filtered.length === 0}
           >
-            <Download size={14} /> Download PDF
+            <Download size={14} /> Télécharger le PDF
           </Button>
         </div>
       </header>
@@ -322,9 +322,9 @@ export default function StudentAttendancePage() {
             <AlertTriangle size={20} className="text-rose-600" />
           </div>
           <div>
-            <p className="font-black text-rose-700 text-sm">Low Attendance Warning</p>
+            <p className="font-black text-rose-700 text-sm">Avertissement de faible assiduité</p>
             <p className="text-rose-500 text-xs font-bold mt-0.5">
-              Your attendance rate is <strong>{stats.rate}%</strong> — below the required 75% threshold. Please contact your class teacher.
+              Votre taux de présence est de <strong>{stats.rate}%</strong> — en dessous du seuil requis de 75%. Veuillez contacter votre professeur principal.
             </p>
           </div>
           <Badge className="ml-auto bg-rose-600 text-white border-none font-black text-xs px-3 py-1 rounded-xl flex-shrink-0">
@@ -340,18 +340,18 @@ export default function StudentAttendancePage() {
           <CardContent className="p-8 relative z-10">
             <div className="flex justify-between items-start mb-5">
               <div>
-                <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400">Overall Attendance Rate</p>
+                <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400">Taux de présence global</p>
                 <h2 className={`text-7xl font-black italic tracking-tighter mt-1 ${stats.rate >= 75 ? 'text-white' : 'text-rose-400'}`}>
                   {stats.rate}%
                 </h2>
               </div>
               <Badge className="bg-primary/20 text-blue-400 border-none font-black px-4 py-1 uppercase text-[9px] mt-1">
-                {stats.rate >= 75 ? 'Good Standing' : 'Needs Attention'}
+                {stats.rate >= 75 ? 'En règle' : 'À surveiller'}
               </Badge>
             </div>
             <div className="space-y-2">
               <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
-                <span className="text-slate-500">Attendance Track</span>
+                <span className="text-slate-500">Suivi des présence</span>
                 <span className={stats.rate >= 75 ? 'text-emerald-400' : 'text-rose-400'}>
                   {stats.present + stats.late} / {stats.total} Sessions
                 </span>
@@ -363,32 +363,32 @@ export default function StudentAttendancePage() {
         </Card>
 
         <StatCard
-          label="Present Days"
+          label="Présent Jours"
           value={stats.present}
           icon={CheckCircle2}
           colorClass="border-emerald-100 hover:border-emerald-300"
           sub={stats.total > 0 ? `${Math.round((stats.present / stats.total) * 100)}% of sessions` : '—'}
         />
         <StatCard
-          label="Absent Days"
+          label="Jours Absents"
           value={stats.absent}
           icon={XCircle}
           colorClass="border-rose-100 hover:border-rose-300"
-          sub={stats.total > 0 ? `${Math.round((stats.absent / stats.total) * 100)}% of sessions` : '—'}
+          sub={stats.total > 0 ? `${Math.round((stats.absent / stats.total) * 100)}% des séances` : '—'}
         />
         <StatCard
-          label="Late Arrivals"
+          label="Retard"
           value={stats.late}
           icon={Clock}
           colorClass="border-amber-100 hover:border-amber-300"
-          sub="Counted partially"
+          sub="Comptabilisé partiellement"
         />
         <StatCard
-          label="Excused / Sick"
+          label="Justifié / Malade"
           value={stats.excused}
           icon={ShieldAlert}
           colorClass="border-blue-100 hover:border-blue-300"
-          sub="With valid reason"
+          sub="Avec justificatif"
         />
       </div>
 
@@ -396,10 +396,10 @@ export default function StudentAttendancePage() {
       <Card className="border border-slate-100 rounded-3xl overflow-hidden shadow-sm bg-white">
         <div className="flex items-center justify-between px-8 py-5 border-b border-slate-50">
           <div>
-            <p className="text-xs font-black uppercase tracking-widest text-slate-900">Attendance History</p>
+            <p className="text-xs font-black uppercase tracking-widest text-slate-900">Historique des présence</p>
             <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">
               {filtered.length} session{filtered.length !== 1 ? 's' : ''}
-              {monthFilter !== 'all' ? ` in ${MONTHS.find(m => m.value === monthFilter)?.label}` : ' total'}
+              {monthFilter !== 'all' ? ` en ${MONTHS.find(m => m.value === monthFilter)?.label}` : ' au total'}
             </p>
           </div>
           <BookOpen size={16} className="text-slate-200" />
@@ -409,17 +409,17 @@ export default function StudentAttendancePage() {
           <Table>
             <TableHeader className="sticky top-0 z-10 bg-white shadow-[0_1px_0_0_#f1f5f9]">
               <TableRow className="hover:bg-transparent border-none">
-                <TableHead className="pl-8 py-4 font-black text-[9px] uppercase tracking-widest text-slate-400">Date / Time</TableHead>
-                <TableHead className="font-black text-[9px] uppercase tracking-widest text-slate-400">Subject</TableHead>
-                <TableHead className="font-black text-[9px] uppercase tracking-widest text-slate-400">Class</TableHead>
-                <TableHead className="text-right pr-8 font-black text-[9px] uppercase tracking-widest text-slate-400">Status</TableHead>
+                <TableHead className="pl-8 py-4 font-black text-[9px] uppercase tracking-widest text-slate-400">Date / Heure</TableHead>
+                <TableHead className="font-black text-[9px] uppercase tracking-widest text-slate-400">Matière</TableHead>
+                <TableHead className="font-black text-[9px] uppercase tracking-widest text-slate-400">Classe</TableHead>
+                <TableHead className="text-right pr-8 font-black text-[9px] uppercase tracking-widest text-slate-400">Statut</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filtered.length > 0 ? filtered.map(record => {
                 const status = resolveStatus(record.status);
-                const cfg    = STATUS_DISPLAY[status];
-                const Icon   = cfg.icon;
+                const cfg = STATUS_DISPLAY[status];
+                const Icon = cfg.icon;
                 return (
                   <TableRow key={record.id} className="border-slate-50 hover:bg-slate-50/60 transition-all duration-200">
                     <TableCell className="pl-8 py-5">
@@ -435,8 +435,8 @@ export default function StudentAttendancePage() {
                           </p>
                           <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">
                             {record.sessionTime
-                              ? new Date(`2000-01-01T${record.sessionTime}`).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
-                              : record.date ? new Date(record.date).toLocaleDateString('en-US', { weekday: 'long' }) : ''}
+                              ? new Date(`2000-01-01T${record.sessionTime}`).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+                              : record.date ? new Date(record.date).toLocaleDateString('fr-FR', { weekday: 'long' }) : ''}
                           </p>
                         </div>
                       </div>
@@ -445,7 +445,7 @@ export default function StudentAttendancePage() {
                       {record.notes ? (
                         <div>
                           <p className="font-black text-amber-600 text-sm">{record.notes}</p>
-                          <p className="text-[9px] font-bold text-amber-400 uppercase tracking-widest">Custom Event</p>
+                          <p className="text-[9px] font-bold text-amber-400 uppercase tracking-widest"> Evénement spécial</p>
                         </div>
                       ) : record.subjectName ? (
                         <p className="font-black text-primary text-sm">{record.subjectName}</p>
@@ -470,7 +470,7 @@ export default function StudentAttendancePage() {
                     <div className="flex flex-col items-center justify-center gap-3">
                       <Calendar size={40} className="text-slate-200" />
                       <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                        {monthFilter !== 'all' ? 'No records for this month.' : 'No attendance records found.'}
+                        {monthFilter !== 'all' ? 'Aucune séance ce mois.' : 'Aucune séance enregistrée.'}
                       </p>
                     </div>
                   </TableCell>

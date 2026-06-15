@@ -8,6 +8,7 @@ import VideoSection from "./pages-sections/home-sections/VideoSection";
 import StaffSection from "./pages-sections/home-sections/StaffSection";
 import TestimonialsSection from "./pages-sections/home-sections/TestimonialsSection";
 import NewsSection from "./pages-sections/home-sections/NewsSection";
+import ImportantNewsPopup from "./pages-sections/home-sections/ImportantNewsPopup";
 
 import {
   fetchHeroSlides,
@@ -50,6 +51,7 @@ export default async function Index() {
 
   return (
     <>
+      <ImportantNewsPopup />
       <Intro slides={heroSlides} />
       <AboutSection aboutData={aboutData} />
       <AcademicSection programs={programs} />

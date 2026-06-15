@@ -124,7 +124,7 @@ export default function BlogPage({ initialPosts = [] }: BlogPageProps) {
                                     <Button
                                         onClick={() => setVisibleCount(prev => prev + 6)}
                                         className="bg-[#2857AE] hover:bg-[#1f448c] cursor-pointer text-white px-8 py-6 rounded-full text-base font-medium">
-                                        Load More
+                                        Charger plus
                                     </Button>
                                 </div>
                             )}
@@ -135,14 +135,14 @@ export default function BlogPage({ initialPosts = [] }: BlogPageProps) {
                             <div className="sticky top-24 space-y-8">
                                 {/* Search Widget */}
                                 <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                                    <h3 className="text-lg font-bold text-gray-900 mb-4">Search for news</h3>
+                                    <h3 className="text-lg font-bold text-gray-900 mb-4">Rechercher une actualité</h3>
                                     <div className="relative">
                                         <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
                                             <Search className="h-4 w-4 text-gray-400" />
                                         </div>
                                         <input
                                             type="text"
-                                            placeholder="Search by title or content..."
+                                            placeholder="Rechercher par titre ou contenu..."
                                             value={searchQuery}
                                             onChange={handleSearchChange}
                                             className="w-full pl-10 pr-4 py-3 bg-[#EEF2F6] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#2857AE]/20 transition-all"
@@ -160,7 +160,7 @@ export default function BlogPage({ initialPosts = [] }: BlogPageProps) {
 
                                 {/* Categories Widget */}
                                 <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                                    <h3 className="text-lg font-bold text-gray-900 mb-4">Categories</h3>
+                                    <h3 className="text-lg font-bold text-gray-900 mb-4">Catégories</h3>
                                     <div className="flex flex-wrap gap-2">
                                         {categories.map((category) => (
                                             <button

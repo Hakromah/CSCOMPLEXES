@@ -5,10 +5,18 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 //import Image from "next/image";
 //import { Button } from "@/components/ui/button";
-import { Phone, ChevronDown } from "lucide-react";
+import { Phone, ChevronDown, Landmark, Copy, Check, User } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 import StrapiImage from "@/components/StrapiImage";
 import type { NavbarData, ContactInfoData } from "@/types/strapi";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 const socialLinks = [
   { name: "facebook", href: "#" },
@@ -27,7 +35,14 @@ interface NavbarProps {
 export default function Navbar({ navbarData, contactInfo }: NavbarProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [mobileSubmenu, setMobileSubmenu] = useState<string | null>(null);
+  const [copiedItem, setCopiedItem] = useState<string | null>(null);
   const pathname = usePathname();
+
+  const copyToClipboard = (text: string, id: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedItem(id);
+    setTimeout(() => setCopiedItem(null), 2000);
+  };
 
   const isPortal = pathname?.startsWith('/student') || pathname?.startsWith('/teacher') || pathname?.startsWith('/admin');
   const lastScrollY = useRef(0);
@@ -36,44 +51,77 @@ export default function Navbar({ navbarData, contactInfo }: NavbarProps) {
   const headerRef = useRef<HTMLElement>(null);
 
   // Use Strapi nav items if present, otherwise fallback to default
-  const navItems = navbarData?.navItems?.length ? navbarData.navItems : [
-    { name: "Home", href: "/" },
+  const baseNavItems = navbarData?.navItems?.length ? navbarData.navItems : [
+    { name: "Accueil", href: "/" },
     {
-      name: "About",
+      name: "À propos",
       href: "/about",
       subItems: [
         {
-          name: "About Us",
+          name: "Qui sommes-nous",
           href: "/about",
-          description: "Discover our legacy of excellence since 1990",
+          description: "Découvrez notre héritage d'excellence depuis 1990",
         },
         {
-          name: "Staff & Leadership",
+          name: "Personnel et direction",
           href: "/staff",
-          description: "Meet the team guiding our success",
+          description: "Rencontrez l'équipe qui guide notre succès",
         },
       ],
     },
     { name: "Blog", href: "/blog" },
     {
-      name: "Academic",
+      name: "Académique",
       href: "/academic",
       subItems: [
         {
-          name: "Academic",
+          name: "Académique",
           href: "/academic",
-          description: "Discover our legacy of excellence since 1990",
+          description: "Découvrez nos programmes éducatifs",
         },
-        {
-          name: "login",
+        { 
+          icon: <User className="w-4 h-4 mr-2 inline-block" />,
+          name: "Connexion au portail",
           href: "/login",
-          description: "Meet the team guiding our success",
+          description: "Connectez-vous pour accéder à votre espace",
         },
       ],
     },
-    { name: "Gallery", href: "/gallery" },
-    { name: "Opportunities", href: "/opportunities" },
+    { name: "Galerie", href: "/gallery" },
+    { name: "Opportunités", href: "/opportunities" },
   ];
+
+  const rawNavItems = [...baseNavItems, { name: "Contact", href: "/contact", label: "Contact" }];
+  const navItems = rawNavItems.map((item: any) => {
+    let name = item.name || item.label;
+    if (name === "Home" || name === "Accueil") name = "Accueil";
+    if (name === "About" || name === "À propos") name = "À propos";
+    if (name === "Academic" || name === "Académique") name = "Académique";
+    if (name === "Gallery" || name === "Galerie") name = "Galerie";
+    if (name === "Opportunities" || name === "Opportunités") name = "Opportunités";
+    
+    let subItems = item.subItems?.map((sub: any) => {
+      let subName = sub.name || sub.label;
+      let subIcon = sub.icon;
+      
+      if (subName === "About Us" || subName === "Qui sommes-nous") { 
+          subName = "Qui sommes-nous"; 
+      }
+      if (subName === "Staff & Leadership" || subName === "Personnel et direction") { 
+          subName = "Personnel et direction"; 
+      }
+      if (subName === "Academic" || subName === "Académique") { 
+          subName = "Académique"; 
+      }
+      if (subName === "Portal Login" || subName === "Connexion au portail" || sub.href === "/login" || subName === "login") { 
+          subName = "Connexion au portail"; 
+          subIcon = <User className="w-4 h-4 mr-2 inline-block shrink-0" />;
+      }
+      return { ...sub, name: subName, label: subName, icon: subIcon };
+    });
+
+    return { ...item, name, label: name, subItems };
+  });
 
   // Merge social links from contactInfo or default array
   const socials = contactInfo?.socialLinks ?? socialLinks;
@@ -259,7 +307,10 @@ export default function Navbar({ navbarData, contactInfo }: NavbarProps) {
                                     }}
 
                                   >
-                                    <div>{sub.label || sub.name}</div>
+                                    <div className="flex items-center">
+                                        {sub.icon && sub.icon}
+                                        {sub.label || sub.name}
+                                    </div>
 
                                     <div className="w-[25px] max-md:hidden h-[25px] absolute right-3 duration-500 scale-75 group-hover/item:scale-100 group-hover/item:opacity-100 opacity-0 top-1/2 -translate-y-1/2 bg-primary rounded-full flex justify-center items-center">
                                       <svg
@@ -306,12 +357,62 @@ export default function Navbar({ navbarData, contactInfo }: NavbarProps) {
                 </a>
 
                 <div className="w-full md:w-auto max-md:text-primary rounded-full max-md:bg-white">
-                  <a
-                    href="/contact"
-                    className="w-full h-full py-3 px-5 text-nowrap flex items-center justify-center transition-colors max-md:text-primary max-md:bg-white lg:hover:bg-primary/10 lg:hover:text-primary bg-primary border border-primary/0 lg:hover:border-primary text-white duration-500 rounded-full text-sm font-medium"
-                  >
-                    Contact Us
-                  </a>
+                  <Dialog onOpenChange={(open) => { if (open) setIsMobileMenuOpen(false); }}>
+                    <DialogTrigger asChild>
+                      <button
+                        className="w-full h-full py-3 px-5 text-nowrap flex items-center justify-center transition-colors max-md:text-primary max-md:bg-white lg:hover:bg-primary/10 lg:hover:text-primary bg-primary border border-primary/0 lg:hover:border-primary text-white duration-500 rounded-full text-sm font-medium cursor-pointer"
+                      >
+                        Faire un don
+                      </button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-md">
+                      <DialogHeader>
+                        <DialogTitle>Informations Bancaires</DialogTitle>
+                        <DialogDescription>
+                          Merci pour votre soutien. Voici nos coordonnées bancaires pour effectuer un don.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="flex flex-col gap-0 py-4">
+                        <div className="bg-slate-50 border border-slate-200 rounded-xl overflow-hidden divide-y divide-slate-200">
+                          <div className="flex items-center gap-4 p-4">
+                            <Landmark className="h-5 w-5 text-primary shrink-0" />
+                            <div className="flex-1">
+                              <p className="text-sm font-medium text-slate-900">Banque</p>
+                              <p className="text-sm text-slate-500">Nom de la banque</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-4 p-4 hover:bg-slate-100 transition-colors group">
+                            <div className="h-5 w-5 shrink-0" />
+                            <div className="flex-1">
+                              <p className="text-sm font-medium text-slate-900">Nom du compte</p>
+                              <p className="text-sm text-slate-500">2 CS COMPLEXES</p>
+                            </div>
+                            <button
+                              onClick={() => copyToClipboard('2 CS COMPLEXES', 'name')}
+                              className="p-2 bg-white shadow-sm border border-slate-200 hover:bg-primary/5 hover:text-primary hover:border-primary/30 rounded-md transition-all opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
+                              title="Copier"
+                            >
+                              {copiedItem === 'name' ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4 text-slate-500" />}
+                            </button>
+                          </div>
+                          <div className="flex items-center gap-4 p-4 hover:bg-slate-100 transition-colors group">
+                            <div className="h-5 w-5 shrink-0" />
+                            <div className="flex-1">
+                              <p className="text-sm font-medium text-slate-900">IBAN / RIB</p>
+                              <p className="text-sm text-slate-500 font-mono">XX00 0000 0000 0000 0000 00</p>
+                            </div>
+                            <button
+                              onClick={() => copyToClipboard('XX00 0000 0000 0000 0000 00', 'iban')}
+                              className="p-2 bg-white shadow-sm border border-slate-200 hover:bg-primary/5 hover:text-primary hover:border-primary/30 rounded-md transition-all opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
+                              title="Copier"
+                            >
+                              {copiedItem === 'iban' ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4 text-slate-500" />}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
                 </div>
               </div>
             </div>
