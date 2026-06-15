@@ -2,6 +2,7 @@ import axios from 'axios';
 import qs from 'qs';
 import Cookies from 'js-cookie';
 
+console.log("DEBUG STRAPI URL:", process.env.NEXT_PUBLIC_STRAPI_URL);
 const baseURL = `${process.env.NEXT_PUBLIC_STRAPI_URL || 'https://api.2cscomplexes.com'}/api`;
 
 const api = axios.create({
