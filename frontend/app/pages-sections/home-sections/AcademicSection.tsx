@@ -43,6 +43,7 @@ const fallbackPrograms: AcademicProgram[] = [
         highlights: ['Apprentissage par le jeu', 'Compétences en lecture et mathématiques', 'Intégration des arts et de la musique'],
         curriculum: [{ subject: 'Arts du langage', desc: 'Phonétique, vocabulaire et lecture précoce.' }, { subject: 'Mathématiques', desc: 'Sens des nombres, opérations de base, formes.' }],
         breadcrumb_item: [],
+        prospectusFileUrl: '', statValue1: 'Captivant', statLabel1: 'Programme', statValue2: 'Experts', statLabel2: 'Éducateurs', statValue3: 'Modernes', statLabel3: 'Infrastructures',
     },
     {
         id: 2, category: 'Elementary', title: 'École primaire', slug: 'elementary',
@@ -54,6 +55,7 @@ const fallbackPrograms: AcademicProgram[] = [
         highlights: ['Approche par investigation', 'Fort accent sur la lecture et les mathématiques', 'Programmes de développement du caractère'],
         curriculum: [{ subject: 'Arts du langage', desc: 'Compréhension de lecture et rédaction créative.' }, { subject: 'Mathématiques', desc: 'Arithmétique, fractions, géométrie.' }],
         breadcrumb_item: [],
+        prospectusFileUrl: '', statValue1: 'Captivant', statLabel1: 'Programme', statValue2: 'Experts', statLabel2: 'Éducateurs', statValue3: 'Modernes', statLabel3: 'Infrastructures',
     },
     {
         id: 3, category: 'Junior High', title: 'Collège', slug: 'junior-high',
@@ -65,6 +67,7 @@ const fallbackPrograms: AcademicProgram[] = [
         highlights: ['Enseignants spécialisés', 'Introduction aux sciences en laboratoire', 'Activités parascolaires enrichissantes'],
         curriculum: [{ subject: 'Sciences avancées', desc: 'Biologie, Chimie et Physique avec travaux de laboratoire.' }, { subject: 'Mathématiques', desc: 'Algèbre, géométrie et pré-calcul.' }],
         breadcrumb_item: [],
+        prospectusFileUrl: '', statValue1: 'Captivant', statLabel1: 'Programme', statValue2: 'Experts', statLabel2: 'Éducateurs', statValue3: 'Modernes', statLabel3: 'Infrastructures',
     },
     {
         id: 4, category: 'Vocational Training', title: 'Formation professionnelle', slug: 'vocational-training',
@@ -76,6 +79,7 @@ const fallbackPrograms: AcademicProgram[] = [
         highlights: ['Formation pratique', 'Curriculum adapté à l\'industrie', 'Opportunités d\'apprentissage'],
         curriculum: [{ subject: 'Compétences techniques', desc: 'Ateliers en automobile, électricité et construction.' }, { subject: 'Technologies de l\'information', desc: 'Développement web, réseaux, compétences logicielles.' }],
         breadcrumb_item: [],
+        prospectusFileUrl: '', statValue1: 'Captivant', statLabel1: 'Programme', statValue2: 'Experts', statLabel2: 'Éducateurs', statValue3: 'Modernes', statLabel3: 'Infrastructures',
     },
     {
         id: 5, category: 'Senior High', title: 'Lycée', slug: 'senior-high',
@@ -87,6 +91,7 @@ const fallbackPrograms: AcademicProgram[] = [
         highlights: ['Cours de niveau avancé (AP)', 'Programmes de préparation à l\'université', 'Orientation universitaire'],
         curriculum: [{ subject: 'Cours avancés', desc: 'Cours de niveau universitaire pour apprenants avancés.' }, { subject: 'Programmes STEM', desc: 'Mathématiques avancées, ingénierie et technologie.' }],
         breadcrumb_item: [],
+        prospectusFileUrl: '', statValue1: 'Captivant', statLabel1: 'Programme', statValue2: 'Experts', statLabel2: 'Éducateurs', statValue3: 'Modernes', statLabel3: 'Infrastructures',
     },
 ];
 
@@ -219,7 +224,7 @@ export default function AcademicSection({ programs: programsProp }: AcademicSect
                 >
                     {filteredPrograms.map((program) => (
                         <SwiperSlide key={program.id} className="h-full">
-                            <a href={`/academic/${program.title.toLowerCase().replace(/ /g, '-')}`} className='block w-full h-full'>
+                            <a href={`/academic/${program.slug}`} className='block w-full h-full'>
                                 <div className="group/card bg-white rounded-[15px] p-3 overflow-hidden h-[501px] max-sm:h-[400px] flex flex-col group cursor-pointer transition-transform duration-300">
                                     <div className=" relative h-60 max-xs:h-[220px] w-full overflow-hidden rounded-[12px]">
                                         <StrapiImage

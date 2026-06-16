@@ -6,6 +6,9 @@ import {
 } from '@/lib/strapi-api';
 import type { AcademicProgram } from '@/types/strapi';
 
+// Allow slugs NOT in generateStaticParams (e.g. new entries added in Strapi)
+export const dynamicParams = true;
+
 // ── Static params: try Strapi first, fall back to hardcoded slugs ─────────────
 export async function generateStaticParams() {
     try {
@@ -68,6 +71,13 @@ function hardcodedProgram(slug: string): AcademicProgram {
         highlights: base.highlights,
         curriculum: base.curriculum,
         breadcrumb_item: [],
+        prospectusFileUrl: '',
+        statValue1: 'Captivant',
+        statLabel1: 'Programme',
+        statValue2: 'Experts',
+        statLabel2: 'Éducateurs',
+        statValue3: 'Modernes',
+        statLabel3: 'Infrastructures',
     };
 }
 

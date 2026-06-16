@@ -518,9 +518,16 @@ export interface ApiAcademicProgramAcademicProgram
       'api::academic-program.academic-program'
     > &
       Schema.Attribute.Private;
+    prospectus_file: Schema.Attribute.Media<'files'>;
     publishedAt: Schema.Attribute.DateTime;
     slug: Schema.Attribute.UID<'title'> & Schema.Attribute.Required;
     sort_order: Schema.Attribute.Integer;
+    stat_label_1: Schema.Attribute.String;
+    stat_label_2: Schema.Attribute.String;
+    stat_label_3: Schema.Attribute.String;
+    stat_value_1: Schema.Attribute.String;
+    stat_value_2: Schema.Attribute.String;
+    stat_value_3: Schema.Attribute.String;
     subheader: Schema.Attribute.Text;
     subtitle: Schema.Attribute.Text;
     title: Schema.Attribute.String;

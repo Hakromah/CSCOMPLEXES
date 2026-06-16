@@ -296,6 +296,14 @@ function normalizeAcademicProgram(item: StrapiAcademicProgram): AcademicProgram 
          description: bc.description,
          imageUrl: mediaUrl(bc.image),
       })),
+      // Detail page extras
+      prospectusFileUrl: mediaUrl(item.prospectus_file as any),
+      statValue1: item.stat_value_1 ?? '',
+      statLabel1: item.stat_label_1 ?? '',
+      statValue2: item.stat_value_2 ?? '',
+      statLabel2: item.stat_label_2 ?? '',
+      statValue3: item.stat_value_3 ?? '',
+      statLabel3: item.stat_label_3 ?? '',
    };
 }
 
@@ -305,6 +313,7 @@ const ACADEMIC_PROGRAM_POPULATE = [
    'populate[2]=highlights',
    'populate[3]=curriculum',
    'populate[4]=breadcrumb_item.image',
+   'populate[5]=prospectus_file',
 ].join('&');
 
 export async function fetchAcademicPrograms(): Promise<AcademicProgram[]> {

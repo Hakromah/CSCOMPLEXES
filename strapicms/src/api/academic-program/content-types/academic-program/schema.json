@@ -68,6 +68,29 @@
       "type": "component",
       "component": "shared.readcrumb",
       "repeatable": true
+    },
+    "prospectus_file": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["files"]
+    },
+    "stat_value_1": {
+      "type": "string"
+    },
+    "stat_label_1": {
+      "type": "string"
+    },
+    "stat_value_2": {
+      "type": "string"
+    },
+    "stat_label_2": {
+      "type": "string"
+    },
+    "stat_value_3": {
+      "type": "string"
+    },
+    "stat_label_3": {
+      "type": "string"
     }
   }
 }

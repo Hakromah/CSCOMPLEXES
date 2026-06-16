@@ -145,6 +145,14 @@ export interface StrapiAcademicProgram {
       description: string;
       image: StrapiMediaItem | null;
    }> | null;
+   // Detail page extras
+   prospectus_file: StrapiMediaItem | null;
+   stat_value_1: string | null;
+   stat_label_1: string | null;
+   stat_value_2: string | null;
+   stat_label_2: string | null;
+   stat_value_3: string | null;
+   stat_label_3: string | null;
 }
 
 /** gallery-items collection */
@@ -373,6 +381,14 @@ export interface AcademicProgram {
    highlights: string[];
    curriculum: { subject: string; desc: string }[];
    breadcrumb_item: BreadcrumbItem[];
+   // Detail page extras
+   prospectusFileUrl: string;
+   statValue1: string;
+   statLabel1: string;
+   statValue2: string;
+   statLabel2: string;
+   statValue3: string;
+   statLabel3: string;
 }
 
 export interface GalleryItem {
