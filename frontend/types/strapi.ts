@@ -128,12 +128,23 @@ export interface StrapiAcademicProgram {
    id: number;
    documentId?: string;
    title: string;
+   slug: string;
    category: string;
+   subtitle: string | null;
    description: string;
    image: StrapiMediaItem | StrapiMediaItem[] | null;
+   content_image: StrapiMediaItem | StrapiMediaItem[] | null;
    sort_order: number;
    header: string;
    subheader: string;
+   highlights: Array<{ id: number; text: string }> | null;
+   curriculum: Array<{ id: number; subject: string; desc: string }> | null;
+   breadcrumb_item: Array<{
+      id: number;
+      breadcrumb_title: string;
+      description: string;
+      image: StrapiMediaItem | null;
+   }> | null;
 }
 
 /** gallery-items collection */
@@ -350,13 +361,18 @@ export interface WhyChooseUsData {
 export interface AcademicProgram {
    id: number;
    title: string;
+   slug: string;
    category: string;
+   subtitle: string;
    description: string;
    image: string;
+   contentImage: string;
    sortOrder: number;
    header: string;
    subheader: string;
-
+   highlights: string[];
+   curriculum: { subject: string; desc: string }[];
+   breadcrumb_item: BreadcrumbItem[];
 }
 
 export interface GalleryItem {

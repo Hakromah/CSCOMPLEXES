@@ -275,25 +275,72 @@ export async function fetchTestimonials(): Promise<Testimonial[]> {
 
 // ─── Academic Programs ────────────────────────────────────────────────────────
 
+function normalizeAcademicProgram(item: StrapiAcademicProgram): AcademicProgram {
+   return {
+      id: item.id,
+      title: item.title ?? '',
+      slug: item.slug ?? String(item.id),
+      category: item.category ?? '',
+      subtitle: item.subtitle ?? '',
+      description: item.description ?? '',
+      image: mediaUrl(item.image),
+      contentImage: mediaUrl(item.content_image) || mediaUrl(item.image),
+      sortOrder: item.sort_order ?? 0,
+      header: item.header ?? '',
+      subheader: item.subheader ?? '',
+      highlights: (item.highlights ?? []).map((h) => h.text),
+      curriculum: (item.curriculum ?? []).map((c) => ({ subject: c.subject, desc: c.desc ?? '' })),
+      breadcrumb_item: (item.breadcrumb_item ?? []).map((bc) => ({
+         id: bc.id,
+         breadcrumb_title: bc.breadcrumb_title,
+         description: bc.description,
+         imageUrl: mediaUrl(bc.image),
+      })),
+   };
+}
+
+const ACADEMIC_PROGRAM_POPULATE = [
+   'populate[0]=image',
+   'populate[1]=content_image',
+   'populate[2]=highlights',
+   'populate[3]=curriculum',
+   'populate[4]=breadcrumb_item.image',
+].join('&');
+
 export async function fetchAcademicPrograms(): Promise<AcademicProgram[]> {
    try {
       const { data } = await strapi.get<StrapiListResponse<StrapiAcademicProgram>>(
-         '/academic-programs?populate=image&sort=sort_order:asc'
+         `/academic-programs?${ACADEMIC_PROGRAM_POPULATE}&sort=sort_order:asc`
       );
-      return data.data.map((item) => ({
-         id: item.id,
-         title: item.title,
-         category: item.category,
-         description: item.description,
-         image: mediaUrl(item.image),
-         sortOrder: item.sort_order,
-         header: item.header,
-         subheader: item.subheader,
-      }));
+      return data.data.map(normalizeAcademicProgram);
    } catch {
       return [];
    }
 }
+
+export async function fetchAcademicProgramBySlug(slug: string): Promise<AcademicProgram | null> {
+   try {
+      const { data } = await strapi.get<StrapiListResponse<StrapiAcademicProgram>>(
+         `/academic-programs?filters[slug][$eq]=${encodeURIComponent(slug)}&${ACADEMIC_PROGRAM_POPULATE}`
+      );
+      if (!data.data.length) return null;
+      return normalizeAcademicProgram(data.data[0]);
+   } catch {
+      return null;
+   }
+}
+
+export async function fetchAcademicProgramSlugs(): Promise<string[]> {
+   try {
+      const { data } = await strapi.get<StrapiListResponse<StrapiAcademicProgram>>(
+         '/academic-programs?fields[0]=slug&sort=sort_order:asc'
+      );
+      return data.data.map((item) => item.slug).filter(Boolean);
+   } catch {
+      return [];
+   }
+}
+
 
 // ─── Gallery ──────────────────────────────────────────────────────────────────
 

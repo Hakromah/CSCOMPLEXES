@@ -33,14 +33,62 @@ const translateCategory = (cat: string) => {
 };
 
 const fallbackPrograms: AcademicProgram[] = [
-    { id: 1, category: 'Kindergarten', title: 'La vie en maternelle est belle pour les enfants', image: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80', description: 'Notre système éducatif s\'est imposé comme l\'un de nos programmes de petite enfance axés sur "l\'apprentissage par le jeu". Nous donnons la priorité...', sortOrder: 1, header: 'Maternelle', subheader: 'Maternelle' },
-    { id: 2, category: 'Elementary', title: 'École primaire', image: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80', description: 'L\'accent principal est mis sur l\'alphabétisation, les mathématiques et le développement socio-émotionnel...', sortOrder: 2, header: 'École primaire', subheader: 'École primaire' },
-    { id: 3, category: 'Junior High', title: 'Collège', image: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80', description: 'Introduction à des matières spécialisées, aux sciences en laboratoire et aux compétences organisationnelles...', sortOrder: 3, header: 'Collège', subheader: 'Collège' },
-    { id: 4, category: 'Vocational Training', title: 'Formation professionnelle', image: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80', description: 'Développer des compétences techniques et pratiques pour le marché du travail...', sortOrder: 4, header: 'Formation professionnelle', subheader: 'Formation professionnelle' },
-    { id: 5, category: 'Senior High', title: 'Lycée', image: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80', description: 'Préparer les étudiants à l\'enseignement supérieur et à la réussite professionnelle avec des programmes académiques rigoureux.', sortOrder: 5, header: 'Lycée', subheader: 'Lycée' },
+    {
+        id: 1, category: 'Kindergarten', title: 'La vie en maternelle est belle pour les enfants', slug: 'kindergarten',
+        subtitle: 'Poser les bases d\'un apprentissage tout au long de la vie',
+        image: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
+        contentImage: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
+        description: 'Notre système éducatif s\'est imposé comme l\'un de nos programmes de petite enfance axés sur "l\'apprentissage par le jeu". Nous donnons la priorité au développement socio-émotionnel, à l\'alphabétisation de base et aux mathématiques.',
+        sortOrder: 1, header: 'Maternelle', subheader: 'Maternelle',
+        highlights: ['Apprentissage par le jeu', 'Compétences en lecture et mathématiques', 'Intégration des arts et de la musique'],
+        curriculum: [{ subject: 'Arts du langage', desc: 'Phonétique, vocabulaire et lecture précoce.' }, { subject: 'Mathématiques', desc: 'Sens des nombres, opérations de base, formes.' }],
+        breadcrumb_item: [],
+    },
+    {
+        id: 2, category: 'Elementary', title: 'École primaire', slug: 'elementary',
+        subtitle: 'Construire des bases académiques solides',
+        image: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
+        contentImage: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
+        description: 'L\'accent principal est mis sur l\'alphabétisation, les mathématiques et le développement socio-émotionnel dans un environnement safe et encourageant.',
+        sortOrder: 2, header: 'École primaire', subheader: 'École primaire',
+        highlights: ['Approche par investigation', 'Fort accent sur la lecture et les mathématiques', 'Programmes de développement du caractère'],
+        curriculum: [{ subject: 'Arts du langage', desc: 'Compréhension de lecture et rédaction créative.' }, { subject: 'Mathématiques', desc: 'Arithmétique, fractions, géométrie.' }],
+        breadcrumb_item: [],
+    },
+    {
+        id: 3, category: 'Junior High', title: 'Collège', slug: 'junior-high',
+        subtitle: 'Se préparer à l\'excellence académique',
+        image: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
+        contentImage: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
+        description: 'Introduction à des matières spécialisées, aux sciences en laboratoire et aux compétences organisationnelles favorisant l\'indépendance.',
+        sortOrder: 3, header: 'Collège', subheader: 'Collège',
+        highlights: ['Enseignants spécialisés', 'Introduction aux sciences en laboratoire', 'Activités parascolaires enrichissantes'],
+        curriculum: [{ subject: 'Sciences avancées', desc: 'Biologie, Chimie et Physique avec travaux de laboratoire.' }, { subject: 'Mathématiques', desc: 'Algèbre, géométrie et pré-calcul.' }],
+        breadcrumb_item: [],
+    },
+    {
+        id: 4, category: 'Vocational Training', title: 'Formation professionnelle', slug: 'vocational-training',
+        subtitle: 'Des compétences pour le monde réel',
+        image: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
+        contentImage: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
+        description: 'Développer des compétences techniques et pratiques pertinentes pour le marché du travail à travers des ateliers pratiques et des apprentissages.',
+        sortOrder: 4, header: 'Formation professionnelle', subheader: 'Formation professionnelle',
+        highlights: ['Formation pratique', 'Curriculum adapté à l\'industrie', 'Opportunités d\'apprentissage'],
+        curriculum: [{ subject: 'Compétences techniques', desc: 'Ateliers en automobile, électricité et construction.' }, { subject: 'Technologies de l\'information', desc: 'Développement web, réseaux, compétences logicielles.' }],
+        breadcrumb_item: [],
+    },
+    {
+        id: 5, category: 'Senior High', title: 'Lycée', slug: 'senior-high',
+        subtitle: 'Excellence en préparation à l\'enseignement supérieur',
+        image: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
+        contentImage: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
+        description: 'Préparer les étudiants à l\'enseignement supérieur et à la réussite professionnelle avec des programmes académiques rigoureux.',
+        sortOrder: 5, header: 'Lycée', subheader: 'Lycée',
+        highlights: ['Cours de niveau avancé (AP)', 'Programmes de préparation à l\'université', 'Orientation universitaire'],
+        curriculum: [{ subject: 'Cours avancés', desc: 'Cours de niveau universitaire pour apprenants avancés.' }, { subject: 'Programmes STEM', desc: 'Mathématiques avancées, ingénierie et technologie.' }],
+        breadcrumb_item: [],
+    },
 ];
-
-
 
 interface AcademicSectionProps {
     programs?: AcademicProgram[];
@@ -132,7 +180,7 @@ export default function AcademicSection({ programs: programsProp }: AcademicSect
                     {/* Tabs */}
                     {dynamicCategories.length > 2 && (
                         <div className="academic-tabs flex items-center justify-start gap-x-8 border-b border-white/20 overflow-x-auto! [-webkit-overflow-scrolling:touch] scrollbar-thin pb-2 sm:pb-[17px] overflow-y-hidden">
-                            {dynamicCategories.map((cat: any) => (
+                            {dynamicCategories.map((cat: string) => (
                                 <button
                                     key={cat}
                                     onClick={() => setActiveTab(cat)}

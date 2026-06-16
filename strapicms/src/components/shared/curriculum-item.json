@@ -1,0 +1,18 @@
+{
+  "collectionName": "components_shared_curriculum_items",
+  "info": {
+    "displayName": "Curriculum Item",
+    "icon": "book",
+    "description": "A single curriculum subject entry with title and description"
+  },
+  "options": {},
+  "attributes": {
+    "subject": {
+      "type": "string",
+      "required": true
+    },
+    "desc": {
+      "type": "text"
+    }
+  }
+}

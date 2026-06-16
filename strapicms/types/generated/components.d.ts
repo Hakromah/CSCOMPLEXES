@@ -10,6 +10,19 @@ export interface SharedBenefit extends Struct.ComponentSchema {
   };
 }
 
+export interface SharedCurriculumItem extends Struct.ComponentSchema {
+  collectionName: 'components_shared_curriculum_items';
+  info: {
+    description: 'A single curriculum subject entry with title and description';
+    displayName: 'Curriculum Item';
+    icon: 'book';
+  };
+  attributes: {
+    desc: Schema.Attribute.Text;
+    subject: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
 export interface SharedDetails extends Struct.ComponentSchema {
   collectionName: 'components_shared_details';
   info: {
@@ -171,6 +184,7 @@ declare module '@strapi/strapi' {
   export module Public {
     export interface ComponentSchemas {
       'shared.benefit': SharedBenefit;
+      'shared.curriculum-item': SharedCurriculumItem;
       'shared.details': SharedDetails;
       'shared.emails': SharedEmails;
       'shared.feature-card': SharedFeatureCard;

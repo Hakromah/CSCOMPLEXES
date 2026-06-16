@@ -31,10 +31,8 @@ export default function OpportunitiesPage({ opportunities = [] }: OpportunitiesP
     if (currentPage > 1) setCurrentPage((prev) => prev - 1);
   };
 
-  // const breadcrumbData = opportunities[0]?.breadcrumb_item?.[0];
-
   const academicBreadcrumb = opportunities.find(s => s.breadcrumb_item && s.breadcrumb_item.length > 0);
-    const breadcrumbData = academicBreadcrumb?.breadcrumb_item?.[0];
+  const breadcrumbData = academicBreadcrumb?.breadcrumb_item?.[0];
 
   return (
     <div className="w-full min-h-screen bg-background lg:pb-20">
@@ -59,68 +57,62 @@ export default function OpportunitiesPage({ opportunities = [] }: OpportunitiesP
             </p>
           </div>
 
-          {/* Opportunities List - Now using currentOpportunities */}
+          {/* Opportunities List */}
           <div className="flex flex-col gap-[clamp(30px,3.5vw,120px)] min-h-[400px]">
-
-
             {currentOpportunities.map((opp, index) => {
-  // 1. Calculate the global number (startIndex is (currentPage - 1) * itemsPerPage)
-  const globalIndex = startIndex + index + 1;
+              const globalIndex = startIndex + index + 1;
+              const formattedNumber = globalIndex < 10 ? `0${globalIndex}` : globalIndex;
 
-  // 2. Format with a leading zero if less than 10 (e.g., 1 becomes 01)
-  const formattedNumber = globalIndex < 10 ? `0${globalIndex}` : globalIndex;
+              return (
+                <div key={opp.id} className="w-full h-full relative group">
+                  <Link href={`/opportunities/${opp.slug}`}>
+                    <div className="flex flex-col lg:flex-row gap-[clamp(20px,3.5vw,40px)] items-start">
+                      <div className="flex-1 w-full lg:w-auto flex gap-6 relative">
+                        <div className="text-[clamp(15px,2.5vw,30px)] max-sm:absolute z-50 max-sm:top-3 max-sm:left-3 font-normal max-sm:w-15 max-sm:h-10 max-sm:text-white max-sm:bg-primary w-[83px] h-[63px] rounded-[10px] bg-primary/10 text-black flex items-center justify-center leading-none select-none">
+                          {formattedNumber}
+                        </div>
 
-  return (
-    <div key={opp.id} className="w-full h-full relative group">
-      <Link href={`/opportunities/${opp.slug}`}>
-        <div className="flex flex-col lg:flex-row gap-[clamp(20px,3.5vw,40px)] items-start">
-          <div className="flex-1 w-full lg:w-auto flex gap-6 relative">
-            {/* 3. Use the formattedNumber here */}
-            <div className="text-[clamp(15px,2.5vw,30px)] max-sm:absolute z-50 max-sm:top-3 max-sm:left-3 font-normal max-sm:w-15 max-sm:h-10 max-sm:text-white max-sm:bg-primary w-[83px] h-[63px] rounded-[10px] bg-primary/10 text-black flex items-center justify-center leading-none select-none">
-              {formattedNumber}
-            </div>
+                        {opp.image && (
+                          <div className="relative h-[300px] w-full rounded-2xl overflow-hidden shadow-sm">
+                            <StrapiImage
+                              src={opp.image}
+                              alt={opp.title}
+                              fill
+                              unoptimized
+                              className="object-cover transition-transform duration-500 group-hover:scale-105"
+                            />
+                          </div>
+                        )}
+                      </div>
 
-            {opp.image && (
-              <div className="relative h-[300px] w-full rounded-2xl overflow-hidden shadow-sm">
-                <StrapiImage
-                  src={opp.image}
-                  alt={opp.title}
-                  fill
-                  unoptimized
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-              </div>
-            )}
-          </div>
+                      <div className="flex-1 space-y-[clamp(12px,3.5vw,24px)] pt-2">
+                        <h3 className="text-2xl font-bold text-gray-900 leading-tight">
+                          {opp.title}
+                        </h3>
+                        <p className="text-gray-600 leading-relaxed">
+                          {opp.description}
+                        </p>
 
-           <div className="flex-1 space-y-[clamp(12px,3.5vw,24px)] pt-2">
-                      <h3 className="text-2xl font-bold text-gray-900 leading-tight">
-                        {opp.title}
-                      </h3>
-                      <p className="text-gray-600 leading-relaxed">
-                        {opp.description}
-                      </p>
+                        <div className="flex flex-wrap items-center justify-between gap-4 text-sm text-gray-500 border-b border-gray-100 pb-[clamp(12px,3.5vw,24px)] pt-2">
+                          <span>publié le {opp.publishedDate}</span>
+                          <div className="h-px bg-primary grow mx-4 hidden sm:block"></div>
+                          <div>
+                            Date limite : {opp.deadline}{" "}
+                            <span className="text-primary">{opp.dateNumber}</span>
+                          </div>
+                        </div>
 
-                      <div className="flex flex-wrap items-center justify-between gap-4 text-sm text-gray-500 border-b border-gray-100 pb-[clamp(12px,3.5vw,24px)] pt-2">
-                        <span>publié le {opp.publishedDate}</span>
-                        <div className="h-px bg-primary grow mx-4 hidden sm:block"></div>
                         <div>
-                          Date limite : {opp.deadline}{" "}
-                          <span className="text-primary">{opp.dateNumber}</span>
+                          <Button className="bg-[#2857AE] hover:bg-[#1e408a] cursor-pointer lg:hover:bg-secondary duration-500 lg:hover:text-primary border border-primary/0 lg:hover:border-primary rounded-full px-8">
+                            Voir les détails
+                          </Button>
                         </div>
                       </div>
-
-                      <div>
-                        <Button className="bg-[#2857AE] hover:bg-[#1e408a] cursor-pointer lg:hover:bg-secondary duration-500 lg:hover:text-primary border border-primary/0 lg:hover:border-primary rounded-full px-8">
-                          Voir les détails
-                        </Button>
-                      </div>
                     </div>
-        </div>
-      </Link>
-    </div>
-  );
-})}
+                  </Link>
+                </div>
+              );
+            })}
           </div>
 
           {/* Dynamic Pagination Controls */}
@@ -131,9 +123,8 @@ export default function OpportunitiesPage({ opportunities = [] }: OpportunitiesP
                 size="icon"
                 onClick={handlePrevPage}
                 disabled={currentPage === 1}
-                className={`group/previous cursor-pointer rounded-full h-12 w-12 max-md:w-10 max-md:h-10 duration-500 transition-colors ${
-                  currentPage === 1 ? "bg-gray-200 opacity-50" : "bg-primary text-white lg:hover:bg-white lg:hover:text-primary lg:border-primary"
-                }`}
+                className={`group/previous cursor-pointer rounded-full h-12 w-12 max-md:w-10 max-md:h-10 duration-500 transition-colors ${currentPage === 1 ? "bg-gray-200 opacity-50" : "bg-primary text-white lg:hover:bg-white lg:hover:text-primary lg:border-primary"
+                  }`}
               >
                 <ArrowLeft className={`h-6 w-6 duration-500 ${currentPage === 1 ? "text-gray-400" : "text-white lg:group-hover/previous:text-primary"}`} />
               </Button>
@@ -143,11 +134,10 @@ export default function OpportunitiesPage({ opportunities = [] }: OpportunitiesP
                   <button
                     key={pageNum}
                     onClick={() => setCurrentPage(pageNum)}
-                    className={`w-8 h-[29px] flex justify-center items-center text-[clamp(16px,3vw,18px)] font-semibold leading-normal transition-all rounded-sm ${
-                      currentPage === pageNum
-                        ? "bg-primary text-white"
-                        : "bg-primary/10 text-black hover:bg-primary/20"
-                    }`}
+                    className={`w-8 h-[29px] flex justify-center items-center text-[clamp(16px,3vw,18px)] font-semibold leading-normal transition-all rounded-sm ${currentPage === pageNum
+                      ? "bg-primary text-white"
+                      : "bg-primary/10 text-black hover:bg-primary/20"
+                      }`}
                   >
                     {pageNum}
                   </button>
@@ -159,9 +149,8 @@ export default function OpportunitiesPage({ opportunities = [] }: OpportunitiesP
                 size="icon"
                 onClick={handleNextPage}
                 disabled={currentPage === totalPages}
-                className={`group/next cursor-pointer rounded-full h-12 w-12 max-md:w-10 max-md:h-10 duration-500 transition-colors ${
-                  currentPage === totalPages ? "bg-gray-200 opacity-50" : "bg-primary text-white lg:hover:bg-white lg:hover:text-black lg:border-primary"
-                }`}
+                className={`group/next cursor-pointer rounded-full h-12 w-12 max-md:w-10 max-md:h-10 duration-500 transition-colors ${currentPage === totalPages ? "bg-gray-200 opacity-50" : "bg-primary text-white lg:hover:bg-white lg:hover:text-black lg:border-primary"
+                  }`}
               >
                 <ArrowRight className={`h-6 w-6 duration-500 ${currentPage === totalPages ? "text-gray-400" : "text-white lg:group-hover/next:text-primary"}`} />
               </Button>
