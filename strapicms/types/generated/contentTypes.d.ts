@@ -491,6 +491,7 @@ export interface ApiAcademicProgramAcademicProgram
     draftAndPublish: true;
   };
   attributes: {
+    academic_link: Schema.Attribute.Component<'shared.social-links', true>;
     breadcrumb_item: Schema.Attribute.Component<'shared.readcrumb', true>;
     category: Schema.Attribute.Enumeration<
       [
@@ -509,6 +510,7 @@ export interface ApiAcademicProgramAcademicProgram
       Schema.Attribute.Private;
     curriculum: Schema.Attribute.Component<'shared.curriculum-item', true>;
     description: Schema.Attribute.Text;
+    description_text: Schema.Attribute.Text;
     header: Schema.Attribute.String;
     highlights: Schema.Attribute.Component<'shared.benefit', true>;
     image: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
@@ -518,6 +520,8 @@ export interface ApiAcademicProgramAcademicProgram
       'api::academic-program.academic-program'
     > &
       Schema.Attribute.Private;
+    mid_header: Schema.Attribute.String;
+    middle_text: Schema.Attribute.String;
     prospectus_file: Schema.Attribute.Media<'files'>;
     publishedAt: Schema.Attribute.DateTime;
     slug: Schema.Attribute.UID<'title'> & Schema.Attribute.Required;

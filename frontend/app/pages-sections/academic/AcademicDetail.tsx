@@ -13,41 +13,46 @@ const FALLBACK_CONTENT = 'https://images.unsplash.com/photo-1581091226825-a6a2a5
 
 export default function AcademicDetail({ program }: { program: AcademicProgram }) {
 
-    // ── Breadcrumb ─────────────────────────────────────────────────────────────
+    // Breadcrumb
     const bc = program.breadcrumb_item?.[0];
     const breadcrumbTitle = bc?.breadcrumb_title || program.title;
     const breadcrumbDesc = bc?.description || program.subtitle || 'Empowering Students for the Future';
     const breadcrumbImage = bc?.imageUrl || program.image || FALLBACK_HERO;
 
-    // ── Images ─────────────────────────────────────────────────────────────────
+    // Academic links for CTA buttons
+    const academicLinks = program.academic_link ?? [];
+    const academicLink0 = academicLinks[0];
+    const academicLink1 = academicLinks[1];
+
+    // Images
     const contentImage = program.contentImage || program.image || FALLBACK_CONTENT;
 
-    // ── Highlights — Strapi data or fallback ──────────────────────────────────
+    // Highlights
     const highlights: string[] = program.highlights?.length
         ? program.highlights
         : [
-            'Programme complet aligné sur les normes',
-            'Corps enseignant expérimenté et dévoué',
+            'Programme complet align sur les normes',
+            'Corps enseignant experimente et dedie',
             'Installations et ressources modernes',
-            'Approche holistique du développement des élèves',
+            'Approche holistique du developpement des eleves',
         ];
 
-    // ── Curriculum — Strapi data or fallback ──────────────────────────────────
+    // Curriculum
     const curriculum: { subject: string; desc: string }[] = program.curriculum?.length
         ? program.curriculum
         : [
-            { subject: 'Cadre fondamental', desc: 'Études avancées en mathématiques, sciences, arts du langage et sciences humaines.' },
-            { subject: 'Options spécialisées', desc: 'Options variées incluant technologie, arts, compétences professionnelles et éducation physique.' },
-            { subject: 'Programmes enrichissants', desc: 'Clubs, sports de compétition, laboratoires d\'innovation et développement du leadership.' },
-            { subject: 'Préparation à l\'avenir', desc: 'Exploration de carrières, orientation et préparation à l\'enseignement supérieur.' },
+            { subject: 'Cadre fondamental', desc: 'Etudes avancees en mathematiques, sciences, arts du langage et sciences humaines.' },
+            { subject: 'Options specialisees', desc: 'Options variees incluant technologie, arts, competences professionnelles et education physique.' },
+            { subject: 'Programmes enrichissants', desc: 'Clubs, sports de competition, laboratoires d innovation et developpement du leadership.' },
+            { subject: 'Preparation a l avenir', desc: 'Exploration de carrieres, orientation et preparation a l enseignement superieur.' },
         ];
 
-    // ── Stat overlay — Strapi data or fallback ────────────────────────────────
+    // Stats
     const stat1 = { value: program.statValue1 || 'Captivant', label: program.statLabel1 || 'Programme' };
-    const stat2 = { value: program.statValue2 || 'Experts', label: program.statLabel2 || 'Éducateurs' };
+    const stat2 = { value: program.statValue2 || 'Experts', label: program.statLabel2 || 'Educateurs' };
     const stat3 = { value: program.statValue3 || 'Modernes', label: program.statLabel3 || 'Infrastructures' };
 
-    // ── PDF Download ──────────────────────────────────────────────────────────
+    // PDF
     const prospectusUrl = program.prospectusFileUrl || null;
 
     return (
@@ -59,16 +64,16 @@ export default function AcademicDetail({ program }: { program: AcademicProgram }
                 alt={`${breadcrumbTitle} Banner`}
             />
 
-            {/* ── Programme Overview ─────────────────────────────────────────── */}
+            {/* Programme Overview */}
             <div className="max-sm:pt-7 max-sm:pb-2.5 sm:py-[clamp(20px,5vw,100px)]">
                 <div className="container mx-auto max-w-[1920px] px-5 md:px-[clamp(20px,5vw,60px)]">
                     <div className="grid lg:grid-cols-2 gap-[clamp(20px,4vw,60px)] items-center">
 
-                        {/* ── Left: text ───────────────────────────────────── */}
+                        {/* Left: text */}
                         <div className="space-y-[clamp(15px,5vw,24px)]">
                             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary font-medium text-sm">
                                 <GraduationCap className="w-5 h-5" />
-                                <span>Programme académique</span>
+                                {program.mid_header && <span>{program.mid_header}</span>}
                             </div>
                             <h1 className="text-[clamp(22px,4vw,45px)] font-bold text-gray-900 leading-tight">
                                 {program.title}
@@ -80,9 +85,9 @@ export default function AcademicDetail({ program }: { program: AcademicProgram }
                                 {program.description}
                             </p>
 
-                            {/* ── Highlights ───────────────────────────────── */}
+                            {/* Highlights */}
                             <div className="pt-[clamp(5px,5vw,24px)]">
-                                <h3 className="text-xl font-bold text-gray-900 mb-6">Points clés</h3>
+                                <h3 className="text-xl font-bold text-gray-900 mb-6">Points cles</h3>
                                 <ul className="grid sm:grid-cols-2 gap-4">
                                     {highlights.map((highlight, idx) => (
                                         <li key={idx} className="flex items-start gap-3 text-gray-700">
@@ -93,29 +98,33 @@ export default function AcademicDetail({ program }: { program: AcademicProgram }
                                 </ul>
                             </div>
 
-                            {/* ── CTA buttons ──────────────────────────────── */}
+                            {/* CTA buttons — name and href come from Strapi academic_link */}
                             <div className="pt-8 flex flex-wrap gap-4">
-                                <Button
-                                    className="h-fit px-[clamp(25px,3vw,36px)] py-[clamp(10px,3vw,15px)] rounded-full bg-primary hover:bg-primary/90 text-white font-bold text-lg transition-all duration-300 shadow-xl shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-1"
-                                    onClick={() => window.location.href = '/contact'}
-                                >
-                                    Demande d&apos;admission
-                                </Button>
-                                <Button
-                                    variant="outline"
-                                    className="h-fit px-[clamp(25px,3vw,36px)] py-[clamp(10px,3vw,15px)] rounded-full border-gray-300 text-gray-700 hover:border-primary hover:text-primary font-bold text-lg transition-all duration-300"
-                                    onClick={() => window.location.href = '/contact'}
-                                >
-                                    Contacter les admissions
-                                </Button>
+                                {academicLink0 && (
+                                    <a href={academicLink0.href} target="_blank" rel="noreferrer">
+                                        <Button className="h-fit px-[clamp(25px,3vw,36px)] py-[clamp(10px,3vw,15px)] rounded-full bg-primary hover:bg-primary/90 text-white font-bold text-lg transition-all duration-300 shadow-xl shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-1">
+                                            {academicLink0.name}
+                                        </Button>
+                                    </a>
+                                )}
+                                {academicLink1 && (
+                                    <a href={academicLink1.href} target="_blank" rel="noreferrer">
+                                        <Button
+                                            variant="outline"
+                                            className="h-fit px-[clamp(25px,3vw,36px)] py-[clamp(10px,3vw,15px)] rounded-full border-gray-300 text-gray-700 hover:border-primary hover:text-primary font-bold text-lg transition-all duration-300"
+                                        >
+                                            {academicLink1.name}
+                                        </Button>
+                                    </a>
+                                )}
                             </div>
                         </div>
 
-                        {/* ── Right: image with stat overlay ───────────────── */}
+                        {/* Right: image with stat overlay */}
                         <div className="relative h-[clamp(400px,40vw,600px)] w-full rounded-3xl overflow-hidden shadow-2xl group">
                             <Image
                                 src={contentImage}
-                                alt={`${program.title} – aperçu`}
+                                alt={`${program.title} apercu`}
                                 fill
                                 className="object-cover transition-transform duration-700 group-hover:scale-105"
                                 priority
@@ -123,7 +132,7 @@ export default function AcademicDetail({ program }: { program: AcademicProgram }
                             />
                             <div className="absolute inset-0 bg-black/10 transition-colors duration-500 group-hover:bg-transparent" />
 
-                            {/* Stat overlay — values come from Strapi */}
+                            {/* Stat overlay */}
                             <div className="absolute bottom-6 left-6 right-6 bg-white/95 backdrop-blur-md p-6 rounded-2xl shadow-xl border border-white/20 transform translate-y-2 opacity-90 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
                                 <div className="flex justify-around items-center divide-x divide-gray-200">
                                     <div className="text-center px-4">
@@ -146,13 +155,13 @@ export default function AcademicDetail({ program }: { program: AcademicProgram }
                 </div>
             </div>
 
-            {/* ── Curriculum Breakdown ─────────────────────────────────────── */}
+            {/* Curriculum Breakdown */}
             <div className="max-sm:pt-7 max-sm:pb-2.5 sm:py-[clamp(20px,5vw,100px)] bg-gray-50">
                 <div className="container mx-auto max-w-[1920px] px-5 md:px-[clamp(20px,5vw,60px)]">
                     <div className="text-center max-w-3xl mx-auto mb-[clamp(20px,3vw,60px)]">
-                        <h2 className="text-[clamp(22px,4vw,45px)] font-bold text-gray-900 mb-6">Structure du programme</h2>
+                        <h2 className="text-[clamp(22px,4vw,45px)] font-bold text-gray-900 mb-6">{program.middle_text}</h2>
                         <p className="text-gray-600 text-lg leading-relaxed">
-                            Notre programme est conçu de manière réfléchie pour offrir une éducation complète et équilibrée, favorisant la croissance intellectuelle et personnelle.
+                            {program.description_text}
                         </p>
                     </div>
 
@@ -179,21 +188,20 @@ export default function AcademicDetail({ program }: { program: AcademicProgram }
                 </div>
             </div>
 
-            {/* ── Prospectus Download CTA ──────────────────────────────────── */}
-            {/* Always visible — button disabled/hidden when no file in Strapi */}
+            {/* Prospectus Download CTA */}
+            {/* Always visible, button disabled when no file in Strapi */}
             <div className="max-sm:pt-7 max-sm:pb-5 sm:py-[clamp(20px,5vw,80px)]">
                 <div className="container mx-auto max-w-[1920px] px-5 md:px-[clamp(20px,5vw,60px)]">
                     <div className="bg-[#2857AE] text-white rounded-3xl p-[clamp(24px,4vw,48px)] relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-[clamp(15px,3vw,35px)]">
-                        {/* Decorative blobs */}
                         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full translate-x-1/2 -translate-y-1/2 blur-2xl pointer-events-none" />
                         <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full -translate-x-1/2 translate-y-1/2 blur-2xl pointer-events-none" />
 
                         <div className="relative z-10 lg:max-w-2xl text-center md:text-left">
                             <h2 className="text-[clamp(20px,3vw,36px)] font-bold mb-4">
-                                Télécharger le Prospectus — {program.title}
+                                Telecharger le Prospectus — {program.title}
                             </h2>
                             <p className="text-white/80 text-lg">
-                                Obtenez un aperçu détaillé de notre curriculum, des activités parascolaires et du processus d&apos;admission dans notre guide complet.
+                                Obtenez un apercu detaille de notre curriculum, des activites parascolaires et du processus d&apos;admission dans notre guide complet.
                             </p>
                         </div>
 
@@ -202,7 +210,7 @@ export default function AcademicDetail({ program }: { program: AcademicProgram }
                                 <a href={prospectusUrl} download target="_blank" rel="noreferrer">
                                     <Button className="h-fit py-[clamp(10px,3vw,15px)] px-[clamp(20px,3vw,40px)] rounded-full bg-white text-primary hover:bg-gray-100 font-bold text-sm md:text-lg transition-all duration-300 flex items-center gap-3 group">
                                         <Download className="w-5 h-5 lg:group-hover:-translate-y-1 transition-transform" />
-                                        Télécharger PDF
+                                        Telecharger PDF
                                     </Button>
                                 </a>
                             ) : (
@@ -212,7 +220,7 @@ export default function AcademicDetail({ program }: { program: AcademicProgram }
                                     title="Prospectus non disponible pour le moment"
                                 >
                                     <Download className="w-5 h-5" />
-                                    Bientôt disponible
+                                    Bientot disponible
                                 </Button>
                             )}
                         </div>

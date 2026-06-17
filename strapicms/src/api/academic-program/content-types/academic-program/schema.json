@@ -38,12 +38,22 @@
     "image": {
       "type": "media",
       "multiple": false,
-      "allowedTypes": ["images", "files", "videos", "audios"]
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
     },
     "content_image": {
       "type": "media",
       "multiple": false,
-      "allowedTypes": ["images", "files", "videos", "audios"]
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
     },
     "sort_order": {
       "type": "integer"
@@ -72,7 +82,9 @@
     "prospectus_file": {
       "type": "media",
       "multiple": false,
-      "allowedTypes": ["files"]
+      "allowedTypes": [
+        "files"
+      ]
     },
     "stat_value_1": {
       "type": "string"
@@ -90,6 +102,20 @@
       "type": "string"
     },
     "stat_label_3": {
+      "type": "string"
+    },
+    "middle_text": {
+      "type": "string"
+    },
+    "description_text": {
+      "type": "text"
+    },
+    "academic_link": {
+      "type": "component",
+      "component": "shared.social-links",
+      "repeatable": true
+    },
+    "mid_header": {
       "type": "string"
     }
   }

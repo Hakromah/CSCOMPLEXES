@@ -137,6 +137,10 @@ export interface StrapiAcademicProgram {
    sort_order: number;
    header: string;
    subheader: string;
+   description_text: string;
+   middle_text: string;
+   mid_header: string;
+   academic_link: Array<{ name: string; href: string }> | null;
    highlights: Array<{ id: number; text: string }> | null;
    curriculum: Array<{ id: number; subject: string; desc: string }> | null;
    breadcrumb_item: Array<{
@@ -379,6 +383,10 @@ export interface AcademicProgram {
    header: string;
    subheader: string;
    highlights: string[];
+   description_text: string;
+   middle_text: string;
+   mid_header: string;
+   academic_link: Array<{ name: string; href: string }> | null;
    curriculum: { subject: string; desc: string }[];
    breadcrumb_item: BreadcrumbItem[];
    // Detail page extras

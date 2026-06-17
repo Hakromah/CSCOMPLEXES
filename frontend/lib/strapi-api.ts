@@ -34,7 +34,6 @@ import type {
    StrapiFooterLink,
    StrapiNavbar,
    StrapiNavItem,
-   StrapiNavSubItem,
    StrapiFeatureCard,
    StrapiRichTextBlock,
    StrapiMediaItem,
@@ -231,13 +230,6 @@ export async function fetchStaffMembers(filter?: {
       if (filter?.featured) filterStr += '&filters[is_featured][$eq]=true';
       if (filter?.leadership) filterStr += '&filters[isLeadership][$eq]=true';
 
-      // Updated populate to include both the profile image and the breadcrumb component
-      // const query = [
-      //   'populate[0]=image',
-      //   'populate[1]=breadcrumb_item.image',
-      //   'sort=sort_order:asc'
-      // ].join('&');
-
       const query = [
          'populate[image][populate]=*', // Get profile image
          'populate[breadcrumb_item][populate]=*', // Deeply get breadcrumb + its image
@@ -283,6 +275,10 @@ function normalizeAcademicProgram(item: StrapiAcademicProgram): AcademicProgram 
       category: item.category ?? '',
       subtitle: item.subtitle ?? '',
       description: item.description ?? '',
+      description_text: item.description_text ?? '',
+      middle_text: item.middle_text ?? '',
+      academic_link: item.academic_link ?? [],
+      mid_header: item.mid_header ?? '',
       image: mediaUrl(item.image),
       contentImage: mediaUrl(item.content_image) || mediaUrl(item.image),
       sortOrder: item.sort_order ?? 0,
@@ -297,7 +293,7 @@ function normalizeAcademicProgram(item: StrapiAcademicProgram): AcademicProgram 
          imageUrl: mediaUrl(bc.image),
       })),
       // Detail page extras
-      prospectusFileUrl: mediaUrl(item.prospectus_file as any),
+      prospectusFileUrl: mediaUrl(item.prospectus_file),
       statValue1: item.stat_value_1 ?? '',
       statLabel1: item.stat_label_1 ?? '',
       statValue2: item.stat_value_2 ?? '',
@@ -314,6 +310,7 @@ const ACADEMIC_PROGRAM_POPULATE = [
    'populate[3]=curriculum',
    'populate[4]=breadcrumb_item.image',
    'populate[5]=prospectus_file',
+   'populate[6]=academic_link',
 ].join('&');
 
 export async function fetchAcademicPrograms(): Promise<AcademicProgram[]> {
