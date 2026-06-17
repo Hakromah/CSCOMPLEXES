@@ -491,20 +491,26 @@ export interface ApiAcademicProgramAcademicProgram
     draftAndPublish: true;
   };
   attributes: {
+    breadcrumb_item: Schema.Attribute.Component<'shared.readcrumb', true>;
     category: Schema.Attribute.Enumeration<
       [
         'Kindergarten',
         'Elementary',
         'Junior High',
-        'Senior High ',
+        'Senior High',
         'Vocational Training',
       ]
+    >;
+    content_image: Schema.Attribute.Media<
+      'images' | 'files' | 'videos' | 'audios'
     >;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    curriculum: Schema.Attribute.Component<'shared.curriculum-item', true>;
     description: Schema.Attribute.Text;
     header: Schema.Attribute.String;
+    highlights: Schema.Attribute.Component<'shared.benefit', true>;
     image: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
@@ -512,9 +518,18 @@ export interface ApiAcademicProgramAcademicProgram
       'api::academic-program.academic-program'
     > &
       Schema.Attribute.Private;
+    prospectus_file: Schema.Attribute.Media<'files'>;
     publishedAt: Schema.Attribute.DateTime;
+    slug: Schema.Attribute.UID<'title'> & Schema.Attribute.Required;
     sort_order: Schema.Attribute.Integer;
+    stat_label_1: Schema.Attribute.String;
+    stat_label_2: Schema.Attribute.String;
+    stat_label_3: Schema.Attribute.String;
+    stat_value_1: Schema.Attribute.String;
+    stat_value_2: Schema.Attribute.String;
+    stat_value_3: Schema.Attribute.String;
     subheader: Schema.Attribute.Text;
+    subtitle: Schema.Attribute.Text;
     title: Schema.Attribute.String;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &

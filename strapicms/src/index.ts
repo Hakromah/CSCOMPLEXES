@@ -122,7 +122,16 @@ export default {
       if (publicRole) {
         const publicActions = [
             'api::contact-message.contact-message.create',
-            'api::newsletter-subscription.newsletter-subscription.create'
+            'api::newsletter-subscription.newsletter-subscription.create',
+            // Academic public read access (used by the school's public website)
+            'api::academic-program.academic-program.find',
+            'api::academic-program.academic-program.findOne',
+            'api::academic-section.academic-section.find',
+            'api::academic-section.academic-section.findOne',
+            'api::academic-resource.academic-resource.find',
+            'api::academic-resource.academic-resource.findOne',
+            'api::school-calendar.school-calendar.find',
+            'api::school-calendar.school-calendar.findOne',
         ];
         
         for (const publicAction of publicActions) {
