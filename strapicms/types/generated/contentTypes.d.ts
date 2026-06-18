@@ -827,6 +827,8 @@ export interface ApiContactInfoContactInfo extends Struct.SingleTypeSchema {
   attributes: {
     address: Schema.Attribute.Text;
     breadcrumb_item: Schema.Attribute.Component<'shared.readcrumb', true>;
+    connect_dis: Schema.Attribute.Text;
+    connect_text: Schema.Attribute.String;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1022,10 +1024,14 @@ export interface ApiFooterFooter extends Struct.SingleTypeSchema {
   };
   attributes: {
     academics_links: Schema.Attribute.Component<'shared.footer-link', true>;
+    address_text: Schema.Attribute.Text;
+    all_right: Schema.Attribute.Text;
+    contact_us: Schema.Attribute.String;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     description: Schema.Attribute.Text;
+    follow_us: Schema.Attribute.Text;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -1148,6 +1154,62 @@ export interface ApiLearningMaterialLearningMaterial
       'manyToOne',
       'plugin::users-permissions.user'
     >;
+  };
+}
+
+export interface ApiMapSettingMapSetting extends Struct.SingleTypeSchema {
+  collectionName: 'map_settings';
+  info: {
+    description: 'Controls all map display settings for the contact page';
+    displayName: 'Map Setting';
+    pluralName: 'map-settings';
+    singularName: 'map-setting';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    address_line: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    directions_label: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<"Obtenir l'itineraire">;
+    google_maps_url: Schema.Attribute.Text;
+    latitude: Schema.Attribute.Decimal &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<9.5375>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::map-setting.map-setting'
+    > &
+      Schema.Attribute.Private;
+    longitude: Schema.Attribute.Decimal &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<-13.67733>;
+    marker_pulse: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    popup_subtitle: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Conakry, Guinee'>;
+    publishedAt: Schema.Attribute.DateTime;
+    school_name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'Complex Scolaire'>;
+    section_subtitle: Schema.Attribute.String;
+    section_title: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Notre Localisation'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    zoom_level: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 20;
+          min: 1;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<15>;
   };
 }
 
@@ -2655,6 +2717,7 @@ declare module '@strapi/strapi' {
       'api::gallery-item.gallery-item': ApiGalleryItemGalleryItem;
       'api::hero-slide.hero-slide': ApiHeroSlideHeroSlide;
       'api::learning-material.learning-material': ApiLearningMaterialLearningMaterial;
+      'api::map-setting.map-setting': ApiMapSettingMapSetting;
       'api::navbar.navbar': ApiNavbarNavbar;
       'api::news-post.news-post': ApiNewsPostNewsPost;
       'api::newsletter-subscription.newsletter-subscription': ApiNewsletterSubscriptionNewsletterSubscription;

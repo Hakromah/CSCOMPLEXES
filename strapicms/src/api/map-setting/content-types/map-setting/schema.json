@@ -1,0 +1,62 @@
+{
+  "kind": "singleType",
+  "collectionName": "map_settings",
+  "info": {
+    "singularName": "map-setting",
+    "pluralName": "map-settings",
+    "displayName": "Map Setting",
+    "description": "Controls all map display settings for the contact page"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "school_name": {
+      "type": "string",
+      "required": true,
+      "default": "Complex Scolaire"
+    },
+    "popup_subtitle": {
+      "type": "string",
+      "default": "Conakry, Guinee"
+    },
+    "address_line": {
+      "type": "string"
+    },
+    "latitude": {
+      "type": "decimal",
+      "required": true,
+      "default": 9.537500
+    },
+    "longitude": {
+      "type": "decimal",
+      "required": true,
+      "default": -13.677330
+    },
+    "zoom_level": {
+      "type": "integer",
+      "default": 15,
+      "min": 1,
+      "max": 20
+    },
+    "directions_label": {
+      "type": "string",
+      "default": "Obtenir l'itineraire"
+    },
+    "google_maps_url": {
+      "type": "text"
+    },
+    "marker_pulse": {
+      "type": "boolean",
+      "default": true
+    },
+    "section_title": {
+      "type": "string",
+      "default": "Notre Localisation"
+    },
+    "section_subtitle": {
+      "type": "string"
+    }
+  }
+}

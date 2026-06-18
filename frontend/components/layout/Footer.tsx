@@ -184,7 +184,7 @@ export default function Footer({ footerData, contactInfo }: FooterProps) {
         {/* Bottom Bar */}
         <div className="pt-[clamp(10px,3vw,32px)] border-t border-white/10 text-center">
           <p className="text-xs text-white/50">
-            © {new Date().getFullYear()} Complexe Scolaire Camara Salemtou. All Rights Reserved.
+            © {new Date().getFullYear()} {footerData?.allRight || "2CS SCOLAIRE"}.
           </p>
         </div>
 

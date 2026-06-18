@@ -279,6 +279,8 @@ export interface StrapiContactInfo {
    id: number;
    documentId?: string;
    address: string;
+   connect_text: string;
+   connect_dis: string;
    phones: Array<{ phones: string | number }>;
    email: Array<{ address: string }>;
    office_hours: string;
@@ -486,6 +488,8 @@ export interface AboutPageData {
 
 export interface ContactInfoData {
    address: string;
+   connectText: string;
+   connectDis: string;
    phones: string[];
    emails: string[];
    officeHours: string;
@@ -494,6 +498,39 @@ export interface ContactInfoData {
    socialLinks: Array<{ name: string; href: string }>;
    breadcrumb_item: BreadcrumbItem[];
 }
+
+/** map-setting single type — raw Strapi response */
+export interface StrapiMapSetting {
+   id: number;
+   documentId?: string;
+   school_name: string;
+   popup_subtitle: string | null;
+   address_line: string | null;
+   latitude: number;
+   longitude: number;
+   zoom_level: number | null;
+   directions_label: string | null;
+   google_maps_url: string | null;
+   marker_pulse: boolean | null;
+   section_title: string | null;
+   section_subtitle: string | null;
+}
+
+/** map-setting — normalized frontend DTO */
+export interface MapSettingData {
+   schoolName: string;
+   popupSubtitle: string;
+   addressLine: string;
+   latitude: number;
+   longitude: number;
+   zoomLevel: number;
+   directionsLabel: string;
+   googleMapsUrl: string;
+   markerPulse: boolean;
+   sectionTitle: string;
+   sectionSubtitle: string;
+}
+
 
 export interface StudentLifeData {
    heading: string;
@@ -544,6 +581,7 @@ export interface StrapiFooter {
    documentId?: string;
    logo: StrapiMediaItem | StrapiMediaItem[] | null;
    title: string;
+   all_right: string;
    subtitle: string;
    description: string;
    quick_links: StrapiFooterLink[];
@@ -606,6 +644,7 @@ export interface FooterLinkData {
 export interface FooterData {
    logo: string;
    title: string;
+   allRight: string;
    subtitle: string;
    description: string;
    quickLinks: FooterLinkData[];

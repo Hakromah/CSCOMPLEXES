@@ -14,7 +14,7 @@ import {
     SheetTrigger,
 } from "@/components/ui/sheet"
 import dynamic from 'next/dynamic';
-import type { ContactInfoData } from '@/types/strapi';
+import type { ContactInfoData, MapSettingData } from '@/types/strapi';
 import api from '@/lib/api';
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
@@ -35,9 +35,10 @@ const fallbackSocialLinks = [
 
 interface ContactPageProps {
     contactInfo?: ContactInfoData | null;
+    mapSetting?: MapSettingData | null;
 }
 
-export default function ContactPage({ contactInfo }: ContactPageProps) {
+export default function ContactPage({ contactInfo, mapSetting }: ContactPageProps) {
 
     const breadcrumbData = contactInfo?.breadcrumb_item?.[0];
 
@@ -94,9 +95,9 @@ export default function ContactPage({ contactInfo }: ContactPageProps) {
                                 <h3 className="font-bold text-lg mb-2">Address</h3>
                                 <p className="text-gray-600 max-md:[&_br]:hidden max-md:w-full max-md:text-left text-sm leading-relaxed whitespace-pre-line">
                                     {contactInfo?.address ? contactInfo.address : (
-                                        <>A.M. FOFANA High School Sinkor<br />
-                                        Fish Market Monrovia, Liberia<br />
-                                        West Africa</>
+                                        <>2CS Ccomplexes dans la ville de Conakry<br />
+                                            Guin&eacute;<br />
+                                            West Africa</>
                                     )}
                                 </p>
                             </a>
@@ -169,9 +170,9 @@ export default function ContactPage({ contactInfo }: ContactPageProps) {
                         {/* Connect With Us */}
                         <div className="space-y-8">
                             <div>
-                                <h2 className="text-2xl font-bold text-gray-900 mb-4">Suivez-nous</h2>
+                                <h2 className="text-2xl font-bold text-gray-900 mb-4">{contactInfo?.connectText}</h2>
                                 <p className="text-gray-600">
-                                    Suivez-nous sur les réseaux sociaux pour obtenir des mises à jour, des nouvelles et des informations sur nos élèves.
+                                    {contactInfo?.connectDis}
                                 </p>
                             </div>
 
@@ -247,7 +248,7 @@ export default function ContactPage({ contactInfo }: ContactPageProps) {
 
                         {/* Map Section */}
                         <div className="bg-blue-50 rounded-3xl h-[400px] w-full relative overflow-hidden flex items-center justify-center border border-blue-100 z-0">
-                            <Map lat={contactInfo?.latitude} lng={contactInfo?.longitude} />
+                            <Map lat={contactInfo?.latitude} lng={contactInfo?.longitude} mapSetting={mapSetting} />
                         </div>
                     </div>
                 </div>

@@ -42,6 +42,12 @@
     },
     "longitude": {
       "type": "decimal"
+    },
+    "connect_text": {
+      "type": "string"
+    },
+    "connect_dis": {
+      "type": "text"
     }
   }
 }

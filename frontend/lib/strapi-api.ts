@@ -35,6 +35,7 @@ import type {
    StrapiNavbar,
    StrapiNavItem,
    StrapiFeatureCard,
+   StrapiMapSetting,
    StrapiRichTextBlock,
    StrapiMediaItem,
    HeroSlide,
@@ -54,6 +55,7 @@ import type {
    VideoSectionData,
    FooterData,
    NavbarData,
+   MapSettingData,
 } from '@/types/strapi';
 
 // ─── Utility ──────────────────────────────────────────────────────────────────
@@ -593,6 +595,8 @@ export async function fetchContactInfo(): Promise<ContactInfoData | null> {
       const c = data.data;
       return {
          address: c.address,
+         connectText: c.connect_text,
+         connectDis: c.connect_dis,
          phones: (c.phones ?? []).map((p) => String(p.phones)),
          emails: (c.email ?? []).map((e) => e.address),
          officeHours: c.office_hours,
@@ -693,6 +697,7 @@ export async function fetchFooter(): Promise<FooterData | null> {
       return {
          logo: mediaUrl(f.logo),
          title: f.title,
+         allRight: f.all_right,
          subtitle: f.subtitle,
          description: f.description,
          quickLinks: (f.quick_links || []).map((l: StrapiFooterLink) => ({
@@ -736,6 +741,33 @@ export async function fetchNavbar(): Promise<NavbarData | null> {
                description: sub.description || null
             })) : null
          }))
+      };
+   } catch {
+      return null;
+   }
+}
+
+// ─── Map Setting (Single Type) ────────────────────────────────────────────────
+
+export async function fetchMapSetting(): Promise<MapSettingData | null> {
+   try {
+      const { data } = await strapi.get<StrapiSingleResponse<StrapiMapSetting>>(
+         '/map-setting'
+      );
+      if (!data.data) return null;
+      const m = data.data;
+      return {
+         schoolName: m.school_name ?? '',
+         popupSubtitle: m.popup_subtitle ?? '',
+         addressLine: m.address_line ?? '',
+         latitude: m.latitude ?? 9.5375,
+         longitude: m.longitude ?? -13.67733,
+         zoomLevel: m.zoom_level ?? 15,
+         directionsLabel: m.directions_label ?? "Obtenir l'itineraire",
+         googleMapsUrl: m.google_maps_url ?? `https://maps.google.com/?q=${m.latitude},${m.longitude}`,
+         markerPulse: m.marker_pulse ?? true,
+         sectionTitle: m.section_title ?? 'Notre Localisation',
+         sectionSubtitle: m.section_subtitle ?? '',
       };
    } catch {
       return null;
