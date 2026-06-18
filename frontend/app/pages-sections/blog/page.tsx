@@ -14,7 +14,7 @@ interface BlogPageProps {
 export default function BlogPage({ initialPosts = [] }: BlogPageProps) {
     const [visibleCount, setVisibleCount] = useState(6);
     const [searchQuery, setSearchQuery] = useState('');
-    const [activeCategory, setActiveCategory] = useState('All');
+    const [activeCategory, setActiveCategory] = useState('Tous');
 
     const postWithBreadcrumb = initialPosts.find(p => p.breadcrumb_item && p.breadcrumb_item.length > 0);
     const breadcrumbData = postWithBreadcrumb?.breadcrumb_item?.[0];
@@ -22,7 +22,7 @@ export default function BlogPage({ initialPosts = [] }: BlogPageProps) {
     // Auto-generate categories from blog data (future-proof)
     const categories = useMemo(() => {
         const uniqueCategories = [...new Set(initialPosts.map(post => post.category))];
-        return ['All', ...uniqueCategories];
+        return ['Tous', ...uniqueCategories];
     }, [initialPosts]);
 
     // Filter posts by search + category
@@ -32,17 +32,21 @@ export default function BlogPage({ initialPosts = [] }: BlogPageProps) {
                 post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                 post.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
 
-            const matchesCategory = activeCategory === 'All' || post.category === activeCategory;
+
+            const matchesCategory = activeCategory === 'Tous' || post.category === activeCategory;
 
             return matchesSearch && matchesCategory;
         });
     }, [initialPosts, searchQuery, activeCategory]);
+
+
 
     // Reset visible count when filters change
     const handleCategoryChange = (category: string) => {
         setActiveCategory(category);
         setVisibleCount(6);
     };
+
 
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchQuery(e.target.value);
@@ -63,15 +67,16 @@ export default function BlogPage({ initialPosts = [] }: BlogPageProps) {
                         {/* Main Content */}
                         <div className="w-full lg:w-2/3 max-lg:order-2">
                             <h2 className="text-[clamp(20px,3vw,50px)] font-bold text-gray-900 mb-8">
-                                {activeCategory === 'All' ? 'Latest Posts' : activeCategory}
+                                {activeCategory === 'Tous' ? 'Dernières articles' : activeCategory}
                                 {searchQuery && <span className="text-base font-normal text-gray-500 ml-3">({filteredPosts.length} result{filteredPosts.length !== 1 ? 's' : ''})</span>}
                             </h2>
+
 
                             {filteredPosts.length === 0 ? (
                                 <div className="text-center py-16">
                                     <p className="text-gray-500 text-lg">No posts found{searchQuery ? ` for "${searchQuery}"` : ''}.</p>
                                     <button
-                                        onClick={() => { setSearchQuery(''); setActiveCategory('All'); }}
+                                        onClick={() => { setSearchQuery(''); setActiveCategory('Tous'); }}
                                         className="mt-4 text-[#2857AE] font-medium hover:underline"
                                     >
                                         Clear filters
@@ -135,7 +140,11 @@ export default function BlogPage({ initialPosts = [] }: BlogPageProps) {
                             <div className="sticky top-24 space-y-8">
                                 {/* Search Widget */}
                                 <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                                    <h3 className="text-lg font-bold text-gray-900 mb-4">Rechercher une actualité</h3>
+                                    {filteredPosts.slice(0, visibleCount).map((post) => (
+                                        <div key={post.id} className="mb-4">
+                                            <h3 className="text-lg font-bold text-gray-900 mb-4">{post.cearchText}</h3>
+                                        </div>
+                                    ))}
                                     <div className="relative">
                                         <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
                                             <Search className="h-4 w-4 text-gray-400" />

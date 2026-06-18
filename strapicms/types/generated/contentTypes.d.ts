@@ -783,15 +783,17 @@ export interface ApiBlogPostBlogPost extends Struct.CollectionTypeSchema {
     breadcrumb_item: Schema.Attribute.Component<'shared.readcrumb', true>;
     category: Schema.Attribute.Enumeration<
       [
-        'Academics',
-        'Events',
+        '\u00C9tudes',
+        '\u00C9v\u00E9nements',
         'Sports',
         'Campus',
-        'News',
-        'Announcements',
-        'scholarship',
+        'Actualit\u00E9s',
+        'Annonces',
+        "Bourses d'\u00E9tudes",
       ]
     >;
+    category_text: Schema.Attribute.String;
+    cearch_text: Schema.Attribute.String;
     content: Schema.Attribute.Blocks;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -799,6 +801,7 @@ export interface ApiBlogPostBlogPost extends Struct.CollectionTypeSchema {
     date: Schema.Attribute.Date;
     excerpt: Schema.Attribute.Text;
     image: Schema.Attribute.Media<'images' | 'videos'>;
+    latest_post: Schema.Attribute.String;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -1023,6 +1026,7 @@ export interface ApiFooterFooter extends Struct.SingleTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
+    academic_link: Schema.Attribute.String;
     academics_links: Schema.Attribute.Component<'shared.footer-link', true>;
     address_text: Schema.Attribute.Text;
     all_right: Schema.Attribute.Text;
@@ -1040,6 +1044,7 @@ export interface ApiFooterFooter extends Struct.SingleTypeSchema {
       Schema.Attribute.Private;
     logo: Schema.Attribute.Media<'images', true>;
     publishedAt: Schema.Attribute.DateTime;
+    quick_link: Schema.Attribute.String;
     quick_links: Schema.Attribute.Component<'shared.footer-link', true>;
     subtitle: Schema.Attribute.String;
     title: Schema.Attribute.String;

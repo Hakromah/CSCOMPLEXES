@@ -48,6 +48,12 @@
     },
     "follow_us": {
       "type": "text"
+    },
+    "quick_link": {
+      "type": "string"
+    },
+    "academic_link": {
+      "type": "string"
     }
   }
 }

@@ -41,19 +41,28 @@
     "category": {
       "type": "enumeration",
       "enum": [
-        "Academics",
-        "Events",
+        "Études",
+        "Événements",
         "Sports",
         "Campus",
-        "News",
-        "Announcements",
-        "scholarship"
+        "Actualités",
+        "Annonces",
+        "Bourses d'études"
       ]
     },
     "breadcrumb_item": {
       "type": "component",
       "component": "shared.readcrumb",
       "repeatable": true
+    },
+    "latest_post": {
+      "type": "string"
+    },
+    "cearch_text": {
+      "type": "string"
+    },
+    "category_text": {
+      "type": "string"
     }
   }
 }

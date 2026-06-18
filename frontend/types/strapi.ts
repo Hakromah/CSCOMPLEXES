@@ -80,6 +80,9 @@ export interface StrapiBlogPost {
    content: StrapiRichTextBlock[] | string;
    date: string;
    category: string;
+   latest_post: string;
+   cearch_text: string;
+   category_text: string;
    author: string;
    image: StrapiMediaItem | StrapiMediaItem[] | null;
    slug: string;
@@ -330,6 +333,9 @@ export interface BlogPost {
    content: string;  // always plain/HTML string in the DTO
    date: string;
    category: string;
+   latestPost: string;
+   cearchText: string;
+   categoryText: string;
    author: string;
    image: string;
    slug: string;
@@ -583,6 +589,11 @@ export interface StrapiFooter {
    title: string;
    all_right: string;
    subtitle: string;
+   contact_us: string;
+   address_text: string;
+   quick_link: string;
+   academic_link: string;
+   follow_us: string;
    description: string;
    quick_links: StrapiFooterLink[];
    academics_links: StrapiFooterLink[];
@@ -647,6 +658,11 @@ export interface FooterData {
    allRight: string;
    subtitle: string;
    description: string;
+   academicLink: string;
+   quickLink: string;
+   contactUs: string;
+   addressText: string;
+   followUs: string;
    quickLinks: FooterLinkData[];
    academicsLinks: FooterLinkData[];
 }

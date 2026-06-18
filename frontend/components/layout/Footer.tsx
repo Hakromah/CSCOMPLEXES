@@ -106,7 +106,7 @@ export default function Footer({ footerData, contactInfo }: FooterProps) {
               {footerData?.description || "Serving the community of Monrovia since 1977. We believe that education is the ultimate key to unlocking a bright future."}
             </p>
             <div className="space-y-2">
-              <p className="text-xs text-white/60">Suivez-nous sur les réseaux sociaux</p>
+              <p className="text-xs text-white/60">{footerData?.followUs || "Suivez-nous sur les réseaux sociaux"}</p>
               <div className="flex gap-2 max-md:gap-2 pt-1">
                 {socialLinks.map((social) => (
                   <Link
@@ -123,7 +123,7 @@ export default function Footer({ footerData, contactInfo }: FooterProps) {
           {/* Column 2: Quick Links */}
           <div className="lg:col-span-1 lg:border-l max-xs:hidden border-white/20 lg:flex lg:justify-center">
             <div className="lg:py-5 lg:px-5">
-              <h3 className="text-xl font-bold mb-6">Liens rapides</h3>
+              <h3 className="text-xl font-bold mb-6">{footerData?.quickLink || "Liens rapides"}</h3>
               <ul className="space-y-4 max-sm:space-y-2 text-white/80 text-sm">
                 {(footerData && footerData.quickLinks.length > 0) ? footerData.quickLinks.map(link => (
                   <li key={link.id}><Link href={link.url} className="hover:text-white transition-colors">{link.label}</Link></li>
@@ -143,7 +143,7 @@ export default function Footer({ footerData, contactInfo }: FooterProps) {
           {/* Column 3: Academics */}
           <div className="lg:col-span-1 lg:border-l max-xs:hidden border-white/20 lg:flex lg:justify-center">
             <div className="lg:py-5 lg:px-5">
-              <h3 className="text-xl font-bold mb-6">Scolarité</h3>
+              <h3 className="text-xl font-bold mb-6">{footerData?.academicLink || "Academic Links"}</h3>
               <ul className="space-y-4 max-sm:space-y-2 text-white/80 text-sm">
                 {(footerData && footerData.academicsLinks.length > 0) ? footerData.academicsLinks.map(link => (
                   <li key={link.id}><Link href={link.url} className="hover:text-white transition-colors">{link.label}</Link></li>
@@ -162,19 +162,9 @@ export default function Footer({ footerData, contactInfo }: FooterProps) {
           {/* Column 4: Contact Us */}
           <div className="lg:col-span-1 lg:border-l border-white/20 lg:flex lg:justify-center">
             <div className="lg:py-5 lg:px-5">
-              <h3 className="text-xl font-bold mb-6">Nous contacter</h3>
+              <h3 className="text-xl font-bold mb-6">{footerData?.contactUs || "Nous contacter"}</h3>
               <div className="space-y-4 max-sm:space-y-2 text-white/80 text-sm leading-relaxed whitespace-pre-line">
-                <p>{contactInfo?.address || "Fish Market Monrovia,\nLiberia."}</p>
-                {contactInfo?.phones && contactInfo.phones.length > 0 ? (
-                  <a href={`tel:${contactInfo.phones[0].replace(/\s+/g, '')}`} className="block text-xl font-bold text-white hover:text-white/80 transition-colors">{contactInfo.phones[0]}</a>
-                ) : (
-                  <a href="tel:+23105457503232" className="block text-xl font-bold text-white hover:text-white/80 transition-colors">+231 054 575 032 32</a>
-                )}
-                {contactInfo?.emails && contactInfo.emails.length > 0 ? (
-                  <a href={`mailto:${contactInfo.emails[0]}`} className="block hover:text-white transition-colors">{contactInfo.emails[0]}</a>
-                ) : (
-                  <a href="mailto:2complexes@gmail.com" className="block hover:text-white transition-colors">2complexes@gmail.com</a>
-                )}
+                <p>{footerData?.addressText || "Conakry, Guinée,\nRue 1, 2 Complexes."}</p>
               </div>
             </div>
           </div>
@@ -187,7 +177,6 @@ export default function Footer({ footerData, contactInfo }: FooterProps) {
             © {new Date().getFullYear()} {footerData?.allRight || "2CS SCOLAIRE"}.
           </p>
         </div>
-
       </div>
     </footer>
   );
