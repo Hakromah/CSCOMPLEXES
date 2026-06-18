@@ -54,15 +54,6 @@
       "type": "component",
       "component": "shared.readcrumb",
       "repeatable": true
-    },
-    "latest_post": {
-      "type": "string"
-    },
-    "cearch_text": {
-      "type": "string"
-    },
-    "category_text": {
-      "type": "string"
     }
   }
 }

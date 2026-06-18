@@ -80,9 +80,8 @@ export interface StrapiBlogPost {
    content: StrapiRichTextBlock[] | string;
    date: string;
    category: string;
-   latest_post: string;
-   cearch_text: string;
-   category_text: string;
+   // cearch_text: string;
+   // category_text: string;
    author: string;
    image: StrapiMediaItem | StrapiMediaItem[] | null;
    slug: string;
@@ -333,9 +332,8 @@ export interface BlogPost {
    content: string;  // always plain/HTML string in the DTO
    date: string;
    category: string;
-   latestPost: string;
-   cearchText: string;
-   categoryText: string;
+   // cearchText: string;
+   // categoryText: string;
    author: string;
    image: string;
    slug: string;

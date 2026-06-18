@@ -24,9 +24,13 @@
     "category": {
       "type": "enumeration",
       "enum": [
+        "Études",
+        "Événements",
+        "Sports",
         "Campus",
-        "Events",
-        "Sports"
+        "Actualités",
+        "Annonces",
+        "Bourses d'études"
       ]
     },
     "src": {

@@ -69,6 +69,26 @@
       "type": "component",
       "component": "shared.readcrumb",
       "repeatable": true
+    },
+    "overview_text": {
+      "type": "string"
+    },
+    "admission_req": {
+      "type": "string"
+    },
+    "ready_to_apply": {
+      "type": "string"
+    },
+    "dont_miss": {
+      "type": "text"
+    },
+    "apply_now": {
+      "type": "component",
+      "component": "shared.social-links",
+      "repeatable": false
+    },
+    "by_applying": {
+      "type": "text"
     }
   }
 }

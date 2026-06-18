@@ -140,11 +140,7 @@ export default function BlogPage({ initialPosts = [] }: BlogPageProps) {
                             <div className="sticky top-24 space-y-8">
                                 {/* Search Widget */}
                                 <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                                    {filteredPosts.slice(0, visibleCount).map((post) => (
-                                        <div key={post.id} className="mb-4">
-                                            <h3 className="text-lg font-bold text-gray-900 mb-4">{post.cearchText}</h3>
-                                        </div>
-                                    ))}
+                                   <h3 className="text-lg font-bold text-gray-900 mb-4">Rechercher dans le blog</h3>
                                     <div className="relative">
                                         <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
                                             <Search className="h-4 w-4 text-gray-400" />
@@ -166,7 +162,6 @@ export default function BlogPage({ initialPosts = [] }: BlogPageProps) {
                                         )}
                                     </div>
                                 </div>
-
                                 {/* Categories Widget */}
                                 <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                                     <h3 className="text-lg font-bold text-gray-900 mb-4">Catégories</h3>

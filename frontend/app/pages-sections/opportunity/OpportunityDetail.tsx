@@ -83,7 +83,7 @@ export default function OpportunityDetail({
             </Link>
             <div className="prose prose-lg max-w-none text-gray-600">
               <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                Aperçu
+                Overview
               </h3>
               <p className="leading-relaxed mb-6">
                 {opportunity.details.intro}
@@ -126,7 +126,7 @@ export default function OpportunityDetail({
           <div className="lg:w-1/3">
             <div className="sticky top-24 bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
               <h3 className="text-xl font-bold mb-2">
-                Prêt à franchir le pas ?
+                Ready to take the next step?
               </h3>
               <p className="text-gray-500 mb-8 text-sm">
                 Ne manquez pas cette chance. Les candidatures sont ouvertes jusqu'au{" "}
@@ -134,7 +134,7 @@ export default function OpportunityDetail({
               </p>
 
               <Button className="w-full bg-primary hover:bg-[#1e408a] py-6 text-lg shadow-blue-200 shadow-xl">
-               <a href=""> Postuler maintenant</a>
+               <a href=""> Apply now</a>
               </Button>
 
               <div className="mt-6 text-center text-xs text-gray-400">

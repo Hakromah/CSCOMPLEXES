@@ -792,8 +792,6 @@ export interface ApiBlogPostBlogPost extends Struct.CollectionTypeSchema {
         "Bourses d'\u00E9tudes",
       ]
     >;
-    category_text: Schema.Attribute.String;
-    cearch_text: Schema.Attribute.String;
     content: Schema.Attribute.Blocks;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -801,7 +799,6 @@ export interface ApiBlogPostBlogPost extends Struct.CollectionTypeSchema {
     date: Schema.Attribute.Date;
     excerpt: Schema.Attribute.Text;
     image: Schema.Attribute.Media<'images' | 'videos'>;
-    latest_post: Schema.Attribute.String;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -1066,7 +1063,17 @@ export interface ApiGalleryItemGalleryItem extends Struct.CollectionTypeSchema {
   };
   attributes: {
     breadcrumb_item: Schema.Attribute.Component<'shared.readcrumb', true>;
-    category: Schema.Attribute.Enumeration<['Campus', 'Events', 'Sports']>;
+    category: Schema.Attribute.Enumeration<
+      [
+        '\u00C9tudes',
+        '\u00C9v\u00E9nements',
+        'Sports',
+        'Campus',
+        'Actualit\u00E9s',
+        'Annonces',
+        "Bourses d'\u00E9tudes",
+      ]
+    >;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1329,8 +1336,11 @@ export interface ApiOpportunityOpportunity extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
+    admission_req: Schema.Attribute.String;
+    apply_now: Schema.Attribute.Component<'shared.social-links', false>;
     benefits: Schema.Attribute.Component<'shared.benefit', true>;
     breadcrumb_item: Schema.Attribute.Component<'shared.readcrumb', true>;
+    by_applying: Schema.Attribute.Text;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1338,6 +1348,7 @@ export interface ApiOpportunityOpportunity extends Struct.CollectionTypeSchema {
     deadline: Schema.Attribute.String;
     description: Schema.Attribute.Text;
     details_intro: Schema.Attribute.Text;
+    dont_miss: Schema.Attribute.Text;
     header: Schema.Attribute.Text;
     how_to_apply: Schema.Attribute.Text;
     image: Schema.Attribute.Media<
@@ -1351,8 +1362,10 @@ export interface ApiOpportunityOpportunity extends Struct.CollectionTypeSchema {
       'api::opportunity.opportunity'
     > &
       Schema.Attribute.Private;
+    overview_text: Schema.Attribute.String;
     published_date: Schema.Attribute.Date;
     publishedAt: Schema.Attribute.DateTime;
+    ready_to_apply: Schema.Attribute.String;
     requirements: Schema.Attribute.Component<'shared.benefit', true>;
     slug: Schema.Attribute.UID<'title'>;
     subheader: Schema.Attribute.Text;
