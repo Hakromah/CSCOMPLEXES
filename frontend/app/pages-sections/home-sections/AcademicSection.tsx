@@ -30,17 +30,16 @@ const translateCategory = (cat: string) => {
         case 'vocational training': return 'Formation professionnelle';
         default: return cat;
     }
-};
-
-const fallbackPrograms: AcademicProgram[] = [
+};const fallbackPrograms: AcademicProgram[] = [
     {
         id: 1, category: 'Kindergarten', title: 'La vie en maternelle est belle pour les enfants', slug: 'kindergarten',
         subtitle: 'Poser les bases d\'un apprentissage tout au long de la vie',
         image: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
         contentImage: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-        description: 'Notre système éducatif s\'est imposé comme l\'un de nos programmes de petite enfance axés sur "l\'apprentissage par le jeu". Nous donnons la priorité au développement socio-émotionnel, à l\'alphabétisation de base et aux mathématiques.',
+        description: 'Notre système éducatif s\'est imposé comme l\'un de nos programmes de petite enfance axés sur \"l\'apprentissage par le jeu\". Nous donnons la priorité au développement socio-émotionnel, à l\'alphabétisation de base et aux mathématiques.',
         sortOrder: 1, header: 'Maternelle', subheader: 'Maternelle',
         highlights: ['Apprentissage par le jeu', 'Compétences en lecture et mathématiques', 'Intégration des arts et de la musique'],
+        description_text: '', middle_text: '', mid_header: '', academic_link: null,
         curriculum: [{ subject: 'Arts du langage', desc: 'Phonétique, vocabulaire et lecture précoce.' }, { subject: 'Mathématiques', desc: 'Sens des nombres, opérations de base, formes.' }],
         breadcrumb_item: [],
         prospectusFileUrl: '', statValue1: 'Captivant', statLabel1: 'Programme', statValue2: 'Experts', statLabel2: 'Éducateurs', statValue3: 'Modernes', statLabel3: 'Infrastructures',
@@ -53,6 +52,7 @@ const fallbackPrograms: AcademicProgram[] = [
         description: 'L\'accent principal est mis sur l\'alphabétisation, les mathématiques et le développement socio-émotionnel dans un environnement safe et encourageant.',
         sortOrder: 2, header: 'École primaire', subheader: 'École primaire',
         highlights: ['Approche par investigation', 'Fort accent sur la lecture et les mathématiques', 'Programmes de développement du caractère'],
+        description_text: '', middle_text: '', mid_header: '', academic_link: null,
         curriculum: [{ subject: 'Arts du langage', desc: 'Compréhension de lecture et rédaction créative.' }, { subject: 'Mathématiques', desc: 'Arithmétique, fractions, géométrie.' }],
         breadcrumb_item: [],
         prospectusFileUrl: '', statValue1: 'Captivant', statLabel1: 'Programme', statValue2: 'Experts', statLabel2: 'Éducateurs', statValue3: 'Modernes', statLabel3: 'Infrastructures',
@@ -65,6 +65,7 @@ const fallbackPrograms: AcademicProgram[] = [
         description: 'Introduction à des matières spécialisées, aux sciences en laboratoire et aux compétences organisationnelles favorisant l\'indépendance.',
         sortOrder: 3, header: 'Collège', subheader: 'Collège',
         highlights: ['Enseignants spécialisés', 'Introduction aux sciences en laboratoire', 'Activités parascolaires enrichissantes'],
+        description_text: '', middle_text: '', mid_header: '', academic_link: null,
         curriculum: [{ subject: 'Sciences avancées', desc: 'Biologie, Chimie et Physique avec travaux de laboratoire.' }, { subject: 'Mathématiques', desc: 'Algèbre, géométrie et pré-calcul.' }],
         breadcrumb_item: [],
         prospectusFileUrl: '', statValue1: 'Captivant', statLabel1: 'Programme', statValue2: 'Experts', statLabel2: 'Éducateurs', statValue3: 'Modernes', statLabel3: 'Infrastructures',
@@ -77,6 +78,7 @@ const fallbackPrograms: AcademicProgram[] = [
         description: 'Développer des compétences techniques et pratiques pertinentes pour le marché du travail à travers des ateliers pratiques et des apprentissages.',
         sortOrder: 4, header: 'Formation professionnelle', subheader: 'Formation professionnelle',
         highlights: ['Formation pratique', 'Curriculum adapté à l\'industrie', 'Opportunités d\'apprentissage'],
+        description_text: '', middle_text: '', mid_header: '', academic_link: null,
         curriculum: [{ subject: 'Compétences techniques', desc: 'Ateliers en automobile, électricité et construction.' }, { subject: 'Technologies de l\'information', desc: 'Développement web, réseaux, compétences logicielles.' }],
         breadcrumb_item: [],
         prospectusFileUrl: '', statValue1: 'Captivant', statLabel1: 'Programme', statValue2: 'Experts', statLabel2: 'Éducateurs', statValue3: 'Modernes', statLabel3: 'Infrastructures',
@@ -89,6 +91,7 @@ const fallbackPrograms: AcademicProgram[] = [
         description: 'Préparer les étudiants à l\'enseignement supérieur et à la réussite professionnelle avec des programmes académiques rigoureux.',
         sortOrder: 5, header: 'Lycée', subheader: 'Lycée',
         highlights: ['Cours de niveau avancé (AP)', 'Programmes de préparation à l\'université', 'Orientation universitaire'],
+        description_text: '', middle_text: '', mid_header: '', academic_link: null,
         curriculum: [{ subject: 'Cours avancés', desc: 'Cours de niveau universitaire pour apprenants avancés.' }, { subject: 'Programmes STEM', desc: 'Mathématiques avancées, ingénierie et technologie.' }],
         breadcrumb_item: [],
         prospectusFileUrl: '', statValue1: 'Captivant', statLabel1: 'Programme', statValue2: 'Experts', statLabel2: 'Éducateurs', statValue3: 'Modernes', statLabel3: 'Infrastructures',

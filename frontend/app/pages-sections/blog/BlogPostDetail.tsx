@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 "use client";
 
 import React, { useState, useEffect } from 'react';
@@ -7,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { ArrowLeft } from 'lucide-react';
 import { Fancybox } from '@fancyapps/ui';
+// @ts-ignore: side-effect CSS import - no type declarations available for this package
 import "@fancyapps/ui/dist/fancybox/fancybox.css";
 
 
@@ -157,7 +159,7 @@ export default function BlogPostDetail({ post }: BlogPostDetailProps) {
                                                         onOpenChange={(open) => setOpenStates(prev => ({ ...prev, [social.action!]: open }))}
                                                     >
                                                         <TooltipTrigger asChild>
-                                                            <button
+                                                            <Button
                                                                 onClick={() => handleAction(social.action!)}
                                                                 className={`icon icon-${social.name} cursor-pointer text-gray-400 hover:text-[#2857AE] transition-colors w-5 h-5 flex justify-center items-center`}
                                                             />
