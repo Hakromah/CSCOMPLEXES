@@ -21,25 +21,26 @@ gsap.registerPlugin(ScrollTrigger);
 const fallbackStaff: StaffMember[] = [
     {
         id: 1, name: "Sarah Mitchell", role: "Principal", email: "sarahmitchell@edu.lib", image: "/home/staff1.png", bio: "Leading our institution with 15+ years of educational excellence. Committed to fostering innovation and academic achievement.", isFeatured: true, isLeadership: true,
-        heading: '',
+        heading: '', leadText: '', meetText: '',
         breadcrumb_item: []
     },
     {
         id: 2, name: "Ms. Emily Chen", role: "Vice Principal", email: "emilychen@edu.lib", image: "/home/staff2.png", bio: "Dedicated to student welfare and curriculum development. Ensuring a supportive and inclusive learning environment for all.", isFeatured: true, isLeadership: true,
-        heading: '',
+        heading: '', leadText: '', meetText: '',
         breadcrumb_item: []
     },
     {
         id: 3, name: "Mr. David Ross", role: "Head of Science", email: "davidross@edu.lib", image: "/home/staff1.png", bio: "Inspiring curiosity and scientific inquiry. Passionate about STEM education and hands-on learning experiences.", isFeatured: true, isLeadership: false,
-        heading: '',
+        heading: '', leadText: '', meetText: '',
         breadcrumb_item: []
     },
     {
         id: 4, name: "Mrs. Lisa Wong", role: "Head of Arts", email: "lisawong@edu.lib", image: "/home/staff2.png", bio: "Cultivating creativity and artistic expression. Believes in the power of arts to transform lives and perspectives.", isFeatured: true, isLeadership: false,
-        heading: '',
+        heading: '', leadText: '', meetText: '',
         breadcrumb_item: []
     },
 ];
+
 
 interface StaffSectionProps {
     staffMembers?: StaffMember[];
