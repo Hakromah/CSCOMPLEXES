@@ -1,0 +1,31 @@
+{
+  "collectionName": "components_shared_bank_details",
+  "info": {
+    "displayName": "Bank Details"
+  },
+  "options": {},
+  "attributes": {
+    "bank_name": {
+      "type": "string"
+    },
+    "branch_name": {
+      "type": "string"
+    },
+    "swift_code": {
+      "type": "string"
+    },
+    "bank_address": {
+      "type": "text"
+    },
+    "account_name": {
+      "type": "string"
+    },
+    "account_number": {
+      "type": "string"
+    },
+    "iban_number": {
+      "type": "string"
+    }
+  },
+  "config": {}
+}

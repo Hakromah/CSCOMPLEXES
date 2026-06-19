@@ -36,6 +36,8 @@ import type {
    StrapiNavItem,
    StrapiFeatureCard,
    StrapiMapSetting,
+   StrapiDonation,
+   StrapiBankDetail,
    StrapiRichTextBlock,
    StrapiMediaItem,
    HeroSlide,
@@ -56,6 +58,7 @@ import type {
    FooterData,
    NavbarData,
    MapSettingData,
+   DonationData,
 } from '@/types/strapi';
 
 // ─── Utility ──────────────────────────────────────────────────────────────────
@@ -394,7 +397,7 @@ export async function fetchOpportunities(): Promise<Opportunity[]> {
 export async function fetchOpportunityBySlug(slug: string): Promise<Opportunity | null> {
    try {
       const { data } = await strapi.get<StrapiListResponse<StrapiOpportunity>>(
-         `/opportunities?filters[slug][$eq]=${encodeURIComponent(slug)}&populate[0]=image&populate[1]=requirements&populate[2]=benefits`
+          `/opportunities?filters[slug][$eq]=${encodeURIComponent(slug)}&populate[0]=image&populate[1]=requirements&populate[2]=benefits&populate[3]=breadcrumb_item.image&populate[4]=apply_now`
       );
       if (!data.data.length) return null;
       return normalizeOpportunity(data.data[0]);
@@ -439,6 +442,14 @@ function normalizeOpportunity(item: StrapiOpportunity): Opportunity {
       deadline: item.deadline,
       dateNumber: item.date_number,
       slug: item.slug,
+
+      // New fields
+      overviewText: item.overview_text,
+      admissionReq: item.admission_req,
+      readyToApply: item.ready_to_apply,
+      dontMiss: item.dont_miss,
+      applyNow: item.apply_now ?? null,
+      byApplying: item.by_applying,
 
       // --- New Breadcrumb Mapping ---
       breadcrumb_item: (item.breadcrumb_item ?? []).map((bc) => ({
@@ -777,6 +788,34 @@ export async function fetchMapSetting(): Promise<MapSettingData | null> {
          markerPulse: m.marker_pulse ?? true,
          sectionTitle: m.section_title ?? 'Notre Localisation',
          sectionSubtitle: m.section_subtitle ?? '',
+      };
+   } catch {
+      return null;
+   }
+}
+
+// ─── Donation (Collection Type — fetch first entry) ─────────────────────────────────
+
+export async function fetchDonation(): Promise<DonationData | null> {
+   try {
+      const { data } = await strapi.get<StrapiListResponse<StrapiDonation>>(
+         '/donations?populate[0]=bank_details&pagination[pageSize]=1&sort=id:asc'
+      );
+      if (!data.data.length) return null;
+      const d = data.data[0];
+      return {
+         header: d.header ?? '',
+         description: d.description ?? '',
+         bankDetails: (d.bank_details ?? []).map((b: StrapiBankDetail) => ({
+            id: b.id,
+            bankName: b.bank_name ?? '',
+            branchName: b.branch_name ?? '',
+            swiftCode: b.swift_code ?? '',
+            bankAddress: b.bank_address ?? '',
+            accountName: b.account_name ?? '',
+            accountNumber: b.account_number ?? '',
+            ibanNumber: b.iban_number ?? '',
+         })),
       };
    } catch {
       return null;

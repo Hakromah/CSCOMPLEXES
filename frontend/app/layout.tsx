@@ -9,7 +9,7 @@ import Footer from "@/components/layout/Footer";
 import { Toaster } from "sonner";
 import CookieConsent from "@/components/CookieConsent";
 import { PreferencesProvider } from '@/app/context/PreferencesContext';
-import { fetchFooter, fetchContactInfo, fetchNavbar } from "@/lib/strapi-api";
+import { fetchFooter, fetchContactInfo, fetchNavbar, fetchDonation } from "@/lib/strapi-api";
 
 
 // Force rebuild to clear cache
@@ -38,10 +38,11 @@ export default async function RootLayout({
   const cookieStore = await cookies();
   const preferences = cookieStore.get("preferences");
 
-  const [footerData, contactInfo, navbarData] = await Promise.all([
+  const [footerData, contactInfo, navbarData, donationData] = await Promise.all([
     fetchFooter(),
     fetchContactInfo(),
     fetchNavbar(),
+    fetchDonation(),
   ]);
 
   return (
@@ -53,7 +54,7 @@ export default async function RootLayout({
         )}
       >
         <div className="relative min-h-screen overflow-clip">
-          <Navbar navbarData={navbarData} contactInfo={contactInfo} />
+          <Navbar navbarData={navbarData} contactInfo={contactInfo} donationData={donationData} />
           <main className="h-full w-full">
             <PreferencesProvider initialPreferences={preferences?.value}>
               {children}

@@ -1,5 +1,4 @@
 "use client";
-import React, { useState } from "react";
 import StrapiImage from "@/components/StrapiImage";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -8,33 +7,17 @@ import {
   Calendar,
   CheckCircle,
   Clock,
-  Send,
-  Upload,
 } from "lucide-react";
 import type { Opportunity } from "@/types/strapi";
-import { Input } from "@/components/ui/input";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
 
 export default function OpportunityDetail({
   opportunity,
 }: {
   opportunity: Opportunity;
 }) {
-  const [isApplied, setIsApplied] = useState(false);
 
-  const handleApply = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsApplied(true);
-    // Simulate API call
-    setTimeout(() => setIsApplied(false), 3000); // Reset for demo
-  };
+  const applied = opportunity.applyNow;
+
   return (
     <div className="min-h-screen bg-white sm:pb-[clamp(25px,3vw,80px)]">
       {/* Header / Hero */}
@@ -90,7 +73,7 @@ export default function OpportunityDetail({
               </p>
 
               <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                Critères d'éligibilité
+                {opportunity.admissionReq}
               </h3>
               <ul className="space-y-3 mb-6">
                 {opportunity.details.requirements.map((req, i) => (
@@ -114,7 +97,7 @@ export default function OpportunityDetail({
               </ul>
 
               <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                Comment postuler
+                Comment s'appliquer
               </h3>
               <p className="leading-relaxed bg-blue-50 p-6 rounded-xl border border-blue-100">
                 {opportunity.details.howToApply}
@@ -126,19 +109,28 @@ export default function OpportunityDetail({
           <div className="lg:w-1/3">
             <div className="sticky top-24 bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
               <h3 className="text-xl font-bold mb-2">
-                Ready to take the next step?
+                {opportunity.readyToApply}
               </h3>
               <p className="text-gray-500 mb-8 text-sm">
-                Ne manquez pas cette chance. Les candidatures sont ouvertes jusqu'au{" "}
+                {opportunity.dontMiss}{" "}
                 {opportunity.deadline}.
               </p>
 
-              <Button className="w-full bg-primary hover:bg-[#1e408a] py-6 text-lg shadow-blue-200 shadow-xl">
-               <a href=""> Apply now</a>
-              </Button>
+              {applied ? (
+                <a href={applied.href} target="_blank" rel="noreferrer" className="w-full block">
+                  <Button className="w-full bg-primary hover:bg-[#1e408a] py-6 text-lg shadow-blue-500 shadow-xl">
+                    {applied.name}
+                  </Button>
+                </a>
+              ) : (
+                <Button disabled className="w-full bg-primary/50 py-6 text-lg cursor-not-allowed">
+                  Faire une demande
+                </Button>
+              )}
+
 
               <div className="mt-6 text-center text-xs text-gray-400">
-                En postulant, vous acceptez nos conditions et notre politique de confidentialité.
+                {opportunity.byApplying}
               </div>
             </div>
           </div>

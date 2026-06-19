@@ -186,6 +186,14 @@ export interface StrapiOpportunity {
    title: string;
    header: string;
    subheader: string;
+
+   overview_text: string;
+   admission_req: string;
+   ready_to_apply: string;
+   dont_miss: string;
+   apply_now: { name: string; href: string } | null;
+   by_applying: string;
+
    description: string;
    image: StrapiMediaItem | StrapiMediaItem[] | null;
    published_date: string;
@@ -308,6 +316,46 @@ export interface StrapiStudentLife {
    image_3: StrapiMediaItem | StrapiMediaItem[] | null;
    image_4: StrapiMediaItem | StrapiMediaItem[] | null;
 }
+
+/** donation collection type — raw Strapi */
+export interface StrapiBankDetail {
+   id: number;
+   bank_name: string | null;
+   branch_name: string | null;
+   swift_code: string | null;
+   bank_address: string | null;
+   account_name: string | null;
+   account_number: string | null;
+   iban_number: string | null;
+}
+
+export interface StrapiDonation {
+   id: number;
+   documentId?: string;
+   header: string | null;
+   description: string | null;
+   bank_details: StrapiBankDetail[] | null;
+}
+
+/** donation — normalized frontend DTO */
+export interface BankDetail {
+   id: number;
+   bankName: string;
+   branchName: string;
+   swiftCode: string;
+   bankAddress: string;
+   accountName: string;
+   accountNumber: string;
+   ibanNumber: string;
+}
+
+export interface DonationData {
+   header: string;
+   description: string;
+   bankDetails: BankDetail[];
+}
+
+
 
 // ─────────────────────────────────────────────
 // Normalised frontend DTOs  (flat, easy to use in components)
@@ -435,6 +483,14 @@ export interface Opportunity {
    deadline: string;
    dateNumber: string;
    slug: string;
+
+   // New fields
+   overviewText: string;
+   admissionReq: string;
+   readyToApply: string;
+   dontMiss: string;
+   applyNow: { name: string; href: string } | null;
+   byApplying: string;
    // Added breadcrumb array
    breadcrumb_item: BreadcrumbItem[];
    details: {

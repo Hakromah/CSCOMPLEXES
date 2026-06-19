@@ -886,6 +886,36 @@ export interface ApiContactMessageContactMessage
   };
 }
 
+export interface ApiDonationDonation extends Struct.CollectionTypeSchema {
+  collectionName: 'donations';
+  info: {
+    displayName: 'Donation';
+    pluralName: 'donations';
+    singularName: 'donation';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    bank_details: Schema.Attribute.Component<'shared.bank-details', true>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Text;
+    header: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::donation.donation'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiExamResultExamResult extends Struct.CollectionTypeSchema {
   collectionName: 'exam_results';
   info: {
@@ -2728,6 +2758,7 @@ declare module '@strapi/strapi' {
       'api::blog-post.blog-post': ApiBlogPostBlogPost;
       'api::contact-info.contact-info': ApiContactInfoContactInfo;
       'api::contact-message.contact-message': ApiContactMessageContactMessage;
+      'api::donation.donation': ApiDonationDonation;
       'api::exam-result.exam-result': ApiExamResultExamResult;
       'api::financial-report.financial-report': ApiFinancialReportFinancialReport;
       'api::financial-statement.financial-statement': ApiFinancialStatementFinancialStatement;
