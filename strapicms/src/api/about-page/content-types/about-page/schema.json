@@ -93,6 +93,30 @@
       "type": "component",
       "component": "shared.readcrumb",
       "repeatable": true
+    },
+    "student_text": {
+      "type": "string"
+    },
+    "year_text": {
+      "type": "string"
+    },
+    "program_text": {
+      "type": "string"
+    },
+    "principal_text": {
+      "type": "string"
+    },
+    "vis_text": {
+      "type": "string"
+    },
+    "mis_text": {
+      "type": "string"
+    },
+    "value_text": {
+      "type": "string"
+    },
+    "awards_text": {
+      "type": "string"
     }
   }
 }

@@ -484,6 +484,8 @@ function normalizeStaffMember(item: StrapiStaffMember): StaffMember {
       image: mediaUrl(item.image),
       isLeadership: item.is_leadership,
       isFeatured: item.is_featured,
+      leadText: item.lead_text,
+      meetText: item.meet_text,
 
       // Mapping the breadcrumb component
       breadcrumb_item: (item.breadcrumb_item ?? []).map((bc) => ({
@@ -577,6 +579,17 @@ export async function fetchAboutPage(): Promise<AboutPageData | null> {
          },
          missionText: a.mission_text,
          visionText: a.vision_text,
+
+         // New fields
+         studentText: a.student_text,
+         yearText: a.year_text,
+         awardsText: a.awards_text,
+         principalText: a.principal_text,
+         visText: a.vis_text,
+         misText: a.mis_text,
+         valueText: a.value_text,
+         programText: a.program_text,
+
          values: a.values ?? [],
          principalName: a.principal_name,
          principalRole: a.principal_role,

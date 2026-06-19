@@ -12,12 +12,17 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 
+
+import { Button } from "@/ui/button";
+
 const defaultTeam = [
   {
     id: 1,
     name: "Sarah Mitchell",
     role: "Principal",
     email: "sarah.mitchell@edu.lb",
+    leadText: "", // 👈 Add this to your fallback mock data!
+    meetText: "", // 👈 Add this to your fallback mock data!
     image:
       "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=1887&auto=format&fit=crop",
   },
@@ -26,6 +31,8 @@ const defaultTeam = [
     name: "Dr. Ibrahim Kamara",
     role: "Principal",
     email: "i.kamara@edu.lb",
+    leadText: "", // 👈 Add this to your fallback mock data!
+    meetText: "", // 👈 Add this to your fallback mock data!
     image:
       "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1887&auto=format&fit=crop",
   },
@@ -34,6 +41,8 @@ const defaultTeam = [
     name: "Ms. Emily Chen",
     role: "Vice Principal",
     email: "emily.chen@edu.lb",
+    leadText: "", // 👈 Add this to your fallback mock data!
+    meetText: "", // 👈 Add this to your fallback mock data!
     image:
       "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=2070&auto=format&fit=crop",
   },
@@ -42,6 +51,8 @@ const defaultTeam = [
     name: "Mr. David Smith",
     role: "Head of Academics",
     email: "d.smith@edu.lb",
+    leadText: "", // 👈 Add this to your fallback mock data!
+    meetText: "", // 👈 Add this to your fallback mock data!
     image:
       "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=2070&auto=format&fit=crop",
   },
@@ -50,6 +61,8 @@ const defaultTeam = [
     name: "Dr. Ibrahim Kamara",
     role: "Principal",
     email: "i.kamara@edu.lb",
+    leadText: "", // 👈 Add this to your fallback mock data!
+    meetText: "", // 👈 Add this to your fallback mock data!
     image:
       "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1887&auto=format&fit=crop",
   },
@@ -58,6 +71,8 @@ const defaultTeam = [
     name: "Ms. Emily Chen",
     role: "Vice Principal",
     email: "emily.chen@edu.lb",
+    leadText: "", // 👈 Add this to your fallback mock data!
+    meetText: "", // 👈 Add this to your fallback mock data!
     image:
       "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=2070&auto=format&fit=crop",
   },
@@ -66,6 +81,8 @@ const defaultTeam = [
     name: "Mr. David Smith",
     role: "Head of Academics",
     email: "d.smith@edu.lb",
+    leadText: "", // 👈 Add this to your fallback mock data!
+    meetText: "", // 👈 Add this to your fallback mock data!
     image:
       "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=2070&auto=format&fit=crop",
   },
@@ -74,6 +91,8 @@ const defaultTeam = [
     name: "Mr. David Smith",
     role: "Head of Academics",
     email: "d.smith@edu.lb",
+    leadText: "", // 👈 Add this to your fallback mock data!
+    meetText: "", // 👈 Add this to your fallback mock data!
     image:
       "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=2070&auto=format&fit=crop",
   },
@@ -90,25 +109,34 @@ export default function LeadershipSlider({ leadershipTeam: teamProp }: Leadershi
     role: m.role,
     email: m.email || '',
     image: m.image,
+    leadText: m.leadText || '', // 👈 Safe fallback string
+    meetText: m.meetText || '', // 👈 Safe fallback string
   })) : defaultTeam;
   return (
     <section className="py-[clamp(25px,3vw,80px)] relative bg-background xs:mb-[clamp(15px,3vw,80px)]">
       <div className="container relative max-w-[1920px] w-full mx-auto px-5 md:px-[clamp(20px,5vw,60px)]">
-        <div className="text-center mb-[clamp(20px,3vw,48px)]">
-          <h2 className="text-3xl font-bold text-black mb-2">Our Leadership</h2>
-          <p className="text-muted-foreground">
-            Meet the dedicated team guiding our institution.
-          </p>
+
+        <div className="space-y-8">
+          {leaders.map((leader) => (
+            <div key={leader.id} className="text-center mb-[clamp(20px,3vw,48px)]">
+              <h2 className="text-3xl font-bold text-black mb-2">
+                {leader.leadText}
+              </h2>
+              <p className="text-muted-foreground">
+                {leader.meetText}
+              </p>
+            </div>
+          ))}
         </div>
 
         <div className="relative w-full h-full sm:px-15">
           {/* Custom Navigation Buttons */}
-          <button className="swiper-button-prev-custom absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 hover:bg-[#2857AE] hover:text-white transition-colors">
+          <Button className="swiper-button-prev-custom absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 hover:bg-[#2857AE] hover:text-white transition-colors">
             <ChevronLeft className="w-6 h-6" />
-          </button>
-          <button className="swiper-button-next-custom absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-[#2857AE] flex items-center justify-center text-white hover:bg-[#15346F] transition-colors">
+          </Button>
+          <Button className="swiper-button-next-custom absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-[#2857AE] flex items-center justify-center text-white hover:bg-[#15346F] transition-colors">
             <ChevronRight className="w-6 h-6" />
-          </button>
+          </Button>
 
           <Swiper
             modules={[Navigation, Pagination]}

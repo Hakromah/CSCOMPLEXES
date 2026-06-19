@@ -91,7 +91,7 @@ export default function AboutPage({ aboutData, leadershipTeam }: AboutPageProps)
                   </svg>
                 </div>
                 <AnimatedCounter to={stats?.students || 1500} suffix="+" duration={2} className="text-2xl font-bold text-gray-900" />
-                <p className="text-gray-600 font-medium">Students</p>
+                <p className="text-gray-600 font-medium">{aboutData?.studentText || "Students"}</p>
               </div>
               {/* Stat 2 */}
               <div className="flex flex-col items-center">
@@ -101,9 +101,10 @@ export default function AboutPage({ aboutData, leadershipTeam }: AboutPageProps)
                   </svg>
                 </div>
                 <AnimatedCounter to={stats?.years || 40} suffix="+" duration={2.5} className="text-2xl font-bold text-gray-900" />
-                <p className="text-gray-600 font-medium">Years Excellence</p>
+                <p className="text-gray-600 font-medium">{aboutData?.yearText || "Years of Excellence"}</p>
               </div>
               {/* Stat 3 */}
+
               <div className="flex flex-col items-center">
                 <div className="w-16 h-16 bg-[#2857AE] rounded-lg flex items-center justify-center mb-4 text-white shadow-md">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8">
@@ -111,7 +112,7 @@ export default function AboutPage({ aboutData, leadershipTeam }: AboutPageProps)
                   </svg>
                 </div>
                 <AnimatedCounter to={stats?.programs || 15} suffix="+" duration={3} className="text-2xl font-bold text-gray-900" />
-                <p className="text-gray-600 font-medium">Programs</p>
+                <p className="text-gray-600 font-medium">{aboutData?.programText || "Programs"}</p>
               </div>
               {/* Stat 4 */}
               <div className="flex flex-col items-center">
@@ -121,7 +122,7 @@ export default function AboutPage({ aboutData, leadershipTeam }: AboutPageProps)
                   </svg>
                 </div>
                 <AnimatedCounter to={stats?.awards || 20} suffix="+" duration={2.5} className="text-2xl font-bold text-gray-900" />
-                <p className="text-gray-600 font-medium">Awards</p>
+                <p className="text-gray-600 font-medium">{aboutData?.awardsText || "Awards"}</p>
               </div>
             </div>
           </div>
@@ -137,7 +138,7 @@ export default function AboutPage({ aboutData, leadershipTeam }: AboutPageProps)
               <div className="w-12 h-12 bg-linear-to-br from-primary to-[#15346F] rounded-lg mb-[clamp(20px,3vw,25px)] flex items-center justify-center shadow-lg">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20" /></svg>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-4">Our Mission</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-4">{aboutData?.misText || "Notre Mission"}</h3>
               <p className="text-gray-600 leading-relaxed text-[15px]">
                 {aboutData?.missionText || "To provide a comprehensive education that nurtures the intellectual, spiritual, and moral development of our students."}
               </p>
@@ -146,7 +147,7 @@ export default function AboutPage({ aboutData, leadershipTeam }: AboutPageProps)
               <div className="w-12 h-12 bg-linear-to-br from-primary to-[#15346F] rounded-lg mb-6 flex items-center justify-center shadow-lg">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white"><circle cx="12" cy="12" r="10" /><path d="M2 12h20" /><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" /></svg>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-4">Our Vision</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-4">{aboutData?.visText || "Notre Vision"}</h3>
               <p className="text-gray-600 leading-relaxed text-[15px]">
                 {aboutData?.visionText || "To be a leading institution of learning that produces well-rounded individuals who excel in both religious and secular knowledge."}
               </p>
@@ -159,7 +160,7 @@ export default function AboutPage({ aboutData, leadershipTeam }: AboutPageProps)
       <section id="values" className="py-[clamp(25px,3vw,80px)] bg-background">
         <div className="container mx-auto w-full max-w-[1920px] px-5 md:px-[clamp(20px,5vw,60px)]">
           <div className="text-center mb-12">
-            <h2 className="text-[clamp(20px,3vw,40px)] font-bold text-[#2857AE]">Our Core Value</h2>
+            <h2 className="text-[clamp(20px,3vw,40px)] font-bold text-[#2857AE]">{aboutData?.valueText || "Our Core Values"}</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {(values || defaultValues).map((val, i) => (
@@ -197,7 +198,7 @@ export default function AboutPage({ aboutData, leadershipTeam }: AboutPageProps)
               </div>
             </div>
             <div className="w-full md:w-2/3 text-white">
-              <h2 className="text-[clamp(20px,3vw,32px)] font-bold mb-[clamp(16px,3vw,25px)]">Principal&apos;s Message</h2>
+              <h2 className="text-[clamp(20px,3vw,32px)] font-bold mb-[clamp(16px,3vw,25px)]">{aboutData?.principalText || "Principal's Message"}</h2>
               <div className="space-y-6 text-lg leading-relaxed opacity-90">
                 {aboutData?.principalMessage
                   ? aboutData.principalMessage.split("\n\n").map((para, i) => (
@@ -213,7 +214,7 @@ export default function AboutPage({ aboutData, leadershipTeam }: AboutPageProps)
                   {aboutData?.principalName || "Dr. Ibrahim Kamara"}
                 </h3>
                 <p className="text-white/70 text-sm mt-1 uppercase tracking-wider">
-                  {aboutData?.principalRole || "Principal, A.M. FOFANA High School"}
+                  {aboutData?.principalRole || "Principal, de 2CS SCOLAIRE COMPLEXES"}
                 </p>
               </div>
             </div>

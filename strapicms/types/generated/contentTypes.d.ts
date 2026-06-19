@@ -441,6 +441,7 @@ export interface ApiAboutPageAboutPage extends Struct.SingleTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
+    awards_text: Schema.Attribute.String;
     breadcrumb_item: Schema.Attribute.Component<'shared.readcrumb', true>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -461,21 +462,28 @@ export interface ApiAboutPageAboutPage extends Struct.SingleTypeSchema {
       'api::about-page.about-page'
     > &
       Schema.Attribute.Private;
+    mis_text: Schema.Attribute.String;
     mission_text: Schema.Attribute.Text;
     principal_image: Schema.Attribute.Media<'images'>;
     principal_message: Schema.Attribute.Text;
     principal_name: Schema.Attribute.String;
     principal_role: Schema.Attribute.String;
+    principal_text: Schema.Attribute.String;
+    program_text: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
     stat_awards: Schema.Attribute.String;
     stat_programs: Schema.Attribute.String;
     stat_students: Schema.Attribute.String;
     stat_years: Schema.Attribute.String;
+    student_text: Schema.Attribute.String;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    value_text: Schema.Attribute.String;
     values: Schema.Attribute.Component<'shared.values', true>;
+    vis_text: Schema.Attribute.String;
     vision_text: Schema.Attribute.Text;
+    year_text: Schema.Attribute.String;
   };
 }
 
@@ -1786,12 +1794,14 @@ export interface ApiStaffMemberStaffMember extends Struct.CollectionTypeSchema {
     image: Schema.Attribute.Media<'images'>;
     is_featured: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     isLeadership: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    lead_text: Schema.Attribute.String;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::staff-member.staff-member'
     > &
       Schema.Attribute.Private;
+    meet_text: Schema.Attribute.Text;
     name: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
     role: Schema.Attribute.String;

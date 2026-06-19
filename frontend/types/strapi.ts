@@ -100,6 +100,8 @@ export interface StrapiStaffMember {
    name: string;
    role: string;
    email: string;
+   lead_text: string;
+   meet_text: string;
    bio: string;
    heading: string;
    image: StrapiMediaItem | StrapiMediaItem[] | null;
@@ -263,6 +265,17 @@ export interface StrapiAboutPage {
    history_image: StrapiMediaItem | StrapiMediaItem[] | null;
    stat_students: string;
    stat_years: string;
+
+   //new fields
+   student_text: string;
+   year_text: string;
+   principal_text: string;
+   vis_text: string;
+   mis_text: string;
+   value_text: string;
+   program_text: string;
+   awards_text: string;
+
    stat_programs: string;
    stat_awards: string;
    mission_text: string;
@@ -393,6 +406,8 @@ export interface StaffMember {
    name: string;
    role: string;
    email: string;
+   leadText: string;
+   meetText: string;
    bio: string;
    image: string;
    heading: string;
@@ -538,6 +553,17 @@ export interface AboutPageData {
    principalRole: string;
    principalMessage: string;
    principalImage: string;
+
+   // New fields
+   studentText: string;
+   yearText: string;
+   programText: string;
+   principalText: string;
+   visText: string;
+   misText: string;
+   valueText: string;
+   awardsText: string;
+
    homeHeading: string;
    homeDescription: string;
    homeStat: string;

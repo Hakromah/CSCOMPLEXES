@@ -50,6 +50,12 @@
     },
     "heading": {
       "type": "text"
+    },
+    "lead_text": {
+      "type": "string"
+    },
+    "meet_text": {
+      "type": "text"
     }
   }
 }
