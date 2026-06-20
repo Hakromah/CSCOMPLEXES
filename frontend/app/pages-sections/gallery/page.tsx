@@ -27,13 +27,13 @@ export default function GalleryPage({ items = [] }: GalleryPageProps) {
   const [activeMediaType, setActiveMediaType] = useState<"image" | "video">(
     "image",
   );
-  const [activeCategory, setActiveCategory] = useState<string>("All");
+  const [activeCategory, setActiveCategory] = useState<string>("Tous");
   const [visibleGridCount, setVisibleGridCount] = useState(6);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Derive categories dynamically from whatever Strapi returns
   const categories: string[] = [
-    "All",
+    "Tous",
     ...Array.from(
       new Set(
         items
@@ -48,7 +48,7 @@ export default function GalleryPage({ items = [] }: GalleryPageProps) {
       (activeMediaType === "video"
         ? item.type === "video"
         : item.type === "image") &&
-      (activeCategory === "All" || item.category === activeCategory),
+      (activeCategory === "Tous" || item.category === activeCategory),
   );
 
   // Filter items for the grid (only images)
@@ -179,7 +179,9 @@ export default function GalleryPage({ items = [] }: GalleryPageProps) {
 
             {filteredItems.length === 0 && (
               <div className="text-center py-20 text-muted-foreground">
-                No media found for the selected category.
+                <p className="text-lg font-medium">
+                  Aucun élément trouvé pour cette catégorie.
+                </p>
               </div>
             )}
           </div>
@@ -189,7 +191,7 @@ export default function GalleryPage({ items = [] }: GalleryPageProps) {
         {/* 5. Past Events Grid Section */}
         <div className="mt-[clamp(20px,3vw,50px)] text-center">
           <h2 className="text-[clamp(20px,3vw,50px)] font-bold text-primary mb-[clamp(20px,3vw,50px)]">
-            From our past events
+            Nos événements passés
           </h2>
 
           <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 gap-6 mb-[clamp(25px,3vw,50px)]">
@@ -221,7 +223,7 @@ export default function GalleryPage({ items = [] }: GalleryPageProps) {
               onClick={() => setVisibleGridCount((prev) => prev + 6)}
               className="px-8 py-6 rounded-full bg-[#2857AE] cursor-pointer hover:bg-[#1e408a] text-white text-lg"
             >
-              Load More
+              Charger plus
             </Button>
           )}
         </div>
