@@ -27,11 +27,21 @@ export default function GalleryPage({ items = [] }: GalleryPageProps) {
   const [activeMediaType, setActiveMediaType] = useState<"image" | "video">(
     "image",
   );
-  const [activeCategory, setActiveCategory] = useState<
-    "All" | "Campus" | "Events" | "Sports"
-  >("All");
+  const [activeCategory, setActiveCategory] = useState<string>("All");
   const [visibleGridCount, setVisibleGridCount] = useState(6);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Derive categories dynamically from whatever Strapi returns
+  const categories: string[] = [
+    "All",
+    ...Array.from(
+      new Set(
+        items
+          .map((item) => item.category)
+          .filter((cat) => cat !== null) as string[]
+      )
+    ),
+  ];
 
   const filteredItems = items.filter(
     (item) =>
@@ -93,10 +103,10 @@ export default function GalleryPage({ items = [] }: GalleryPageProps) {
           {/* 2. Filter Buttons (Pills) */}
           <div className="w-full h-fit flex justify-center items-center">
             <div className="galleryBtn flex overflow-x-auto whitespace-nowrap overflow-auto gap-3 mt-[clamp(40px,3vw,70px)] mb-[clamp(20px,3vw,50px)] z-10 pb-2 relative">
-              {["All", "Campus", "Events", "Sports"].map((cat) => (
+              {categories.map((cat) => (
                 <Button
                   key={cat}
-                  onClick={() => setActiveCategory(cat as any)}
+                  onClick={() => setActiveCategory(cat)}
                   className={`min-w-[80px] flex justify-center items-center px-6 py-2 rounded-full border cursor-pointer text-sm font-medium transition-all duration-200 ${activeCategory === cat
                     ? "bg-[#2857AE] text-white border-[#2857AE]"
                     : "bg-white text-[#2857AE] border-[#2857AE] hover:bg-blue-50"

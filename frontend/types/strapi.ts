@@ -169,7 +169,7 @@ export interface StrapiGalleryItem {
    documentId?: string;
    title: string;
    type: 'image' | 'video';
-   category: 'Campus' | 'Events' | 'Sports';
+   category: 'Études' | 'Événements' | 'Sports' | 'Campus' | 'Actualités' | 'Annonces' | "Bourses d'études" | null;
    src: StrapiMediaItem | StrapiMediaItem[] | null;
    thumbnail: StrapiMediaItem | StrapiMediaItem[] | null;
    breadcrumb_item: Array<{
@@ -472,7 +472,7 @@ export interface GalleryItem {
    id: number;
    title: string;
    type: 'image' | 'video';
-   category: 'Campus' | 'Events' | 'Sports';
+   category: 'Études' | 'Événements' | 'Sports' | 'Campus' | 'Actualités' | 'Annonces' | "Bourses d'études" | null;
    src: string;
    thumbnail?: string;
    breadcrumb_item: BreadcrumbItem[];
