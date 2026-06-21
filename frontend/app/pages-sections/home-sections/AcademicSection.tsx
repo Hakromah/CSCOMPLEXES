@@ -180,9 +180,9 @@ export default function AcademicSection({ programs: programsProp }: AcademicSect
                                     </Button>
                                 </div>
                             )}
-                            <Link href="/academic" className="group/all relative text-nowrap flex lg:hover:text-white items-center py-3 max-xs:px-4 max-xs:py-2 px-6 rounded-full border-white/50 lg:hover:border-white border gap-2 text-white/80 duration-500 font-medium ml-4">
-                                Tous les programmes <ArrowUpRight className="h-4 w-4 lg:group-hover/all:rotate-45 transition-all  lg:group-hover/all:text-white text-white/80 duration-500" />
-                            </Link>
+                              <Link href="/academic" className="group flex text-nowrap items-center gap-2 text-white font-medium md:before:absolute md:before:bottom-0 md:before:left-0 md:before:w-0 md:hover:before:w-full md:before:h-px md:before:bg-white before:duration-500  md:before:z-1 relative duration-500">
+                              Tous les programmes <ArrowUpRight className="h-4 w-4 lg:group-hover:rotate-45 transition-all  lg:group-hover:text-white text-white/80 duration-500" />
+                              </Link>
                         </div>
                     </div>
 
