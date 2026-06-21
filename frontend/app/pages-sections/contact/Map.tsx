@@ -55,14 +55,14 @@ export default function Map({ lat, lng, mapSetting }: MapProps) {
         <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
             <svg class="${pulseClass}" style="width:60px;height:60px;filter:drop-shadow(0 4px 12px rgba(40,87,174,0.45));"
                 xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" fill="none">
-            <circle fill="#2857AE" fill-opacity="0.15" cx="40" cy="40" r="40"/>
-            <circle fill="#2857AE" fill-opacity="0.35" cx="40" cy="40" r="26.667"/>
-            <circle fill="#2857AE" cx="40" cy="40" r="13.333"/>
+            <circle fill="#394995" fill-opacity="0.15" cx="40" cy="40" r="40"/>
+            <circle fill="#394995" fill-opacity="0.35" cx="40" cy="40" r="26.667"/>
+            <circle fill="#394995" cx="40" cy="40" r="13.333"/>
             </svg>
             <span style="
             font-family:system-ui,sans-serif;
             font-size:11px;font-weight:600;white-space:nowrap;
-            background:white;color:#2857AE;
+            background:white;color:#394995;
             padding:4px 12px;border-radius:20px;
             border:1px solid rgba(40,87,174,0.2);
             box-shadow:0 2px 8px rgba(0,0,0,0.1);
@@ -91,7 +91,7 @@ export default function Map({ lat, lng, mapSetting }: MapProps) {
             <Marker position={position} icon={customIcon}>
                 <Popup>
                     <div style={{ textAlign: 'center', minWidth: '160px' }}>
-                        <h3 style={{ fontWeight: 700, color: '#2857AE', marginBottom: '4px', fontSize: '14px' }}>
+                        <h3 style={{ fontWeight: 700, color: '#394995', marginBottom: '4px', fontSize: '14px' }}>
                             {schoolName}
                         </h3>
                         {popupSubtitle && (
@@ -103,7 +103,7 @@ export default function Map({ lat, lng, mapSetting }: MapProps) {
                             href={mapsUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            style={{ color: '#2857AE', fontSize: '12px', textDecoration: 'underline' }}
+                            style={{ color: '#394995', fontSize: '12px', textDecoration: 'underline' }}
                         >
                             {directionsLabel}
                         </a>

@@ -131,10 +131,10 @@ export default function LeadershipSlider({ leadershipTeam: teamProp }: Leadershi
 
         <div className="relative w-full h-full sm:px-15">
           {/* Custom Navigation Buttons */}
-          <Button className="swiper-button-prev-custom absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 hover:bg-[#2857AE] hover:text-white transition-colors">
+          <Button className="swiper-button-prev-custom absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 hover:bg-[#394995] hover:text-white transition-colors">
             <ChevronLeft className="w-6 h-6" />
           </Button>
-          <Button className="swiper-button-next-custom absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-[#2857AE] flex items-center justify-center text-white hover:bg-[#15346F] transition-colors">
+          <Button className="swiper-button-next-custom absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-[#394995] flex items-center justify-center text-white hover:bg-[#15346F] transition-colors">
             <ChevronRight className="w-6 h-6" />
           </Button>
 
@@ -190,7 +190,7 @@ export default function LeadershipSlider({ leadershipTeam: teamProp }: Leadershi
       </div>
       <style jsx global>{`
         .swiper-pagination-progressbar-fill {
-          background-color: #2857ae !important;
+          background-color: #394995 !important;
         }
       `}</style>
     </section>

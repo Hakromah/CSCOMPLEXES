@@ -30,7 +30,8 @@ const translateCategory = (cat: string) => {
         case 'vocational training': return 'Formation professionnelle';
         default: return cat;
     }
-};const fallbackPrograms: AcademicProgram[] = [
+};
+const fallbackPrograms: AcademicProgram[] = [
     {
         id: 1, category: 'Kindergarten', title: 'La vie en maternelle est belle pour les enfants', slug: 'kindergarten',
         subtitle: 'Poser les bases d\'un apprentissage tout au long de la vie',
@@ -158,7 +159,7 @@ export default function AcademicSection({ programs: programsProp }: AcademicSect
                             </p>
                         </div>
 
-                        <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-4 max-xs:gap-2">
                             {!isLocked && (
                                 <div className="flex gap-2">
                                     <Button
@@ -179,7 +180,7 @@ export default function AcademicSection({ programs: programsProp }: AcademicSect
                                     </Button>
                                 </div>
                             )}
-                            <Link href="/academic" className="group/all relative text-nowrap flex lg:hover:text-white items-center gap-2 text-white/80 duration-500 font-medium lg:before:absolute lg:before:w-0 lg:before:h-px lg:before:-bottom-0.5 lg:before:left-0 lg:hover:before:w-full lg:before:bg-white lg:before:transition-all lg:before:duration-500 ml-4">
+                            <Link href="/academic" className="group/all relative text-nowrap flex lg:hover:text-white items-center py-3 max-xs:px-4 max-xs:py-2 px-6 rounded-full border-white/50 lg:hover:border-white border gap-2 text-white/80 duration-500 font-medium ml-4">
                                 Tous les programmes <ArrowUpRight className="h-4 w-4 lg:group-hover/all:rotate-45 transition-all  lg:group-hover/all:text-white text-white/80 duration-500" />
                             </Link>
                         </div>
@@ -246,7 +247,7 @@ export default function AcademicSection({ programs: programsProp }: AcademicSect
                                             {program.description}
                                         </p>
 
-                                        <div className="mt-auto">
+                                        <div className="mt-auto">#394995
                                             <Button className="w-full rounded-full font-bold bg-[#2857AE]/10 lg:hover:bg-primary lg:hover:text-white text-primary text-[clamp(16px,1.5vw,18px)] italic transition-all duration-500 border border-primary">
                                                 Explorer le programme
                                             </Button>

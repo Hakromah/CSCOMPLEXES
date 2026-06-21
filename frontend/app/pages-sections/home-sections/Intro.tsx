@@ -131,7 +131,7 @@ export default function Intro({ slides: slidesProp }: IntroProps) {
                                     <div className="space-y-4">
                                        
                                          <h1
-                                            className="w-full group-[&.swiper-slide-active]/slide:translate-y-0 line-clamp-2 xl:tracking-[-3px] tracking-normal translate-y-5 opacity-0 group-[&.swiper-slide-active]/slide:opacity-100 group-[&.swiper-slide-active]/slide:delay-500 transition-all duration-500 text-[clamp(25px,4vw,60px)] font-semibold leading-[clamp(45px,6vw,75px)] font-sans bg-clip-text text-transparent bg-[linear-gradient(90deg,#FFF_54.33%,#2857AE_100%)] pb-2"
+                                            className="w-full group-[&.swiper-slide-active]/slide:translate-y-0 line-clamp-2 xl:tracking-[-3px] tracking-normal translate-y-5 opacity-0 group-[&.swiper-slide-active]/slide:opacity-100 group-[&.swiper-slide-active]/slide:delay-500 transition-all duration-500 text-[clamp(25px,4vw,60px)] font-semibold leading-[clamp(45px,6vw,75px)] font-sans bg-clip-text text-transparent bg-[linear-gradient(90deg,#FFF_54.33%,#394995_100%)] pb-2"
                                         >
                                             {slide.subtitle} <br />
                                             {slide.title}

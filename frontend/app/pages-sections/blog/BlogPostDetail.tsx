@@ -140,7 +140,7 @@ export default function BlogPostDetail({ post }: BlogPostDetailProps) {
 
                     {/* Meta Info */}
                     <div className="mb-[clamp(20px,3vw,35px)]">
-                        <span className="text-[#2857AE] font-bold">Publié le</span>
+                        <span className="text-[#394995] font-bold">Publié le</span>
                         <span className="text-gray-600 ml-2">{post.date}</span>
                     </div>
 
@@ -161,11 +161,11 @@ export default function BlogPostDetail({ post }: BlogPostDetailProps) {
                                                         <TooltipTrigger asChild>
                                                             <Button
                                                                 onClick={() => handleAction(social.action!)}
-                                                                className={`icon icon-${social.name} cursor-pointer text-gray-400 hover:text-[#2857AE] transition-colors w-5 h-5 flex justify-center items-center`}
+                                                                className={`icon icon-${social.name} cursor-pointer text-gray-400 bg-white! lg:hover:text-[#394995] transition-colors w-5 h-5 flex justify-center items-center`}
                                                             />
                                                         </TooltipTrigger>
-                                                        <TooltipContent side="top" className="bg-primary text-white">
-                                                            <p className="capitalize">
+                                                        <TooltipContent side="top" className="text-primary">
+                                                            <p className="capitalize text-gray-400 lg:hover:text-[#394995]">
                                                                 {social.action === "copy" && copied ? "Copied!" : social.action}
                                                             </p>
                                                         </TooltipContent>
@@ -178,7 +178,7 @@ export default function BlogPostDetail({ post }: BlogPostDetailProps) {
                                                     rel="noopener noreferrer"
                                                 >
                                                     <span
-                                                        className={`icon icon-${social.name} ${social.name === "whatsapp" ? "text-[#25D366]/80 hover:text-[#25D366]" : "text-gray-400 hover:text-[#2857AE]"} transition-colors w-5 h-5 flex justify-center items-center`}
+                                                        className={`icon icon-${social.name} ${social.name === "whatsapp" ? "text-[#25D366]/80 hover:text-[#25D366]" : "text-gray-400 hover:text-[#394995]"} transition-colors w-5 h-5 flex justify-center items-center`}
                                                     />
                                                 </a>
                                             )}
@@ -198,12 +198,12 @@ export default function BlogPostDetail({ post }: BlogPostDetailProps) {
 
                             {/* Conditional Scholarship CTA */}
                             {post.category.toLowerCase() === "scholarship" && (
-                                <div className="mt-10 p-8 bg-gradient-to-r from-[#2857AE]/5 to-[#2857AE]/10 rounded-2xl border border-[#2857AE]/15 text-center">
+                                <div className="mt-10 p-8 bg-gradient-to-r from-[#394995]/5 to-[#394995]/10 rounded-2xl border border-[#394995]/15 text-center">
                                     <h3 className="text-[clamp(20px,3vw,32px)] font-bold text-gray-900 mb-2">Interested in this scholarship?</h3>
                                     <p className="text-gray-600 mb-6">Submit your application today and take the next step in your academic journey.</p>
                                     <a
                                         href="#"
-                                        className="inline-block bg-[#2857AE] hover:bg-[#1f448c] text-white font-semibold px-10 py-4 rounded-full transition-colors text-base"
+                                        className="inline-block bg-[#394995] hover:bg-[#1f448c] text-white font-semibold px-10 py-4 rounded-full transition-colors text-base"
                                     >
                                         Apply Now
                                     </a>

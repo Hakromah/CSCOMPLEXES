@@ -90,7 +90,7 @@ export default function GalleryPage({ items = [] }: GalleryPageProps) {
               <Button
                 onClick={() => setActiveMediaType("video")}
                 className={`px-8 py-2.5 rounded-full text-sm font-semibold cursor-pointer text-nowrap transition-all duration-300 ${activeMediaType === "video"
-                  ? "bg-[#2857AE] text-white shadow-md"
+                  ? "bg-[#394995] text-white shadow-md"
                   : "text-gray-500 hover:text-gray-900 bg-transparent"
                   }`}
               >
@@ -108,8 +108,8 @@ export default function GalleryPage({ items = [] }: GalleryPageProps) {
                   key={cat}
                   onClick={() => setActiveCategory(cat)}
                   className={`min-w-[80px] flex justify-center items-center px-6 py-2 rounded-full border cursor-pointer text-sm font-medium transition-all duration-200 ${activeCategory === cat
-                    ? "bg-[#2857AE] text-white border-[#2857AE]"
-                    : "bg-white text-[#2857AE] border-[#2857AE] hover:bg-blue-50"
+                    ? "bg-[#394995] text-white border-[#394995]"
+                    : "bg-white text-[#394995] border-[#394995] hover:bg-blue-50"
                     }`}
                 >
                   {cat}
@@ -158,7 +158,7 @@ export default function GalleryPage({ items = [] }: GalleryPageProps) {
                     {item.type === "video" && (
                       <div className="absolute inset-0 flex items-center justify-center bg-black/10 group-hover:bg-black/20 transition-colors">
                         <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                          <Play className="w-5 h-5 text-[#2857AE] fill-current ml-0.5" />
+                          <Play className="w-5 h-5 text-[#394995] fill-current ml-0.5" />
                         </div>
                       </div>
                     )}
@@ -169,10 +169,10 @@ export default function GalleryPage({ items = [] }: GalleryPageProps) {
 
             {/* 4. Custom Navigation Buttons (Centered Below) */}
             <div className="flex justify-center gap-4 mt-8">
-              <Button className="custom-prev w-10 h-10 rounded-full bg-[#DCE4F2] text-[#2857AE] flex items-center justify-center hover:bg-[#2857AE] hover:text-white transition-colors duration-300 disabled:opacity-50">
+              <Button className="custom-prev w-10 h-10 rounded-full bg-[#DCE4F2] text-[#394995] flex items-center justify-center hover:bg-[#394995] hover:text-white transition-colors duration-300 disabled:opacity-50">
                 <ArrowLeft className="w-5 h-5" />
               </Button>
-              <Button className="custom-next w-10 h-10 rounded-full bg-[#2857AE] text-white flex items-center justify-center hover:bg-[#1e408a] transition-colors duration-300 disabled:opacity-50">
+              <Button className="custom-next w-10 h-10 rounded-full bg-[#394995] text-white flex items-center justify-center hover:bg-[#1e408a] transition-colors duration-300 disabled:opacity-50">
                 <ArrowRight className="w-5 h-5" />
               </Button>
             </div>
@@ -221,7 +221,7 @@ export default function GalleryPage({ items = [] }: GalleryPageProps) {
           {visibleGridCount < gridItems.length && (
             <Button
               onClick={() => setVisibleGridCount((prev) => prev + 6)}
-              className="px-8 py-6 rounded-full bg-[#2857AE] cursor-pointer hover:bg-[#1e408a] text-white text-lg"
+              className="px-8 py-6 rounded-full bg-[#394995] cursor-pointer hover:bg-[#1e408a] text-white text-lg"
             >
               Charger plus
             </Button>

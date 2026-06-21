@@ -66,7 +66,7 @@
   --card-foreground: oklch(0.129 0.042 264.695);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.129 0.042 264.695);
-  --primary: #2857AE;
+  --primary: #394995;
   --primary-foreground: oklch(0.984 0.003 247.858);
   --secondary: oklch(0.968 0.007 247.896);
   --secondary-foreground: oklch(0.208 0.042 265.755);
@@ -217,15 +217,25 @@ body::-webkit-scrollbar-thumb {
 }
 
 @media print {
+
   /* Hide sidebar, headers, popovers, action toolbars, and buttons */
-  aside, nav, header, button, .print\:hidden,
-  [class*="Sidebar"], [class*="Header"],
-  .max-w-7xl.mx-auto.flex, .flex.justify-between.items-center.bg-white {
+  aside,
+  nav,
+  header,
+  button,
+  .print\:hidden,
+  [class*="Sidebar"],
+  [class*="Header"],
+  .max-w-7xl.mx-auto.flex,
+  .flex.justify-between.items-center.bg-white {
     display: none !important;
   }
 
   /* Exclude layout container sizes */
-  body, html, main, div.flex-1 {
+  body,
+  html,
+  main,
+  div.flex-1 {
     height: auto !important;
     min-height: 0 !important;
     margin: 0 !important;
@@ -251,7 +261,8 @@ body::-webkit-scrollbar-thumb {
     width: 100% !important;
     max-width: 100% !important;
     margin: 0 !important;
-    padding: 1.5rem !important; /* Reduced padding for clean layout fitting */
+    padding: 1.5rem !important;
+    /* Reduced padding for clean layout fitting */
     border: none !important;
     box-shadow: none !important;
     background: white !important;
@@ -264,13 +275,16 @@ body::-webkit-scrollbar-thumb {
   .printable-transcript .bg-slate-900 {
     padding: 1.5rem !important;
   }
+
   .printable-transcript .p-10 {
     padding: 1.5rem !important;
   }
+
   .printable-transcript .space-y-8 {
     margin-top: 1rem !important;
     margin-bottom: 1rem !important;
   }
+
   .printable-transcript table th,
   .printable-transcript table td {
     padding: 8px 12px !important;
@@ -286,10 +300,12 @@ body::-webkit-scrollbar-thumb {
   table {
     page-break-inside: auto;
   }
+
   tr {
     page-break-inside: avoid;
     page-break-after: auto;
   }
+
   thead {
     display: table-header-group;
   }
@@ -297,17 +313,19 @@ body::-webkit-scrollbar-thumb {
 
 /* Attendance PDF print target */
 @media print {
-  body > *:not(.printable-attendance) {
+  body>*:not(.printable-attendance) {
     display: none !important;
   }
+
   .printable-attendance {
     display: block !important;
     padding: 0 !important;
     margin: 0 !important;
     background: white !important;
   }
+
   .printable-attendance nav,
-  .printable-attendance header > div:last-child {
+  .printable-attendance header>div:last-child {
     display: none !important;
   }
 }

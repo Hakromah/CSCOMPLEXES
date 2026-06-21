@@ -31,10 +31,11 @@ export default function Footer({ footerData, contactInfo }: FooterProps) {
 
   const [email, setEmail] = React.useState('');
   const [isSubscribing, setIsSubscribing] = React.useState(false);
+  const [agreed, setAgreed] = React.useState(false);
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) return;
+    if (!email || !agreed) return;
 
     setIsSubscribing(true);
     const tid = toast.loading("Subscribing...");
@@ -58,7 +59,7 @@ export default function Footer({ footerData, contactInfo }: FooterProps) {
   };
 
   return (
-    <footer className="bg-[#2857AE] text-white pt-[clamp(20px,3vw,60px)] pb-[clamp(20px,3vw,40px)]">
+    <footer className="bg-[#394995] text-white pt-[clamp(20px,3vw,60px)] pb-[clamp(20px,3vw,40px)]">
       <div className="container mx-auto max-w-[1920px] px-5 md:px-[clamp(20px,5vw,60px)]">
 
         {/* Top Section: Logo & Subscription */}
@@ -81,20 +82,42 @@ export default function Footer({ footerData, contactInfo }: FooterProps) {
           </div>
 
           {/* Subscription Form */}
-          <form onSubmit={handleSubscribe} className="w-full max-w-md bg-white rounded-lg p-2 flex">
-            <Input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Entrez votre e-mail"
-              disabled={isSubscribing}
-              required
-              className="border-0 bg-transparent text-black focus-visible:ring-0 placeholder:text-gray-400"
-            />
-            <Button type="submit" disabled={isSubscribing} className="bg-[#2857AE] hover:bg-[#1e4287] text-white px-6 py-2 rounded-md transition-all">
-              {isSubscribing ? <Loader2 className="h-4 w-4 animate-spin" /> : "S'abonner"}
-            </Button>
-          </form>
+          <div className="w-full max-w-md space-y-2">
+            <form onSubmit={handleSubscribe} className="bg-white rounded-lg p-2 flex">
+              <Input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Entrez votre e-mail"
+                disabled={isSubscribing}
+                required
+                className="border-0 bg-transparent text-black focus-visible:ring-0 placeholder:text-gray-400"
+              />
+              <Button
+                type="submit"
+                disabled={isSubscribing || !agreed}
+                className="bg-[#394995] hover:bg-[#1e4287] disabled:opacity-50 text-white px-6 py-2 rounded-md transition-all"
+              >
+                {isSubscribing ? <Loader2 className="h-4 w-4 animate-spin" /> : "S'abonner"}
+              </Button>
+            </form>
+            {/* Consent */}
+            <label className="flex items-start gap-2 cursor-pointer group">
+              <input
+                type="checkbox"
+                checked={agreed}
+                onChange={(e) => setAgreed(e.target.checked)}
+                className="mt-0.5 h-3.5 w-3.5 shrink-0 accent-white cursor-pointer"
+              />
+              <span className="text-white/60 text-xs leading-relaxed group-hover:text-white/80 transition-colors">
+                J&apos;accepte la{" "}
+                <Link href="/legal" className="underline underline-offset-2 text-white/80 hover:text-white transition-colors">
+                  politique de confidentialité
+                </Link>{" "}
+                et consens à recevoir des communications de 2 CS Complexes.
+              </span>
+            </label>
+          </div>
         </div>
 
         {/* Main Grid */}
@@ -172,10 +195,19 @@ export default function Footer({ footerData, contactInfo }: FooterProps) {
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-[clamp(10px,3vw,32px)] border-t border-white/10 text-center">
+        <div className="pt-[clamp(10px,3vw,32px)] border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-xs text-white/50">
-            © {new Date().getFullYear()} {footerData?.allRight || "2CS SCOLAIRE"}.
+            © {new Date().getFullYear()} {footerData?.allRight || "2CS SCOLAIRE"}. Tous droits réservés.
           </p>
+          <div className="flex items-center gap-4">
+            <Link href="/legal" className="text-xs text-white/50 hover:text-white/80 transition-colors">
+              Mentions légales
+            </Link>
+            <span className="text-white/20 text-xs">|</span>
+            <Link href="/legal#collecte-donnees" className="text-xs text-white/50 hover:text-white/80 transition-colors">
+              Politique de confidentialité
+            </Link>
+          </div>
         </div>
       </div>
     </footer>

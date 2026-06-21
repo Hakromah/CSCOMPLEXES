@@ -50,11 +50,13 @@ export default function ContactPage({ contactInfo, mapSetting }: ContactPageProp
         message: ''
     });
     const [isSubmitting, setIsSubmitting] = React.useState(false);
+    const [agreed, setAgreed] = React.useState(false);
 
     const socialLinks = contactInfo?.socialLinks ?? fallbackSocialLinks;
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!agreed) return;
         setIsSubmitting(true);
         const tid = toast.loading("Envoi de votre message...");
         try {
@@ -89,7 +91,7 @@ export default function ContactPage({ contactInfo, mapSetting }: ContactPageProp
                         {/* Address Card */}
                         <div className="md:bg-white max-md:w-full md:p-8 md:rounded-2xl md:shadow-sm md:border md:border-gray-100 flex flex-col md:items-center items-start md:text-center md:hover:shadow-md transition-shadow">
                             <a href="" className='max-md:w-full flex flex-col md:items-center items-start md:text-center'>
-                                <div className="h-12 max-sm:hidden w-12 bg-blue-50 rounded-full flex items-center justify-center text-[#2857AE] mb-6">
+                                <div className="h-12 max-sm:hidden w-12 bg-blue-50 rounded-full flex items-center justify-center text-[#394995] mb-6">
                                     <span className='icon icon-map flex items-center justify-center text-primary h-5 w-5'></span>
                                 </div>
                                 <h3 className="font-bold text-lg mb-2">Address</h3>
@@ -105,7 +107,7 @@ export default function ContactPage({ contactInfo, mapSetting }: ContactPageProp
 
                         {/* Phone Card */}
                         <div className="md:bg-white max-md:w-full md:p-8 md:rounded-2xl md:shadow-sm md:border md:border-gray-100 flex flex-col md:items-center items-start md:text-center md:hover:shadow-md transition-shadow">
-                            <div className="h-12 w-12  max-sm:hidden bg-blue-50 rounded-full flex items-center justify-center text-[#2857AE] mb-6">
+                            <div className="h-12 w-12  max-sm:hidden bg-blue-50 rounded-full flex items-center justify-center text-[#394995] mb-6">
 
                                 <span className='icon icon-phone flex items-center justify-center text-primary h-5 w-5'></span>
                             </div>
@@ -126,7 +128,7 @@ export default function ContactPage({ contactInfo, mapSetting }: ContactPageProp
 
                         {/* Email Card */}
                         <div className="md:bg-white max-md:w-full md:p-8 md:rounded-2xl md:shadow-sm md:border md:border-gray-100 flex flex-col md:items-center items-start md:text-center md:hover:shadow-md transition-shadow">
-                            <div className="h-12  max-sm:hidden w-12 bg-blue-50 rounded-full flex items-center justify-center text-[#2857AE] mb-6">
+                            <div className="h-12  max-sm:hidden w-12 bg-blue-50 rounded-full flex items-center justify-center text-[#394995] mb-6">
                                 <span className='icon icon-mail flex items-center justify-center text-primary h-5 w-5'></span>
                             </div>
                             <h3 className="font-bold text-lg mb-2">Email</h3>
@@ -153,7 +155,7 @@ export default function ContactPage({ contactInfo, mapSetting }: ContactPageProp
 
                         {/* Office Hours Card */}
                         <div className="md:bg-white max-md:w-full md:p-8 md:rounded-2xl md:shadow-sm md:border md:border-gray-100 flex flex-col md:items-center items-start md:text-center md:hover:shadow-md transition-shadow">
-                            <div className="h-12  max-sm:hidden w-12 bg-blue-50 rounded-full flex items-center justify-center text-[#2857AE] mb-6">
+                            <div className="h-12  max-sm:hidden w-12 bg-blue-50 rounded-full flex items-center justify-center text-[#394995] mb-6">
                                 <span className='icon icon-clock flex items-center justify-center text-primary h-5 w-5'></span>
                             </div>
                             <h3 className="font-bold text-lg mb-2">Office Hours</h3>
@@ -190,14 +192,14 @@ export default function ContactPage({ contactInfo, mapSetting }: ContactPageProp
 
                             <Sheet>
                                 <SheetTrigger asChild>
-                                    <Button className="bg-[#2857AE] cursor-pointer hover:bg-[#1e408a] text-white px-8 py-6 rounded-lg text-base font-medium w-full sm:w-auto">
+                                    <Button className="bg-[#394995] cursor-pointer hover:bg-[#1e408a] text-white px-8 py-6 rounded-lg text-base font-medium w-full sm:w-auto">
                                         Formulaire de contact
                                     </Button>
                                 </SheetTrigger>
                                 <SheetContent side="bottom" className="sm:max-w-xl w-[calc(100%-2rem)] px-0 overflow-y-auto">
                                     <div className="px-6 py-6 h-full overflow-y-auto">
                                         <SheetHeader className="mb-6 text-left">
-                                            <SheetTitle className="text-2xl font-bold text-[#2857AE]">Envoyez-nous un message</SheetTitle>
+                                            <SheetTitle className="text-2xl font-bold text-[#394995]">Envoyez-nous un message</SheetTitle>
                                             <SheetDescription>
                                                 Remplissez le formulaire ci-dessous et notre équipe vous répondra dans les plus brefs délais.
                                             </SheetDescription>
@@ -233,7 +235,37 @@ export default function ContactPage({ contactInfo, mapSetting }: ContactPageProp
                                                 ></textarea>
                                             </div>
 
-                                            <Button type="submit" className="w-full cursor-pointer bg-[#2857AE] hover:bg-[#1e408a] py-6 text-base transition-all" disabled={isSubmitting}>
+                                            {/* Consent checkbox */}
+                                            <label className="flex items-start gap-2.5 cursor-pointer group">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={agreed}
+                                                    onChange={(e) => setAgreed(e.target.checked)}
+                                                    className="mt-0.5 h-3.5 w-3.5 shrink-0 accent-[#394995] cursor-pointer"
+                                                    required
+                                                />
+                                                <span className="text-gray-500 text-xs leading-relaxed group-hover:text-gray-700 transition-colors">
+                                                    J&apos;ai lu et j&apos;accepte la{" "}
+                                                    <Link
+                                                        href="/legal"
+                                                        target="_blank"
+                                                        className="text-[#394995] underline underline-offset-2 hover:text-[#1e408a] transition-colors"
+                                                    >
+                                                        politique de confidentialité
+                                                    </Link>{" "}
+                                                    et les{" "}
+                                                    <Link
+                                                        href="/legal#mentions-legales"
+                                                        target="_blank"
+                                                        className="text-[#394995] underline underline-offset-2 hover:text-[#1e408a] transition-colors"
+                                                    >
+                                                        mentions légales
+                                                    </Link>{" "}
+                                                    de 2 CS Complexes.
+                                                </span>
+                                            </label>
+
+                                            <Button type="submit" className="w-full cursor-pointer bg-[#394995] hover:bg-[#1e408a] py-6 text-base transition-all" disabled={isSubmitting || !agreed}>
                                                 {isSubmitting ? (
                                                     <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Envoi en cours...</>
                                                 ) : (

@@ -115,7 +115,7 @@ export default function WhyChooseUs({ whyChooseUsData }: WhyChooseUsProps) {
                 </div>
 
                 {/* Cards Grid */}
-                <div ref={cardsRef} className="grid grid-cols-1 md:grid-cols-3 xs:grid-cols-2 grid-cols-1 gap-6 w-full md:max-w-6xl">
+                <div ref={cardsRef} className="grid grid-cols-1 md:grid-cols-3 xs:grid-cols-2 gap-6 w-full md:max-w-6xl">
 
                     {(whyChooseUsData?.cards && whyChooseUsData.cards.length > 0 ? whyChooseUsData.cards : [
                         { id: 1, icon: "BookOpen", title: "Dual Curriculum", description: "A unique English academic system perfectly combined with a strong, deep-rooted Islamic education for a balanced life." },
@@ -126,8 +126,8 @@ export default function WhyChooseUs({ whyChooseUsData }: WhyChooseUsProps) {
 
                         return (
                             <div key={card.id} className="feature-card w-full flex flex-col gap-5 bg-gradient-to-t from-primary to-white backdrop-blur-md p-8 h-[354px] rounded-[20px] shadow-xl hover:shadow-2xl transition-all duration-300 items-start text-left group">
-                                <div className="w-14 h-14 rounded-[10px] bg-[radial-gradient(50%_50%_at_50%_50%,_#FFF_0%,_#2857AE_100%)] flex items-center justify-center mb-6 text-white shadow-lg group-hover:scale-110 transition-transform duration-300">
-                                    <IconComponent className="h-7 w-7 text-black" />
+                                <div className="w-14 h-14 rounded-[10px] bg-[radial-gradient(50%_50%_at_50%_50%,_#FFF_0%,_#394995_100%)] flex items-center justify-center mb-6 text-white shadow-lg group-hover:scale-110 transition-transform duration-300">
+                                    <IconComponent className="h-7 w-7 text-primary" />
                                 </div>
                                 <div className="flex flex-col gap-2">
                                     <h3 className="text-[calmp(20px,3vw,25px)] font-bold line-clamp-2 text-black mb-3">{card.title}</h3>

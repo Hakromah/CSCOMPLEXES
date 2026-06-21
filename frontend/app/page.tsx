@@ -20,6 +20,7 @@ import {
   fetchStudentLife,
   fetchWhyChooseUs,
   fetchVideoSection,
+  fetchImportantNewsPopup,
 } from "@/lib/strapi-api";
 
 export default async function Index() {
@@ -33,7 +34,8 @@ export default async function Index() {
     aboutData,
     studentLifeData,
     whyChooseUsData,
-    videoSectionData
+    videoSectionData,
+    importantNewsPopupData
   ] = await Promise.all([
     fetchHeroSlides().catch(() => []),
     fetchBlogPosts({ pageSize: 8 }).catch(() => ({ posts: [], total: 0 })),
@@ -44,14 +46,15 @@ export default async function Index() {
     fetchStudentLife().catch(() => null),
     fetchWhyChooseUs().catch(() => null),
     fetchVideoSection().catch(() => null),
-  ]) as any; // 'as any' is the quickest way to fix the destructuring error for build
+    fetchImportantNewsPopup().catch(() => null),
+  ]) as any;
 
   // Now safely extract the posts array
   const newsItems = newsData?.posts || [];
 
   return (
     <>
-      <ImportantNewsPopup />
+      <ImportantNewsPopup popupData={importantNewsPopupData} />
       <Intro slides={heroSlides} />
       <AboutSection aboutData={aboutData} />
       <AcademicSection programs={programs} />

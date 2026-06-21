@@ -190,7 +190,7 @@ export default function Navbar({ navbarData, contactInfo, donationData }: Navbar
     >
       <div className="w-full h-full ">
         <div
-          className="topNav w-full bg-[#2857AE] flex items-center  h-[37px]"
+          className="topNav w-full bg-primary flex items-center  h-[37px]"
         >
           <div className="w-full flex justify-between items-center py-3 container px-5 md:px-[clamp(20px,5vw,60px)] mx-auto max-w-[1920px]">
             <div>
@@ -269,7 +269,7 @@ export default function Navbar({ navbarData, contactInfo, donationData }: Navbar
                               toggleMobileSubmenu(item.label || item.name);
                             }}
                           >
-                            <div className="relative max-md:text-white  text-[18px] md:text-[16px] xl:text-[clamp(17px,3vw,18px)] h-full flex items-center md:before:absolute md:before:bottom-0 md:before:left-0 md:before:w-0 md:before:h-0.5 md:before:bg-primary md:before:transition-all md:before:duration-300 md:hover:before:w-full md:hover:before:duration-500 md:hover:text-[#2857AE]">
+                            <div className="relative max-md:text-white  text-[18px] md:text-[16px] xl:text-[clamp(17px,3vw,18px)] h-full flex items-center md:before:absolute md:before:bottom-0 md:before:left-0 md:before:w-0 md:before:h-0.5 md:before:bg-primary md:before:transition-all md:before:duration-300 md:hover:before:w-full md:hover:before:duration-500 md:hover:text-[#394995]">
                               {item.label || item.name}
                             </div>
                             <ChevronDown
@@ -338,7 +338,7 @@ export default function Navbar({ navbarData, contactInfo, donationData }: Navbar
                           className="text-foreground/60 h-auto cursor-pointer md:h-full max-md:w-full   max-md:border-b max-md:border-white/50 flex items-center transition-colors hover:text-foreground/80 py-3 md:py-0 relative"
                           onClick={() => setIsMobileMenuOpen(false)}
                         >
-                          <div className="relative h-full max-md:text-white text-[18px] md:text-[16px] xl:text-[clamp(17px,3vw,18px)] flex items-center md:before:absolute md:before:bottom-0 max-md:px-5 md:before:left-0 md:before:w-0 md:before:h-0.5 md:before:bg-primary md:before:transition-all md:before:duration-300 md:hover:before:w-full md:hover:before:duration-500 md:hover:text-[#2857AE]">
+                          <div className="relative h-full max-md:text-white text-[18px] md:text-[16px] xl:text-[clamp(17px,3vw,18px)] flex items-center md:before:absolute md:before:bottom-0 max-md:px-5 md:before:left-0 md:before:w-0 md:before:h-0.5 md:before:bg-primary md:before:transition-all md:before:duration-300 md:hover:before:w-full md:hover:before:duration-500 md:hover:text-[#394995]">
                             {item.label || item.name}
                           </div>
                         </Link>
@@ -395,9 +395,9 @@ export default function Navbar({ navbarData, contactInfo, donationData }: Navbar
 
                               {/* Account Name */}
                               {bank.accountName && (
-                                <div className="flex items-center gap-4 p-4 hover:bg-slate-100 transition-colors group">
-                                  <div className="h-5 w-5 shrink-0" />
-                                  <div className="flex-1">
+                                <div className="flex items-center gap-4 px-4 py-2 hover:bg-slate-100 transition-colors group">
+                                  <div className="h-5 w-5 shrink-0 max-xs:hidden" />
+                                  <div className="flex-1 max-xs:flex max-xs:justify-between xs:flex-row xs:items-center xs:justify-between xs:pr-8 xs:flex max-xs:gap-2 max-xs:items-center ">
                                     <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Nom du compte</p>
                                     <p className="text-sm text-slate-900 font-medium">{bank.accountName}</p>
                                   </div>
@@ -413,9 +413,9 @@ export default function Navbar({ navbarData, contactInfo, donationData }: Navbar
 
                               {/* Account Number */}
                               {bank.accountNumber && (
-                                <div className="flex items-center gap-4 p-4 hover:bg-slate-100 transition-colors group">
-                                  <div className="h-5 w-5 shrink-0" />
-                                  <div className="flex-1">
+                                <div className="flex items-center gap-4 px-4 py-2 hover:bg-slate-100 transition-colors group">
+                                  <div className="h-5 w-5 shrink-0 max-xs:hidden" />
+                                  <div className="flex-1 max-xs:flex max-xs:justify-between xs:flex-row xs:items-center xs:justify-between xs:pr-8 xs:flex max-xs:gap-2 max-xs:items-center">
                                     <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Numéro de compte</p>
                                     <p className="text-sm text-slate-900 font-mono">{bank.accountNumber}</p>
                                   </div>
@@ -431,9 +431,9 @@ export default function Navbar({ navbarData, contactInfo, donationData }: Navbar
 
                               {/* IBAN */}
                               {bank.ibanNumber && (
-                                <div className="flex items-center gap-4 p-4 hover:bg-slate-100 transition-colors group">
-                                  <div className="h-5 w-5 shrink-0" />
-                                  <div className="flex-1">
+                                <div className="flex items-center gap-4 px-4 py-2 hover:bg-slate-100 transition-colors group">
+                                  <div className="h-5 w-5 shrink-0 max-xs:hidden" />
+                                  <div className="flex-1 max-xs:flex max-xs:justify-between xs:flex-row xs:items-center xs:justify-between xs:pr-8 xs:flex max-xs:gap-2 max-xs:items-center">
                                     <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">IBAN / RIB</p>
                                     <p className="text-sm text-slate-900 font-mono">{bank.ibanNumber}</p>
                                   </div>
@@ -449,9 +449,9 @@ export default function Navbar({ navbarData, contactInfo, donationData }: Navbar
 
                               {/* SWIFT */}
                               {bank.swiftCode && (
-                                <div className="flex items-center gap-4 p-4 hover:bg-slate-100 transition-colors group">
-                                  <div className="h-5 w-5 shrink-0" />
-                                  <div className="flex-1">
+                                <div className="flex items-center gap-4 px-4 py-2 hover:bg-slate-100 transition-colors group">
+                                  <div className="h-5 w-5 shrink-0 max-xs:hidden" />
+                                  <div className="flex-1 max-xs:flex max-xs:justify-between xs:flex-row xs:items-center xs:justify-between xs:pr-8 xs:flex max-xs:gap-2 max-xs:items-center">
                                     <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Code SWIFT / BIC</p>
                                     <p className="text-sm text-slate-900 font-mono">{bank.swiftCode}</p>
                                   </div>
@@ -468,8 +468,8 @@ export default function Navbar({ navbarData, contactInfo, donationData }: Navbar
                               {/* Bank Address */}
                               {bank.bankAddress && (
                                 <div className="flex items-center gap-4 p-4">
-                                  <div className="h-5 w-5 shrink-0" />
-                                  <div className="flex-1">
+                                  <div className="h-5 w-5 shrink-0 max-xs:hidden" />
+                                  <div className="flex-1 max-xs:flex max-xs:justify-between xs:flex-row xs:items-center xs:justify-between xs:pr-8 xs:flex max-xs:gap-2 max-xs:items-center">
                                     <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Adresse</p>
                                     <p className="text-sm text-slate-900">{bank.bankAddress}</p>
                                   </div>
@@ -482,14 +482,14 @@ export default function Navbar({ navbarData, contactInfo, donationData }: Navbar
                           <div className="bg-slate-50 border border-slate-200 rounded-xl overflow-hidden divide-y divide-slate-200">
                             <div className="flex items-center gap-4 p-4">
                               <Landmark className="h-5 w-5 text-primary shrink-0" />
-                              <div className="flex-1">
+                              <div className="flex-1 max-xs:flex max-xs:justify-between xs:flex-row xs:items-center xs:justify-between xs:pr-8 xs:flex max-xs:gap-2 max-xs:items-center">
                                 <p className="text-sm font-medium text-slate-900">Banque</p>
                                 <p className="text-sm text-slate-500">Nom de la banque</p>
                               </div>
                             </div>
-                            <div className="flex items-center gap-4 p-4 hover:bg-slate-100 transition-colors group">
-                              <div className="h-5 w-5 shrink-0" />
-                              <div className="flex-1">
+                            <div className="flex items-center gap-4 px-4 py-2 hover:bg-slate-100 transition-colors group">
+                              <div className="h-5 w-5 shrink-0 max-xs:hidden" />
+                              <div className="flex-1 max-xs:flex max-xs:justify-between xs:flex-row xs:items-center xs:justify-between xs:pr-8 xs:flex max-xs:gap-2 max-xs:items-center">
                                 <p className="text-sm font-medium text-slate-900">Nom du compte</p>
                                 <p className="text-sm text-slate-500">2 CS COMPLEXES</p>
                               </div>
@@ -501,9 +501,9 @@ export default function Navbar({ navbarData, contactInfo, donationData }: Navbar
                                 {copiedItem === 'name' ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4 text-slate-500" />}
                               </button>
                             </div>
-                            <div className="flex items-center gap-4 p-4 hover:bg-slate-100 transition-colors group">
-                              <div className="h-5 w-5 shrink-0" />
-                              <div className="flex-1">
+                            <div className="flex items-center gap-4 px-4 py-2 hover:bg-slate-100 transition-colors group">
+                              <div className="h-5 w-5 shrink-0 max-xs:hidden" />
+                              <div className="flex-1 max-xs:flex max-xs:justify-between xs:flex-row xs:items-center xs:justify-between xs:pr-8 xs:flex max-xs:gap-2 max-xs:items-center">
                                 <p className="text-sm font-medium text-slate-900">IBAN / RIB</p>
                                 <p className="text-sm text-slate-500 font-mono">XX00 0000 0000 0000 0000 00</p>
                               </div>

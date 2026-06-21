@@ -40,6 +40,7 @@ import type {
    StrapiBankDetail,
    StrapiRichTextBlock,
    StrapiMediaItem,
+   StrapiImportantNewsPopup,
    HeroSlide,
    BlogPost,
    StaffMember,
@@ -59,6 +60,7 @@ import type {
    NavbarData,
    MapSettingData,
    DonationData,
+   ImportantNewsPopupData,
 } from '@/types/strapi';
 
 // ─── Utility ──────────────────────────────────────────────────────────────────
@@ -829,6 +831,29 @@ export async function fetchDonation(): Promise<DonationData | null> {
             accountNumber: b.account_number ?? '',
             ibanNumber: b.iban_number ?? '',
          })),
+      };
+   } catch {
+      return null;
+   }
+}
+
+// ─── Important News Popup (Single Type) ──────────────────────────────────────────────
+
+export async function fetchImportantNewsPopup(): Promise<ImportantNewsPopupData | null> {
+   try {
+      const { data } = await strapi.get<StrapiSingleResponse<StrapiImportantNewsPopup>>(
+         '/important-news-popup?populate=image'
+      );
+      if (!data.data) return null;
+      const p = data.data;
+      // If is_active is explicitly set to false, don't show
+      if (p.is_active === false) return null;
+      const image = mediaUrl(p.image);
+      // Only return data if an image is configured
+      if (!image) return null;
+      return {
+         imageUrl: image,
+         link: p.link ?? null,
       };
    } catch {
       return null;

@@ -192,7 +192,7 @@ export default function AcademicDetail({ program }: { program: AcademicProgram }
             {/* Always visible, button disabled when no file in Strapi */}
             <div className="max-sm:pt-7 max-sm:pb-5 sm:py-[clamp(20px,5vw,80px)]">
                 <div className="container mx-auto max-w-[1920px] px-5 md:px-[clamp(20px,5vw,60px)]">
-                    <div className="bg-[#2857AE] text-white rounded-3xl p-[clamp(24px,4vw,48px)] relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-[clamp(15px,3vw,35px)]">
+                    <div className="bg-[#394995] text-white rounded-3xl p-[clamp(24px,4vw,48px)] relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-[clamp(15px,3vw,35px)]">
                         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full translate-x-1/2 -translate-y-1/2 blur-2xl pointer-events-none" />
                         <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full -translate-x-1/2 translate-y-1/2 blur-2xl pointer-events-none" />
 

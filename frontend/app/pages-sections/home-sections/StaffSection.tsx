@@ -128,7 +128,7 @@ export default function StaffSection({ staffMembers: staffProp }: StaffSectionPr
                                 {activeStaff.map((member) => (
                                     <SwiperSlide key={member.id} className="h-auto">
 
-                                        <div className="bg-[linear-gradient(180deg,#FFF_0%,#2857AE_100%)] h-[470px] rounded-[20px] p-6 text-center max-md:h-full flex flex-col items-center justify-center group transition-transform duration-300 hover:-translate-y-2 shadow-lg">
+                                        <div className="bg-[linear-gradient(180deg,#FFF_0%,#394995_100%)] h-[470px] rounded-[20px] p-6 text-center max-md:h-full flex flex-col items-center justify-center group transition-transform duration-300 hover:-translate-y-2 shadow-lg">
 
                                             <div className="w-full h-full flex flex-col justify-center items-center  ">
                                                 {/* Image Container */}

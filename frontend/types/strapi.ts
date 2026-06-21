@@ -768,3 +768,18 @@ export interface NavbarData {
    establishmentDate: string;
    navItems: NavItemData[];
 }
+
+/** important-news-popup single type — raw Strapi response */
+export interface StrapiImportantNewsPopup {
+   id: number;
+   documentId?: string;
+   image: StrapiMediaItem | StrapiMediaItem[] | null;
+   link?: string | null;
+   is_active?: boolean | null;
+}
+
+/** important-news-popup — normalized frontend DTO */
+export interface ImportantNewsPopupData {
+   imageUrl: string;
+   link: string | null;
+}

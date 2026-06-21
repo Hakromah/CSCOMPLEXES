@@ -107,7 +107,7 @@ export default function AcademicPage({ sections: sectionsProp, resources: resour
                     {/* Intro */}
                     <div className="max-w-4xl mb-[clamp(20px,4vw,50px)]">
                         <div className="flex items-center gap-4 mb-[clamp(12px,3vw,25px)]">
-                            <div className="h-12 w-1 bg-[#2857AE]"></div>
+                            <div className="h-12 w-1 bg-[#394995]"></div>
                             <h2 className="text-xl md:text-4xl font-bold text-gray-900">Excellence académique</h2>
                         </div>
                         <h3 className="text-md md:text-xl font-semibold mb-4 max-sm:mb-2">
@@ -130,8 +130,8 @@ export default function AcademicPage({ sections: sectionsProp, resources: resour
                                     ref={el => { if (el) observerRefs.current[String(section.id)] = el; }}
                                     className="scroll-mt-32 h-fit flex flex-col justify-center"
                                 >
-                                    <div className="border-l-4 border-[#2857AE] pl-6 py-2 transition-all duration-300">
-                                        <h3 className={`text-[clamp(20px,3vw,32px)] font-bold mb-3 ${activeSection === String(section.id) ? 'text-[#2857AE]' : 'text-gray-900'}`}>
+                                    <div className="border-l-4 border-[#394995] pl-6 py-2 transition-all duration-300">
+                                        <h3 className={`text-[clamp(20px,3vw,32px)] font-bold mb-3 ${activeSection === String(section.id) ? 'text-[#394995]' : 'text-gray-900'}`}>
                                             {section.header || section.title}
                                         </h3>
                                         <p className="text-gray-600 text-lg mb-[clamp(15px,3vw,24px)] leading-relaxed">
@@ -177,12 +177,12 @@ export default function AcademicPage({ sections: sectionsProp, resources: resour
                             <a key={cal.id} href={cal.fileUrl || '#'} target="_blank" download rel="noopener noreferrer" className='block w-full h-full mb-4 last:mb-0'>
                                 <div className="bg-white p-[clamp(12px,4vw,26px)] rounded-xl md:shadow-sm border border-gray-100 flex flex-wrap items-center justify-between gap-6">
                                     <div className="flex items-center gap-6">
-                                        <div className="bg-blue-50 p-4 rounded-lg text-[#2857AE] font-bold text-xl max-md:text-sm">
+                                        <div className="bg-blue-50 p-4 rounded-lg text-[#394995] font-bold text-xl max-md:text-sm">
                                             {cal.year}
                                         </div>
                                         <h3 className="text-xl max-md:text-sm font-bold text-gray-900">{cal.label}</h3>
                                     </div>
-                                    <Button variant="outline" className="gap-2 max-xs:w-full cursor-pointer border-gray-300 hover:border-[#2857AE] hover:text-[#2857AE]">
+                                    <Button variant="outline" className="gap-2 max-xs:w-full cursor-pointer border-gray-300 hover:border-[#394995] hover:text-[#394995]">
                                         Télécharger <FileText className="w-4 h-4" />
                                     </Button>
                                 </div>
@@ -192,12 +192,12 @@ export default function AcademicPage({ sections: sectionsProp, resources: resour
                         <a href="#" className='block w-full h-full'>
                             <div className="bg-white p-[clamp(12px,4vw,26px)] rounded-xl md:shadow-sm border border-gray-100 flex flex-wrap items-center justify-between gap-6">
                                 <div className="flex items-center gap-6">
-                                    <div className="bg-blue-50 p-4 rounded-lg text-[#2857AE] font-bold text-xl max-md:text-sm">
+                                    <div className="bg-blue-50 p-4 rounded-lg text-[#394995] font-bold text-xl max-md:text-sm">
                                         —
                                     </div>
                                     <h3 className="text-xl max-md:text-sm font-bold text-gray-900">Calendrier scolaire</h3>
                                 </div>
-                                <Button variant="outline" className="gap-2 max-xs:w-full cursor-pointer border-gray-300 hover:border-[#2857AE] hover:text-[#2857AE]">
+                                <Button variant="outline" className="gap-2 max-xs:w-full cursor-pointer border-gray-300 hover:border-[#394995] hover:text-[#394995]">
                                     Télécharger <FileText className="w-4 h-4" />
                                 </Button>
                             </div>
@@ -224,7 +224,7 @@ export default function AcademicPage({ sections: sectionsProp, resources: resour
                                         >
                                             <div className="flex items-center justify-between py-[clamp(12px,3vw,24px)] border-b border-gray-200 last:border-0 hover:bg-white/50 px-4 rounded-lg max-md:rounded-sm transition-colors cursor-pointer group">
                                                 <span className="text-gray-700 font-medium">{resource.name}</span>
-                                                <div className="flex items-center gap-2 text-[#2857AE] opacity-70 max-md:opacity-100 group-hover:opacity-100 transition-opacity">
+                                                <div className="flex items-center gap-2 text-[#394995] opacity-70 max-md:opacity-100 group-hover:opacity-100 transition-opacity">
                                                     <span className="text-sm font-semibold">Télécharger</span>
                                                     <FileText className="w-5 h-5" />
                                                 </div>

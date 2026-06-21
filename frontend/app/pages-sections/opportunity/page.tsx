@@ -47,7 +47,7 @@ export default function OpportunitiesPage({ opportunities = [] }: OpportunitiesP
         <div className="container px-5 md:px-[clamp(20px,5vw,60px)] mx-auto max-w-[1920px]">
           <div className="mb-[clamp(30px,4vw,50px)]">
             <div className="flex items-center gap-4 mb-6">
-              <div className="h-12 w-1 bg-[#2857AE]"></div>
+              <div className="h-12 w-1 bg-[#394995]"></div>
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
                 {opportunities?.[0]?.header || "Check the latest Opportunities"}
               </h2>
@@ -103,7 +103,7 @@ export default function OpportunitiesPage({ opportunities = [] }: OpportunitiesP
                         </div>
 
                         <div>
-                          <Button className="bg-[#2857AE] hover:bg-[#1e408a] cursor-pointer lg:hover:bg-secondary duration-500 lg:hover:text-primary border border-primary/0 lg:hover:border-primary rounded-full px-8">
+                          <Button className="bg-[#394995] hover:bg-[#1e408a] cursor-pointer lg:hover:bg-secondary duration-500 lg:hover:text-primary border border-primary/0 lg:hover:border-primary rounded-full px-8">
                             Voir les détails
                           </Button>
                         </div>

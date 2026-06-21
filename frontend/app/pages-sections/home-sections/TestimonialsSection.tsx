@@ -60,7 +60,7 @@ export default function TestimonialsSection({ testimonials: testimonialsProp }: 
                 {/* Header Section */}
                 <div className="testimonial-header flex flex-col lg:flex-row justify-between items-start lg:items-end mb-16 max-md:mb-6 gap-8 max-md:gap-5">
                     <div>
-                        <h2 className="text-[clamp(30px,4vw,50px)] font-bold text-[#2857AE] mb-2 leading-tight">
+                        <h2 className="text-[clamp(30px,4vw,50px)] font-bold text-[#394995] mb-2 leading-tight">
                             Témoignages
                         </h2>
                         <h3 className="text-xl max-md:[&_br]:hidden md:text-2xl text-black font-medium">
@@ -86,10 +86,10 @@ export default function TestimonialsSection({ testimonials: testimonialsProp }: 
                                 key={`${testimonial.id}-${index}`}
                                 className="shrink-0 w-[400px] md:w-[450px] testimonial-card-anim"
                             >
-                                <div className="testimonial-card bg-[#2857AE] text-white rounded-3xl p-8 flex flex-col h-full shadow-lg transition-transform duration-300 hover:-translate-y-2 h-[400px]">
+                                <div className="testimonial-card bg-[#394995] text-white rounded-3xl p-8 flex flex-col h-full shadow-lg transition-transform duration-300 hover:-translate-y-2 h-[400px]">
                                     {/* Tag */}
                                     <div className="mb-6">
-                                        <span className="bg-white text-[#2857AE] px-3 py-1 rounded text-sm font-bold uppercase tracking-wider inline-block">
+                                        <span className="bg-white text-[#394995] px-3 py-1 rounded text-sm font-bold uppercase tracking-wider inline-block">
                                             {testimonial.type}
                                         </span>
                                     </div>

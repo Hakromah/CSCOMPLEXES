@@ -201,7 +201,7 @@ export default function LoginPage() {
                      
                      <Button 
                         type="submit" 
-                        className="w-full py-6 rounded-xl bg-[#2857AE] hover:bg-[#356ad0] text-white font-bold text-base mt-8 transition-all shadow-[0_0_20px_rgba(40,87,174,0.4)] hover:shadow-[0_0_30px_rgba(40,87,174,0.6)] cursor-pointer" 
+                        className="w-full py-6 rounded-xl bg-[#394995] hover:bg-[#356ad0] text-white font-bold text-base mt-8 transition-all shadow-[0_0_20px_rgba(40,87,174,0.4)] hover:shadow-[0_0_30px_rgba(40,87,174,0.6)] cursor-pointer" 
                         disabled={isLoading}
                      >
                         {isLoading ? (

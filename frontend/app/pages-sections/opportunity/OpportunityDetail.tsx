@@ -123,9 +123,12 @@ export default function OpportunityDetail({
                   </Button>
                 </a>
               ) : (
-                <Button disabled className="w-full bg-primary/50 py-6 text-lg cursor-not-allowed">
-                  Faire une demande
-                </Button>
+                  <a href="/contact" rel="noreferrer" className="w-full block">
+                  <Button className="w-full bg-primary hover:bg-[#1e408a] py-6 text-lg shadow-blue-500 shadow-xl">
+                    Faire une demande
+                  </Button>
+                </a>
+               
               )}
 
 
