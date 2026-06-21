@@ -168,7 +168,7 @@ export default function ContactPage({ contactInfo, mapSetting }: ContactPageProp
                     </div>
 
                     {/* Bottom Section: Connect & Map */}
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 md:gap-12 gap-5 items-center">
                         {/* Connect With Us */}
                         <div className="space-y-8">
                             <div>
@@ -279,7 +279,7 @@ export default function ContactPage({ contactInfo, mapSetting }: ContactPageProp
                         </div>
 
                         {/* Map Section */}
-                        <div className="bg-blue-50 rounded-3xl h-[400px] w-full relative overflow-hidden flex items-center justify-center border border-blue-100 z-0">
+                        <div className="bg-blue-50 rounded-3xl h-[400px] max-xs:h-[300px] w-full relative overflow-hidden flex items-center justify-center border border-blue-100 z-0">
                             <Map lat={contactInfo?.latitude} lng={contactInfo?.longitude} mapSetting={mapSetting} />
                         </div>
                     </div>

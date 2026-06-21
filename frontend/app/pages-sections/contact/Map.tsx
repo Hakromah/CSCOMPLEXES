@@ -80,7 +80,7 @@ export default function Map({ lat, lng, mapSetting }: MapProps) {
             center={position}
             zoom={zoomLevel}
             scrollWheelZoom={false}
-            className="h-full w-full rounded-3xl"
+            className="h-full w-full md:rounded-3xl max-md:rounded-md"
             style={{ height: '100%', width: '100%' }}
             zoomControl={true}
         >
