@@ -121,7 +121,7 @@ export default function LoginPage() {
          {/* Full Screen Background Image */}
          <div className="absolute inset-0 z-0">
             <Image
-               src="/login-hero.png"
+               src="/students.webp"
                alt="Background"
                fill
                className="object-cover"
@@ -129,17 +129,7 @@ export default function LoginPage() {
                unoptimized
             />
             {/* Dark Overlay for better contrast */}
-            <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px]"></div>
-         </div>
-
-         {/* Back button */}
-         <div className="absolute top-6 left-6 z-20">
-            <Link href="/">
-               <Button variant="ghost" className="text-white hover:bg-white/10 group backdrop-blur-sm">
-                  <ArrowLeft className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" />
-                  Retour à l'accueil
-               </Button>
-            </Link>
+            <div className="absolute inset-0 bg-black/0 "></div>
          </div>
 
          {/* Centered Glassmorphism Card */}
@@ -185,9 +175,6 @@ export default function LoginPage() {
                            <FormItem>
                               <div className="flex items-center justify-between ml-1">
                                  <FormLabel className="text-gray-200 font-medium">Mot de passe</FormLabel>
-                                 <Link href="#" className="text-sm text-blue-300 hover:text-blue-200 hover:underline transition-colors">
-                                    Mot de passe oublié ?
-                                 </Link>
                               </div>
                               <FormControl>
                                  <Input 
