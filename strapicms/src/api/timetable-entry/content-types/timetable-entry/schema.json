@@ -33,6 +33,11 @@
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::subject.subject"
+    },
+    "teacher": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
     }
   }
 }

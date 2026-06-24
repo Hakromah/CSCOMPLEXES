@@ -243,4 +243,73 @@ export default {
 
     ctx.body = await strapi.service('api::school-admin.school-admin').getStudentTranscript(studentId, filters);
   },
+
+  async getMySalary(ctx: any) {
+    const user = ctx.state.user;
+    if (!user || user.schoolRole !== 'TEACHER') return ctx.unauthorized('Access denied');
+    const records = await strapi.entityService.findMany('api::salary-record.salary-record' as any, {
+      filters: { staff: { id: user.id } },
+      sort: [{ year: 'desc' }, { month: 'desc' }],
+    });
+    ctx.body = records;
+  },
+
+  async getMyEvents(ctx: any) {
+    const user = ctx.state.user;
+    if (!user || user.schoolRole !== 'TEACHER') return ctx.unauthorized('Access denied');
+    const events = await strapi.entityService.findMany('api::school-event.school-event' as any, {
+      filters: {
+        $or: [
+          { targetAudience: 'ALL' },
+          { targetAudience: 'STAFF' },
+        ],
+        isPublished: true,
+      },
+      sort: [{ startDate: 'asc' }],
+    });
+    ctx.body = events;
+  },
+
+  async getMyNotifications(ctx: any) {
+    const user = ctx.state.user;
+    if (!user || user.schoolRole !== 'TEACHER') return ctx.unauthorized('Access denied');
+    const notifications = await strapi.entityService.findMany('api::school-notification.school-notification' as any, {
+      filters: { recipient: { id: user.id } },
+      sort: [{ createdAt: 'desc' }],
+    });
+    ctx.body = notifications;
+  },
+
+  async importAttendanceCsv(ctx: any) {
+    const user = ctx.state.user;
+    if (!user || user.schoolRole !== 'TEACHER') return ctx.unauthorized('Access denied');
+    const { classId, date, sessionTime, subjectId, notes, records } = ctx.request.body;
+    
+    if (!classId || !date || !records || !Array.isArray(records)) {
+      ctx.status = 400;
+      return (ctx.body = { error: 'classId, date, and records array are required' });
+    }
+
+    // Verify this teacher belongs to this class
+    const cls = await strapi.entityService.findOne('api::school-class.school-class' as any, classId, {
+      populate: ['teachers'],
+    }) as any;
+    if (!cls) return ctx.notFound('Class not found');
+    const isTeacher = (cls.teachers || []).some((t: any) => t.id === user.id);
+    if (!isTeacher) return ctx.forbidden('Unauthorized: not your class');
+
+    await strapi.service('api::school-teacher.school-teacher').submitAttendance({
+      classId: Number(classId),
+      date,
+      sessionTime,
+      subjectId: subjectId ? Number(subjectId) : undefined,
+      notes,
+      records: records.map((r: any) => ({
+        studentId: Number(r.studentId),
+        status: r.status,
+      })),
+    });
+
+    ctx.body = { message: 'Attendance imported successfully' };
+  },
 };

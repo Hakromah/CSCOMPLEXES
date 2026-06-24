@@ -1,0 +1,37 @@
+{
+  "kind": "collectionType",
+  "collectionName": "parent_student_relations",
+  "info": {
+    "singularName": "parent-student-relation",
+    "pluralName": "parent-student-relations",
+    "displayName": "ParentStudentRelation"
+  },
+  "options": { "draftAndPublish": false },
+  "attributes": {
+    "parent": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "student": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "family": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::family.family"
+    },
+    "relationship": {
+      "type": "enumeration",
+      "enum": ["FATHER", "MOTHER", "GUARDIAN", "UNCLE", "AUNT", "GRANDPARENT", "OTHER"],
+      "required": true
+    },
+    "isPrimary": { "type": "boolean", "default": false },
+    "canPickup": { "type": "boolean", "default": true },
+    "canViewFinance": { "type": "boolean", "default": true },
+    "canViewAcademics": { "type": "boolean", "default": true },
+    "notes": { "type": "text" }
+  }
+}

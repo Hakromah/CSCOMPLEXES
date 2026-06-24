@@ -7,7 +7,7 @@ import {
   Users, School, BookOpen, FileText,
   TrendingUp, ShieldCheck, Briefcase,
   GraduationCap, Download, RefreshCcw,
-  PieChart, Activity, Loader2
+  PieChart as LucidePieChart, Activity, Loader2
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
@@ -15,6 +15,22 @@ import api from '@/lib/api';
 
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import { SCHOOL_CONFIG } from '@/lib/school-config';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Cell,
+  PieChart as RechartsPieChart,
+  Pie,
+  Legend
+} from 'recharts';
 
 interface ReportDTO {
   totalStudents: number;
@@ -28,7 +44,7 @@ interface ReportDTO {
 export default function ReportsPage() {
   const [report, setReport] = useState<ReportDTO | null>(null);
   const [loading, setLoading] = useState(true);
-  const [currentYear, setCurrentYear] = useState <number | string> ('');
+  const [currentYear, setCurrentYear] = useState<number | string>('');
 
   const fetchReport = async () => {
     setLoading(true);
@@ -45,8 +61,91 @@ export default function ReportsPage() {
 
   useEffect(() => { fetchReport(); }, []);
   useEffect(() => {
-    setCurrentYear(new Date().getFullYear())
+    setCurrentYear(new Date().getFullYear());
   }, []);
+
+  const exportPDF = () => {
+    if (!report) return;
+    try {
+      const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+      const pageW = doc.internal.pageSize.getWidth();
+
+      // Header
+      doc.setFillColor(15, 23, 42); // slate-900
+      doc.rect(0, 0, pageW, 40, 'F');
+
+      doc.setTextColor(255, 255, 255);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(18);
+      doc.text(SCHOOL_CONFIG.name, 15, 15);
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+      doc.text(SCHOOL_CONFIG.address || '', 15, 22);
+      doc.text(`Contact: ${SCHOOL_CONFIG.contact || ''}`, 15, 28);
+
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(11);
+      doc.text('RAPPORT DE L\'INTELLIGENCE INSTITUTIONNELLE', pageW - 15, 16, { align: 'right' });
+      doc.setFontSize(8);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Date: ${new Date().toLocaleDateString()}`, pageW - 15, 22, { align: 'right' });
+
+      // Blue divider
+      doc.setFillColor(37, 99, 235);
+      doc.rect(0, 40, pageW, 1.5, 'F');
+
+      // Title
+      doc.setTextColor(15, 23, 42);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(14);
+      doc.text('Résumé exécutif et aperçu des indicateurs', 15, 55);
+
+      // Info Table
+      autoTable(doc, {
+        startY: 62,
+        head: [['Indicateur de mesure', 'Nombre / Valeur', 'Classification']],
+        body: [
+          ['Total des étudiants actifs', report.totalStudents.toLocaleString(), 'Capital humain - Apprenants'],
+          ['Corps enseignant / Instructeurs', report.totalTeachers.toLocaleString(), 'Capital humain - Éducateurs'],
+          ['Administrateurs du système', report.totalAdmins.toLocaleString(), 'Gouvernance et Opérations'],
+          ['Classes actives / Groupes', report.totalClasses.toLocaleString(), 'Capacité structurelle'],
+          ['Examens académiques / Évaluations', report.totalExams.toLocaleString(), 'Assurance qualité'],
+          ['Catalogue des cours / Matières', report.totalSubjects.toLocaleString(), 'Actifs éducatifs'],
+          ['Total des comptes système gérés', (report.totalStudents + report.totalTeachers + report.totalAdmins).toLocaleString(), 'Base totale de l\'effectif'],
+        ],
+        styles: { fontSize: 9, cellPadding: 4 },
+        headStyles: { fillColor: [15, 23, 42], textColor: [255, 255, 255] },
+        alternateRowStyles: { fillColor: [248, 250, 252] },
+      });
+
+      // Signature section
+      const finalY = (doc as any).lastAutoTable.finalY + 25;
+      doc.setDrawColor(226, 232, 240);
+      doc.line(15, finalY, 75, finalY);
+      doc.line(pageW - 75, finalY, pageW - 15, finalY);
+
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(8);
+      doc.setTextColor(100, 116, 139);
+      doc.text('Bureau du registraire', 15, finalY + 5);
+      doc.text('Responsable des opérations système', pageW - 15, finalY + 5, { align: 'right' });
+
+      // Footer
+      const pageH = doc.internal.pageSize.getHeight();
+      doc.setFillColor(248, 250, 252);
+      doc.rect(0, pageH - 12, pageW, 12, 'F');
+      doc.setFontSize(7);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`${SCHOOL_CONFIG.name} — Document interne confidentiel`, pageW / 2, pageH - 5, { align: 'center' });
+
+      doc.save(`rapport-intelligence-institutionnelle-${new Date().toISOString().split('T')[0]}.pdf`);
+      toast.success('Rapport PDF exporté avec succès');
+    } catch (e) {
+      console.error(e);
+      toast.error('Échec de l\'exportation du PDF');
+    }
+  };
 
   if (loading) return (
     <div className="h-screen flex flex-col items-center justify-center gap-4 bg-[#f8fafc]">
@@ -56,6 +155,18 @@ export default function ReportsPage() {
       </p>
     </div>
   );
+
+  const humanCapitalData = [
+    { name: 'Étudiants', value: report?.totalStudents || 0, color: '#3b82f6' },
+    { name: 'Enseignants', value: report?.totalTeachers || 0, color: '#f59e0b' },
+    { name: 'Admins', value: report?.totalAdmins || 0, color: '#f43f5e' },
+  ];
+
+  const structuralData = [
+    { name: 'Classes', count: report?.totalClasses || 0 },
+    { name: 'Examens', count: report?.totalExams || 0 },
+    { name: 'Matières', count: report?.totalSubjects || 0 },
+  ];
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] p-[clamp(1.2rem,2vw+1rem,2rem)] lg:p-[clamp(1.2rem,2vw+1rem,2rem)] space-y-[clamp(1rem,2vw+1rem,2rem)]">
@@ -74,11 +185,11 @@ export default function ReportsPage() {
           <Button
             onClick={fetchReport}
             variant="outline"
-            className="rounded-[clamp(1.2rem,2vw+1rem,2rem)] h-14 w-14 p-0 border-slate-200 bg-white hover:bg-slate-50 transition-all"
+            className="rounded-[clamp(1.2rem,2vw+1rem,2rem)] h-14 w-14 p-0 border-slate-200 bg-white hover:bg-slate-50 transition-all cursor-pointer"
           >
             <RefreshCcw size={20} className="text-slate-600" />
           </Button>
-          <Button className="bg-slate-900 hover:bg-blue-600 text-white rounded-[clamp(1.2rem,2vw+1rem,2rem)] h-14 px-8 font-black transition-all shadow-xl shadow-slate-200">
+          <Button onClick={exportPDF} className="bg-slate-900 hover:bg-blue-600 text-white rounded-[clamp(1.2rem,2vw+1rem,2rem)] h-14 px-8 font-black transition-all shadow-xl shadow-slate-200 cursor-pointer">
             <Download size={20} className="mr-2" /> EXPORTER LES RAPPORTS
           </Button>
         </div>
@@ -89,7 +200,7 @@ export default function ReportsPage() {
         {/* Section 1: Human Capital */}
         <div className="space-y-[clamp(0rem,2vw+1rem,2rem)]">
           <div className="flex items-center gap-3 px-2">
-            <PieChart className="text-slate-400" size={20} />
+            <LucidePieChart className="text-slate-400" size={20} />
             <h2 className="text-sm font-black uppercase tracking-widest text-slate-400">Indice du capital humain</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -117,7 +228,62 @@ export default function ReportsPage() {
           </div>
         </div>
 
-        {/* Section 2: Structural & Academic Assets */}
+        {/* Section 2: Recharts Visualizations */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Human Capital Distribution */}
+          <div className="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm flex flex-col justify-between">
+            <div className="mb-4">
+              <h3 className="text-sm font-black uppercase tracking-widest text-slate-900">Ratio de l'effectif</h3>
+              <p className="text-xs font-bold text-slate-400">Distribution proportionnelle des membres de l'école</p>
+            </div>
+            <div className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <RechartsPieChart>
+                  <Pie
+                    data={humanCapitalData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={80}
+                    paddingAngle={5}
+                    dataKey="value"
+                  >
+                    {humanCapitalData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip formatter={(value) => [value, 'Comptes']} />
+                  <Legend verticalAlign="bottom" height={36} />
+                </RechartsPieChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          {/* Academic & Structural Assets */}
+          <div className="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm flex flex-col justify-between">
+            <div className="mb-4">
+              <h3 className="text-sm font-black uppercase tracking-widest text-slate-900">Charge d'actifs académiques</h3>
+              <p className="text-xs font-bold text-slate-400">Comparaison d'inventaire des classes, examens et matières</p>
+            </div>
+            <div className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={structuralData} margin={{ top: 20, right: 20, left: -20, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                  <XAxis dataKey="name" tick={{ fontSize: 10, fontWeight: 'bold', fill: '#64748b' }} />
+                  <YAxis tick={{ fontSize: 10, fontWeight: 'bold', fill: '#64748b' }} />
+                  <Tooltip />
+                  <Bar dataKey="count" fill="#3b82f6" radius={[8, 8, 0, 0]}>
+                    <Cell fill="#6366f1" />
+                    <Cell fill="#3b82f6" />
+                    <Cell fill="#10b981" />
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </div>
+
+        {/* Section 3: Structural Capacity */}
         <div className="space-y-6">
           <div className="flex items-center gap-3 px-2">
             <Activity className="text-slate-400" size={20} />
@@ -141,7 +307,7 @@ export default function ReportsPage() {
                 <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Évaluations académiques</p>
                 <h3 className="text-5xl font-black text-slate-900 tracking-tighter italic">{report?.totalExams}</h3>
               </div>
-              <Badge className="w-fit bg-blue-100 text-primary border-none mt-6 font-black text-[9px] tracking-widest">SESSION {currentYear || '2026'}  ACTIVE</Badge>
+              <Badge className="w-fit bg-blue-100 text-primary border-none mt-6 font-black text-[9px] tracking-widest">SESSION {currentYear || '2026'} ACTIVE</Badge>
             </div>
 
             <div className="bg-white rounded-[3rem] p-10 shadow-sm border border-slate-100 md:hover:border-primary duration-500 transition-colors flex flex-col justify-between">
@@ -164,7 +330,7 @@ export default function ReportsPage() {
               <Users size={32} />
             </div>
             <div>
-              <p className="text-2xl font-black italic tracking-tighter leading-none">Ensembles des comptes gérés par la plateforme</p>
+              <p className="text-2xl font-black italic tracking-tighter leading-none">Ensemble des comptes gérés par la plateforme</p>
               <p className="text-sm font-bold opacity-80 mt-1">Ensemble total des comptes gérés par la plateforme</p>
             </div>
           </div>

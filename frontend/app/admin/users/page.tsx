@@ -8,7 +8,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
    Search, UserPlus, MoreVertical, UserCog, Trash2, ShieldCheck,
-   User, Mail, Fingerprint, Calendar as CalendarIcon, MapPin,
+   User, Users, Mail, Fingerprint, Calendar as CalendarIcon, MapPin,
    Phone, Globe, Info, Loader2, Edit, FileUp, Download,
    AlertCircle, Home, LayoutDashboard, PieChart, Activity,
    Bus, Briefcase, Landmark
@@ -41,7 +41,7 @@ const userFormSchema = z.object({
    name: z.string().min(1, 'Name is required'),
    email: z.string().email('Invalid email'),
    password: z.string().min(6, 'Min 6 characters'),
-   role: z.enum(['STUDENT', 'TEACHER', 'ADMIN', 'ACCOUNTANT', 'ACCOUNTLEAD', 'DRIVER', 'WORKER']),
+   role: z.enum(['STUDENT', 'TEACHER', 'ADMIN', 'ACCOUNTANT', 'ACCOUNTLEAD', 'DRIVER', 'WORKER', 'PARENT']),
    birthDate: z.string().optional(),
    birthCountry: z.string().optional(),
    birthCity: z.string().optional(),
@@ -261,7 +261,8 @@ export default function UserManagement() {
          ACCOUNTANT: "bg-purple-600 hover:bg-purple-700",
          ACCOUNTLEAD: "bg-violet-600 hover:bg-violet-700",
          DRIVER: "bg-indigo-600 hover:bg-indigo-700",
-         WORKER: "bg-slate-700 hover:bg-slate-800"
+         WORKER: "bg-slate-700 hover:bg-slate-800",
+         PARENT: "bg-rose-500 hover:bg-rose-600"
       };
 
       return (
@@ -269,6 +270,7 @@ export default function UserManagement() {
             {role === 'ADMIN' && <ShieldCheck size={10} />}
             {role === 'TEACHER' && <UserCog size={10} />}
             {role === 'STUDENT' && <User size={10} />}
+            {role === 'PARENT' && <Users size={10} />}
             {(role === 'ACCOUNTANT' || role === 'ACCOUNTLEAD') && <Landmark size={10} />}
             {role === 'DRIVER' && <Bus size={10} />}
             {role === 'WORKER' && <Briefcase size={10} />}
@@ -410,9 +412,9 @@ export default function UserManagement() {
                      <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
                      <Input placeholder="Rechercher dans le registre par nom, e-mail ou identifiant biométrique..." className="pl-12 h-12 bg-slate-50 border-none rounded-xl focus-visible:ring-2 focus-visible:ring-blue-600 font-medium" value={search} onChange={(e) => setSearch(e.target.value)} />
                   </div>
-                  <div className="flex p-1 bg-slate-100 rounded-2xl gap-1">
-                     {['ALL', 'ADMIN', 'TEACHER', 'STUDENT', 'ACCOUNTANT', 'ACCOUNTLEAD', 'DRIVER', 'WORKER'].map((role) => (
-                        <Button key={role} variant="ghost" size="sm" onClick={() => setRoleFilter(role)} className={`rounded-xl h-10 px-5 font-black uppercase text-[10px] tracking-widest transition-all ${roleFilter === role ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500'}`}>{role}</Button>
+                  <div className="flex p-1 bg-slate-100 rounded-2xl gap-1 overflow-x-auto max-w-full">
+                     {['ALL', 'ADMIN', 'TEACHER', 'STUDENT', 'PARENT', 'ACCOUNTANT', 'ACCOUNTLEAD', 'DRIVER', 'WORKER'].map((role) => (
+                        <Button key={role} variant="ghost" size="sm" onClick={() => setRoleFilter(role)} className={`rounded-xl h-10 px-5 font-black uppercase text-[10px] tracking-widest transition-all shrink-0 ${roleFilter === role ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500'}`}>{role}</Button>
                      ))}
                   </div>
                </div>
@@ -560,6 +562,7 @@ export default function UserManagement() {
                                        <SelectItem value="STUDENT">Élève</SelectItem>
                                        <SelectItem value="TEACHER">Enseignant</SelectItem>
                                        <SelectItem value="ADMIN">Admin</SelectItem>
+                                       <SelectItem value="PARENT">Parent</SelectItem>
                                        <SelectItem value="ACCOUNTANT">Comptable</SelectItem>
                                        <SelectItem value="ACCOUNTLEAD">Chef Comptable</SelectItem>
                                        <SelectItem value="DRIVER">Chauffeur</SelectItem>

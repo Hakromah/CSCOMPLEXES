@@ -355,7 +355,7 @@ export default () => ({
 
     return strapi.entityService.findMany('api::timetable-entry.timetable-entry', {
       filters: { classe: { id: { $in: classIds } } },
-      populate: ['classe', 'subject'],
+      populate: ['classe', 'subject', 'teacher'],
       sort: [{ dayOfWeek: 'asc' }, { startTime: 'asc' }],
     });
   },

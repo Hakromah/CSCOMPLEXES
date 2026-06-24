@@ -1,0 +1,38 @@
+{
+  "kind": "collectionType",
+  "collectionName": "school_notifications",
+  "info": {
+    "singularName": "school-notification",
+    "pluralName": "school-notifications",
+    "displayName": "SchoolNotification"
+  },
+  "options": { "draftAndPublish": false },
+  "attributes": {
+    "title": { "type": "string", "required": true },
+    "body": { "type": "text", "required": true },
+    "type": {
+      "type": "enumeration",
+      "enum": ["ATTENDANCE", "FEE_REMINDER", "PAYMENT", "EXAM_RESULT", "HOMEWORK", "ANNOUNCEMENT", "EVENT", "BEHAVIOR", "SALARY", "GENERAL"],
+      "default": "GENERAL"
+    },
+    "priority": {
+      "type": "enumeration",
+      "enum": ["LOW", "NORMAL", "HIGH", "URGENT"],
+      "default": "NORMAL"
+    },
+    "recipient": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "sender": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "isRead": { "type": "boolean", "default": false },
+    "readAt": { "type": "datetime" },
+    "actionUrl": { "type": "string" },
+    "metadata": { "type": "json" }
+  }
+}

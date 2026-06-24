@@ -10,12 +10,16 @@ import {
   Info,
   Loader2,
   ArrowRight,
-  GraduationCap
+  GraduationCap,
+  Download,
+  User
 } from 'lucide-react';
 import api from '@/lib/api';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
+import { generateTimetable } from '@/lib/pdf-generator';
 
 const DAYS = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY'];
 
@@ -41,6 +45,7 @@ interface TimetableEntry {
 
 export default function UserTimetablePage() {
   const [timetable, setTimetable] = useState<TimetableEntry[]>([]);
+  const [teacherName, setTeacherName] = useState('Enseignant');
   const [loading, setLoading] = useState(true);
 
   // FIXED: Correct TypeScript implementation for uppercase weekday
@@ -52,9 +57,12 @@ export default function UserTimetablePage() {
   useEffect(() => {
     const fetchTimetable = async () => {
       try {
-        // The endpoint should be specific to the role (e.g., /teacher/timetables)
-        const response = await api.get('/teacher/timetables');
-        setTimetable(Array.isArray(response.data) ? response.data : []);
+        const [timetableRes, userRes] = await Promise.all([
+          api.get('/teacher/timetables'),
+          api.get('/auth/me')
+        ]);
+        setTimetable(Array.isArray(timetableRes.data) ? timetableRes.data : []);
+        setTeacherName(userRes.data?.name || userRes.data?.username || 'Enseignant');
       } catch (error) {
         console.error("Schedule Fetch Error:", error);
       } finally {
@@ -63,6 +71,31 @@ export default function UserTimetablePage() {
     };
     fetchTimetable();
   }, []);
+
+  const handleExportPDF = () => {
+    if (timetable.length === 0) {
+      toast.error('Aucune donnée d\'emploi du temps à exporter');
+      return;
+    }
+    try {
+      const timetableData: any = {
+        className: `Emploi du temps : ${teacherName}`,
+        entries: timetable.map(item => ({
+          day: DAY_LABELS[item.dayOfWeek] || item.dayOfWeek,
+          startTime: item.startTime,
+          endTime: item.endTime,
+          subject: `${item.subject?.name} (${item.classe?.name})`,
+          teacher: teacherName
+        }))
+      };
+      const doc = generateTimetable(timetableData);
+      doc.save(`emploi-du-temps-${teacherName.toLowerCase().replace(/\s+/g, '-')}.pdf`);
+      toast.success('Emploi du temps exporté en PDF avec succès');
+    } catch (err) {
+      console.error(err);
+      toast.error('Échec de l\'exportation de l\'emploi du temps en PDF');
+    }
+  };
 
   // Filter and Sort: Ensure classes are ordered by time
   const filteredSchedule = timetable
@@ -91,13 +124,21 @@ export default function UserTimetablePage() {
           </h1>
         </div>
 
-        <div className="flex items-center gap-4 bg-white p-4 rounded-[clamp(1.3rem,1vw+0.5rem,2rem)] shadow-sm border border-primary/0 lg:hover:border-primary duration-300">
-          <div className="w-10 h-10 bg-blue-50 rounded-[clamp(1.3rem,1vw+0.5rem,2rem)] flex items-center justify-center text-primary">
-            <Calendar size={20} />
-          </div>
-          <div>
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Date d&apos;aujourd&apos;hui</p>
-            <p className="font-bold text-slate-700">{new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}</p>
+        <div className="flex items-center gap-4">
+          <Button
+            onClick={handleExportPDF}
+            className="bg-slate-900 hover:bg-blue-600 text-white rounded-[clamp(1.3rem,1vw+0.5rem,2rem)] h-14 px-6 font-black transition-all cursor-pointer shadow-md"
+          >
+            <Download size={16} className="mr-2" /> Exporter PDF
+          </Button>
+          <div className="flex items-center gap-4 bg-white p-4 rounded-[clamp(1.3rem,1vw+0.5rem,2rem)] shadow-sm border border-slate-100">
+            <div className="w-10 h-10 bg-blue-50 rounded-[clamp(1.3rem,1vw+0.5rem,2rem)] flex items-center justify-center text-primary">
+              <Calendar size={20} />
+            </div>
+            <div>
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Date d&apos;aujourd&apos;hui</p>
+              <p className="font-bold text-slate-700">{new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}</p>
+            </div>
           </div>
         </div>
       </header>

@@ -1,0 +1,39 @@
+{
+  "kind": "collectionType",
+  "collectionName": "school_events",
+  "info": {
+    "singularName": "school-event",
+    "pluralName": "school-events",
+    "displayName": "SchoolEvent"
+  },
+  "options": { "draftAndPublish": false },
+  "attributes": {
+    "title": { "type": "string", "required": true },
+    "description": { "type": "text" },
+    "type": {
+      "type": "enumeration",
+      "enum": ["ACADEMIC", "EXAM", "HOLIDAY", "MEETING", "SPORTS", "CULTURAL", "TRIP", "OTHER"],
+      "required": true
+    },
+    "startDate": { "type": "datetime", "required": true },
+    "endDate": { "type": "datetime" },
+    "location": { "type": "string" },
+    "targetAudience": {
+      "type": "enumeration",
+      "enum": ["ALL", "STUDENTS", "PARENTS", "STAFF", "CLASS"],
+      "default": "ALL"
+    },
+    "targetClass": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::school-class.school-class"
+    },
+    "requiresConfirmation": { "type": "boolean", "default": false },
+    "isPublished": { "type": "boolean", "default": false },
+    "createdBy": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    }
+  }
+}

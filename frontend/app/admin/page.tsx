@@ -2,12 +2,15 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import {
   Users, School, BookOpen, FileText, UserCog,
   BarChart3, ShieldCheck, Activity, ArrowUpRight,
-  TrendingUp, Globe, Database
+  TrendingUp, Globe, Database, Bell, Radio, Bus,
+  Calendar as CalendarIcon, UserCheck, ShieldAlert
 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import api from '@/lib/api';
@@ -27,6 +30,8 @@ interface ReportDTO {
 
 export default function AdminDashboard() {
   const [report, setReport] = useState<ReportDTO | null>(null);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [recentLogs, setRecentLogs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   // State to hold the dynamic semester text to prevent hydration mismatches
@@ -58,10 +63,21 @@ export default function AdminDashboard() {
   };
 
   useEffect(() => {
-    const fetchReport = async () => {
+    const fetchDashboardData = async () => {
       try {
-        const response = await api.get('/admin/reports/summary');
-        setReport(response.data);
+        const [reportRes, unreadRes, logsRes] = await Promise.all([
+          api.get('/admin/reports/summary'),
+          api.get('/notifications/unread-count').catch(() => ({ data: { count: 0 } })),
+          api.get('/school-finance/audit-logs').catch(() => ({ data: [] }))
+        ]);
+        setReport(reportRes.data);
+        setUnreadCount(unreadRes.data?.count || 0);
+        
+        // Take last 5 logs sorted by date
+        const sortedLogs = (logsRes.data || []).sort((a: any, b: any) =>
+          new Date(b.timestamp || b.createdAt).getTime() - new Date(a.timestamp || a.createdAt).getTime()
+        ).slice(0, 5);
+        setRecentLogs(sortedLogs);
         setSemesterText(getDynamicSemester());
       } catch (error) {
         toast.error('Données administratives non synchronisées.');
@@ -69,8 +85,7 @@ export default function AdminDashboard() {
         setLoading(false);
       }
     };
-    fetchReport();
-
+    fetchDashboardData();
   }, []);
 
 
@@ -102,7 +117,15 @@ export default function AdminDashboard() {
           <p className="text-slate-500 font-medium">Tableau de bord administratif • <span className="text-emerald-500">Actif</span> • {semesterText || 'Chargement...'}</p>
         </motion.div>
 
-        <div className="flex gap-3">
+        <div className="flex items-center gap-4">
+          <a href="/admin/notifications" className="relative p-2.5 bg-white hover:bg-slate-50 border border-slate-200 rounded-2xl shadow-sm text-slate-700 transition-colors">
+            <Bell size={20} />
+            {unreadCount > 0 && (
+              <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center text-[10px] font-black animate-bounce">
+                {unreadCount}
+              </span>
+            )}
+          </a>
           <div className="flex items-center gap-2 px-4 py-2 bg-white text-slate-700 rounded-2xl border border-slate-200 shadow-sm font-bold text-sm">
             <Globe className="w-4 h-4 text-blue-500" /> Système : En ligne
           </div>
@@ -118,6 +141,16 @@ export default function AdminDashboard() {
         <StatCard title="Corps enseignant" value={report?.totalTeachers} icon={UserCog} color="emerald" sub="Corps enseignant" />
         <StatCard title="Classes" value={report?.totalClasses} icon={School} color="amber" sub="Classes actives" />
         <StatCard title="Évaluations" value={report?.totalExams} icon={BookOpen} color="rose" sub="Total des examens" />
+      </div>
+
+      {/* QUICK LINKS GRID */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+        <QuickDashboardLink href="/admin/families" label="Familles" icon={Users} color="blue" />
+        <QuickDashboardLink href="/admin/parents" label="Parents" icon={UserCheck} color="emerald" />
+        <QuickDashboardLink href="/admin/transport" label="Transport" icon={Bus} color="indigo" />
+        <QuickDashboardLink href="/admin/calendar" label="Calendrier" icon={CalendarIcon} color="amber" />
+        <QuickDashboardLink href="/admin/notifications" label="Alertes" icon={Bell} color="rose" />
+        <QuickDashboardLink href="/admin/audit" label="Journal d'audit" icon={Activity} color="violet" />
       </div>
 
       <div className="grid lg:grid-cols-3 gap-[clamp(1.2rem,2vw+1rem,2rem)]">
@@ -186,18 +219,38 @@ export default function AdminDashboard() {
       </div>
 
       <div className="grid md:grid-cols-2 gap-[clamp(1.2rem,2vw+1rem,2rem)]">
-        <Card className="border border-slate-800 py-5 md:hover:border-primary duration-500 transition-colors shadow-2xl overflow-hidden bg-slate-900 rounded-3xl">
-          <CardHeader>
-            <CardTitle className="text-white flex items-center gap-2">
-              <Activity className="w-5 h-5 text-blue-400" />
-              Liens rapides de gestion
-            </CardTitle>
+        {/* LIVE SYSTEM AUDIT TRAIL */}
+        <Card className="border border-slate-100 shadow-sm rounded-3xl overflow-hidden bg-white">
+          <CardHeader className="border-b border-slate-50 p-6 flex flex-row items-center justify-between">
+            <div>
+              <CardTitle className="text-lg font-black uppercase tracking-wider text-slate-800">Journal d'audit en direct</CardTitle>
+              <CardDescription className="text-xs text-slate-400 font-bold uppercase tracking-widest mt-0.5">Enregistreur de mutations d'état</CardDescription>
+            </div>
+            <Activity className="text-slate-400" size={20} />
           </CardHeader>
-          <CardContent className="grid grid-cols-2 gap-4">
-            <QuickAction href="/admin/users" label="Audit utilisateur" color="blue" />
-            <QuickAction href="/admin/timetable" label="Horaires" color="emerald" />
-            <QuickAction href="/admin/reports" label="Analyses" color="amber" />
-            <QuickAction href="/admin/settings" label="Réseau" color="rose" />
+          <CardContent className="p-6">
+            <div className="space-y-4">
+              {recentLogs.length > 0 ? (
+                recentLogs.map((log) => (
+                  <div key={log.id} className="flex items-start justify-between p-3 bg-slate-50 rounded-2xl hover:bg-slate-100/60 duration-300 transition-colors">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <Badge variant="outline" className={`text-[8px] font-black uppercase tracking-wider py-0 ${log.actionType?.includes('CREATE') ? 'text-emerald-600 border-emerald-100 bg-emerald-50/50' : 'text-amber-600 border-amber-100 bg-amber-50/50'}`}>
+                          {log.actionType}
+                        </Badge>
+                        <span className="text-[10px] text-slate-400 font-bold">{new Date(log.timestamp || log.createdAt).toLocaleTimeString()}</span>
+                      </div>
+                      <p className="text-xs font-bold text-slate-800">{log.notes || `${log.entityName} mutation`}</p>
+                    </div>
+                    <span className="text-[10px] text-slate-400 font-black uppercase tracking-wider">
+                      {log.performedBy?.username || 'Système'}
+                    </span>
+                  </div>
+                ))
+              ) : (
+                <p className="text-center py-10 text-slate-400 font-bold uppercase tracking-widest text-xs">Aucune activité récente</p>
+              )}
+            </div>
           </CardContent>
         </Card>
 
@@ -269,6 +322,27 @@ function QuickAction({ href, label, color }: { href: string, label: string, colo
     >
       <ArrowUpRight className={`w-5 h-5 ml-auto transition-all ${colors[color]}`} />
       <span className="text-sm font-bold tracking-tight text-white">{label}</span>
+    </a>
+  );
+}
+
+function QuickDashboardLink({ href, label, icon: Icon, color }: { href: string, label: string, icon: any, color: string }) {
+  const colors: Record<string, string> = {
+    blue: 'text-blue-500 bg-blue-50 border-blue-100 hover:border-blue-300',
+    emerald: 'text-emerald-500 bg-emerald-50 border-emerald-100 hover:border-emerald-300',
+    indigo: 'text-indigo-500 bg-indigo-50 border-indigo-100 hover:border-indigo-300',
+    amber: 'text-amber-500 bg-amber-50 border-amber-100 hover:border-amber-300',
+    rose: 'text-rose-500 bg-rose-50 border-rose-100 hover:border-rose-300',
+    violet: 'text-violet-500 bg-violet-50 border-violet-100 hover:border-violet-300',
+  };
+
+  return (
+    <a
+      href={href}
+      className={`flex flex-col items-center justify-center p-4 border rounded-3xl transition-all duration-300 ${colors[color]} hover:shadow-md`}
+    >
+      <Icon className="w-6 h-6 mb-2" />
+      <span className="text-xs font-bold">{label}</span>
     </a>
   );
 }

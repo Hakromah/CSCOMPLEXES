@@ -31,6 +31,8 @@ export function middleware(request: NextRequest) {
         return NextResponse.redirect(new URL('/teacher', request.url));
       case 'STUDENT':
         return NextResponse.redirect(new URL('/student', request.url));
+      case 'PARENT':
+        return NextResponse.redirect(new URL('/parent', request.url));
       case 'DRIVER':
         return NextResponse.redirect(new URL('/driver', request.url));
       case 'WORKER':
@@ -56,7 +58,11 @@ export function middleware(request: NextRequest) {
       '/admin/assign-teacher',
       '/admin/assign-student',
       '/admin/timetable',
-      '/admin/settings'
+      '/admin/settings',
+      '/admin/attendance',
+      '/admin/results',
+      '/admin/reports',
+      '/admin/transcripts',
     ];
     if (userRole !== 'ADMIN' && adminOnlyPaths.some(p => pathname.startsWith(p))) {
       return NextResponse.redirect(new URL('/admin/finance', request.url));
@@ -75,6 +81,9 @@ export function middleware(request: NextRequest) {
   if (pathname.startsWith('/worker') && userRole !== 'WORKER') {
     return NextResponse.redirect(new URL('/', request.url));
   }
+  if (pathname.startsWith('/parent') && userRole !== 'PARENT') {
+    return NextResponse.redirect(new URL('/', request.url));
+  }
 
   return NextResponse.next();
 }
@@ -86,6 +95,7 @@ export const config = {
     '/admin/:path*',
     '/teacher/:path*',
     '/student/:path*',
+    '/parent/:path*',
     '/driver/:path*',
     '/worker/:path*',
   ],

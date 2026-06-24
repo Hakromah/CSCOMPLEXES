@@ -18,5 +18,10 @@ export default {
     { method: 'GET', path: '/student/transcripts',                        handler: 'school-student.getStudentTranscriptsList' },
     { method: 'GET', path: '/student/transcripts/:id/preview',            handler: 'school-student.previewTranscript' },
     { method: 'GET', path: '/student/dashboard-stats',                    handler: 'school-student.getDashboardStats' },
+    { method: 'GET', path: '/student/finance/invoices',                   handler: 'school-student.getMyInvoices' },
+    { method: 'GET', path: '/student/finance/balance',                    handler: 'school-student.getMyBalance' },
+    { method: 'GET', path: '/student/transport',                          handler: 'school-student.getMyTransport' },
+    { method: 'GET', path: '/student/calendar',                           handler: 'school-student.getMyEvents' },
+    { method: 'GET', path: '/student/notifications',                      handler: 'school-student.getMyNotifications' },
   ],
 };

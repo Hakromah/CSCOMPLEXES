@@ -2,6 +2,7 @@
 'use client';
 
 import { useEffect, useState, useMemo } from 'react';
+import Papa from 'papaparse';
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from '@/components/ui/table';
@@ -198,6 +199,61 @@ export default function TeacherAttendancePage() {
 
   const markAll = (status: AttendanceStatus) =>
     setAttendance(prev => prev.map(a => ({ ...a, status })));
+
+  const handleCsvUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const allowedStatuses: AttendanceStatus[] = ['PRESENT', 'ABSENT', 'LATE', 'EXCUSED', 'SICK'];
+
+    Papa.parse(file, {
+      header: true,
+      skipEmptyLines: true,
+      complete: (results) => {
+        const data = results.data as any[];
+        if (data.length === 0) {
+          toast.error('Le fichier CSV est vide.');
+          return;
+        }
+
+        const firstRow = data[0];
+        const statusKey = Object.keys(firstRow).find(k => k.toLowerCase() === 'status' || k.toLowerCase() === 'statut');
+        const idKey = Object.keys(firstRow).find(k => k.toLowerCase() === 'studentid' || k.toLowerCase() === 'userid' || k.toLowerCase() === 'student id' || k.toLowerCase() === 'user id' || k.toLowerCase() === 'identifiant');
+
+        if (!statusKey || !idKey) {
+          toast.error('Le CSV doit contenir des en-têtes de colonnes pour Student ID/User ID et Status (ou Statut).');
+          return;
+        }
+
+        let matchedCount = 0;
+        const newAttendance = attendance.map(item => {
+          const student = students.find(s => s.id === item.studentId);
+          if (!student) return item;
+
+          const csvRow = data.find(row => {
+            const csvId = String(row[idKey]).trim().toLowerCase();
+            return csvId === String(student.id).toLowerCase() || csvId === String(student.userId).trim().toLowerCase();
+          });
+
+          if (csvRow) {
+            const csvStatus = String(csvRow[statusKey]).trim().toUpperCase() as AttendanceStatus;
+            if (allowedStatuses.includes(csvStatus)) {
+              matchedCount++;
+              return { ...item, status: csvStatus };
+            }
+          }
+          return item;
+        });
+
+        setAttendance(newAttendance);
+        toast.success(`${matchedCount} enregistrements importés avec succès depuis le CSV. Prévisualisez les résultats ci-dessous.`);
+        e.target.value = '';
+      },
+      error: () => {
+        toast.error('Erreur lors de la lecture du fichier CSV.');
+      }
+    });
+  };
 
   // ── Submit / Update ─────────────────────────────────────────────────────────
   const handleSubmit = async () => {
@@ -523,6 +579,18 @@ export default function TeacherAttendancePage() {
               />
             </div>
             <div className="flex gap-2 flex-wrap ml-auto">
+              <Button size="sm" variant="outline"
+                className="rounded-xl gap-1.5 font-bold text-[11px] border-slate-200 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 cursor-pointer"
+                onClick={() => document.getElementById('csv-file-input')?.click()}>
+                <FileEdit size={12} /> Importer CSV
+              </Button>
+              <input
+                id="csv-file-input"
+                type="file"
+                accept=".csv"
+                className="hidden"
+                onChange={handleCsvUpload}
+              />
               <Button size="sm" variant="outline"
                 className="rounded-xl gap-1.5 font-bold text-[11px] border-slate-200 hover:bg-emerald-50 hover:border-emerald-300 hover:text-emerald-700"
                 onClick={() => markAll('PRESENT')}>

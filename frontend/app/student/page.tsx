@@ -26,15 +26,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 
-// Mock data for the chart if backend doesn't provide weekly progress yet
-const attendanceData = [
-  { day: 'Mon', value: 100 },
-  { day: 'Tue', value: 80 },
-  { day: 'Wed', value: 95 },
-  { day: 'Thu', value: 90 },
-  { day: 'Fri', value: 100 },
-];
-
 export default function StudentDashboard() {
   const [stats, setStats] = useState({
     courseCount: 0,
@@ -44,6 +35,13 @@ export default function StudentDashboard() {
     upcomingExam: null as any,
     recentActivity: [] as any[],
   });
+  const [attendanceData, setAttendanceData] = useState<any[]>([
+    { day: 'Lun', value: 100 },
+    { day: 'Mar', value: 100 },
+    { day: 'Mer', value: 100 },
+    { day: 'Jeu', value: 100 },
+    { day: 'Ven', value: 100 },
+  ]);
   const [studentName, setStudentName] = useState('Student');
   const [loading, setLoading] = useState(true);
 
@@ -100,6 +98,15 @@ export default function StudentDashboard() {
       try {
         const statsRes = await api.get('/student/dashboard-stats');
         setStats(statsRes.data);
+        if (statsRes.data?.weeklyAttendance && Array.isArray(statsRes.data.weeklyAttendance)) {
+          // Translate English weekday tags to French for the chart labels
+          const frMap: Record<string, string> = { Mon: 'Lun', Tue: 'Mar', Wed: 'Mer', Thu: 'Jeu', Fri: 'Ven', Sat: 'Sam', Sun: 'Dim' };
+          const mapped = statsRes.data.weeklyAttendance.map((item: any) => ({
+            ...item,
+            day: frMap[item.day] || item.day
+          }));
+          setAttendanceData(mapped);
+        }
       } catch (error) {
         console.error("Failed to fetch dashboard stats:", error);
       } finally {

@@ -105,4 +105,77 @@ export default {
     });
     ctx.body = list;
   },
+
+  async getMyInvoices(ctx: any) {
+    const user = ctx.state.user;
+    if (!user || user.schoolRole !== 'STUDENT') return ctx.unauthorized('Access denied');
+    const invoices = await strapi.entityService.findMany('api::student-invoice.student-invoice' as any, {
+      filters: { student: { id: user.id } },
+      populate: ['items'],
+      sort: [{ dueDate: 'desc' }],
+    });
+    ctx.body = invoices;
+  },
+
+  async getMyBalance(ctx: any) {
+    const user = ctx.state.user;
+    if (!user || user.schoolRole !== 'STUDENT') return ctx.unauthorized('Access denied');
+    const invoices = await strapi.entityService.findMany('api::student-invoice.student-invoice' as any, {
+      filters: { student: { id: user.id } },
+    }) as any[];
+    
+    const totalCharged = invoices.reduce((sum, inv) => sum + Number(inv.subtotal || 0), 0);
+    const totalPaid = invoices.reduce((sum, inv) => sum + Number(inv.totalPaid || 0), 0);
+    const outstandingBalance = Math.max(0, totalCharged - totalPaid);
+    ctx.body = { totalCharged, totalPaid, outstandingBalance, currency: invoices[0]?.currency || 'GNF' };
+  },
+
+  async getMyTransport(ctx: any) {
+    const user = ctx.state.user;
+    if (!user || user.schoolRole !== 'STUDENT') return ctx.unauthorized('Access denied');
+    const assignments = await strapi.entityService.findMany('api::transport-assignment.transport-assignment' as any, {
+      filters: { student: { id: user.id }, isActive: true },
+      populate: ['driver'],
+    });
+    ctx.body = assignments[0] || null;
+  },
+
+  async getMyEvents(ctx: any) {
+    const user = ctx.state.user;
+    if (!user || user.schoolRole !== 'STUDENT') return ctx.unauthorized('Access denied');
+    
+    // Find student's class
+    const classes = await strapi.entityService.findMany('api::school-class.school-class' as any, {
+      filters: { students: { id: user.id } },
+    }) as any[];
+    const classIds = classes.map(c => c.id);
+
+    const events = await strapi.entityService.findMany('api::school-event.school-event' as any, {
+      filters: {
+        $or: [
+          { targetAudience: 'ALL' },
+          { targetAudience: 'STUDENTS' },
+          {
+            $and: [
+              { targetAudience: 'CLASS' },
+              { targetClass: { id: { $in: classIds } } }
+            ]
+          }
+        ],
+        isPublished: true,
+      },
+      sort: [{ startDate: 'asc' }],
+    });
+    ctx.body = events;
+  },
+
+  async getMyNotifications(ctx: any) {
+    const user = ctx.state.user;
+    if (!user || user.schoolRole !== 'STUDENT') return ctx.unauthorized('Access denied');
+    const notifications = await strapi.entityService.findMany('api::school-notification.school-notification' as any, {
+      filters: { recipient: { id: user.id } },
+      sort: [{ createdAt: 'desc' }],
+    });
+    ctx.body = notifications;
+  },
 };

@@ -1,0 +1,67 @@
+{
+  "kind": "collectionType",
+  "collectionName": "families",
+  "info": {
+    "singularName": "family",
+    "pluralName": "families",
+    "displayName": "Family"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "familyCode": {
+      "type": "string",
+      "unique": true
+    },
+    "familyName": {
+      "type": "string",
+      "required": true
+    },
+    "address": {
+      "type": "text"
+    },
+    "nationality": {
+      "type": "string"
+    },
+    "city": {
+      "type": "string"
+    },
+    "emergencyContact1Name": {
+      "type": "string"
+    },
+    "emergencyContact1Phone": {
+      "type": "string"
+    },
+    "emergencyContact1Relation": {
+      "type": "string"
+    },
+    "emergencyContact2Name": {
+      "type": "string"
+    },
+    "emergencyContact2Phone": {
+      "type": "string"
+    },
+    "emergencyContact2Relation": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "text"
+    },
+    "isActive": {
+      "type": "boolean",
+      "default": true
+    },
+    "parents": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "familyMemberships"
+    },
+    "students": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "plugin::users-permissions.user"
+    }
+  }
+}

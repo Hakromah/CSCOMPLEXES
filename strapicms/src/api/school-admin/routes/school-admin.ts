@@ -48,7 +48,6 @@ export default {
     { method: 'GET',    path: '/admin/reports/summary',            handler: 'school-admin.getSummaryReport' },
     { method: 'GET',    path: '/admin/reports/semester-summary',   handler: 'school-admin.getSemesterGPA' },
     { method: 'PUT',    path: '/admin/semester/finalize',          handler: 'school-admin.finalizeSemester' },
-    { method: 'PUT',    path: '/admin/semester/lock',              handler: 'school-admin.finalizeSemester' },
     { method: 'GET',    path: '/admin/transcripts/generate',       handler: 'school-admin.generateTranscript' },
     { method: 'GET',    path: '/admin/transcripts/student/:studentId', handler: 'school-admin.getStudentTranscriptsList' },
 
@@ -60,6 +59,10 @@ export default {
     // auth:false + manual ADMIN check so these work without Strapi panel permission grants
     { method: 'GET',    path: '/admin/attendance',           handler: 'school-admin.getAttendanceSessions',   config: { auth: false } },
     { method: 'GET',    path: '/admin/attendance/analytics', handler: 'school-admin.getAttendanceAnalytics',  config: { auth: false } },
-    { method: 'DELETE', path: '/admin/attendance/:id',       handler: 'school-admin.deleteAttendanceSession', config: { auth: false } },
+    // Parents & Notifications
+    { method: 'GET',    path: '/admin/parents',                    handler: 'school-admin.getAllParents' },
+    { method: 'POST',   path: '/admin/parents',                    handler: 'school-admin.createParent' },
+    { method: 'POST',   path: '/admin/notifications/send',         handler: 'school-admin.sendAdminNotification' },
+    { method: 'POST',   path: '/admin/notifications/broadcast',    handler: 'school-admin.broadcastAdminAnnouncement' },
   ],
 };

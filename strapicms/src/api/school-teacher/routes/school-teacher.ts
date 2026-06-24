@@ -40,5 +40,9 @@ export default {
     { method: 'DELETE', path: '/teacher/materials/:id',                      handler: 'school-teacher.deleteTeacherMaterial' },
     { method: 'GET',    path: '/teacher/transcripts/student/:studentId',         handler: 'school-teacher.getStudentTranscriptsList' },
     { method: 'GET',    path: '/teacher/transcripts/:id/preview',            handler: 'school-teacher.previewTranscript' },
+    { method: 'GET',    path: '/teacher/finance/my-salary',                  handler: 'school-teacher.getMySalary' },
+    { method: 'GET',    path: '/teacher/calendar',                           handler: 'school-teacher.getMyEvents' },
+    { method: 'GET',    path: '/teacher/notifications',                      handler: 'school-teacher.getMyNotifications' },
+    { method: 'POST',   path: '/teacher/attendance/import',                  handler: 'school-teacher.importAttendanceCsv' },
   ],
 };

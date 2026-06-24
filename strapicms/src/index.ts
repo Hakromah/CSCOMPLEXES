@@ -55,7 +55,8 @@ export default {
           'getStats', 'recalculateSystem', 'getAuditLogs', 'createInvoice',
           'approveInvoice', 'rejectInvoice', 'createPayment', 'approvePayment',
           'rejectPayment', 'getStudentStatement', 'createSalaryRecord', 'approveSalaryRecord',
-          'rejectSalaryRecord', 'createSalaryPayment', 'approveSalaryPayment', 'rejectSalaryPayment'
+          'rejectSalaryRecord', 'createSalaryPayment', 'approveSalaryPayment', 'rejectSalaryPayment',
+          'getFamilyStatement', 'getPaymentProviders'
         ].map(act => `api::school-finance.school-finance.${act}`);
 
         const semesterActions = ['find', 'findOne', 'create', 'update', 'delete'].map(act => `api::semester.semester.${act}`);
@@ -73,6 +74,59 @@ export default {
         const accountingLogActions = ['find', 'findOne', 'create', 'update', 'delete'].map(act => `api::accounting-log.accounting-log.${act}`);
         const paymentCategoryActions = ['find', 'findOne', 'create', 'update', 'delete'].map(act => `api::payment-category.payment-category.${act}`);
         const financialReportActions = ['find', 'findOne', 'create', 'update', 'delete'].map(act => `api::financial-report.financial-report.${act}`);
+
+        // ─── Phase 3: New Collections ──────────────────────────────────
+        const schoolParentActions = [
+          'getProfile', 'updateProfile', 'changePassword',
+          'getFamily', 'getChildren', 'getChildProfile',
+          'getChildAttendance', 'getChildResults', 'getChildExams',
+          'getChildTimetable', 'getChildMaterials', 'getChildTranscripts',
+          'previewChildTranscript',
+          'getFamilyFinance', 'getChildFinance', 'getChildInvoices',
+          'getChildPayments', 'getCalendar', 'getDashboardStats'
+        ].map(act => `api::school-parent.school-parent.${act}`);
+
+        const schoolNotificationActions = [
+          'getMyNotifications', 'markAsRead', 'markAllRead', 'getUnreadCount',
+          'sendNotification', 'broadcastAnnouncement', 'deleteNotification'
+        ].map(act => `api::school-notification.school-notification.${act}`);
+
+        const schoolMessageActions = [
+          'getInbox', 'getSent', 'getThread', 'sendMessage', 'replyToMessage',
+          'markAsRead', 'deleteMessage', 'getUnreadCount'
+        ].map(act => `api::school-message.school-message.${act}`);
+
+        const behaviorRecordActions = [
+          'findAll', 'findOne', 'create', 'update', 'remove',
+          'getMyStudentsBehavior', 'getChildBehavior',
+          'find', 'delete'
+        ].map(act => `api::behavior-record.behavior-record.${act}`);
+
+        const schoolEventActions = [
+          'findAll', 'findOne', 'create', 'update', 'remove', 'findPublished',
+          'find', 'delete'
+        ].map(act => `api::school-event.school-event.${act}`);
+
+        const transportAssignmentActions = [
+          'findAll', 'findOne', 'create', 'update', 'remove',
+          'getMyAssignments', 'getMyTransport', 'getChildTransport',
+          'find', 'delete'
+        ].map(act => `api::transport-assignment.transport-assignment.${act}`);
+
+        const familyActions = [
+          'findAll', 'findOne', 'create', 'update', 'remove',
+          'addParent', 'removeParent', 'addStudent', 'removeStudent', 'getMyFamily',
+          'find', 'delete'
+        ].map(act => `api::family.family.${act}`);
+
+        const parentStudentRelationActions = [
+          'findAll', 'findOne', 'create', 'update', 'remove', 'findByParent',
+          'find', 'delete'
+        ].map(act => `api::parent-student-relation.parent-student-relation.${act}`);
+
+        const calendarEventActions = [
+          'findPublished', 'find', 'findOne'
+        ].map(act => `api::school-event.school-event.${act}`);
 
         const allActions = [
           ...schoolAdminActions, 
@@ -93,8 +147,20 @@ export default {
           ...accountingLogActions,
           ...paymentCategoryActions,
           ...financialReportActions,
+          // Phase 3 New
+          ...schoolParentActions,
+          ...schoolNotificationActions,
+          ...schoolMessageActions,
+          ...behaviorRecordActions,
+          ...schoolEventActions,
+          ...transportAssignmentActions,
+          ...familyActions,
+          ...parentStudentRelationActions,
+          ...calendarEventActions,
           'api::contact-message.contact-message.create',
-          'api::newsletter-subscription.newsletter-subscription.create'
+          'api::newsletter-subscription.newsletter-subscription.create',
+          'plugin::users-permissions.user.find',
+          'plugin::users-permissions.user.findOne'
         ];
 
         for (const action of allActions) {

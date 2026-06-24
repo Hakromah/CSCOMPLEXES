@@ -1,0 +1,38 @@
+{
+  "kind": "collectionType",
+  "collectionName": "school_messages",
+  "info": {
+    "singularName": "school-message",
+    "pluralName": "school-messages",
+    "displayName": "SchoolMessage"
+  },
+  "options": { "draftAndPublish": false },
+  "attributes": {
+    "subject": { "type": "string", "required": true },
+    "body": { "type": "text", "required": true },
+    "sender": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "recipient": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "threadId": { "type": "string" },
+    "parentMessage": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::school-message.school-message"
+    },
+    "isReadBySender": { "type": "boolean", "default": true },
+    "isReadByRecipient": { "type": "boolean", "default": false },
+    "readAt": { "type": "datetime" },
+    "isDeletedBySender": { "type": "boolean", "default": false },
+    "isDeletedByRecipient": { "type": "boolean", "default": false },
+    "attachmentUrl": { "type": "string" },
+    "senderRole": { "type": "string" },
+    "recipientRole": { "type": "string" }
+  }
+}

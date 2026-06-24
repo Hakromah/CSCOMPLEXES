@@ -26,7 +26,7 @@ import api from '@/lib/api';
 const formSchema = z.object({
   name: z.string().min(1, { message: 'Name is required' }),
   email: z.string().email({ message: 'Invalid email address' }),
-  role: z.enum(['STUDENT', 'TEACHER', 'ADMIN', 'ACCOUNTANT', 'ACCOUNTLEAD', 'DRIVER', 'WORKER']),
+  role: z.enum(['STUDENT', 'TEACHER', 'ADMIN', 'ACCOUNTANT', 'ACCOUNTLEAD', 'DRIVER', 'WORKER', 'PARENT']),
   birthDate: z.string().optional(),
   birthCountry: z.string().optional(),
   birthCity: z.string().optional(),
@@ -127,6 +127,7 @@ export default function EditUserForm({ user, onFinished }: EditUserFormProps) {
                   <SelectItem value="STUDENT">Student</SelectItem>
                   <SelectItem value="TEACHER">Teacher</SelectItem>
                   <SelectItem value="ADMIN">Admin</SelectItem>
+                  <SelectItem value="PARENT">Parent</SelectItem>
                   <SelectItem value="ACCOUNTANT">Accountant</SelectItem>
                   <SelectItem value="ACCOUNTLEAD">Account Lead</SelectItem>
                   <SelectItem value="DRIVER">Driver</SelectItem>

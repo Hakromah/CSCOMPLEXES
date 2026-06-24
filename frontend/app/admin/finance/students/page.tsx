@@ -232,6 +232,34 @@ export default function StudentFinance() {
     fetchAllData();
   }, []);
 
+  useEffect(() => {
+    if (!selectedStudentId || editingInvoice) return;
+
+    const fetchTransportFee = async () => {
+      try {
+        const res = await api.get(`/admin/transport?studentId=${selectedStudentId}&isActive=true`);
+        const activeAssignment = res.data?.[0];
+        if (activeAssignment && activeAssignment.transportFee > 0) {
+          setChargeItems(prev => {
+            const filtered = prev.filter(item => item.category !== 'TRANSPORT');
+            return [...filtered, {
+              description: `Frais de transport (${activeAssignment.routeName})`,
+              amount: activeAssignment.transportFee,
+              category: 'TRANSPORT'
+            }];
+          });
+        } else {
+          // If student has no active transport assignment, remove the TRANSPORT item
+          setChargeItems(prev => prev.filter(item => item.category !== 'TRANSPORT'));
+        }
+      } catch (err) {
+        console.error('Failed to fetch student transport fee', err);
+      }
+    };
+
+    fetchTransportFee();
+  }, [selectedStudentId, editingInvoice]);
+
   // ─── Filtered Lists ────────────────────────────────────────────────────────
   const filteredInvoices = useMemo(() => {
     return invoices.filter((inv) => {

@@ -15,9 +15,25 @@ import {
 import { toast } from 'sonner';
 import {
   Calendar, CheckCircle2, XCircle, Clock, Users, Loader2,
-  ClipboardList, BarChart2, Trash2, ShieldAlert, TrendingUp, RefreshCw, BookOpen, FileEdit, X,
+  ClipboardList, BarChart2, Trash2, ShieldAlert, TrendingUp, RefreshCw, BookOpen, FileEdit, X, Download
 } from 'lucide-react';
 import api from '@/lib/api';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import { SCHOOL_CONFIG } from '@/lib/school-config';
+import {
+  ResponsiveContainer,
+  PieChart as RechartsPieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  Legend,
+  BarChart as RechartsBarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+} from 'recharts';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 interface AttendanceSession {
@@ -70,15 +86,15 @@ function StatCard({ label, value, icon: Icon, color, sub }: { label: string; val
 
 // ══════════════════════════════════════════════════════════════════════════════
 export default function AdminAttendancePage() {
-  const [sessions, setSessions] = useState<AttendanceSession[]>([]);
+  const [sessions, setSessions]   = useState<AttendanceSession[]>([]);
   const [analytics, setAnalytics] = useState<Analytics | null>(null);
-  const [classes, setClasses] = useState<any[]>([]);
+  const [classes, setClasses]     = useState<any[]>([]);
   const [classFilter, setClassFilter] = useState<string>('all');
-  const [dateFilter, setDateFilter] = useState<string>('');   // ISO date string YYYY-MM-DD
-  const [loading, setLoading] = useState(true);
-  const [tab, setTab] = useState<'sessions' | 'analytics'>('analytics');
+  const [dateFilter, setDateFilter]   = useState<string>('');   // ISO date string YYYY-MM-DD
+  const [loading, setLoading]     = useState(true);
+  const [tab, setTab]             = useState<'sessions' | 'analytics'>('analytics');
   const [expandedId, setExpandedId] = useState<number | null>(null);
-  const [deleting, setDeleting] = useState<number | null>(null);
+  const [deleting, setDeleting]   = useState<number | null>(null);
 
   const fetchData = async () => {
     setLoading(true);
@@ -105,7 +121,7 @@ export default function AdminAttendancePage() {
   const filtered = useMemo(() => {
     return sessions.filter(s => {
       const matchClass = classFilter === 'all' || String(s.classId) === classFilter;
-      const matchDate = !dateFilter || s.date === dateFilter;
+      const matchDate  = !dateFilter || s.date === dateFilter;
       return matchClass && matchDate;
     });
   }, [sessions, classFilter, dateFilter]);
@@ -125,6 +141,123 @@ export default function AdminAttendancePage() {
     }
   };
 
+  const exportCSV = () => {
+    if (!sessions || sessions.length === 0) {
+      toast.error('Aucune session à exporter');
+      return;
+    }
+    const headers = ['ID Session', 'Date', 'Classe', 'Matière', 'Heure de la session', 'Total Présents', 'Total Absents', 'Total Retards', 'Taux de Présence (%)'];
+    const rows = sessions.map(s => [
+      s.id,
+      s.date,
+      s.className,
+      s.subjectName || '—',
+      s.sessionTime || '—',
+      s.presentCount,
+      s.absentCount,
+      s.lateCount,
+      `${s.attendanceRate}%`
+    ]);
+    const csvContent = "data:text/csv;charset=utf-8," 
+      + [headers.join(','), ...rows.map(e => e.map(val => `"${val}"`).join(","))].join("\n");
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `presence_ecole_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success('CSV exporté avec succès');
+  };
+
+  const exportPDF = () => {
+    if (!analytics) return;
+    try {
+      const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+      const pageW = doc.internal.pageSize.getWidth();
+
+      // Header
+      doc.setFillColor(15, 23, 42); // slate-900
+      doc.rect(0, 0, pageW, 40, 'F');
+
+      doc.setTextColor(255, 255, 255);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(18);
+      doc.text(SCHOOL_CONFIG.name, 15, 15);
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+      doc.text(SCHOOL_CONFIG.address || '', 15, 22);
+      doc.text(`Contact: ${SCHOOL_CONFIG.contact || ''}`, 15, 28);
+
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(11);
+      doc.text('RAPPORT DE PRÉSENCE GLOBAL', pageW - 15, 16, { align: 'right' });
+      doc.setFontSize(8);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Date: ${new Date().toLocaleDateString()}`, pageW - 15, 22, { align: 'right' });
+
+      // Blue divider
+      doc.setFillColor(37, 99, 235);
+      doc.rect(0, 40, pageW, 1.5, 'F');
+
+      // Title
+      doc.setTextColor(15, 23, 42);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(14);
+      doc.text('Résumé des statistiques de présence', 15, 55);
+
+      // Info box with stats
+      doc.setFillColor(248, 250, 252);
+      doc.roundedRect(15, 62, pageW - 30, 25, 3, 3, 'F');
+      doc.setDrawColor(226, 232, 240);
+      doc.roundedRect(15, 62, pageW - 30, 25, 3, 3, 'S');
+
+      doc.setFontSize(8);
+      doc.setTextColor(100, 116, 139);
+      doc.setFont('helvetica', 'bold');
+      doc.text('TAUX GLOBAL', 20, 70);
+      doc.text('TOTAL ENREGISTREMENTS', 65, 70);
+      doc.text('PRÉSENTS / ABSENTS', 120, 70);
+
+      doc.setFontSize(12);
+      doc.setTextColor(15, 23, 42);
+      doc.text(`${analytics.overallRate}%`, 20, 78);
+      doc.text(`${analytics.totalRecords}`, 65, 78);
+      doc.text(`${analytics.presentCount} / ${analytics.absentCount}`, 120, 78);
+
+      // Class Rates Table
+      autoTable(doc, {
+        startY: 95,
+        head: [['Classe', 'Total Vérifié', 'Présents', 'En retard', 'Taux de présence']],
+        body: analytics.byClass.map(c => [
+          c.name,
+          c.total,
+          c.present,
+          c.late,
+          `${c.rate}%`
+        ]),
+        styles: { fontSize: 9, cellPadding: 4 },
+        headStyles: { fillColor: [15, 23, 42], textColor: [255, 255, 255] },
+        alternateRowStyles: { fillColor: [248, 250, 252] },
+      });
+
+      const pageH = doc.internal.pageSize.getHeight();
+      doc.setFillColor(248, 250, 252);
+      doc.rect(0, pageH - 12, pageW, 12, 'F');
+      doc.setFontSize(7);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(100, 116, 139);
+      doc.text(`${SCHOOL_CONFIG.name} — Document Interne Confidentiel`, pageW / 2, pageH - 5, { align: 'center' });
+
+      doc.save(`rapport-presence-ecole-${new Date().toISOString().split('T')[0]}.pdf`);
+      toast.success('Rapport de présence PDF exporté avec succès');
+    } catch (e) {
+      console.error(e);
+      toast.error("Échec de l'exportation PDF");
+    }
+  };
+
   if (loading) {
     return (
       <div className="h-[80vh] flex flex-col items-center justify-center gap-4">
@@ -133,6 +266,13 @@ export default function AdminAttendancePage() {
       </div>
     );
   }
+
+  const attendanceRatioData = analytics ? [
+    { name: 'Présents', value: analytics.presentCount, color: '#10b981' },
+    { name: 'Absents', value: analytics.absentCount, color: '#f43f5e' },
+    { name: 'En retard', value: analytics.lateCount, color: '#f59e0b' },
+    { name: 'Justifiés', value: analytics.excusedCount, color: '#3b82f6' },
+  ] : [];
 
   return (
     <div className="p-6 lg:p-10 min-h-screen space-y-6 bg-[#f8fafc]">
@@ -151,28 +291,46 @@ export default function AdminAttendancePage() {
             Visibilité et gestion de la présence à l'échelle de l'école
           </p>
         </div>
-        <Button
-          variant="outline"
-          className="h-11 rounded-2xl gap-2 font-bold text-sm border-slate-200 hover:border-primary"
-          onClick={fetchData}
-        >
-          <RefreshCw size={14} /> Actualiser
-        </Button>
+        <div className="flex flex-wrap items-center gap-3">
+          <Button
+            variant="outline"
+            className="h-11 rounded-2xl gap-2 font-bold text-sm border-slate-200 hover:border-primary cursor-pointer"
+            onClick={exportCSV}
+          >
+            <Download size={14} /> Exporter CSV
+          </Button>
+          <Button
+            variant="outline"
+            className="h-11 rounded-2xl gap-2 font-bold text-sm border-slate-200 hover:border-primary cursor-pointer"
+            onClick={exportPDF}
+          >
+            <Download size={14} /> Exporter PDF
+          </Button>
+          <Button
+            variant="outline"
+            className="h-11 rounded-2xl gap-2 font-bold text-sm border-slate-200 hover:border-primary cursor-pointer"
+            onClick={fetchData}
+          >
+            <RefreshCw size={14} /> Actualiser
+          </Button>
+        </div>
       </div>
 
       {/* ── Tabs ── */}
       <div className="flex gap-3">
         <Button
           onClick={() => setTab('analytics')}
-          className={`rounded-2xl font-black text-[10px] uppercase tracking-widest px-6 h-10 gap-2 transition-all ${tab === 'analytics' ? 'bg-slate-900 text-white shadow-md' : 'bg-white text-slate-600 border border-slate-200'
-            }`}
+          className={`rounded-2xl font-black text-[10px] uppercase tracking-widest px-6 h-10 gap-2 transition-all cursor-pointer ${
+            tab === 'analytics' ? 'bg-slate-900 text-white shadow-md' : 'bg-white text-slate-600 border border-slate-200'
+          }`}
         >
           <BarChart2 size={13} /> Analytics
         </Button>
         <Button
           onClick={() => setTab('sessions')}
-          className={`rounded-2xl font-black text-[10px] uppercase tracking-widest px-6 h-10 gap-2 transition-all ${tab === 'sessions' ? 'bg-primary text-white shadow-md' : 'bg-white text-slate-600 border border-slate-200'
-            }`}
+          className={`rounded-2xl font-black text-[10px] uppercase tracking-widest px-6 h-10 gap-2 transition-all cursor-pointer ${
+            tab === 'sessions' ? 'bg-primary text-white shadow-md' : 'bg-white text-slate-600 border border-slate-200'
+          }`}
         >
           <ClipboardList size={13} /> Toutes les sessions
         </Button>
@@ -186,20 +344,20 @@ export default function AdminAttendancePage() {
             <CardContent className="p-8 relative">
               <div className="flex justify-between items-start mb-6">
                 <div>
-                  <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400">Taux de présence à l'échelle de l'école</p>
+                  <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400">Taux de présence global</p>
                   <h2 className={`text-7xl font-black italic tracking-tighter mt-1 ${analytics.overallRate >= 75 ? 'text-white' : 'text-rose-400'}`}>
                     {analytics.overallRate}%
                   </h2>
                 </div>
                 <Badge className="bg-primary/20 text-blue-400 border-none font-black px-4 py-1 uppercase text-[9px]">
-                  {analytics.totalRecords} Total des données
+                  {analytics.totalRecords} Données totales
                 </Badge>
               </div>
               <div className="space-y-2">
                 <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
-                  <span className="text-slate-500">Taux de présence</span>
+                  <span className="text-slate-500">Présence globale</span>
                   <span className={analytics.overallRate >= 75 ? 'text-emerald-400' : 'text-rose-400'}>
-                    {analytics.presentCount + analytics.lateCount} / {analytics.totalRecords} Présent
+                    {analytics.presentCount + analytics.lateCount} / {analytics.totalRecords} Présents
                   </span>
                 </div>
                 <Progress value={analytics.overallRate} className="h-2.5 bg-white/10" />
@@ -210,17 +368,70 @@ export default function AdminAttendancePage() {
 
           {/* Stat cards */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <StatCard label="Présent" value={analytics.presentCount} icon={CheckCircle2} color="border-emerald-100 hover:border-emerald-300" />
-            <StatCard label="Absent" value={analytics.absentCount} icon={XCircle} color="border-rose-100 hover:border-rose-300" />
-            <StatCard label="En retard" value={analytics.lateCount} icon={Clock} color="border-amber-100 hover:border-amber-300" />
-            <StatCard label="Excusé/Malade" value={analytics.excusedCount} icon={ShieldAlert} color="border-blue-100 hover:border-blue-300" />
+            <StatCard label="Présents"       value={analytics.presentCount}  icon={CheckCircle2} color="border-emerald-100 hover:border-emerald-300" />
+            <StatCard label="Absents"        value={analytics.absentCount}   icon={XCircle}      color="border-rose-100 hover:border-rose-300"     />
+            <StatCard label="En retard"      value={analytics.lateCount}     icon={Clock}        color="border-amber-100 hover:border-amber-300"    />
+            <StatCard label="Excusés/Malades" value={analytics.excusedCount}  icon={ShieldAlert}  color="border-blue-100 hover:border-blue-300"     />
+          </div>
+
+          {/* Recharts Analytics Visualization */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col justify-between">
+              <div className="mb-4">
+                <h3 className="text-xs font-black uppercase tracking-widest text-slate-900">Répartition des présences</h3>
+                <p className="text-[10px] font-bold text-slate-400">Détail du statut de tous les enregistrements de présence</p>
+              </div>
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <RechartsPieChart>
+                    <Pie
+                      data={attendanceRatioData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={60}
+                      outerRadius={80}
+                      paddingAngle={5}
+                      dataKey="value"
+                    >
+                      {attendanceRatioData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip formatter={(value) => [value, 'Enregistrements']} />
+                    <Legend verticalAlign="bottom" height={36} />
+                  </RechartsPieChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col justify-between">
+              <div className="mb-4">
+                <h3 className="text-xs font-black uppercase tracking-widest text-slate-900">Comparaison par classe</h3>
+                <p className="text-[10px] font-bold text-slate-400">Taux moyen de présence pour chaque classe active</p>
+              </div>
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <RechartsBarChart data={analytics.byClass} margin={{ top: 20, right: 20, left: -20, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                    <XAxis dataKey="name" tick={{ fontSize: 9, fontWeight: 'bold', fill: '#64748b' }} />
+                    <YAxis tick={{ fontSize: 9, fontWeight: 'bold', fill: '#64748b' }} unit="%" />
+                    <Tooltip formatter={(value) => [`${value}%`, 'Taux de présence']} />
+                    <Bar dataKey="rate" fill="#3b82f6" radius={[6, 6, 0, 0]}>
+                      {analytics.byClass.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.rate >= 75 ? '#10b981' : '#f43f5e'} />
+                      ))}
+                    </Bar>
+                  </RechartsBarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
           </div>
 
           {/* Per-class breakdown */}
           {analytics.byClass.length > 0 && (
             <Card className="border border-slate-100 rounded-3xl overflow-hidden shadow-sm">
               <CardHeader className="border-b border-slate-50 px-8 py-5">
-                <p className="font-black text-xs uppercase tracking-widest text-slate-900">Taux de présence par classe</p>
+                <p className="font-black text-xs uppercase tracking-widest text-slate-900">Présence par classe</p>
               </CardHeader>
               <CardContent className="p-0">
                 <Table>
@@ -228,8 +439,8 @@ export default function AdminAttendancePage() {
                     <TableRow className="hover:bg-transparent">
                       <TableHead className="pl-8 font-black text-[9px] uppercase tracking-widest text-slate-400">Classe</TableHead>
                       <TableHead className="text-center font-black text-[9px] uppercase tracking-widest text-slate-400">Total</TableHead>
-                      <TableHead className="text-center font-black text-[9px] uppercase tracking-widest text-slate-400">Présent</TableHead>
-                      <TableHead className="text-center font-black text-[9px] uppercase tracking-widest text-slate-400">En retard</TableHead>
+                      <TableHead className="text-center font-black text-[9px] uppercase tracking-widest text-slate-400">Présents</TableHead>
+                      <TableHead className="text-center font-black text-[9px] uppercase tracking-widest text-slate-400">Retards</TableHead>
                       <TableHead className="pr-8 font-black text-[9px] uppercase tracking-widest text-slate-400">Taux</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -293,8 +504,8 @@ export default function AdminAttendancePage() {
               {dateFilter && (
                 <button
                   onClick={() => setDateFilter('')}
-                  className="text-slate-300 hover:text-rose-400 transition-colors ml-1"
-                  title="Supprimer le filtre par date"
+                  className="text-slate-300 hover:text-rose-400 transition-colors ml-1 cursor-pointer"
+                  title="Supprimer le filtre date"
                 >
                   <X size={13} />
                 </button>
@@ -306,7 +517,7 @@ export default function AdminAttendancePage() {
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-11 rounded-2xl font-bold text-[11px] text-slate-400 hover:text-rose-500 hover:bg-rose-50 px-4"
+                className="h-11 rounded-2xl font-bold text-[11px] text-slate-400 hover:text-rose-500 hover:bg-rose-50 px-4 cursor-pointer"
                 onClick={() => { setClassFilter('all'); setDateFilter(''); }}
               >
                 <X size={12} className="mr-1" /> Supprimer les filtres
@@ -318,12 +529,12 @@ export default function AdminAttendancePage() {
             </p>
           </div>
 
-          {/* Sessions scrollable list — shows ~5 rows, rest scrollable */}
+          {/* Sessions list */}
           {filtered.length === 0 ? (
             <div className="h-64 flex flex-col items-center justify-center rounded-3xl border-2 border-dashed border-slate-200 bg-white">
               <Users size={40} className="text-slate-200 mb-3" />
               <p className="text-slate-400 font-black text-xs uppercase tracking-widest">
-                {dateFilter || classFilter !== 'all' ? 'Aucune session ne correspond à votre recherche.' : 'Aucune session trouvée.'}
+                {dateFilter || classFilter !== 'all' ? 'Aucune session ne correspond à vos filtres.' : 'Aucune session trouvée.'}
               </p>
             </div>
           ) : (
@@ -346,7 +557,7 @@ export default function AdminAttendancePage() {
                         </div>
                         <div>
                           <p className="font-black text-slate-900 text-sm">
-                            {new Date(session.date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
+                            {new Date(session.date).toLocaleDateString('fr-FR', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
                           </p>
                           <div className="flex flex-wrap gap-2 mt-1">
                             <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{session.className}</span>
@@ -362,7 +573,7 @@ export default function AdminAttendancePage() {
                             {session.sessionTime && (
                               <span className="text-[9px] font-black px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 flex items-center gap-1">
                                 <Clock size={8} />
-                                {new Date(`2000-01-01T${session.sessionTime}`).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                                {new Date(`2000-01-01T${session.sessionTime}`).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
                               </span>
                             )}
                           </div>
@@ -372,14 +583,14 @@ export default function AdminAttendancePage() {
                       <div className="flex items-center gap-6 flex-wrap">
                         <div className="flex gap-4">
                           <span className="text-[10px] font-black text-slate-500 flex items-center gap-1.5">
-                            <span className="w-2 h-2 rounded-full bg-emerald-400" />{session.presentCount} Présent
+                            <span className="w-2 h-2 rounded-full bg-emerald-400" />{session.presentCount} Présents
                           </span>
                           <span className="text-[10px] font-black text-slate-500 flex items-center gap-1.5">
-                            <span className="w-2 h-2 rounded-full bg-rose-400" />{session.absentCount} Absent
+                            <span className="w-2 h-2 rounded-full bg-rose-400" />{session.absentCount} Absents
                           </span>
                           {session.lateCount > 0 && (
                             <span className="text-[10px] font-black text-slate-500 flex items-center gap-1.5">
-                              <span className="w-2 h-2 rounded-full bg-amber-400" />{session.lateCount} En retard
+                              <span className="w-2 h-2 rounded-full bg-amber-400" />{session.lateCount} Retards
                             </span>
                           )}
                         </div>
@@ -389,7 +600,7 @@ export default function AdminAttendancePage() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="rounded-xl text-rose-400 hover:text-rose-600 hover:bg-rose-50 p-2"
+                          className="rounded-xl text-rose-400 hover:text-rose-600 hover:bg-rose-50 p-2 cursor-pointer"
                           onClick={e => { e.stopPropagation(); handleDelete(session.id); }}
                           disabled={deleting === session.id}
                         >
@@ -404,7 +615,7 @@ export default function AdminAttendancePage() {
                         <Table>
                           <TableHeader className="bg-slate-50">
                             <TableRow className="hover:bg-transparent">
-                              <TableHead className="pl-8 font-black text-[9px] uppercase tracking-widest text-slate-400">Etudiant</TableHead>
+                              <TableHead className="pl-8 font-black text-[9px] uppercase tracking-widest text-slate-400">Étudiant</TableHead>
                               <TableHead className="font-black text-[9px] uppercase tracking-widest text-slate-400">ID</TableHead>
                               <TableHead className="pr-8 text-right font-black text-[9px] uppercase tracking-widest text-slate-400">Statut</TableHead>
                             </TableRow>
@@ -415,7 +626,7 @@ export default function AdminAttendancePage() {
                               return (
                                 <TableRow key={i} className="border-slate-50 hover:bg-white/60">
                                   <TableCell className="pl-8 py-3 font-bold text-slate-800 text-sm capitalize">
-                                    {rec.studentName || 'Unknown'}
+                                    {rec.studentName || 'Inconnu'}
                                   </TableCell>
                                   <TableCell className="font-mono text-[10px] text-slate-400">
                                     {rec.userId || rec.studentId}

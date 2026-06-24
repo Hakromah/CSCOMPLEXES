@@ -27,7 +27,9 @@ export default (plugin: any) => {
     address: { type: 'text' },
     gender: { type: 'enumeration', enum: ['Male', 'Female', 'Other'] },
     phoneNumber: { type: 'string' },
-    schoolRole: { type: 'enumeration', enum: ['ADMIN', 'TEACHER', 'STUDENT', 'ACCOUNTANT', 'ACCOUNTLEAD', 'DRIVER', 'WORKER'] },
+    firstName: { type: 'string' },
+    lastName: { type: 'string' },
+    schoolRole: { type: 'enumeration', enum: ['ADMIN', 'TEACHER', 'STUDENT', 'ACCOUNTANT', 'ACCOUNTLEAD', 'DRIVER', 'WORKER', 'PARENT'] },
     teachingClasses: {
       type: 'relation',
       relation: 'manyToMany',
@@ -39,6 +41,12 @@ export default (plugin: any) => {
       relation: 'manyToMany',
       target: 'api::school-class.school-class',
       mappedBy: 'students',
+    },
+    familyMemberships: {
+      type: 'relation',
+      relation: 'manyToMany',
+      target: 'api::family.family',
+      mappedBy: 'parents',
     },
   };
 

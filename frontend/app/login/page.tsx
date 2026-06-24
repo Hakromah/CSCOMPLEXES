@@ -80,6 +80,9 @@ export default function LoginPage() {
                case 'STUDENT':
                   router.push('/student');
                   break;
+               case 'PARENT':
+                  router.push('/parent');
+                  break;
                case 'DRIVER':
                   router.push('/driver');
                   break;

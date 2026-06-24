@@ -776,6 +776,62 @@ export interface ApiAttendanceSessionAttendanceSession
   };
 }
 
+export interface ApiBehaviorRecordBehaviorRecord
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'behavior_records';
+  info: {
+    displayName: 'BehaviorRecord';
+    pluralName: 'behavior-records';
+    singularName: 'behavior-record';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    attachmentUrl: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    date: Schema.Attribute.Date & Schema.Attribute.Required;
+    description: Schema.Attribute.Text;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::behavior-record.behavior-record'
+    > &
+      Schema.Attribute.Private;
+    notifyParent: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    parentNotified: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<false>;
+    publishedAt: Schema.Attribute.DateTime;
+    recordedBy: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    severity: Schema.Attribute.Enumeration<['LOW', 'MEDIUM', 'HIGH']>;
+    student: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+    type: Schema.Attribute.Enumeration<
+      [
+        'ACHIEVEMENT',
+        'AWARD',
+        'WARNING',
+        'DISCIPLINE',
+        'INCIDENT',
+        'RECOGNITION',
+        'OTHER',
+      ]
+    > &
+      Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiBlogPostBlogPost extends Struct.CollectionTypeSchema {
   collectionName: 'blog_posts';
   info: {
@@ -960,6 +1016,54 @@ export interface ApiExamResultExamResult extends Struct.CollectionTypeSchema {
       Schema.Attribute.DefaultTo<'DRAFT'>;
     student: Schema.Attribute.Relation<
       'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiFamilyFamily extends Struct.CollectionTypeSchema {
+  collectionName: 'families';
+  info: {
+    displayName: 'Family';
+    pluralName: 'families';
+    singularName: 'family';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    address: Schema.Attribute.Text;
+    city: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    emergencyContact1Name: Schema.Attribute.String;
+    emergencyContact1Phone: Schema.Attribute.String;
+    emergencyContact1Relation: Schema.Attribute.String;
+    emergencyContact2Name: Schema.Attribute.String;
+    emergencyContact2Phone: Schema.Attribute.String;
+    emergencyContact2Relation: Schema.Attribute.String;
+    familyCode: Schema.Attribute.String & Schema.Attribute.Unique;
+    familyName: Schema.Attribute.String & Schema.Attribute.Required;
+    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::family.family'
+    > &
+      Schema.Attribute.Private;
+    nationality: Schema.Attribute.String;
+    notes: Schema.Attribute.Text;
+    parents: Schema.Attribute.Relation<
+      'manyToMany',
+      'plugin::users-permissions.user'
+    >;
+    publishedAt: Schema.Attribute.DateTime;
+    students: Schema.Attribute.Relation<
+      'manyToMany',
       'plugin::users-permissions.user'
     >;
     updatedAt: Schema.Attribute.DateTime;
@@ -1414,6 +1518,53 @@ export interface ApiOpportunityOpportunity extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiParentStudentRelationParentStudentRelation
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'parent_student_relations';
+  info: {
+    displayName: 'ParentStudentRelation';
+    pluralName: 'parent-student-relations';
+    singularName: 'parent-student-relation';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    canPickup: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    canViewAcademics: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<true>;
+    canViewFinance: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    family: Schema.Attribute.Relation<'manyToOne', 'api::family.family'>;
+    isPrimary: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::parent-student-relation.parent-student-relation'
+    > &
+      Schema.Attribute.Private;
+    notes: Schema.Attribute.Text;
+    parent: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    publishedAt: Schema.Attribute.DateTime;
+    relationship: Schema.Attribute.Enumeration<
+      ['FATHER', 'MOTHER', 'GUARDIAN', 'UNCLE', 'AUNT', 'GRANDPARENT', 'OTHER']
+    > &
+      Schema.Attribute.Required;
+    student: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiPaymentCategoryPaymentCategory
   extends Struct.CollectionTypeSchema {
   collectionName: 'payment_categories';
@@ -1678,6 +1829,62 @@ export interface ApiSchoolClassSchoolClass extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiSchoolEventSchoolEvent extends Struct.CollectionTypeSchema {
+  collectionName: 'school_events';
+  info: {
+    displayName: 'SchoolEvent';
+    pluralName: 'school-events';
+    singularName: 'school-event';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Text;
+    endDate: Schema.Attribute.DateTime;
+    isPublished: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::school-event.school-event'
+    > &
+      Schema.Attribute.Private;
+    location: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    requiresConfirmation: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<false>;
+    startDate: Schema.Attribute.DateTime & Schema.Attribute.Required;
+    targetAudience: Schema.Attribute.Enumeration<
+      ['ALL', 'STUDENTS', 'PARENTS', 'STAFF', 'CLASS']
+    > &
+      Schema.Attribute.DefaultTo<'ALL'>;
+    targetClass: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::school-class.school-class'
+    >;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+    type: Schema.Attribute.Enumeration<
+      [
+        'ACADEMIC',
+        'EXAM',
+        'HOLIDAY',
+        'MEETING',
+        'SPORTS',
+        'CULTURAL',
+        'TRIP',
+        'OTHER',
+      ]
+    > &
+      Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiSchoolExamSchoolExam extends Struct.CollectionTypeSchema {
   collectionName: 'school_exams';
   info: {
@@ -1731,6 +1938,121 @@ export interface ApiSchoolExamSchoolExam extends Struct.CollectionTypeSchema {
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     weight: Schema.Attribute.Integer;
+  };
+}
+
+export interface ApiSchoolMessageSchoolMessage
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'school_messages';
+  info: {
+    displayName: 'SchoolMessage';
+    pluralName: 'school-messages';
+    singularName: 'school-message';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    attachmentUrl: Schema.Attribute.String;
+    body: Schema.Attribute.Text & Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    isDeletedByRecipient: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<false>;
+    isDeletedBySender: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<false>;
+    isReadByRecipient: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<false>;
+    isReadBySender: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::school-message.school-message'
+    > &
+      Schema.Attribute.Private;
+    parentMessage: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::school-message.school-message'
+    >;
+    publishedAt: Schema.Attribute.DateTime;
+    readAt: Schema.Attribute.DateTime;
+    recipient: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    recipientRole: Schema.Attribute.String;
+    sender: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    senderRole: Schema.Attribute.String;
+    subject: Schema.Attribute.String & Schema.Attribute.Required;
+    threadId: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiSchoolNotificationSchoolNotification
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'school_notifications';
+  info: {
+    displayName: 'SchoolNotification';
+    pluralName: 'school-notifications';
+    singularName: 'school-notification';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    actionUrl: Schema.Attribute.String;
+    body: Schema.Attribute.Text & Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    isRead: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::school-notification.school-notification'
+    > &
+      Schema.Attribute.Private;
+    metadata: Schema.Attribute.JSON;
+    priority: Schema.Attribute.Enumeration<
+      ['LOW', 'NORMAL', 'HIGH', 'URGENT']
+    > &
+      Schema.Attribute.DefaultTo<'NORMAL'>;
+    publishedAt: Schema.Attribute.DateTime;
+    readAt: Schema.Attribute.DateTime;
+    recipient: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    sender: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+    type: Schema.Attribute.Enumeration<
+      [
+        'ATTENDANCE',
+        'FEE_REMINDER',
+        'PAYMENT',
+        'EXAM_RESULT',
+        'HOMEWORK',
+        'ANNOUNCEMENT',
+        'EVENT',
+        'BEHAVIOR',
+        'SALARY',
+        'GENERAL',
+      ]
+    > &
+      Schema.Attribute.DefaultTo<'GENERAL'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
   };
 }
 
@@ -2099,6 +2421,10 @@ export interface ApiTimetableEntryTimetableEntry
     publishedAt: Schema.Attribute.DateTime;
     startTime: Schema.Attribute.Time & Schema.Attribute.Required;
     subject: Schema.Attribute.Relation<'manyToOne', 'api::subject.subject'>;
+    teacher: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -2152,6 +2478,55 @@ export interface ApiTranscriptTranscript extends Struct.CollectionTypeSchema {
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+  };
+}
+
+export interface ApiTransportAssignmentTransportAssignment
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'transport_assignments';
+  info: {
+    displayName: 'TransportAssignment';
+    pluralName: 'transport-assignments';
+    singularName: 'transport-assignment';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    academicYear: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::academic-year.academic-year'
+    >;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    driver: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    dropoffPoint: Schema.Attribute.String & Schema.Attribute.Required;
+    dropoffTime: Schema.Attribute.Time;
+    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::transport-assignment.transport-assignment'
+    > &
+      Schema.Attribute.Private;
+    notes: Schema.Attribute.Text;
+    pickupPoint: Schema.Attribute.String & Schema.Attribute.Required;
+    pickupTime: Schema.Attribute.Time;
+    publishedAt: Schema.Attribute.DateTime;
+    routeName: Schema.Attribute.String & Schema.Attribute.Required;
+    student: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    transportFee: Schema.Attribute.Decimal;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    vehicleInfo: Schema.Attribute.String;
   };
 }
 
@@ -2698,7 +3073,13 @@ export interface PluginUsersPermissionsUser
       'manyToMany',
       'api::school-class.school-class'
     >;
+    familyMemberships: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::family.family'
+    >;
+    firstName: Schema.Attribute.String;
     gender: Schema.Attribute.Enumeration<['Male', 'Female', 'Other']>;
+    lastName: Schema.Attribute.String;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -2727,6 +3108,7 @@ export interface PluginUsersPermissionsUser
         'ACCOUNTLEAD',
         'DRIVER',
         'WORKER',
+        'PARENT',
       ]
     >;
     teachingClasses: Schema.Attribute.Relation<
@@ -2765,11 +3147,13 @@ declare module '@strapi/strapi' {
       'api::accounting-log.accounting-log': ApiAccountingLogAccountingLog;
       'api::attendance-record.attendance-record': ApiAttendanceRecordAttendanceRecord;
       'api::attendance-session.attendance-session': ApiAttendanceSessionAttendanceSession;
+      'api::behavior-record.behavior-record': ApiBehaviorRecordBehaviorRecord;
       'api::blog-post.blog-post': ApiBlogPostBlogPost;
       'api::contact-info.contact-info': ApiContactInfoContactInfo;
       'api::contact-message.contact-message': ApiContactMessageContactMessage;
       'api::donation.donation': ApiDonationDonation;
       'api::exam-result.exam-result': ApiExamResultExamResult;
+      'api::family.family': ApiFamilyFamily;
       'api::financial-report.financial-report': ApiFinancialReportFinancialReport;
       'api::financial-statement.financial-statement': ApiFinancialStatementFinancialStatement;
       'api::footer.footer': ApiFooterFooter;
@@ -2781,13 +3165,17 @@ declare module '@strapi/strapi' {
       'api::news-post.news-post': ApiNewsPostNewsPost;
       'api::newsletter-subscription.newsletter-subscription': ApiNewsletterSubscriptionNewsletterSubscription;
       'api::opportunity.opportunity': ApiOpportunityOpportunity;
+      'api::parent-student-relation.parent-student-relation': ApiParentStudentRelationParentStudentRelation;
       'api::payment-category.payment-category': ApiPaymentCategoryPaymentCategory;
       'api::receipt.receipt': ApiReceiptReceipt;
       'api::salary-payment.salary-payment': ApiSalaryPaymentSalaryPayment;
       'api::salary-record.salary-record': ApiSalaryRecordSalaryRecord;
       'api::school-calendar.school-calendar': ApiSchoolCalendarSchoolCalendar;
       'api::school-class.school-class': ApiSchoolClassSchoolClass;
+      'api::school-event.school-event': ApiSchoolEventSchoolEvent;
       'api::school-exam.school-exam': ApiSchoolExamSchoolExam;
+      'api::school-message.school-message': ApiSchoolMessageSchoolMessage;
+      'api::school-notification.school-notification': ApiSchoolNotificationSchoolNotification;
       'api::semester.semester': ApiSemesterSemester;
       'api::staff-member.staff-member': ApiStaffMemberStaffMember;
       'api::student-invoice.student-invoice': ApiStudentInvoiceStudentInvoice;
@@ -2798,6 +3186,7 @@ declare module '@strapi/strapi' {
       'api::testimonial.testimonial': ApiTestimonialTestimonial;
       'api::timetable-entry.timetable-entry': ApiTimetableEntryTimetableEntry;
       'api::transcript.transcript': ApiTranscriptTranscript;
+      'api::transport-assignment.transport-assignment': ApiTransportAssignmentTransportAssignment;
       'api::video-section.video-section': ApiVideoSectionVideoSection;
       'api::why-choose-us-section.why-choose-us-section': ApiWhyChooseUsSectionWhyChooseUsSection;
       'plugin::content-releases.release': PluginContentReleasesRelease;

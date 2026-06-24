@@ -1,0 +1,36 @@
+{
+  "kind": "collectionType",
+  "collectionName": "transport_assignments",
+  "info": {
+    "singularName": "transport-assignment",
+    "pluralName": "transport-assignments",
+    "displayName": "TransportAssignment"
+  },
+  "options": { "draftAndPublish": false },
+  "attributes": {
+    "student": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "driver": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "academicYear": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::academic-year.academic-year"
+    },
+    "routeName": { "type": "string", "required": true },
+    "pickupPoint": { "type": "string", "required": true },
+    "dropoffPoint": { "type": "string", "required": true },
+    "pickupTime": { "type": "time" },
+    "dropoffTime": { "type": "time" },
+    "vehicleInfo": { "type": "string" },
+    "transportFee": { "type": "decimal" },
+    "isActive": { "type": "boolean", "default": true },
+    "notes": { "type": "text" }
+  }
+}

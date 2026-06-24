@@ -283,6 +283,109 @@ export default {
       ctx.body = { error: err.message };
     }
   },
+
+  async getAllParents(ctx: any) {
+    const parents = await strapi.entityService.findMany('plugin::users-permissions.user' as any, {
+      filters: { schoolRole: 'PARENT' },
+      populate: ['familyMemberships'],
+    });
+    ctx.body = parents;
+  },
+
+  async createParent(ctx: any) {
+    const crypto = require('crypto');
+    try {
+      const data = ctx.request.body;
+      data.schoolRole = 'PARENT';
+      if (!data.userId) {
+        data.userId = crypto.randomBytes(6).toString('hex').toUpperCase().substring(0, 12);
+      }
+      const parent = await strapi.entityService.create('plugin::users-permissions.user' as any, {
+        data: {
+          ...data,
+          provider: 'local',
+          confirmed: true,
+        },
+      }) as any;
+
+      if (data.familyId) {
+        const family = await strapi.entityService.findOne('api::family.family' as any, data.familyId, {
+          populate: ['parents'],
+        }) as any;
+        if (family) {
+          const parentIds = (family.parents || []).map((p: any) => p.id);
+          if (!parentIds.includes(parent.id)) {
+            parentIds.push(parent.id);
+            await strapi.entityService.update('api::family.family' as any, family.id, {
+              data: { parents: parentIds },
+            });
+          }
+        }
+      }
+
+      ctx.status = 201;
+      ctx.body = parent;
+    } catch (err: any) {
+      ctx.status = 400;
+      ctx.body = { error: { message: err.message } };
+    }
+  },
+
+  async sendAdminNotification(ctx: any) {
+    const user = ctx.state.user;
+    if (!user || user.schoolRole !== 'ADMIN') return ctx.unauthorized('Access denied');
+    const { title, body, type, priority, recipientId, actionUrl, metadata } = ctx.request.body;
+
+    const notif = await strapi.entityService.create('api::school-notification.school-notification' as any, {
+      data: {
+        title,
+        body,
+        type: type || 'GENERAL',
+        priority: priority || 'NORMAL',
+        recipient: recipientId,
+        sender: user.id,
+        isRead: false,
+        actionUrl,
+        metadata,
+      } as any,
+    });
+    ctx.status = 201;
+    ctx.body = notif;
+  },
+
+  async broadcastAdminAnnouncement(ctx: any) {
+    const user = ctx.state.user;
+    if (!user || user.schoolRole !== 'ADMIN') return ctx.unauthorized('Access denied');
+    const { title, body, role, type, priority } = ctx.request.body;
+
+    let recipients: any[] = [];
+    if (role) {
+      recipients = await strapi.entityService.findMany('plugin::users-permissions.user' as any, {
+        filters: { schoolRole: role },
+      }) as any[];
+    } else {
+      recipients = await strapi.entityService.findMany('plugin::users-permissions.user' as any) as any[];
+    }
+
+    const createdNotifications = await Promise.all(
+      recipients.map((recipient: any) =>
+        strapi.entityService.create('api::school-notification.school-notification' as any, {
+          data: {
+            title,
+            body,
+            type: type || 'GENERAL',
+            priority: priority || 'NORMAL',
+            recipient: recipient.id,
+            sender: user.id,
+            isRead: false,
+          } as any,
+        })
+      )
+    );
+
+    ctx.status = 201;
+    ctx.body = { count: createdNotifications.length };
+  },
 };
 
 // ─── Helper: verify admin from JWT (for auth:false routes) ────────────────

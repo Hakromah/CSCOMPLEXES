@@ -167,6 +167,18 @@ export default {
       path: '/school-finance/salary-payments/:id',
       handler: 'school-finance.deleteSalaryPayment',
       config: { middlewares: [] }
+    },
+    {
+      method: 'GET',
+      path: '/school-finance/family/:familyId/statement',
+      handler: 'school-finance.getFamilyStatement',
+      config: { middlewares: [] }
+    },
+    {
+      method: 'GET',
+      path: '/school-finance/payment-providers',
+      handler: 'school-finance.getPaymentProviders',
+      config: { middlewares: [] }
     }
   ]
 };

@@ -1,0 +1,37 @@
+{
+  "kind": "collectionType",
+  "collectionName": "behavior_records",
+  "info": {
+    "singularName": "behavior-record",
+    "pluralName": "behavior-records",
+    "displayName": "BehaviorRecord"
+  },
+  "options": { "draftAndPublish": false },
+  "attributes": {
+    "student": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "recordedBy": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "date": { "type": "date", "required": true },
+    "type": {
+      "type": "enumeration",
+      "enum": ["ACHIEVEMENT", "AWARD", "WARNING", "DISCIPLINE", "INCIDENT", "RECOGNITION", "OTHER"],
+      "required": true
+    },
+    "title": { "type": "string", "required": true },
+    "description": { "type": "text" },
+    "severity": {
+      "type": "enumeration",
+      "enum": ["LOW", "MEDIUM", "HIGH"]
+    },
+    "notifyParent": { "type": "boolean", "default": true },
+    "parentNotified": { "type": "boolean", "default": false },
+    "attachmentUrl": { "type": "string" }
+  }
+}

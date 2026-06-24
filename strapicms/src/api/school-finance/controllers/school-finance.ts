@@ -1,3 +1,5 @@
+import { getAllProviders } from '../services/payment-providers/PaymentProviderFactory';
+
 /**
  * school-finance custom controller
  */
@@ -533,5 +535,88 @@ export default {
     }));
 
     ctx.body = { salaryRecords: flatRecords, salaryPayments: flatPayments };
-  }
+  },
+
+  async getFamilyStatement(ctx: any) {
+    const user = ctx.state.user;
+    if (!user) return ctx.unauthorized();
+    
+    const { familyId } = ctx.params;
+    if (!familyId) {
+      ctx.status = 400;
+      return (ctx.body = { error: 'familyId is required' });
+    }
+
+    const parsedFamilyId = Number(familyId);
+
+    // Authorization safeguard: Parents can only view their own family's statement
+    if (user.schoolRole === 'PARENT') {
+      const family = await strapi.entityService.findOne('api::family.family' as any, parsedFamilyId, {
+        populate: ['parents'],
+      }) as any;
+      if (!family) return ctx.notFound('Family not found');
+      const isInFamily = (family.parents || []).some((p: any) => p.id === user.id);
+      if (!isInFamily) return ctx.forbidden('Access denied');
+    } else if (user.schoolRole !== 'ACCOUNTANT' && user.schoolRole !== 'ACCOUNTLEAD' && user.schoolRole !== 'ADMIN') {
+      return ctx.forbidden('Access denied');
+    }
+
+    const family = await strapi.entityService.findOne('api::family.family' as any, parsedFamilyId, {
+      populate: ['students'],
+    }) as any;
+    if (!family) return ctx.notFound('Family not found');
+
+    const students = family.students || [];
+    const childrenStatements = await Promise.all(
+      students.map(async (student: any) => {
+        try {
+          const statement = await strapi.service('api::school-finance.school-finance').getStudentStatement(student.id);
+          return {
+            student: {
+              id: student.id,
+              username: student.username,
+              firstName: student.firstName,
+              lastName: student.lastName,
+              userId: student.userId,
+            },
+            ...statement,
+          };
+        } catch (err) {
+          return {
+            student: {
+              id: student.id,
+              username: student.username,
+            },
+            invoices: [],
+            payments: [],
+            totalCharged: 0,
+            totalPaid: 0,
+            outstandingBalance: 0,
+          };
+        }
+      })
+    );
+
+    const totalCharged = childrenStatements.reduce((sum, cs) => sum + (cs.totalCharged || 0), 0);
+    const totalPaid = childrenStatements.reduce((sum, cs) => sum + (cs.totalPaid || 0), 0);
+    const totalOutstanding = childrenStatements.reduce((sum, cs) => sum + (cs.outstandingBalance || 0), 0);
+
+    ctx.body = {
+      family: {
+        id: family.id,
+        familyName: family.familyName,
+        familyCode: family.familyCode,
+      },
+      totalCharged,
+      totalPaid,
+      totalOutstanding,
+      children: childrenStatements,
+    };
+  },
+
+  async getPaymentProviders(ctx: any) {
+    const user = ctx.state.user;
+    if (!user) return ctx.unauthorized();
+    ctx.body = getAllProviders();
+  },
 };
