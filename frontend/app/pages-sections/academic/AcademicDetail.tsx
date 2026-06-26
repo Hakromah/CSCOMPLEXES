@@ -21,8 +21,6 @@ export default function AcademicDetail({ program }: { program: AcademicProgram }
 
     // Academic links for CTA buttons
     const academicLinks = program.academic_link ?? [];
-    const academicLink0 = academicLinks[0];
-    const academicLink1 = academicLinks[1];
 
     // Images
     const contentImage = program.contentImage || program.image || FALLBACK_CONTENT;
@@ -100,23 +98,22 @@ export default function AcademicDetail({ program }: { program: AcademicProgram }
 
                             {/* CTA buttons — name and href come from Strapi academic_link */}
                             <div className="pt-8 flex flex-wrap gap-4">
-                                {academicLink0 && (
-                                    <a href={academicLink0.href} target="_blank" rel="noreferrer">
-                                        <Button className="h-fit px-[clamp(25px,3vw,36px)] py-[clamp(10px,3vw,15px)] rounded-full bg-primary hover:bg-primary/90 text-white font-bold text-lg transition-all duration-300 shadow-xl shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-1">
-                                            {academicLink0.name}
-                                        </Button>
+                                {academicLinks.map((link, idx) => (
+                                    <a key={idx} href={link.href} target="_blank" rel="noreferrer">
+                                        {idx === 0 ? (
+                                            <Button className="h-fit px-[clamp(25px,3vw,36px)] py-[clamp(10px,3vw,15px)] rounded-full bg-primary hover:bg-primary/90 text-white font-bold text-lg transition-all duration-300 shadow-xl shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-1">
+                                                {link.name}
+                                            </Button>
+                                        ) : (
+                                            <Button
+                                                variant="outline"
+                                                className="h-fit px-[clamp(25px,3vw,36px)] py-[clamp(10px,3vw,15px)] rounded-full border-gray-300 text-gray-700 hover:border-primary hover:text-primary font-bold text-lg transition-all duration-300"
+                                            >
+                                                {link.name}
+                                            </Button>
+                                        )}
                                     </a>
-                                )}
-                                {academicLink1 && (
-                                    <a href={academicLink1.href} target="_blank" rel="noreferrer">
-                                        <Button
-                                            variant="outline"
-                                            className="h-fit px-[clamp(25px,3vw,36px)] py-[clamp(10px,3vw,15px)] rounded-full border-gray-300 text-gray-700 hover:border-primary hover:text-primary font-bold text-lg transition-all duration-300"
-                                        >
-                                            {academicLink1.name}
-                                        </Button>
-                                    </a>
-                                )}
+                                ))}
                             </div>
                         </div>
 
