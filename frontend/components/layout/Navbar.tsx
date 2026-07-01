@@ -37,6 +37,7 @@ export default function Navbar({ navbarData, contactInfo, donationData }: Navbar
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [mobileSubmenu, setMobileSubmenu] = useState<string | null>(null);
   const [copiedItem, setCopiedItem] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
 
   const copyToClipboard = (text: string, id: string) => {
@@ -126,6 +127,12 @@ export default function Navbar({ navbarData, contactInfo, donationData }: Navbar
 
   // Merge social links from contactInfo or default array
   const socials = contactInfo?.socialLinks ?? socialLinks;
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    const handle = requestAnimationFrame(() => setMounted(true));
+    return () => cancelAnimationFrame(handle);
+  }, []);
 
   useEffect(() => {
     const updateHeaderTransform = () => {
@@ -358,16 +365,22 @@ export default function Navbar({ navbarData, contactInfo, donationData }: Navbar
                 </a>
 
                 {/* Donate Button with Dialog start */}
-
                 <div className="w-full md:w-auto max-md:text-primary rounded-full max-md:bg-white">
-                  <Dialog onOpenChange={(open) => { if (open) setIsMobileMenuOpen(false); }}>
-                    <DialogTrigger asChild>
-                      <button
-                        className="w-full h-full py-3 px-5 text-nowrap flex items-center justify-center transition-colors max-md:text-primary max-md:bg-white lg:hover:bg-primary/10 lg:hover:text-primary bg-primary border border-primary/0 lg:hover:border-primary text-white duration-500 rounded-full text-sm font-medium cursor-pointer"
-                      >
-                        Faire un don
-                      </button>
-                    </DialogTrigger>
+                  {!mounted ? (
+                    <button
+                      className="w-full h-full py-3 px-5 text-nowrap flex items-center justify-center transition-colors max-md:text-primary max-md:bg-white lg:hover:bg-primary/10 lg:hover:text-primary bg-primary border border-primary/0 lg:hover:border-primary text-white duration-500 rounded-full text-sm font-medium cursor-pointer"
+                    >
+                      Faire un don
+                    </button>
+                  ) : (
+                    <Dialog onOpenChange={(open) => { if (open) setIsMobileMenuOpen(false); }}>
+                      <DialogTrigger asChild>
+                        <button
+                          className="w-full h-full py-3 px-5 text-nowrap flex items-center justify-center transition-colors max-md:text-primary max-md:bg-white lg:hover:bg-primary/10 lg:hover:text-primary bg-primary border border-primary/0 lg:hover:border-primary text-white duration-500 rounded-full text-sm font-medium cursor-pointer"
+                        >
+                          Faire un don
+                        </button>
+                      </DialogTrigger>
                     <DialogContent className="sm:max-w-lg max-h-[80vh] overflow-y-auto">
                       <DialogHeader>
                         <DialogTitle>{donationData?.header ?? 'Informations Bancaires'}</DialogTitle>
@@ -520,6 +533,7 @@ export default function Navbar({ navbarData, contactInfo, donationData }: Navbar
                       </div>
                     </DialogContent>
                   </Dialog>
+                  )}
                 </div>
 
                 {/* Donate Button with Dialog end */}

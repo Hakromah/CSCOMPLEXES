@@ -41,6 +41,7 @@ import type {
    StrapiRichTextBlock,
    StrapiMediaItem,
    StrapiImportantNewsPopup,
+   StrapiLoginPage,
    HeroSlide,
    BlogPost,
    StaffMember,
@@ -61,6 +62,7 @@ import type {
    MapSettingData,
    DonationData,
    ImportantNewsPopupData,
+   LoginPageData,
 } from '@/types/strapi';
 
 // ─── Utility ──────────────────────────────────────────────────────────────────
@@ -756,7 +758,7 @@ export async function fetchFooter(): Promise<FooterData | null> {
 export async function fetchNavbar(): Promise<NavbarData | null> {
    try {
       const { data } = await strapi.get<StrapiSingleResponse<StrapiNavbar>>(
-         '/navbar?populate[0]=logo&populate[nav_items][populate]=sub_items'
+         '/navbar?populate[logo][populate]=*&populate[nav_items][populate]=sub_items'
       );
       if (!data.data) return null;
       const n = data.data;
@@ -859,3 +861,24 @@ export async function fetchImportantNewsPopup(): Promise<ImportantNewsPopupData 
       return null;
    }
 }
+
+// ─── Login Page (Single Type) ──────────────────────────────────────────────
+
+export async function fetchLoginPage(): Promise<LoginPageData | null> {
+   try {
+      const { data } = await strapi.get<StrapiSingleResponse<StrapiLoginPage>>(
+         '/login-page?populate=*'
+      );
+      if (!data.data) return null;
+      const p = data.data;
+      return {
+         logo: mediaUrl(p.logo),
+         backgroundImage: mediaUrl(p.background_image),
+         title: p.title ?? '',
+         description: p.description ?? '',
+      };
+   } catch {
+      return null;
+   }
+}
+

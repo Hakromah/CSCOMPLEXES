@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -21,7 +21,7 @@ import api from '@/lib/api';
 import { getUserRole } from '@/lib/auth';
 import { AxiosError } from 'axios';
 import Cookies from 'js-cookie';
-import Image from 'next/image';
+import StrapiImage from '@/components/StrapiImage';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -34,6 +34,33 @@ const formSchema = z.object({
 export default function LoginPage() {
    const router = useRouter();
    const [isLoading, setIsLoading] = useState(false);
+   const [loginPageData, setLoginPageData] = useState<{
+      logo: string;
+      backgroundImage: string;
+      title: string;
+      description: string;
+   } | null>(null);
+
+   useEffect(() => {
+      api.get('/login-page?populate=*')
+         .then((res) => {
+            const d = res.data?.data;
+            if (d) {
+               const strapiBaseUrl = process.env.NEXT_PUBLIC_STRAPI_URL || 'https://api.2cscomplexes.com';
+               const logoUrl = d.logo?.url ? `${strapiBaseUrl}${d.logo.url}` : '';
+               const bgUrl = d.background_image?.url ? `${strapiBaseUrl}${d.background_image.url}` : '';
+               setLoginPageData({
+                  logo: logoUrl,
+                  backgroundImage: bgUrl,
+                  title: d.title || '',
+                  description: d.description || '',
+               });
+            }
+         })
+         .catch((err) => {
+            console.error('Error fetching login page data:', err);
+         });
+   }, []);
 
    const form = useForm<z.infer<typeof formSchema>>({
       resolver: zodResolver(formSchema),
@@ -120,13 +147,12 @@ export default function LoginPage() {
       <div className="relative min-h-screen flex items-center justify-center p-4 overflow-hidden">
          {/* Full Screen Background Image */}
          <div className="absolute inset-0 z-0">
-            <Image
-               src="/students.webp"
+            <StrapiImage
+               src={loginPageData?.backgroundImage || "/students.webp"}
                alt="Background"
                fill
                className="object-cover"
                priority
-               unoptimized
             />
             {/* Dark Overlay for better contrast */}
             <div className="absolute inset-0 bg-black/0 "></div>
@@ -143,10 +169,10 @@ export default function LoginPage() {
                
                <div className="text-center mb-10">
                   <div className="w-20 h-20 mx-auto mb-6 rounded-2xl flex items-center justify-center overflow-hidden border border-white/30 bg-white/5 shadow-inner">
-                     <Image src="/logo/2cslogo.jpeg" alt="Logo" width={80} height={80} className="object-cover" />
+                     <StrapiImage src={loginPageData?.logo || "/logo/2cslogo.jpeg"} alt="Logo" width={80} height={80} className="object-cover" />
                   </div>
-                  <h2 className="text-3xl font-bold text-white tracking-tight">Bienvenue</h2>
-                  <p className="text-sm text-gray-300 mt-3 font-medium">Connectez-vous pour accéder à votre espace</p>
+                  <h2 className="text-3xl font-bold text-white tracking-tight">{loginPageData?.title || "Bienvenue"}</h2>
+                  <p className="text-sm text-gray-300 mt-3 font-medium">{loginPageData?.description || "Connectez-vous pour accéder à votre espace"}</p>
                </div>
 
                <Form {...form}>

@@ -1311,6 +1311,37 @@ export interface ApiLearningMaterialLearningMaterial
   };
 }
 
+export interface ApiLoginPageLoginPage extends Struct.SingleTypeSchema {
+  collectionName: 'login_pages';
+  info: {
+    displayName: 'Login Page';
+    pluralName: 'login-pages';
+    singularName: 'login-page';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    background_image: Schema.Attribute.Media<'images'>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Text;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::login-page.login-page'
+    > &
+      Schema.Attribute.Private;
+    logo: Schema.Attribute.Media<'images'>;
+    publishedAt: Schema.Attribute.DateTime;
+    title: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiMapSettingMapSetting extends Struct.SingleTypeSchema {
   collectionName: 'map_settings';
   info: {
@@ -3160,6 +3191,7 @@ declare module '@strapi/strapi' {
       'api::gallery-item.gallery-item': ApiGalleryItemGalleryItem;
       'api::hero-slide.hero-slide': ApiHeroSlideHeroSlide;
       'api::learning-material.learning-material': ApiLearningMaterialLearningMaterial;
+      'api::login-page.login-page': ApiLoginPageLoginPage;
       'api::map-setting.map-setting': ApiMapSettingMapSetting;
       'api::navbar.navbar': ApiNavbarNavbar;
       'api::news-post.news-post': ApiNewsPostNewsPost;

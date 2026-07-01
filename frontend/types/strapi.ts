@@ -783,3 +783,22 @@ export interface ImportantNewsPopupData {
    imageUrl: string;
    link: string | null;
 }
+
+/** login-page single type — raw Strapi response */
+export interface StrapiLoginPage {
+   id: number;
+   documentId?: string;
+   logo: StrapiMediaItem | StrapiMediaItem[] | null;
+   background_image: StrapiMediaItem | StrapiMediaItem[] | null;
+   title: string | null;
+   description: string | null;
+}
+
+/** login-page — normalized frontend DTO */
+export interface LoginPageData {
+   logo: string;
+   backgroundImage: string;
+   title: string;
+   description: string;
+}
+
