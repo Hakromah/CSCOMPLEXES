@@ -423,9 +423,10 @@ export default function UserManagement() {
 
          {/* 4. MAIN REGISTRY TABLE (Staggered Entrance) */}
          <Card className="border border-slate-100 md:hover:border-primary duration-500 transition-colors shadow-sm bg-white overflow-hidden rounded-3xl">
-            <Table>
-               <TableHeader className="bg-slate-50/50">
-                  <TableRow className="border-slate-100 hover:bg-transparent">
+            <div className="max-h-[620px] overflow-y-auto pr-1">
+               <Table>
+                  <TableHeader className="bg-slate-50 sticky top-0 z-10 shadow-sm">
+                     <TableRow className="border-slate-100 hover:bg-transparent bg-slate-50">
                      <TableHead className="w-12"></TableHead>
                      <TableHead className="font-black uppercase text-[10px] tracking-widest text-slate-400">Profil d'identité</TableHead>
                      <TableHead className="font-black uppercase text-[10px] tracking-widest text-slate-400">Identifiant d'empreinte digitale</TableHead>
@@ -499,11 +500,9 @@ export default function UserManagement() {
                   </AnimatePresence>
                </TableBody>
             </Table>
+            </div>
          </Card>
 
-         {/* 5. DIALOGS (Integrated User Registration Forms) */}
-
-         {/* Create Identity */}
          <Dialog open={isCreateOpen} onOpenChange={(open) => { setIsCreateOpen(open); if (!open) { setEmailDuplicate(null); form.reset(); } }}>
             <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl p-0 border-none shadow-2xl">
                <DialogHeader className="p-6 bg-blue-600 text-white">

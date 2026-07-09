@@ -212,9 +212,10 @@ export default function ParentManagement() {
               No parent accounts found
             </div>
           ) : (
-            <Table>
-              <TableHeader className="bg-slate-50/50">
-                <TableRow>
+            <div className="max-h-[620px] overflow-y-auto pr-1">
+              <Table>
+                <TableHeader className="bg-slate-50 sticky top-0 z-10 shadow-sm">
+                  <TableRow className="bg-slate-50 hover:bg-slate-50/50">
                   <TableHead className="font-bold text-slate-500 uppercase text-[10px] tracking-wider pl-6">Profile</TableHead>
                   <TableHead className="font-bold text-slate-500 uppercase text-[10px] tracking-wider">Authentication</TableHead>
                   <TableHead className="font-bold text-slate-500 uppercase text-[10px] tracking-wider">Contact</TableHead>
@@ -269,6 +270,7 @@ export default function ParentManagement() {
                 ))}
               </TableBody>
             </Table>
+            </div>
           )}
         </CardContent>
       </Card>

@@ -155,62 +155,64 @@ export default function AdvancedSubjectsPage() {
 
         {/* Subjects Grid */}
         <AnimatePresence mode="popLayout">
-          <motion.div
-            layout
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-          >
-            {filteredSubjects.map((subject) => (
-              <motion.div
-                key={subject.id}
-                layout
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                className="group relative"
-              >
-                <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-100 md:hover:border-primary duration-500 hover:shadow-2xl hover:-translate-y-2 transition-all h-full flex flex-col justify-between">
-                  <div className="flex justify-between items-start mb-8">
-                    <div className="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center text-primary group-hover:bg-blue-600 group-hover:text-white transition-colors duration-500">
-                      <BookOpen size={28} />
+          <div className="max-h-[620px] overflow-y-auto pr-1 p-2">
+            <motion.div
+              layout
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+            >
+              {filteredSubjects.map((subject) => (
+                <motion.div
+                  key={subject.id}
+                  layout
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  className="group relative"
+                >
+                  <div className="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 md:hover:border-primary duration-500 hover:shadow-2xl hover:-translate-y-2 transition-all h-full flex flex-col justify-between">
+                    <div className="flex justify-between items-start mb-4">
+                      <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-primary group-hover:bg-blue-600 group-hover:text-white transition-colors duration-500">
+                        <BookOpen size={20} />
+                      </div>
+
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon" className="rounded-full hover:bg-slate-100 h-8 w-8">
+                            <MoreVertical size={16} className="text-slate-400" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="rounded-2xl p-2 shadow-2xl border-slate-100 min-w-[140px]">
+                          <DropdownMenuItem onClick={() => openDialog(subject)} className="rounded-xl font-bold text-[10px] uppercase tracking-widest p-3 cursor-pointer">
+                            <Pencil size={14} className="mr-2 text-amber-500" /> Modifier
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleDelete(subject.id)} className="rounded-xl font-bold text-[10px] uppercase tracking-widest p-3 cursor-pointer text-rose-600 focus:bg-rose-50 focus:text-rose-600">
+                            <Trash2 size={14} className="mr-2" /> Supprimer
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </div>
 
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="rounded-full hover:bg-slate-100">
-                          <MoreVertical size={18} className="text-slate-400" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="rounded-2xl p-2 shadow-2xl border-slate-100 min-w-[140px]">
-                        <DropdownMenuItem onClick={() => openDialog(subject)} className="rounded-xl font-bold text-[10px] uppercase tracking-widest p-3 cursor-pointer">
-                          <Pencil size={14} className="mr-2 text-amber-500" /> Modifier
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleDelete(subject.id)} className="rounded-xl font-bold text-[10px] uppercase tracking-widest p-3 cursor-pointer text-rose-600 focus:bg-rose-50 focus:text-rose-600">
-                          <Trash2 size={14} className="mr-2" /> Supprimer
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-
-                  <div className="space-y-4">
-                    <Badge className="bg-slate-100 text-slate-500 hover:bg-slate-100 border-none rounded-lg font-black text-[9px] px-3 py-1">
-                      ID: #{subject.id}
-                    </Badge>
-                    <h3 className="lg:text-[clamp(1rem,2vw+1rem,1.2rem)] text-lg font-black text-slate-900 tracking-tighter leading-none italic uppercase group-hover:text-primary transition-colors">
-                      {subject.name}
-                    </h3>
-                    <div className="pt-6 border-t border-slate-50 flex items-center justify-between">
-                      <div className="flex items-center gap-1.5 text-[9px] font-black text-slate-400 uppercase tracking-widest">
-                        <GraduationCap size={12} /> Standard
-                      </div>
-                      <div className="flex items-center gap-1.5 text-[9px] font-black text-blue-500 uppercase tracking-widest">
-                        <Sparkles size={12} /> Unifié
+                    <div className="space-y-2">
+                      <Badge className="bg-slate-100 text-slate-500 hover:bg-slate-100 border-none rounded-lg font-black text-[9px] px-3 py-1">
+                        ID: #{subject.id}
+                      </Badge>
+                      <h3 className="text-sm font-extrabold text-slate-900 tracking-tighter leading-none italic uppercase group-hover:text-primary transition-colors">
+                        {subject.name}
+                      </h3>
+                      <div className="pt-3 mt-3 border-t border-slate-50 flex items-center justify-between">
+                        <div className="flex items-center gap-1.5 text-[9px] font-black text-slate-400 uppercase tracking-widest">
+                          <GraduationCap size={12} /> Standard
+                        </div>
+                        <div className="flex items-center gap-1.5 text-[9px] font-black text-blue-500 uppercase tracking-widest">
+                          <Sparkles size={12} /> Unifié
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
         </AnimatePresence>
 
         {/* Empty State */}

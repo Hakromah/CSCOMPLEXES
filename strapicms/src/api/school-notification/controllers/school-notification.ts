@@ -40,11 +40,18 @@ export default {
   async markAllRead(ctx: any) {
     const user = ctx.state.user;
     if (!user) return ctx.unauthorized();
-    await strapi.db.query('api::school-notification.school-notification').updateMany({
+    const unread = await strapi.db.query('api::school-notification.school-notification').findMany({
       where: { recipient: { id: user.id }, isRead: false },
-      data: { isRead: true, readAt: new Date().toISOString() },
+      select: ['id'],
     });
-    ctx.body = { message: 'All notifications marked as read' };
+    const ids = unread.map((n: any) => n.id);
+    if (ids.length > 0) {
+      await strapi.db.query('api::school-notification.school-notification').updateMany({
+        where: { id: { $in: ids } },
+        data: { isRead: true, readAt: new Date().toISOString() },
+      });
+    }
+    ctx.body = { message: 'All notifications marked as read', count: ids.length };
   },
 
   async sendNotification(ctx: any) {
@@ -70,7 +77,7 @@ export default {
     const user = ctx.state.user;
     if (!user || user.schoolRole !== 'ADMIN') return ctx.unauthorized('Access denied');
     const { title, body, type, priority, targetRole, actionUrl } = ctx.request.body;
-    const where: any = {};
+    const where: any = { id: { $ne: user.id } };
     if (targetRole) where.schoolRole = targetRole;
     const users = await strapi.db.query('plugin::users-permissions.user').findMany({ where, select: ['id'] });
     const created = await Promise.all(

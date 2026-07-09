@@ -150,10 +150,11 @@ export default function AdvancedClassesPage() {
 
       <main className="max-w-7xl mx-auto">
         <AnimatePresence mode="popLayout">
-          <motion.div
-            layout
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-          >
+          <div className="max-h-[700px] overflow-y-auto pr-1 p-2">
+            <motion.div
+              layout
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+            >
             {filteredClasses.map((c) => (
               <motion.div
                 key={c.id}
@@ -219,6 +220,7 @@ export default function AdvancedClassesPage() {
               </motion.div>
             ))}
           </motion.div>
+          </div>
         </AnimatePresence>
       </main>
       {/* DIALOGS */}

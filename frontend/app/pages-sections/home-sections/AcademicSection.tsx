@@ -180,9 +180,9 @@ export default function AcademicSection({ programs: programsProp }: AcademicSect
                                     </Button>
                                 </div>
                             )}
-                              <Link href="/academic" className="group flex text-nowrap items-center gap-2 text-white font-medium md:before:absolute md:before:bottom-0 md:before:left-0 md:before:w-0 md:hover:before:w-full md:before:h-px md:before:bg-white before:duration-500  md:before:z-1 relative duration-500">
-                              Tous les programmes <ArrowUpRight className="h-4 w-4 lg:group-hover:rotate-45 transition-all  lg:group-hover:text-white text-white/80 duration-500" />
-                              </Link>
+                            <Link href="/academic" className="group flex text-nowrap items-center gap-2 text-white font-medium md:before:absolute md:before:bottom-0 md:before:left-0 md:before:w-0 md:hover:before:w-full md:before:h-px md:before:bg-white before:duration-500  md:before:z-1 relative duration-500">
+                                Tous les programmes <ArrowUpRight className="h-4 w-4 lg:group-hover:rotate-45 transition-all  lg:group-hover:text-white text-white/80 duration-500" />
+                            </Link>
                         </div>
                     </div>
 
@@ -202,63 +202,63 @@ export default function AcademicSection({ programs: programsProp }: AcademicSect
                     )}
                 </div>
 
-               <div className='overflow-hidden w-full h-fit relative'>
-                {/* Swiper */}
-                <Swiper
-                    onSwiper={setSwiperInstance}
-                    onInit={(swiper) => setIsLocked(swiper.isLocked)}
-                    onLock={(swiper) => setIsLocked(swiper.isLocked)}
-                    onUnlock={(swiper) => setIsLocked(swiper.isLocked)}
-                    onResize={(swiper) => setIsLocked(swiper.isLocked)}
-                    modules={[Navigation, Autoplay]}
-                    spaceBetween={24}
-                    slidesPerView={1.1}
-                    breakpoints={{
-                        640: {
-                            slidesPerView: 2.1,
-                        },
-                        1024: {
-                            slidesPerView: 2.5,
-                        },
-                        1300: {
-                            slidesPerView: 4,
-                        },
-                    }}
-                    className="academic-swiper w-full overflow-visible!"
-                >
-                    {filteredPrograms.map((program) => (
-                        <SwiperSlide key={program.id} className="h-full">
-                            <a href={`/academic/${program.slug}`} className='block w-full h-full'>
-                                <div className="group/card bg-white rounded-[15px] p-3 overflow-hidden h-[501px] max-sm:h-[400px] flex flex-col group cursor-pointer transition-transform duration-300">
-                                    <div className=" relative h-60 max-xs:h-[220px] w-full overflow-hidden rounded-[12px]">
-                                        <StrapiImage
-                                            src={program.image}
-                                            alt={program.title}
-                                            fill
-                                            unoptimized
-                                            className="object-cover transition-transform duration-500 lg:group-hover/card:scale-110 h-60 max-xs:h-[220px]"
-                                        />
-                                        <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors duration-300" />
-                                    </div>
+                <div className='overflow-hidden w-full h-fit relative'>
+                    {/* Swiper */}
+                    <Swiper
+                        onSwiper={setSwiperInstance}
+                        onInit={(swiper) => setIsLocked(swiper.isLocked)}
+                        onLock={(swiper) => setIsLocked(swiper.isLocked)}
+                        onUnlock={(swiper) => setIsLocked(swiper.isLocked)}
+                        onResize={(swiper) => setIsLocked(swiper.isLocked)}
+                        modules={[Navigation, Autoplay]}
+                        spaceBetween={24}
+                        slidesPerView={1.1}
+                        breakpoints={{
+                            640: {
+                                slidesPerView: 2.1,
+                            },
+                            1024: {
+                                slidesPerView: 2.5,
+                            },
+                            1300: {
+                                slidesPerView: 4,
+                            },
+                        }}
+                        className="academic-swiper w-full overflow-visible!"
+                    >
+                        {filteredPrograms.map((program) => (
+                            <SwiperSlide key={program.id} className="h-full">
+                                <a href={`/academic/${program.slug}`} className='block w-full h-full'>
+                                    <div className="group/card bg-white rounded-[15px] p-3 overflow-hidden h-[501px] max-sm:h-[400px] flex flex-col group cursor-pointer transition-transform duration-300">
+                                        <div className=" relative h-60 max-xs:h-[220px] w-full overflow-hidden rounded-[12px]">
+                                            <StrapiImage
+                                                src={program.image}
+                                                alt={program.title}
+                                                fill
+                                                unoptimized
+                                                className="object-cover transition-transform duration-500 lg:group-hover/card:scale-110 h-60 max-xs:h-[220px]"
+                                            />
+                                            <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors duration-300" />
+                                        </div>
 
-                                    <div className="pb-6  pt-3 flex flex-col grow text-primary">
-                                        <h3 className="text-[clamp(20px,2vw,25px)] font-semibold mb-3 line-clamp-2">{program.title}</h3>
-                                        <p className="text-[#4B5563] text-[clamp(16px,1.5vw,18px)] line-clamp-2 leading-relaxed mb-6 grow">
-                                            {program.description}
-                                        </p>
+                                        <div className="pb-6  pt-3 flex flex-col grow text-primary">
+                                            <h3 className="text-[clamp(20px,2vw,25px)] font-semibold mb-3 line-clamp-2">{program.title}</h3>
+                                            <p className="text-[#4B5563] text-[clamp(16px,1.5vw,18px)] line-clamp-2 leading-relaxed mb-6 grow">
+                                                {program.description}
+                                            </p>
 
-                                        <div className="mt-auto">#394995
-                                            <Button className="w-full rounded-full font-bold bg-[#2857AE]/10 lg:hover:bg-primary lg:hover:text-white text-primary text-[clamp(16px,1.5vw,18px)] italic transition-all duration-500 border border-primary">
-                                                Explorer le programme
-                                            </Button>
+                                            <div className="mt-auto">
+                                                <Button className="w-full rounded-full font-bold bg-[#2857AE]/10 lg:hover:bg-primary lg:hover:text-white text-primary text-[clamp(16px,1.5vw,18px)] italic transition-all duration-500 border border-primary">
+                                                    Explorer le programme
+                                                </Button>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </a>
-                        </SwiperSlide>
-                    ))}
-                </Swiper>
-              </div>
+                                </a>
+                            </SwiperSlide>
+                        ))}
+                    </Swiper>
+                </div>
             </div>
         </section>
     );

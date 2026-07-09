@@ -179,7 +179,8 @@ export default function AdminMaterialsPage() {
                   <Loader2 className="animate-spin text-rose-600" size={40} />
                </div>
             ) : (
-               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="max-h-[920px] overflow-y-auto pr-1 p-2">
+               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   <AnimatePresence mode="popLayout">
                      {materials.map(m => {
                         const isPdf = m.fileName?.toLowerCase().endsWith('.pdf') || m.fileType?.includes('pdf');
@@ -192,11 +193,11 @@ export default function AdminMaterialsPage() {
                               animate={{ opacity: 1, scale: 1 }}
                               exit={{ opacity: 0, scale: 0.9 }}
                            >
-                              <Card className="rounded-[clamp(1rem,2vw+1rem,2rem)] p-8 border border-primary/0 lg:hover:border-primary duration-500 shadow-sm bg-white hover:shadow-2xl transition-all group flex flex-col justify-between h-full relative overflow-hidden">
+                              <Card className="rounded-2xl p-5 border border-primary/0 lg:hover:border-primary duration-500 shadow-sm bg-white hover:shadow-2xl transition-all group flex flex-col justify-between h-full relative overflow-hidden">
                                  <div className="absolute top-0 left-0 w-2 h-full bg-rose-600/10 group-hover:bg-rose-600 transition-colors" />
 
                                  <div>
-                                    <div className="flex justify-between items-start mb-6">
+                                    <div className="flex justify-between items-start mb-3">
                                        <Badge className="bg-slate-900 text-[9px] font-black uppercase tracking-widest italic rounded-lg">
                                           ID: #{m.id}
                                        </Badge>
@@ -204,21 +205,21 @@ export default function AdminMaterialsPage() {
                                           onClick={() => deleteMaterial(m.id)}
                                           variant="ghost"
                                           size="icon"
-                                          className="text-slate-200 hover:text-rose-600 rounded-full"
+                                          className="text-slate-200 hover:text-rose-600 rounded-full h-8 w-8"
                                        >
-                                          <Trash2 size={20} />
+                                          <Trash2 size={16} />
                                        </Button>
                                     </div>
 
                                     <div className="flex items-center gap-2 mb-2">
-                                       {isPdf ? <FileText className="text-rose-600" size={20} /> : <ImageIcon className="text-indigo-600" size={20} />}
-                                       <h3 className="text-xl font-black italic uppercase text-slate-900 truncate tracking-tighter">
+                                       {isPdf ? <FileText className="text-rose-600" size={16} /> : <ImageIcon className="text-indigo-600" size={16} />}
+                                       <h3 className="text-sm font-black italic uppercase text-slate-900 truncate tracking-tighter">
                                           {m.fileName}
                                        </h3>
                                     </div>
-                                    <p className="text-slate-400 font-bold text-xs italic line-clamp-2 mb-6">{m.title}</p>
+                                    <p className="text-slate-400 font-bold text-[11px] italic line-clamp-2 mb-3">{m.title}</p>
 
-                                    <div className="flex flex-wrap gap-2 mb-6">
+                                    <div className="flex flex-wrap gap-2 mb-3">
                                        {(m.targetClasses || (m.classe ? [m.classe] : [])).map((c: any) => (
                                           <Badge key={c.id || 'no-class'} className="bg-slate-50 text-slate-400 border-none font-black text-[9px] uppercase italic">
                                              {c.name || 'Non assigné'}
@@ -232,8 +233,8 @@ export default function AdminMaterialsPage() {
                                     </div>
                                  </div>
 
-                                 <div className="space-y-4">
-                                    <div className="p-4 rounded-2xl bg-slate-50 space-y-2">
+                                 <div className="space-y-3">
+                                    <div className="p-2.5 rounded-xl bg-slate-50 space-y-1">
                                        <div className="flex items-center gap-2 text-[10px] font-black uppercase text-slate-500 italic">
                                           <User size={14} className="text-rose-600" /> Ajouté : {m.uploadedBy?.name}
                                        </div>
@@ -245,15 +246,15 @@ export default function AdminMaterialsPage() {
                                     <div className="flex gap-3">
                                        <Button
                                           onClick={() => handlePreview(m)}
-                                          className="flex-1 h-12 rounded-2xl bg-white border-2 border-slate-100 text-slate-900 font-black italic uppercase text-[10px] hover:bg-slate-50 shadow-sm"
+                                          className="flex-1 h-9 rounded-xl bg-white border-2 border-slate-100 text-slate-900 font-black italic uppercase text-[9px] hover:bg-slate-50 shadow-sm"
                                        >
-                                          <Eye size={16} className="mr-2" /> Aperçu
+                                          <Eye size={14} className="mr-2" /> Aperçu
                                        </Button>
                                        <Button
                                           onClick={() => handleDownload(m)}
-                                          className="flex-1 h-12 rounded-2xl bg-rose-600 text-white font-black italic uppercase text-[10px] hover:bg-slate-900 shadow-xl shadow-rose-200 transition-all"
+                                          className="flex-1 h-9 rounded-xl bg-rose-600 text-white font-black italic uppercase text-[9px] hover:bg-slate-900 shadow-xl shadow-rose-200 transition-all"
                                        >
-                                          <Download size={16} className="mr-2" /> Télécharger
+                                          <Download size={14} className="mr-2" /> Télécharger
                                        </Button>
                                     </div>
                                  </div>
@@ -263,6 +264,7 @@ export default function AdminMaterialsPage() {
                      })}
                   </AnimatePresence>
                </div>
+            </div>
             )}
          </main>
       </div>
