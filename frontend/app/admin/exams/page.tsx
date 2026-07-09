@@ -12,7 +12,9 @@ import {
   ChevronRight,
   Loader2,
   AlertTriangle,
-  Download
+  Download,
+  Calendar,
+  Clock
 } from 'lucide-react';
 import { toast } from 'sonner';
 import api from '@/lib/api';
@@ -113,6 +115,7 @@ export default function AdminExamsPage() {
             <TableRow className="border-none">
               <TableHead className="py-8 pl-10 font-black text-[10px] uppercase tracking-widest text-slate-400">EXAMEN & CLASSE</TableHead>
               <TableHead className="font-black text-[10px] uppercase tracking-widest text-slate-400">ENSEIGNANT</TableHead>
+              <TableHead className="font-black text-[10px] uppercase tracking-widest text-slate-400">DATE & HEURE</TableHead>
               <TableHead className="font-black text-[10px] uppercase tracking-widest text-slate-400 text-center">POIDS</TableHead>
               <TableHead className="font-black text-[10px] uppercase tracking-widest text-slate-400">STATUT</TableHead>
               <TableHead className="text-right pr-10 font-black text-[10px] uppercase tracking-widest text-slate-400">CONTRÔLE</TableHead>
@@ -132,6 +135,13 @@ export default function AdminExamsPage() {
                       {(exam.teacher?.username || exam.teacher?.name || 'UN').substring(0, 2).toUpperCase()}
                     </div>
                     <span className="font-bold text-xs text-slate-700">{exam.teacher?.username || exam.teacher?.name || 'Unknown'}</span>
+                  </div>
+                </TableCell>
+
+                <TableCell>
+                  <div className="flex flex-col gap-1 text-[11px] font-bold text-slate-600">
+                    <span className="flex items-center gap-1.5"><Calendar size={12} className="text-blue-500" /> {exam.date}</span>
+                    <span className="flex items-center gap-1.5 uppercase text-slate-450 tracking-tighter"><Clock size={12} /> {exam.startTime?.slice(0, 5) || 'TBD'} - {exam.endTime?.slice(0, 5) || 'TBD'}</span>
                   </div>
                 </TableCell>
 

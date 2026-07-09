@@ -215,37 +215,45 @@ export default function StudentDashboard() {
 
         {/* Sidebar Info */}
         <div className="space-y-6">
-          <Card className="border border-slate-800 md:hover:border-primary duration-500 transition-colors shadow-sm rounded-4 md:rounded-3xl bg-slate-900 text-white p-4 md:p-[clamp(1rem,2.5vw+1rem,2rem)] overflow-hidden relative group">
+          <Card className="border border-slate-200 md:hover:border-primary duration-500 transition-colors shadow-md rounded-2xl bg-white text-slate-800 p-5 overflow-hidden relative group">
             <div className="relative z-10">
-              <h2 className="text-lg font-black uppercase tracking-widest mb-4">Rappel d'examen</h2>
+              <h2 className="text-xs font-black uppercase tracking-wider text-slate-400 mb-4 flex items-center gap-2">
+                <Clock className="w-4 h-4 text-blue-500 animate-pulse" /> Rappel d'examen
+              </h2>
 
               {stats.upcomingExam ? (
-                <div className="group/calendar flex items-center gap-4 bg-white/10 p-4 rounded-2xl backdrop-blur-sm border border-white/10 md:hover:border-white duration-500">
-                  <div className="bg-primary p-3 rounded-2xl md:group-hover/calendar:bg-white md:group-hover/calendar:text-primary duration-500">
-                    <Clock size={20} />
+                <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 flex flex-col gap-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-blue-600 bg-blue-50 px-2 py-0.5 rounded">
+                      {stats.upcomingExam.subject}
+                    </span>
+                    <span className="text-[10px] font-bold text-slate-400">
+                      {new Date(stats.upcomingExam.date).toLocaleDateString()}
+                    </span>
                   </div>
-                  <div>
-                    <p className="text-xs font-bold text-blue-200 uppercase tracking-widest">{stats.upcomingExam.name}</p>
-                    <p className="text-sm font-medium">{new Date(stats.upcomingExam.date).toLocaleDateString()} • {stats.upcomingExam.time?.slice(0, 5) || '12:00'}</p>
+                  <h3 className="text-sm font-black text-slate-900 leading-tight uppercase italic mt-1">
+                    {stats.upcomingExam.name}
+                  </h3>
+                  <div className="text-[11px] font-bold text-slate-500 mt-2 flex flex-col gap-1.5">
+                    <span className="flex items-center gap-1.5"><Clock size={12} className="text-slate-400" /> {stats.upcomingExam.time?.slice(0, 5) || '12:00'}</span>
+                    <span className="flex items-center gap-1.5"><BookOpen size={12} className="text-slate-400" /> Enseignant : {stats.upcomingExam.teacherName || 'Non assigné'}</span>
                   </div>
                 </div>
               ) : (
-                <div className="flex items-center gap-4 bg-white/5 p-4 rounded-2xl backdrop-blur-sm border border-white/5">
-                  <div className="bg-slate-800 p-3 rounded-2xl">
-                    <CheckCircle size={20} className="text-slate-400" />
-                  </div>
+                <div className="flex items-center gap-3 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                  <CheckCircle className="text-emerald-500 w-5 h-5" />
                   <div>
-                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Aucun examen à venir</p>
-                    <p className="text-sm font-medium text-slate-500">Vous êtes à jour !</p>
+                    <p className="text-xs font-bold text-slate-700">Aucun examen à venir</p>
+                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Vous êtes à jour !</p>
                   </div>
                 </div>
               )}
 
-              <Button className="w-full mt-6 bg-white text-slate-900 md:hover:bg-primary md:hover:text-white rounded-2xl h-12 font-black uppercase text-[10px] tracking-widest transition-all duration-500">
-                Guide d'étude
+              <Button className="w-full mt-4 bg-slate-900 text-white md:hover:bg-primary duration-500 rounded-xl h-10 font-bold text-xs uppercase tracking-wider transition-all" asChild>
+                 <a href="/student/exams">Guide d'étude</a>
               </Button>
             </div>
-            <BookOpen className="absolute -right-8 -bottom-8 text-white/5" size={180} />
+            <BookOpen className="absolute -right-8 -bottom-8 text-slate-100 pointer-events-none" size={150} />
           </Card>
 
           <Card className="group/card border border-primary/0 md:hover:border-primary duration-500 shadow-sm rounded-4 md:rounded-3xl bg-white p-4 md:p-[clamp(1rem,2.5vw+1rem,2rem)]">

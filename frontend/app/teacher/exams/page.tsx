@@ -347,7 +347,10 @@ export default function TeacherExamsPage() {
                </DialogHeader>
 
                <Form {...form}>
-                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 mt-6">
+                  <form onSubmit={form.handleSubmit(onSubmit, (errors) => {
+                     console.log('Exam form validation errors:', errors);
+                     toast.error('Veuillez remplir tous les champs obligatoires');
+                  })} className="space-y-6 mt-6">
                      <FormField control={form.control} name="academicYearId" render={({ field }) => (
                         <FormItem>
                            <div className="flex items-center gap-2">
@@ -362,6 +365,7 @@ export default function TeacherExamsPage() {
                                     <SelectItem key={y.id} value={String(y.id)} className="font-bold">{y.name}</SelectItem>
                                  ))}
                               </SelectContent></Select>
+                           <FormMessage />
                         </FormItem>
                      )} />
 
@@ -383,6 +387,7 @@ export default function TeacherExamsPage() {
                                        <SelectItem key={s.id} value={String(s.id)} className="font-bold">{s.name}</SelectItem>
                                     ))}
                                  </SelectContent></Select>
+                              <FormMessage />
                            </FormItem>
                         )} />
                         <FormField control={form.control} name="termId" render={({ field }) => (
@@ -402,6 +407,7 @@ export default function TeacherExamsPage() {
                                        <SelectItem key={t.id} value={String(t.id)} className="font-bold">{t.name}</SelectItem>
                                     ))}
                                  </SelectContent></Select>
+                              <FormMessage />
                            </FormItem>
                         )} />
                      </div>
@@ -414,6 +420,7 @@ export default function TeacherExamsPage() {
                                  <SelectContent className="rounded-xl border-none shadow-xl">
                                     {subjects.map(s => <SelectItem key={s.id} value={String(s.id)} className="font-bold">{s.name}</SelectItem>)}
                                  </SelectContent></Select>
+                              <FormMessage />
                            </FormItem>
                         )} />
                         <FormField control={form.control} name="weight" render={({ field }) => (
@@ -432,18 +439,19 @@ export default function TeacherExamsPage() {
                               <SelectContent className="rounded-xl border-none shadow-xl">
                                  {classes.map(c => <SelectItem key={c.id} value={String(c.id)} className="font-bold">{c.name}</SelectItem>)}
                               </SelectContent></Select>
+                           <FormMessage />
                         </FormItem>
                      )} />
 
                      <div className="grid grid-cols-3 gap-4">
                         <FormField control={form.control} name="date" render={({ field }) => (
-                           <FormItem><FormLabel className="text-[10px] font-black uppercase text-slate-400">Date</FormLabel><FormControl><Input type="date" {...field} className="rounded-xl bg-slate-50 border-none font-bold" /></FormControl></FormItem>
+                           <FormItem><FormLabel className="text-[10px] font-black uppercase text-slate-400">Date</FormLabel><FormControl><Input type="date" {...field} className="rounded-xl bg-slate-50 border-none font-bold" /></FormControl><FormMessage /></FormItem>
                         )} />
                         <FormField control={form.control} name="startTime" render={({ field }) => (
-                           <FormItem><FormLabel className="text-[10px] font-black uppercase text-slate-400">Heure de début</FormLabel><FormControl><Input type="time" {...field} className="rounded-xl bg-slate-50 border-none font-bold" /></FormControl></FormItem>
+                           <FormItem><FormLabel className="text-[10px] font-black uppercase text-slate-400">Heure de début</FormLabel><FormControl><Input type="time" {...field} className="rounded-xl bg-slate-50 border-none font-bold" /></FormControl><FormMessage /></FormItem>
                         )} />
                         <FormField control={form.control} name="endTime" render={({ field }) => (
-                           <FormItem><FormLabel className="text-[10px] font-black uppercase text-slate-400">Heure de fin</FormLabel><FormControl><Input type="time" {...field} className="rounded-xl bg-slate-50 border-none font-bold" /></FormControl></FormItem>
+                           <FormItem><FormLabel className="text-[10px] font-black uppercase text-slate-400">Heure de fin</FormLabel><FormControl><Input type="time" {...field} className="rounded-xl bg-slate-50 border-none font-bold" /></FormControl><FormMessage /></FormItem>
                         )} />
                      </div>
 

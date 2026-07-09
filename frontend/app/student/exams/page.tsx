@@ -93,6 +93,7 @@ export default function StudentExamsPage() {
                         <TableCell className="pl-10 py-6">
                            <div className="font-black text-slate-900 italic uppercase text-sm tracking-tight">{exam.name}</div>
                            <div className="text-[10px] font-bold text-blue-500 uppercase tracking-widest mt-1">Classe: {exam.classe.name}</div>
+                           <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">Enseignant: {exam.teacher?.username || exam.teacher?.name || 'Non assigné'}</div>
                         </TableCell>
 
                         <TableCell>

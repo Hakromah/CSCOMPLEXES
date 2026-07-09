@@ -230,6 +230,7 @@ export default () => ({
       subject: (upcomingExams[0] as any).subject?.name || 'Exam',
       date: (upcomingExams[0] as any).date,
       time: (upcomingExams[0] as any).startTime,
+      teacherName: (upcomingExams[0] as any).teacher?.username || (upcomingExams[0] as any).teacher?.name || 'Non assigné',
     } : null;
 
     // Recent Activity Feed (mix of latest grades and materials)

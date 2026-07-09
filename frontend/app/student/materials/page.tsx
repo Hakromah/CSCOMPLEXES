@@ -194,79 +194,63 @@ export default function StudentMaterialsPage() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95 }}
                 >
-                  <Card className="rounded-[3.5rem] p-10 bg-white border border-slate-100 md:hover:border-primary shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group relative overflow-hidden h-full flex flex-col justify-between">
-                    <div className="absolute -right-4 -top-4 w-24 h-24 bg-indigo-500/5 rounded-full blur-2xl group-hover:bg-indigo-500/10 transition-colors" />
+                  <Card className="rounded-2xl p-4.5 bg-white border border-slate-100 md:hover:border-primary shadow-sm hover:shadow-md transition-all duration-300 group relative overflow-hidden h-full flex flex-col justify-between">
+                    <div className="absolute top-0 left-0 w-1.5 h-full bg-blue-600/10 group-hover:bg-blue-600 transition-colors" />
 
-                    <div>
-                      <div className="flex justify-between items-start mb-8 relative z-10">
-                        <div className="bg-indigo-50 p-5 rounded-3xl text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-500 shadow-inner">
+                    <div className="pl-1.5">
+                      <div className="flex justify-between items-center mb-3">
+                        <div className="bg-blue-50 p-2.5 rounded-xl text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-all shadow-inner">
                           {getFileIcon(mat.fileUrl)}
                         </div>
-
-                        <div className="flex gap-2">
-                          {/* PREVIEW BUTTON: No attachment flags, just f_auto and conditional .pdf */}
-                          <Button
-                            variant="outline"
-                            onClick={() => {
-                              if (!mat.fileUrl) {
-                                toast.error("L'URL du fichier est manquante pour ce matériel.");
-                                return;
-                              }
-                              const isPdf = mat.fileType?.includes('pdf') || mat.fileName?.toLowerCase().endsWith('.pdf');
-                              let previewUrl = mat.fileUrl.replace('/upload/', '/upload/f_auto/');
-                              if (isPdf && !previewUrl.toLowerCase().endsWith('.pdf')) {
-                                previewUrl += '.pdf';
-                              }
-                              window.open(getFullUrl(previewUrl), "_blank", 'noopener,noreferrer');
-                            }}
-                            className="rounded-2xl border-slate-100 text-slate-400 md:hover:border-primary md:hover:text-primary duration-500 transition-colors font-black text-[10px] tracking-widest h-10 px-4 uppercase"
-                          >
-                            <Eye size={14} className="mr-2" /> Aperçu
-                          </Button>
-
-                          <Button
-                            onClick={() => handleDownload(mat)}
-                            className="flex-1 h-12 rounded-2xl bg-rose-600 text-white font-black italic uppercase text-[10px] md:hover:bg-primary duration-500 shadow-xl shadow-rose-200 transition-all"
-                          >
-                            <Download size={14} className="mr-2" /> Obtenir
-                          </Button>
-
+                        <div className="flex flex-col items-end">
+                          <span className="text-[9px] font-black text-blue-500 uppercase italic flex items-center gap-1">
+                            <Layers size={10} /> {formatBytes(mat.fileSize)}
+                          </span>
+                          <span className="text-[9px] font-bold text-slate-350 uppercase mt-0.5">
+                            {new Date(mat.createdAt).toLocaleDateString()}
+                          </span>
                         </div>
                       </div>
 
-                      <div className="space-y-4">
-                        <h3 className="text-3xl font-black italic uppercase tracking-tighter text-slate-900 leading-none group-hover:text-indigo-600 transition-colors">
+                      <div className="space-y-1">
+                        <h3 className="text-sm font-black italic uppercase tracking-tight text-slate-900 group-hover:text-blue-600 transition-colors truncate">
                           {mat.title}
                         </h3>
-                        <p className="text-slate-400 font-bold text-sm leading-relaxed italic line-clamp-2">
-                          {mat.description || "Ressource pédagogique officielle pour votre programme."}
+                        <p className="text-slate-400 font-bold text-[11px] leading-snug italic line-clamp-2">
+                          {mat.description || "Ressource pédagogique officielle."}
                         </p>
                       </div>
-                    </div>
 
-                    <div className="flex items-center justify-between pt-8 mt-8 border-t border-slate-50 relative z-10">
-                      <div className="flex flex-col gap-2">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-2xl bg-slate-100 flex items-center justify-center font-black text-xs text-slate-500 italic shadow-sm">
-                            {mat.uploadedBy?.name?.charAt(0) || "T"}
-                          </div>
-                          <div className="flex flex-col">
-                            <span className="text-[10px] font-black text-slate-900 uppercase tracking-widest italic leading-none">
-                              {mat.uploadedBy?.name || "Professeur"}
-                            </span>
-                            <span className="text-[9px] font-bold text-slate-300 uppercase mt-1">Professeur</span>
-                          </div>
-                        </div>
+                      <div className="text-[10px] font-bold text-slate-400 flex items-center gap-2 mt-2.5 mb-4">
+                        <span>Prof: {mat.uploadedBy?.name || "Enseignant"}</span>
                       </div>
 
-                      <div className="flex flex-col items-end gap-1">
-                        <Badge className="bg-slate-50 text-slate-400 border-none font-black text-[9px] px-4 py-1.5 uppercase tracking-tighter rounded-lg">
-                          <Calendar size={10} className="mr-1.5" />
-                          {new Date(mat.createdAt).toLocaleDateString()}
-                        </Badge>
-                        <span className="text-[9px] font-black text-indigo-400 uppercase italic flex items-center gap-1 mr-1">
-                          <Layers size={10} /> {formatBytes(mat.fileSize)}
-                        </span>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          onClick={() => {
+                            if (!mat.fileUrl) {
+                              toast.error("L'URL du fichier est manquante pour ce matériel.");
+                              return;
+                            }
+                            const isPdf = mat.fileType?.includes('pdf') || mat.fileName?.toLowerCase().endsWith('.pdf');
+                            let previewUrl = mat.fileUrl.replace('/upload/', '/upload/f_auto/');
+                            if (isPdf && !previewUrl.toLowerCase().endsWith('.pdf')) {
+                              previewUrl += '.pdf';
+                            }
+                            window.open(getFullUrl(previewUrl), "_blank", 'noopener,noreferrer');
+                          }}
+                          className="flex-1 h-8 rounded-lg border-slate-100 text-slate-700 font-bold text-[9px] uppercase hover:bg-slate-50 transition-all"
+                        >
+                          <Eye size={12} className="mr-1" /> Aperçu
+                        </Button>
+
+                        <Button
+                          onClick={() => handleDownload(mat)}
+                          className="flex-1 h-8 rounded-lg bg-rose-600 text-white font-bold text-[9px] uppercase hover:bg-rose-700 transition-all shadow-sm"
+                        >
+                          <Download size={12} className="mr-1" /> Obtenir
+                        </Button>
                       </div>
                     </div>
                   </Card>

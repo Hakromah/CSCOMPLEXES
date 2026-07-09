@@ -180,62 +180,60 @@ export default function TeacherMaterialsPage() {
         <AnimatePresence mode="popLayout">
           {materials.map((mat) => (
             <motion.div key={mat.id} layout initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }}>
-              <Card className="rounded-[clamp(1rem,2vw+0.5rem,3rem)] border border-slate-100 md:hover:border-primary duration-500 transition-colors shadow-sm bg-white p-8 hover:shadow-2xl h-full flex flex-col justify-between group">
-                <div>
-                  <div className="flex justify-between items-start mb-6">
-                    <div className="h-14 w-14 rounded-2xl bg-blue-50 flex items-center justify-center text-primary group-hover:bg-blue-600 group-hover:text-white transition-all">
-                      <FileText size={24} />
+              <Card className="rounded-xl border border-slate-100 md:hover:border-primary duration-500 transition-colors shadow-sm bg-white p-4 hover:shadow-md h-full flex flex-col justify-between group relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-1.5 h-full bg-blue-600/10 group-hover:bg-blue-600 transition-colors" />
+
+                <div className="pl-1.5">
+                  <div className="flex justify-between items-center mb-3">
+                    <div className="flex flex-wrap gap-1">
+                      {mat.targetClasses.map((c: any) => (
+                        <Badge key={c.id} className="bg-blue-50 text-blue-600 border-none font-bold text-[9px] px-1.5 py-0.5 rounded">
+                          {c.name}
+                        </Badge>
+                      ))}
                     </div>
-                    <Button onClick={() => handleDelete(mat.id)} variant="ghost" size="icon" className="text-slate-300 hover:text-rose-500 rounded-full transition-colors">
-                      <Trash2 size={18} />
+                    <Button onClick={() => handleDelete(mat.id)} variant="ghost" size="icon" className="text-slate-300 hover:text-rose-500 rounded-full h-7 w-7 transition-colors">
+                      <Trash2 size={14} />
                     </Button>
                   </div>
-                  <h3 className="text-2xl font-black italic tracking-tight uppercase text-slate-900 leading-none mb-3 truncate">{mat.title}</h3>
-                  <p className="text-slate-400 text-xs font-bold leading-relaxed line-clamp-2 mb-6">{mat.description}</p>
-                </div>
 
-                <div className="space-y-4">
-                  <div className="flex flex-wrap gap-2">
-                    {mat.targetClasses.map((c: any) => (
-                      <Badge key={c.id} className="bg-slate-100 text-slate-500 hover:bg-slate-100 border-none font-black text-[9px] tracking-tighter italic px-2">
-                        {c.name}
-                      </Badge>
-                    ))}
+                  <div className="flex items-start gap-2 mb-1.5">
+                    <FileText className="text-blue-600 shrink-0 mt-0.5" size={15} />
+                    <div className="min-w-0">
+                      <h3 className="text-xs font-black italic uppercase text-slate-900 leading-tight truncate" title={mat.title}>
+                        {mat.title}
+                      </h3>
+                      <p className="text-slate-400 font-bold text-[10px] mt-0.5 line-clamp-1">{mat.description}</p>
+                    </div>
                   </div>
-                  {/* The Footer Section */}
-                  <div className="flex items-center justify-between py-5 border-t flex-wrap border-slate-50">
-                    <div className="flex flex-col gap-1 text-[10px] font-black text-slate-300 uppercase tracking-widest">
-                      <div className="flex items-center gap-1.5">
-                        <Calendar size={12} /> {new Date(mat.createdAt).toLocaleDateString()}
-                      </div>
-                      <div className="flex items-center gap-1.5 text-blue-500/60">
-                        <FileText size={12} /> {formatBytes(mat.fileSize)}
-                      </div>
-                    </div>
 
-                    <div className="flex gap-5 pt-3">
-                      {/* PREVIEW BUTTON: No attachment flags, just f_auto and conditional .pdf */}
-                      <Button
-                        variant="outline"
-                        onClick={() => {
-                          const isPdf = mat.fileType?.includes('pdf') || mat.fileName?.toLowerCase().endsWith('.pdf');
-                          let previewUrl = getFullUrl(mat.fileUrl).replace('/upload/', '/upload/f_auto/');
-                          if (isPdf && !previewUrl.toLowerCase().endsWith('.pdf')) {
-                            previewUrl += '.pdf';
-                          }
-                          window.open(previewUrl, "_blank", 'noopener,noreferrer');
-                        }}
-                        className="rounded-2xl border-slate-100 text-slate-400 hover:text-primary font-black text-[10px] tracking-widest h-10 px-4 uppercase"
-                      >
-                        <Eye size={14} className="mr-2" /> Aperçu
-                      </Button>
-                      <Button
-                        onClick={() => handleDownload(mat)}
-                        className="flex-1 h-12 rounded-2xl bg-rose-600 text-white font-black italic uppercase text-[10px] hover:bg-slate-900 shadow-xl shadow-rose-200 transition-all"
-                      >
-                        <Download size={14} className="mr-2" /> Télécharger
-                      </Button>
-                    </div>
+                  <div className="text-[10px] font-bold text-slate-400 flex items-center gap-1.5 mt-2.5 mb-4">
+                    <span>Date: {new Date(mat.createdAt).toLocaleDateString()}</span>
+                    <span>•</span>
+                    <span>{formatBytes(mat.fileSize)}</span>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        const isPdf = mat.fileType?.includes('pdf') || mat.fileName?.toLowerCase().endsWith('.pdf');
+                        let previewUrl = getFullUrl(mat.fileUrl).replace('/upload/', '/upload/f_auto/');
+                        if (isPdf && !previewUrl.toLowerCase().endsWith('.pdf')) {
+                          previewUrl += '.pdf';
+                        }
+                        window.open(previewUrl, "_blank", 'noopener,noreferrer');
+                      }}
+                      className="flex-1 h-8 rounded-lg border-slate-100 text-slate-700 font-bold text-[9px] uppercase hover:bg-slate-50 transition-all"
+                    >
+                      <Eye size={12} className="mr-1" /> Aperçu
+                    </Button>
+                    <Button
+                      onClick={() => handleDownload(mat)}
+                      className="flex-1 h-8 rounded-lg bg-rose-600 text-white font-bold text-[9px] uppercase hover:bg-rose-700 transition-all shadow-sm"
+                    >
+                      <Download size={12} className="mr-1" /> Télécharger
+                    </Button>
                   </div>
                 </div>
               </Card>

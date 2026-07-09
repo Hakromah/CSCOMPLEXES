@@ -193,68 +193,64 @@ export default function AdminMaterialsPage() {
                               animate={{ opacity: 1, scale: 1 }}
                               exit={{ opacity: 0, scale: 0.9 }}
                            >
-                              <Card className="rounded-2xl p-5 border border-primary/0 lg:hover:border-primary duration-500 shadow-sm bg-white hover:shadow-2xl transition-all group flex flex-col justify-between h-full relative overflow-hidden">
-                                 <div className="absolute top-0 left-0 w-2 h-full bg-rose-600/10 group-hover:bg-rose-600 transition-colors" />
+                              <Card className="rounded-xl p-4 border border-slate-100 md:hover:border-primary duration-500 shadow-sm bg-white hover:shadow-md transition-all group flex flex-col justify-between h-full relative overflow-hidden">
+                                 <div className="absolute top-0 left-0 w-1.5 h-full bg-rose-600/10 group-hover:bg-rose-600 transition-colors" />
 
-                                 <div>
-                                    <div className="flex justify-between items-start mb-3">
-                                       <Badge className="bg-slate-900 text-[9px] font-black uppercase tracking-widest italic rounded-lg">
+                                 <div className="pl-1.5">
+                                    <div className="flex justify-between items-center mb-2.5">
+                                       <Badge className="bg-slate-955 text-[9px] font-black uppercase tracking-widest italic rounded px-2 py-0.5">
                                           ID: #{m.id}
                                        </Badge>
-                                       <Button
-                                          onClick={() => deleteMaterial(m.id)}
-                                          variant="ghost"
-                                          size="icon"
-                                          className="text-slate-200 hover:text-rose-600 rounded-full h-8 w-8"
-                                       >
-                                          <Trash2 size={16} />
-                                       </Button>
-                                    </div>
-
-                                    <div className="flex items-center gap-2 mb-2">
-                                       {isPdf ? <FileText className="text-rose-600" size={16} /> : <ImageIcon className="text-indigo-600" size={16} />}
-                                       <h3 className="text-sm font-black italic uppercase text-slate-900 truncate tracking-tighter">
-                                          {m.fileName}
-                                       </h3>
-                                    </div>
-                                    <p className="text-slate-400 font-bold text-[11px] italic line-clamp-2 mb-3">{m.title}</p>
-
-                                    <div className="flex flex-wrap gap-2 mb-3">
-                                       {(m.targetClasses || (m.classe ? [m.classe] : [])).map((c: any) => (
-                                          <Badge key={c.id || 'no-class'} className="bg-slate-50 text-slate-400 border-none font-black text-[9px] uppercase italic">
-                                             {c.name || 'Non assigné'}
-                                          </Badge>
-                                       ))}
-                                       {!(m.targetClasses?.length || m.classe) && (
-                                          <Badge className="bg-slate-50 text-slate-400 border-none font-black text-[9px] uppercase italic">
-                                             Aucune classe
-                                          </Badge>
-                                       )}
-                                    </div>
-                                 </div>
-
-                                 <div className="space-y-3">
-                                    <div className="p-2.5 rounded-xl bg-slate-50 space-y-1">
-                                       <div className="flex items-center gap-2 text-[10px] font-black uppercase text-slate-500 italic">
-                                          <User size={14} className="text-rose-600" /> Ajouté : {m.uploadedBy?.name}
-                                       </div>
-                                       <div className="flex items-center gap-2 text-[10px] font-black uppercase text-slate-500 italic">
-                                          <Calendar size={14} className="text-rose-600" /> Date: {new Date(m.createdAt).toLocaleDateString()}
+                                       <div className="flex items-center gap-1.5">
+                                          {(m.targetClasses || (m.classe ? [m.classe] : [])).map((c: any) => (
+                                             <Badge key={c.id || 'no-class'} className="bg-blue-50 text-blue-600 border-none font-bold text-[9px] uppercase px-1.5 py-0.5 rounded">
+                                                {c.name || 'Non assigné'}
+                                             </Badge>
+                                          ))}
+                                          {!(m.targetClasses?.length || m.classe) && (
+                                             <Badge className="bg-slate-50 text-slate-400 border-none font-bold text-[9px] uppercase px-1.5 py-0.5 rounded">
+                                                Aucune classe
+                                             </Badge>
+                                          )}
+                                          <Button
+                                             onClick={() => deleteMaterial(m.id)}
+                                             variant="ghost"
+                                             size="icon"
+                                             className="text-slate-300 hover:text-rose-600 rounded-full h-7 w-7 transition-colors ml-1"
+                                          >
+                                             <Trash2 size={14} />
+                                          </Button>
                                        </div>
                                     </div>
 
-                                    <div className="flex gap-3">
+                                    <div className="flex items-start gap-2 mb-1.5">
+                                       {isPdf ? <FileText className="text-rose-600 shrink-0 mt-0.5" size={15} /> : <ImageIcon className="text-indigo-600 shrink-0 mt-0.5" size={15} />}
+                                       <div className="min-w-0">
+                                          <h3 className="text-xs font-black italic uppercase text-slate-900 truncate tracking-tight" title={m.fileName}>
+                                             {m.fileName}
+                                          </h3>
+                                          <p className="text-slate-400 font-bold text-[10px] mt-0.5 line-clamp-1">{m.title}</p>
+                                       </div>
+                                    </div>
+
+                                    <div className="text-[10px] font-bold text-slate-400 flex flex-wrap items-center gap-1.5 mt-2 mb-3.5">
+                                       <span>Par: {m.uploadedBy?.name || 'Admin'}</span>
+                                       <span>•</span>
+                                       <span>{new Date(m.createdAt).toLocaleDateString()}</span>
+                                    </div>
+
+                                    <div className="flex gap-2">
                                        <Button
                                           onClick={() => handlePreview(m)}
-                                          className="flex-1 h-9 rounded-xl bg-white border-2 border-slate-100 text-slate-900 font-black italic uppercase text-[9px] hover:bg-slate-50 shadow-sm"
+                                          className="flex-1 h-8 rounded-lg bg-white border border-slate-100 text-slate-700 font-bold uppercase text-[9px] hover:bg-slate-50 transition-all"
                                        >
-                                          <Eye size={14} className="mr-2" /> Aperçu
+                                          <Eye size={12} className="mr-1" /> Aperçu
                                        </Button>
                                        <Button
                                           onClick={() => handleDownload(m)}
-                                          className="flex-1 h-9 rounded-xl bg-rose-600 text-white font-black italic uppercase text-[9px] hover:bg-slate-900 shadow-xl shadow-rose-200 transition-all"
+                                          className="flex-1 h-8 rounded-lg bg-rose-600 text-white font-bold uppercase text-[9px] hover:bg-rose-700 transition-all shadow-sm"
                                        >
-                                          <Download size={14} className="mr-2" /> Télécharger
+                                          <Download size={12} className="mr-1" /> Télécharger
                                        </Button>
                                     </div>
                                  </div>
