@@ -13,7 +13,7 @@ import QRCode from 'qrcode';
 
 const loadLogo = (): Promise<HTMLImageElement> => {
   return new Promise((resolve, reject) => {
-    const img = new Image();
+    const img = new window.Image();
     img.src = '/logo/2cslogo.jpeg';
     img.onload = () => resolve(img);
     img.onerror = (err) => reject(err);
