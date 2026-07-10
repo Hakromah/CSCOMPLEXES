@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     default: "2 CS COMPLEXES",
     template: "%s | 2 CS Complexes",
   },
-  description: "Excellence in Education. Future Leaders in the Making.",
+  description: "L'excellence dans l'éducation. Les futurs leaders en devenir.",
   icons: {
     icon: "/logo/2cslogo.jpeg",
     apple: "/logo/2cslogo.jpeg",
