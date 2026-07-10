@@ -17,6 +17,7 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import QRCode from 'qrcode';
 import { SCHOOL_CONFIG } from '@/lib/school-config';
+import { LOGO_BASE64 } from '@/lib/logo-base64';
 
 // ─── Searchable Staff Combobox ────────────────────────────────────────────────────
 function StaffCombobox({ staff, value, onChange }: {
@@ -358,25 +359,36 @@ export default function StaffFinance() {
 
       const doc = new jsPDF();
 
-      doc.setDrawColor(...SCHOOL_CONFIG.accentColor);
+      doc.setDrawColor(110, 190, 68); // school green
       doc.setLineWidth(1.5);
       doc.rect(5, 5, 200, 287);
 
-      // Header banner
-      doc.setFillColor(...SCHOOL_CONFIG.primaryColor);
+      // Header banner (Royal Blue)
+      doc.setFillColor(43, 76, 126);
       doc.rect(5, 5, 200, 45, 'F');
+      
+      // Draw school logo
+      try {
+        doc.addImage(LOGO_BASE64, 'JPEG', 15, 12, 30, 30);
+      } catch (e) {
+        console.error("Failed to add logo to payslip", e);
+      }
+
       doc.setTextColor(255, 255, 255);
       doc.setFont('Helvetica', 'bold');
       doc.setFontSize(22);
-      doc.text(SCHOOL_CONFIG.name, 15, 23);
+      doc.text(SCHOOL_CONFIG.name, 52, 23);
       doc.setFontSize(9);
       doc.setFont('Helvetica', 'normal');
-      doc.text(`${SCHOOL_CONFIG.subtitle} — BULLETIN DE PAIE DU PERSONNEL`, 15, 30);
-      doc.text(SCHOOL_CONFIG.contact, 15, 36);
+      doc.setTextColor(200, 220, 245); // light blue-gray
+      doc.text(`${SCHOOL_CONFIG.subtitle} — BULLETIN DE PAIE DU PERSONNEL`, 52, 30);
+      doc.text(SCHOOL_CONFIG.contact, 52, 36);
+      
+      doc.setTextColor(255, 255, 255);
       doc.text(`Généré le: ${new Date().toLocaleDateString()}`, 150, 22);
 
       // Title
-      doc.setTextColor(...SCHOOL_CONFIG.primaryColor);
+      doc.setTextColor(43, 76, 126);
       doc.setFontSize(20);
       doc.setFont('Helvetica', 'bold');
       doc.text('BULLETIN DE PAIE DU PERSONNEL', 15, 70);
@@ -412,7 +424,7 @@ export default function StaffFinance() {
           ['Solde restant', outstanding.toLocaleString()]
         ],
         theme: 'striped',
-        headStyles: { fillColor: SCHOOL_CONFIG.primaryColor },
+        headStyles: { fillColor: [43, 76, 126] as any },
         bodyStyles: { fontSize: 10 },
         didParseCell: (data: any) => {
           if (data.row.index === 3) data.cell.styles.fontStyle = 'bold';

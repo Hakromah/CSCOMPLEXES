@@ -1,20 +1,21 @@
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { SCHOOL_CONFIG } from './school-config';
+import { LOGO_BASE64 } from './logo-base64';
 
 // ─── Color Palette ────────────────────────────────────────────────────────────
 const COLORS = {
-  primary: SCHOOL_CONFIG.accentColor as [number, number, number],
-  primaryDark: SCHOOL_CONFIG.primaryColor as [number, number, number],
+  primary: [43, 76, 126] as [number, number, number], // Royal Blue
+  primaryDark: [27, 54, 93] as [number, number, number], // Darker Navy
   secondary: [248, 250, 252] as [number, number, number],
   text: [15, 23, 42] as [number, number, number],
   textMuted: [100, 116, 139] as [number, number, number],
-  success: [22, 163, 74] as [number, number, number],
+  success: [110, 190, 68] as [number, number, number], // School Green
   warning: [234, 179, 8] as [number, number, number],
   danger: [220, 38, 38] as [number, number, number],
   border: [226, 232, 240] as [number, number, number],
   white: [255, 255, 255] as [number, number, number],
-  accent: [219, 234, 254] as [number, number, number],
+  accent: [240, 253, 244] as [number, number, number], // very light green
 };
 
 // ─── Shared Header ────────────────────────────────────────────────────────────
@@ -24,23 +25,33 @@ function addSchoolHeader(doc: jsPDF, subtitle?: string) {
   doc.setFillColor(...COLORS.primary);
   doc.rect(0, 0, pageW, 42, 'F');
 
+  // Draw school logo
+  try {
+    doc.addImage(LOGO_BASE64, 'JPEG', 15, 8, 26, 26);
+  } catch (e) {
+    console.error("Failed to add logo to PDF header", e);
+  }
+
   doc.setTextColor(...COLORS.white);
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(18);
-  doc.text(SCHOOL_CONFIG.name, 15, 16);
+  doc.text(SCHOOL_CONFIG.name, 46, 16);
 
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(8);
-  doc.text(SCHOOL_CONFIG.address || '', 15, 23);
-  doc.text(`Contact: ${SCHOOL_CONFIG.contact || ''}`, 15, 29);
+  doc.setTextColor(200, 220, 245); // light blue-gray
+  doc.text(SCHOOL_CONFIG.address || '', 46, 23);
+  doc.text(`Contact: ${SCHOOL_CONFIG.contact || ''}`, 46, 29);
 
   if (subtitle) {
+    doc.setTextColor(...COLORS.white);
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(10);
     doc.text(subtitle.toUpperCase(), pageW - 15, 20, { align: 'right' });
   }
 
-  doc.setFillColor(219, 234, 254);
+  // Divider line in school green
+  doc.setFillColor(110, 190, 68);
   doc.rect(0, 42, pageW, 1.5, 'F');
   doc.setTextColor(...COLORS.text);
 }

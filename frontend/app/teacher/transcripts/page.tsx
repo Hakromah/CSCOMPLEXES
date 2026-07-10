@@ -21,6 +21,15 @@ import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 
+const loadLogo = (): Promise<HTMLImageElement> => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.src = '/logo/2cslogo.jpeg';
+    img.onload = () => resolve(img);
+    img.onerror = (err) => reject(err);
+  });
+};
+
 export default function TeacherTranscriptsPage() {
   // --- STATE ---
   const [students, setStudents] = useState<any[]>([]);
@@ -176,7 +185,7 @@ export default function TeacherTranscriptsPage() {
   }, [transcriptData]);
 
   // --- PDF EXPORT ---
-  const handleDownloadPDF = () => {
+  const handleDownloadPDF = async () => {
     if (!transcriptData) return;
     try {
       const doc = new jsPDF() as any;
@@ -185,23 +194,46 @@ export default function TeacherTranscriptsPage() {
       const sum = transcriptData.summary;
       const meta = transcriptData.metadata;
 
-      // Header Branding
-      doc.setFillColor(15, 23, 42); // slate-900
+      // Load school logo
+      let logoImg: HTMLImageElement | null = null;
+      try {
+        logoImg = await loadLogo();
+      } catch (e) {
+        console.error("Failed to load school logo", e);
+      }
+
+      // Header Branding (School Royal Blue: #2B4C7E)
+      doc.setFillColor(43, 76, 126);
       doc.rect(0, 0, 210, 45, 'F');
 
-      doc.setTextColor(255, 255, 255);
-      doc.setFont('Helvetica', 'bold');
-      doc.setFontSize(20);
-      doc.text((sch.name || 'School').toUpperCase(), 14, 18);
+      if (logoImg) {
+        doc.addImage(logoImg, 'JPEG', 14, 10, 25, 25);
+        
+        doc.setTextColor(255, 255, 255);
+        doc.setFont('Helvetica', 'bold');
+        doc.setFontSize(18);
+        doc.text((sch.name || '2CS COMPLEXE SCOLAIRE').toUpperCase(), 45, 18);
 
-      doc.setFont('Helvetica', 'normal');
-      doc.setFontSize(9);
-      doc.setTextColor(156, 163, 175); // gray-400
-      doc.text(`2CS COMPLEXE ACADEMIQUE RELEVÉ DE NOTES OFFICIEL`, 14, 25);
-      doc.text(`Adresse: ${sch.address || ''} | Email: ${sch.email || ''} | Téléphone: ${sch.phone || ''}`, 14, 32);
+        doc.setFont('Helvetica', 'normal');
+        doc.setFontSize(8.5);
+        doc.setTextColor(200, 220, 245); // light blue-gray
+        doc.text(`2CS COMPLEXE ACADEMIQUE RELEVÉ DE NOTES OFFICIEL`, 45, 25);
+        doc.text(`Adresse: ${sch.address || ''} | Email: ${sch.email || ''} | Téléphone: ${sch.phone || ''}`, 45, 31);
+      } else {
+        doc.setTextColor(255, 255, 255);
+        doc.setFont('Helvetica', 'bold');
+        doc.setFontSize(20);
+        doc.text((sch.name || 'School').toUpperCase(), 14, 18);
 
-      // Document Title
-      doc.setTextColor(15, 23, 42);
+        doc.setFont('Helvetica', 'normal');
+        doc.setFontSize(9);
+        doc.setTextColor(200, 220, 245); // light blue-gray
+        doc.text(`2CS COMPLEXE ACADEMIQUE RELEVÉ DE NOTES OFFICIEL`, 14, 25);
+        doc.text(`Adresse: ${sch.address || ''} | Email: ${sch.email || ''} | Téléphone: ${sch.phone || ''}`, 14, 32);
+      }
+
+      // Document Title (branded color)
+      doc.setTextColor(43, 76, 126);
       doc.setFont('Helvetica', 'bold');
       doc.setFontSize(13);
       doc.text('RELEVÉ DE NOTES OFFICIEL', 14, 55);
@@ -267,7 +299,7 @@ export default function TeacherTranscriptsPage() {
         head: [['Matière', 'Classe', 'Examen', 'Semestre (Term)', 'Note', 'Note', 'Remarques']],
         body: tableBody,
         theme: 'striped',
-        headStyles: { fillColor: [15, 23, 42] as any, fontSize: 8.5, fontStyle: 'bold' },
+        headStyles: { fillColor: [43, 76, 126] as any, fontSize: 8.5, fontStyle: 'bold' },
         bodyStyles: { fontSize: 8 },
         columnStyles: {
           0: { cellWidth: 35 },
@@ -288,27 +320,31 @@ export default function TeacherTranscriptsPage() {
         currentY = 20; // reset Y coordinate on the new page
       }
 
-      // Summary Index Card
-      doc.setFillColor(15, 23, 42); // slate-900 (dark card like in UI)
+      // Summary Index Card (Royal Blue with Green GPA box)
+      doc.setFillColor(43, 76, 126); // School Royal Blue (#2B4C7E)
       doc.rect(14, currentY, 182, 28, 'F');
+
+      doc.setFillColor(110, 190, 68); // School Green (#6EBE44)
+      doc.rect(132, currentY + 2, 60, 24, 'F');
 
       doc.setTextColor(255, 255, 255);
       doc.setFont('Helvetica', 'bold');
-      doc.setFontSize(9);
+      doc.setFontSize(8.5);
       doc.text('LISTE DES ÉVALUATIONS', 20, currentY + 8);
       doc.text('PERFORMANCE MOYENNE', 70, currentY + 8);
-      doc.text('MOYENNE GENERALE', 135, currentY + 8);
+      doc.text('MOYENNE GENERALE', 136, currentY + 8);
 
       doc.setFontSize(18);
       doc.text(String(sum.totalSubjectsCount || 0), 20, currentY + 18);
       doc.text(`${sum.weightedAverageScore || 0}%`, 70, currentY + 18);
-      doc.text(typeof sum.gpa === 'number' ? sum.gpa.toFixed(2) : '0.00', 135, currentY + 18);
+      doc.text(typeof sum.gpa === 'number' ? sum.gpa.toFixed(2) : '0.00', 136, currentY + 18);
 
       doc.setFontSize(7.5);
-      doc.setTextColor(156, 163, 175);
+      doc.setTextColor(200, 220, 245); // light blue-gray
       doc.text('Champs Évalués', 20, currentY + 24);
       doc.text('Note Moyenne Pondérée', 70, currentY + 24);
-      doc.text('Sur 4.00 max', 135, currentY + 24);
+      doc.setTextColor(240, 253, 244); // very light green
+      doc.text('Sur 4.00 max', 136, currentY + 24);
 
       // Signatures and QR Code Block
       const sigY = currentY + 42;
@@ -563,17 +599,24 @@ export default function TeacherTranscriptsPage() {
                       {/* Printable Transcript Document */}
                       <Card className="printable-transcript rounded-[2.5rem] border border-slate-100 bg-white shadow-2xl overflow-hidden print:border-none print:shadow-none print:rounded-none">
                         {/* Premium Brand Header */}
-                        <div className="bg-slate-900 p-10 text-white flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative overflow-hidden">
+                        <div className="bg-[#2B4C7E] p-10 text-white flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative overflow-hidden">
                           <div className="absolute top-0 right-0 p-10 opacity-5">
                             <Building2 size={240} />
                           </div>
-                          <div>
-                            <h2 className="text-2xl font-black italic tracking-tighter uppercase">{transcriptData.school.name}</h2>
-                            <p className="text-[10px] text-blue-400 font-bold uppercase tracking-[0.3em] mt-1">Registre Académique Officiel</p>
-                            <div className="flex flex-wrap gap-x-4 gap-y-1 text-[10px] font-bold text-slate-400 mt-4">
-                              <span className="flex items-center gap-1"><Building2 size={12} /> {transcriptData.school.address}</span>
-                              <span className="flex items-center gap-1"><Phone size={12} /> {transcriptData.school.phone}</span>
-                              <span className="flex items-center gap-1"><Mail size={12} /> {transcriptData.school.email}</span>
+                          <div className="flex items-center gap-6 z-10">
+                            <img
+                              src="/logo/2cslogo.jpeg"
+                              alt="Logo"
+                              className="w-20 h-20 rounded-full border-2 border-white bg-white object-contain shadow-lg print:w-16 print:h-16"
+                            />
+                            <div>
+                              <h2 className="text-2xl font-black italic tracking-tighter uppercase">{transcriptData.school.name}</h2>
+                              <p className="text-[10px] text-[#6EBE44] font-bold uppercase tracking-[0.3em] mt-1">Registre Académique Officiel</p>
+                              <div className="flex flex-wrap gap-x-4 gap-y-1 text-[10px] font-bold text-blue-100 mt-4">
+                                <span className="flex items-center gap-1"><Building2 size={12} /> {transcriptData.school.address}</span>
+                                <span className="flex items-center gap-1"><Phone size={12} /> {transcriptData.school.phone}</span>
+                                <span className="flex items-center gap-1"><Mail size={12} /> {transcriptData.school.email}</span>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -591,7 +634,7 @@ export default function TeacherTranscriptsPage() {
                               <p className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Profil de l'Étudiant</p>
                               <div>
                                 <p className="text-sm font-black text-slate-800">{transcriptData.student.name}</p>
-                                <p className="text-[10px] text-blue-500 font-bold uppercase tracking-wider mt-0.5">ID: {transcriptData.student.userId || 'N/A'}</p>
+                                <p className="text-[10px] text-[#2B4C7E] font-bold uppercase tracking-wider mt-0.5">ID: {transcriptData.student.userId || 'N/A'}</p>
                               </div>
                               <p className="text-xs font-semibold text-slate-500">Email: {transcriptData.student.email}</p>
                             </div>
@@ -632,8 +675,8 @@ export default function TeacherTranscriptsPage() {
                             <h4 className="text-xs font-black uppercase tracking-wider text-slate-400">Tableau de Bord Académique</h4>
                             <div className="rounded-2xl border overflow-hidden">
                               <Table>
-                                <TableHeader className="bg-slate-900 text-white">
-                                  <TableRow className="border-none hover:bg-slate-900">
+                                <TableHeader className="bg-[#2B4C7E] text-white">
+                                  <TableRow className="border-none hover:bg-[#2B4C7E]">
                                     <TableHead className="text-white font-black text-[9px] uppercase tracking-wider py-4 pl-6">Matière / Classe</TableHead>
                                     <TableHead className="text-white font-black text-[9px] uppercase tracking-wider">Exam / Session</TableHead>
                                     <TableHead className="text-white font-black text-[9px] uppercase tracking-wider text-center">Note</TableHead>
@@ -656,7 +699,7 @@ export default function TeacherTranscriptsPage() {
                                         {res.marks}%
                                       </TableCell>
                                       <TableCell className="text-center py-4">
-                                        <Badge className="bg-slate-900 text-white font-black text-[10px] px-2 py-0.5 rounded-md border-none">
+                                        <Badge className="bg-[#2B4C7E] text-white font-black text-[10px] px-2 py-0.5 rounded-md border-none">
                                           {res.letterGrade}
                                         </Badge>
                                       </TableCell>
@@ -671,21 +714,21 @@ export default function TeacherTranscriptsPage() {
                           </div>
 
                           {/* Summary Metric Card */}
-                          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 bg-slate-900 rounded-[2rem] p-8 text-white relative overflow-hidden">
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 bg-[#2B4C7E] rounded-[2rem] p-8 text-white relative overflow-hidden">
                             <div className="space-y-1">
-                              <p className="text-[9px] font-black uppercase tracking-[0.2em] text-blue-400">Index des Matières</p>
+                              <p className="text-[9px] font-black uppercase tracking-[0.2em] text-[#6EBE44]">Index des Matières</p>
                               <h4 className="text-4xl font-black italic tracking-tighter">{transcriptData.summary.totalSubjectsCount}</h4>
                               <p className="text-[10px] font-bold opacity-60">Domaines Évalués</p>
                             </div>
                             <div className="space-y-1">
-                              <p className="text-[9px] font-black uppercase tracking-[0.2em] text-blue-400">Moyenne Générale</p>
+                              <p className="text-[9px] font-black uppercase tracking-[0.2em] text-[#6EBE44]">Moyenne Générale</p>
                               <h4 className="text-4xl font-black italic tracking-tighter">{transcriptData.summary.weightedAverageScore}%</h4>
                               <p className="text-[10px] font-bold opacity-60">Moyenne Pondérée Générale</p>
                             </div>
-                            <div className="space-y-1 bg-blue-600 rounded-2xl p-6 shadow-lg shadow-blue-900/10">
-                              <p className="text-[9px] font-black uppercase tracking-[0.2em] text-blue-100">Moyenne Périodique</p>
+                            <div className="space-y-1 bg-[#6EBE44] rounded-2xl p-6 shadow-lg shadow-green-900/10">
+                              <p className="text-[9px] font-black uppercase tracking-[0.2em] text-green-100">Moyenne Périodique</p>
                               <h4 className="text-4xl font-black italic tracking-tighter">{transcriptData.summary.gpa.toFixed(2)}</h4>
-                              <p className="text-[10px] font-bold text-blue-100">Sur 4.00</p>
+                              <p className="text-[10px] font-bold text-green-100">Sur 4.00</p>
                             </div>
                           </div>
 

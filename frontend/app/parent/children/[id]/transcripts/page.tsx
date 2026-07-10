@@ -11,6 +11,15 @@ import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import QRCode from 'qrcode';
 
+const loadLogo = (): Promise<HTMLImageElement> => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.src = '/logo/2cslogo.jpeg';
+    img.onload = () => resolve(img);
+    img.onerror = (err) => reject(err);
+  });
+};
+
 export default function ChildTranscriptsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id: studentId } = React.use(params);
   const [transcripts, setTranscripts] = useState<Transcript[]>([]);
@@ -58,23 +67,46 @@ export default function ChildTranscriptsPage({ params }: { params: Promise<{ id:
       // 3. Create PDF Doc
       const doc = new jsPDF() as any;
 
-      // Header Branding
-      doc.setFillColor(15, 23, 42); // slate-900
+      // Load school logo
+      let logoImg: HTMLImageElement | null = null;
+      try {
+        logoImg = await loadLogo();
+      } catch (e) {
+        console.error("Failed to load school logo", e);
+      }
+
+      // Header Branding (School Royal Blue: #2B4C7E)
+      doc.setFillColor(43, 76, 126);
       doc.rect(0, 0, 210, 45, 'F');
 
-      doc.setTextColor(255, 255, 255);
-      doc.setFont('Helvetica', 'bold');
-      doc.setFontSize(20);
-      doc.text((sch.name || 'School').toUpperCase(), 14, 18);
+      if (logoImg) {
+        doc.addImage(logoImg, 'JPEG', 14, 10, 25, 25);
+        
+        doc.setTextColor(255, 255, 255);
+        doc.setFont('Helvetica', 'bold');
+        doc.setFontSize(18);
+        doc.text((sch.name || '2CS COMPLEXE SCOLAIRE').toUpperCase(), 45, 18);
 
-      doc.setFont('Helvetica', 'normal');
-      doc.setFontSize(9);
-      doc.setTextColor(156, 163, 175); // gray-400
-      doc.text(`Official Academic Transcript • Registries System`, 14, 25);
-      doc.text(`Address: ${sch.address || ''} | Email: ${sch.email || ''} | Phone: ${sch.phone || ''}`, 14, 32);
+        doc.setFont('Helvetica', 'normal');
+        doc.setFontSize(8.5);
+        doc.setTextColor(200, 220, 245); // light blue-gray
+        doc.text(`Official Academic Transcript • Registries System`, 45, 25);
+        doc.text(`Address: ${sch.address || ''} | Email: ${sch.email || ''} | Phone: ${sch.phone || ''}`, 45, 31);
+      } else {
+        doc.setTextColor(255, 255, 255);
+        doc.setFont('Helvetica', 'bold');
+        doc.setFontSize(20);
+        doc.text((sch.name || '2CS COMPLEXE SCOLAIRE').toUpperCase(), 14, 18);
 
-      // Document Title
-      doc.setTextColor(15, 23, 42);
+        doc.setFont('Helvetica', 'normal');
+        doc.setFontSize(9);
+        doc.setTextColor(200, 220, 245); // light blue-gray
+        doc.text(`Official Academic Transcript • Registries System`, 14, 25);
+        doc.text(`Address: ${sch.address || ''} | Email: ${sch.email || ''} | Phone: ${sch.phone || ''}`, 14, 32);
+      }
+
+      // Document Title (branded color)
+      doc.setTextColor(43, 76, 126);
       doc.setFont('Helvetica', 'bold');
       doc.setFontSize(13);
       doc.text('OFFICIAL STUDENT TRANSCRIPT', 14, 55);
@@ -109,7 +141,7 @@ export default function ChildTranscriptsPage({ params }: { params: Promise<{ id:
       doc.setTextColor(100, 116, 139); // slate-500
       doc.text('REFERENCE NUMBER', 18, 95);
       doc.text('DATE OF ISSUE', 70, 95);
-      doc.text('SEMESTERS', 110, 95);
+      doc.text('SEMESTRES', 110, 95);
       doc.text('TERMS', 155, 95);
 
       doc.setTextColor(15, 23, 42); // slate-900
@@ -141,7 +173,7 @@ export default function ChildTranscriptsPage({ params }: { params: Promise<{ id:
         head: [['Subject Name', 'Class', 'Exam', 'Semester (Term)', 'Score', 'Grade', 'Remarks']],
         body: tableBody,
         theme: 'striped',
-        headStyles: { fillColor: [15, 23, 42] as any, fontSize: 8.5, fontStyle: 'bold' },
+        headStyles: { fillColor: [43, 76, 126] as any, fontSize: 8.5, fontStyle: 'bold' },
         bodyStyles: { fontSize: 8 },
         columnStyles: {
           0: { cellWidth: 35 },
@@ -161,27 +193,31 @@ export default function ChildTranscriptsPage({ params }: { params: Promise<{ id:
         currentY = 20;
       }
 
-      // Summary Card
-      doc.setFillColor(15, 23, 42);
+      // Summary Card (Royal Blue with Green GPA box)
+      doc.setFillColor(43, 76, 126); // School Royal Blue (#2B4C7E)
       doc.rect(14, currentY, 182, 28, 'F');
+
+      doc.setFillColor(110, 190, 68); // School Green (#6EBE44)
+      doc.rect(132, currentY + 2, 60, 24, 'F');
 
       doc.setTextColor(255, 255, 255);
       doc.setFont('Helvetica', 'bold');
-      doc.setFontSize(9);
+      doc.setFontSize(8.5);
       doc.text('ROSTER INDEX', 20, currentY + 8);
       doc.text('AVERAGE PERFORMANCE', 70, currentY + 8);
-      doc.text('CUMULATIVE GPA', 135, currentY + 8);
+      doc.text('CUMULATIVE GPA', 136, currentY + 8);
 
       doc.setFontSize(18);
       doc.text(String(sum.totalSubjectsCount || 0), 20, currentY + 18);
       doc.text(`${sum.weightedAverageScore || 0}%`, 70, currentY + 18);
-      doc.text(typeof sum.gpa === 'number' ? sum.gpa.toFixed(2) : '0.00', 135, currentY + 18);
+      doc.text(typeof sum.gpa === 'number' ? sum.gpa.toFixed(2) : '0.00', 136, currentY + 18);
 
       doc.setFontSize(7.5);
-      doc.setTextColor(156, 163, 175);
+      doc.setTextColor(200, 220, 245); // light blue-gray
       doc.text('Evaluated Fields', 20, currentY + 24);
       doc.text('Weighted Average Score', 70, currentY + 24);
-      doc.text('Out of 4.00 max', 135, currentY + 24);
+      doc.setTextColor(240, 253, 244); // very light green
+      doc.text('Out of 4.00 max', 136, currentY + 24);
 
       // Signatures
       const sigY = currentY + 42;

@@ -8,6 +8,8 @@ import { toast } from 'sonner';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import QRCode from 'qrcode';
+import { SCHOOL_CONFIG } from '@/lib/school-config';
+import { LOGO_BASE64 } from '@/lib/logo-base64';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
@@ -228,21 +230,32 @@ export default function ParentDocumentsPage() {
     const toastId = toast.loading('Compiling ledger statement...');
     try {
       const doc = new jsPDF();
-      doc.setDrawColor(59, 130, 246);
+      doc.setDrawColor(110, 190, 68); // school green
       doc.setLineWidth(1.5);
       doc.rect(5, 5, 200, 287);
 
-      // Header Banner
-      doc.setFillColor(15, 23, 42);
+      // Header Banner (Royal Blue)
+      doc.setFillColor(43, 76, 126);
       doc.rect(5, 5, 200, 45, 'F');
+      
+      // Draw school logo
+      try {
+        doc.addImage(LOGO_BASE64, 'JPEG', 15, 12, 30, 30);
+      } catch (e) {
+        console.error("Failed to add logo to statement", e);
+      }
+
       doc.setTextColor(255, 255, 255);
       doc.setFont('Helvetica', 'bold');
-      doc.setFontSize(18);
-      doc.text('AMFOFANA ACADEMY', 15, 22);
+      doc.setFontSize(20);
+      doc.text(SCHOOL_CONFIG.name, 52, 22);
       doc.setFontSize(10);
       doc.setFont('Helvetica', 'normal');
-      doc.text('STATEMENT OF ACCOUNT', 15, 30);
-      doc.text('Conakry, Guinea | billing@amfofana.edu', 15, 37);
+      doc.setTextColor(200, 220, 245); // light blue-gray
+      doc.text('STATEMENT OF ACCOUNT', 52, 30);
+      doc.text(`Conakry, Guinea | ${SCHOOL_CONFIG.contact}`, 52, 37);
+      
+      doc.setTextColor(255, 255, 255);
       doc.text(`Generated: ${new Date().toLocaleDateString()}`, 130, 22);
 
       // Student info
@@ -323,7 +336,7 @@ export default function ParentDocumentsPage() {
         head: [['Date', 'Reference #', 'Type', 'Description', 'Billed (Dr)', 'Paid (Cr)', 'Balance']],
         body: ledgerRows.length > 0 ? ledgerRows : [['—', '—', '—', 'No transactions logged', '—', '—', '—']],
         theme: 'grid',
-        headStyles: { fillColor: [15, 23, 42], textColor: [255, 255, 255], fontSize: 8 },
+        headStyles: { fillColor: [43, 76, 126], textColor: [255, 255, 255], fontSize: 8 },
         styles: { fontSize: 8 }
       });
 
@@ -349,23 +362,32 @@ export default function ParentDocumentsPage() {
     const toastId = toast.loading('Compiling payment receipt...');
     try {
       const doc = new jsPDF();
-      doc.setDrawColor(59, 130, 246);
+      doc.setDrawColor(110, 190, 68); // school green
       doc.setLineWidth(1.5);
       doc.rect(5, 5, 200, 287);
 
-      // Header Banner
-      doc.setFillColor(15, 23, 42);
+      // Header Banner (Royal Blue)
+      doc.setFillColor(43, 76, 126);
       doc.rect(5, 5, 200, 45, 'F');
+      
+      // Draw school logo
+      try {
+        doc.addImage(LOGO_BASE64, 'JPEG', 15, 12, 30, 30);
+      } catch (e) {
+        console.error("Failed to add logo to receipt", e);
+      }
+
       doc.setTextColor(255, 255, 255);
       doc.setFont('Helvetica', 'bold');
       doc.setFontSize(22);
-      doc.text('AMFOFANA ACADEMY', 15, 23);
+      doc.text(SCHOOL_CONFIG.name, 52, 23);
       doc.setFontSize(9);
       doc.setFont('Helvetica', 'normal');
-      doc.text('ENTERPRISE FINANCIAL LEDGER RECEIPT', 15, 30);
-      doc.text('Conakry, Guinea | billing@amfofana.edu', 15, 36);
+      doc.setTextColor(200, 220, 245); // light blue-gray
+      doc.text('ENTERPRISE FINANCIAL LEDGER RECEIPT', 52, 30);
+      doc.text(`Conakry, Guinea | ${SCHOOL_CONFIG.contact}`, 52, 36);
 
-      doc.setTextColor(15, 23, 42);
+      doc.setTextColor(43, 76, 126);
       doc.setFontSize(20);
       doc.setFont('Helvetica', 'bold');
       doc.text('PAYMENT RECEIPT', 15, 70);
@@ -391,7 +413,7 @@ export default function ParentDocumentsPage() {
           `${Number(pay.amount || 0).toLocaleString()} GNF`
         ]],
         theme: 'grid',
-        headStyles: { fillColor: [15, 23, 42], textColor: [255, 255, 255] }
+        headStyles: { fillColor: [43, 76, 126], textColor: [255, 255, 255] }
       });
 
       const finalY = (doc as any).lastAutoTable?.finalY || 140;
