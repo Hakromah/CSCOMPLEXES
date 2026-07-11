@@ -17,7 +17,7 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import QRCode from 'qrcode';
 import { SCHOOL_CONFIG } from '@/lib/school-config';
-import { LOGO_BASE64 } from '@/lib/logo-base64';
+import { CIRCULAR_LOGO } from '@/lib/logo-base64';
 
 // ─── Searchable Staff Combobox ────────────────────────────────────────────────────
 function StaffCombobox({ staff, value, onChange }: {
@@ -369,7 +369,7 @@ export default function StaffFinance() {
       
       // Draw school logo
       try {
-        doc.addImage(LOGO_BASE64, 'JPEG', 15, 12, 30, 30);
+        doc.addImage(CIRCULAR_LOGO, 'PNG', 15, 12, 30, 30);
       } catch (e) {
         console.error("Failed to add logo to payslip", e);
       }
@@ -385,7 +385,7 @@ export default function StaffFinance() {
       doc.text(SCHOOL_CONFIG.contact, 52, 36);
       
       doc.setTextColor(255, 255, 255);
-      doc.text(`Généré le: ${new Date().toLocaleDateString()}`, 150, 22);
+      doc.text(`Généré le: ${new Date().toLocaleDateString()}`, 196, 22, { align: 'right' });
 
       // Title
       doc.setTextColor(43, 76, 126);

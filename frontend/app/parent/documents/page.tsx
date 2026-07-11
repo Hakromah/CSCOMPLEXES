@@ -9,7 +9,7 @@ import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import QRCode from 'qrcode';
 import { SCHOOL_CONFIG } from '@/lib/school-config';
-import { LOGO_BASE64 } from '@/lib/logo-base64';
+import { CIRCULAR_LOGO } from '@/lib/logo-base64';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
@@ -102,18 +102,30 @@ export default function ParentDocumentsPage() {
 
       const doc = new jsPDF() as any;
 
-      // Header Branding
-      doc.setFillColor(15, 23, 42);
+      // Header Branding (Royal Blue)
+      doc.setFillColor(43, 76, 126);
       doc.rect(0, 0, 210, 45, 'F');
+      
+      // Divider line in school green
+      doc.setFillColor(110, 190, 68);
+      doc.rect(0, 45, 210, 1.5, 'F');
+
+      // Draw school logo
+      try {
+        doc.addImage(CIRCULAR_LOGO, 'PNG', 14, 10, 25, 25);
+      } catch (e) {
+        console.error("Failed to add logo to transcript", e);
+      }
+
       doc.setTextColor(255, 255, 255);
       doc.setFont('Helvetica', 'bold');
       doc.setFontSize(20);
-      doc.text((sch.name || 'School').toUpperCase(), 14, 18);
+      doc.text((sch.name || 'School').toUpperCase(), 45, 18);
       doc.setFont('Helvetica', 'normal');
       doc.setFontSize(9);
-      doc.setTextColor(156, 163, 175);
-      doc.text(`Official Academic Transcript • Registries System`, 14, 25);
-      doc.text(`Address: ${sch.address || ''} | Email: ${sch.email || ''} | Phone: ${sch.phone || ''}`, 14, 32);
+      doc.setTextColor(200, 220, 245); // light blue-gray
+      doc.text(`Official Academic Transcript • Registries System`, 45, 25);
+      doc.text(`Address: ${sch.address || ''} | Email: ${sch.email || ''} | Phone: ${sch.phone || ''}`, 45, 32);
 
       // Title
       doc.setTextColor(15, 23, 42);
@@ -173,7 +185,7 @@ export default function ParentDocumentsPage() {
         head: [['Subject Name', 'Class', 'Exam', 'Semester (Term)', 'Score', 'Grade', 'Remarks']],
         body: tableBody,
         theme: 'striped',
-        headStyles: { fillColor: [15, 23, 42] as any, fontSize: 8.5, fontStyle: 'bold' },
+        headStyles: { fillColor: [43, 76, 126] as any, fontSize: 8.5, fontStyle: 'bold' },
         bodyStyles: { fontSize: 8 }
       });
 
@@ -198,7 +210,7 @@ export default function ParentDocumentsPage() {
       doc.text(typeof sum.gpa === 'number' ? sum.gpa.toFixed(2) : '0.00', 135, currentY + 18);
 
       // Signatures & QR
-      const sigY = currentY + 42;
+      const sigY = Math.max(235, currentY + 36);
       doc.setTextColor(100, 116, 139);
       doc.setFont('Helvetica', 'bold');
       doc.setFontSize(8);
@@ -240,7 +252,7 @@ export default function ParentDocumentsPage() {
       
       // Draw school logo
       try {
-        doc.addImage(LOGO_BASE64, 'JPEG', 15, 12, 30, 30);
+        doc.addImage(CIRCULAR_LOGO, 'PNG', 15, 12, 30, 30);
       } catch (e) {
         console.error("Failed to add logo to statement", e);
       }
@@ -256,7 +268,7 @@ export default function ParentDocumentsPage() {
       doc.text(`Conakry, Guinea | ${SCHOOL_CONFIG.contact}`, 52, 37);
       
       doc.setTextColor(255, 255, 255);
-      doc.text(`Generated: ${new Date().toLocaleDateString()}`, 130, 22);
+      doc.text(`Generated: ${new Date().toLocaleDateString()}`, 196, 22, { align: 'right' });
 
       // Student info
       doc.setTextColor(15, 23, 42);
@@ -372,7 +384,7 @@ export default function ParentDocumentsPage() {
       
       // Draw school logo
       try {
-        doc.addImage(LOGO_BASE64, 'JPEG', 15, 12, 30, 30);
+        doc.addImage(CIRCULAR_LOGO, 'PNG', 15, 12, 30, 30);
       } catch (e) {
         console.error("Failed to add logo to receipt", e);
       }

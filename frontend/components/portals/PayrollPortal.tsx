@@ -16,7 +16,7 @@ import autoTable from 'jspdf-autotable';
 import QRCode from 'qrcode';
 import Cookies from 'js-cookie';
 import { SCHOOL_CONFIG } from '@/lib/school-config';
-import { LOGO_BASE64 } from '@/lib/logo-base64';
+import { CIRCULAR_LOGO } from '@/lib/logo-base64';
 
 interface PayrollPortalProps {
   role: 'DRIVER' | 'WORKER';
@@ -105,7 +105,7 @@ export default function PayrollPortal({ role, icon: Icon, portalName }: PayrollP
       
       // Draw school logo
       try {
-        doc.addImage(LOGO_BASE64, 'JPEG', 15, 12, 30, 30);
+        doc.addImage(CIRCULAR_LOGO, 'PNG', 15, 12, 30, 30);
       } catch (e) {
         console.error("Failed to add logo to payslip", e);
       }
@@ -121,7 +121,7 @@ export default function PayrollPortal({ role, icon: Icon, portalName }: PayrollP
       doc.text(SCHOOL_CONFIG.contact, 52, 36);
       
       doc.setTextColor(255, 255, 255);
-      doc.text(`Generated: ${new Date().toLocaleDateString()}`, 150, 22);
+      doc.text(`Generated: ${new Date().toLocaleDateString()}`, 196, 22, { align: 'right' });
 
       doc.setTextColor(43, 76, 126);
       doc.setFontSize(20);

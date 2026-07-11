@@ -23,7 +23,23 @@ const loadLogo = (): Promise<HTMLImageElement> => {
   return new Promise((resolve, reject) => {
     const img = new window.Image();
     img.src = '/logo/2cslogo.jpeg';
-    img.onload = () => resolve(img);
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.naturalWidth || img.width || 200;
+      canvas.height = img.naturalHeight || img.height || 200;
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.beginPath();
+        const r = canvas.width / 2;
+        ctx.arc(r, r, r, 0, 2 * Math.PI);
+        ctx.clip();
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      }
+      const roundedImg = new window.Image();
+      roundedImg.src = canvas.toDataURL('image/png');
+      roundedImg.onload = () => resolve(roundedImg);
+      roundedImg.onerror = (err) => reject(err);
+    };
     img.onerror = (err) => reject(err);
   });
 };
@@ -272,7 +288,7 @@ export default function StudentTranscriptsPage() {
       doc.text('Maximum 4.00', 136, currentY + 24);
 
       // Signatures and QR Code Block
-      const sigY = currentY + 42;
+      const sigY = Math.max(235, currentY + 36);
       doc.setTextColor(100, 116, 139); // slate-500
       doc.setFont('Helvetica', 'bold');
       doc.setFontSize(8);

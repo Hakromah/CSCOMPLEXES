@@ -8,7 +8,7 @@ import {
   DollarSign, Clock, UserCircle2, ChevronDown
 } from 'lucide-react';
 import { SCHOOL_CONFIG } from '@/lib/school-config';
-import { LOGO_BASE64 } from '@/lib/logo-base64';
+import { CIRCULAR_LOGO } from '@/lib/logo-base64';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -567,7 +567,7 @@ export default function StudentFinance() {
 
       // Draw school logo
       try {
-        doc.addImage(LOGO_BASE64, 'JPEG', 15, 12, 30, 30);
+        doc.addImage(CIRCULAR_LOGO, 'PNG', 15, 12, 30, 30);
       } catch (e) {
         console.error("Failed to add logo to receipt", e);
       }
@@ -659,10 +659,10 @@ export default function StudentFinance() {
       // Header banner (Royal Blue)
       doc.setFillColor(43, 76, 126);
       doc.rect(5, 5, 200, 45, 'F');
-      
+
       // Draw school logo
       try {
-        doc.addImage(LOGO_BASE64, 'JPEG', 15, 12, 30, 30);
+        doc.addImage(CIRCULAR_LOGO, 'PNG', 15, 12, 30, 30);
       } catch (e) {
         console.error("Failed to add logo to statement", e);
       }
@@ -676,9 +676,9 @@ export default function StudentFinance() {
       doc.setTextColor(200, 220, 245); // light blue-gray
       doc.text('RELEVÉ DE COMPTE', 52, 30);
       doc.text(`Conakry, Guinée | ${SCHOOL_CONFIG.contact}`, 52, 37);
-      
+
       doc.setTextColor(255, 255, 255);
-      doc.text(`Généré le: ${new Date().toLocaleDateString()}`, 130, 22);
+      doc.text(`Généré le: ${new Date().toLocaleDateString()}`, 196, 22, { align: 'right' });
 
       // Student info
       doc.setTextColor(43, 76, 126);
