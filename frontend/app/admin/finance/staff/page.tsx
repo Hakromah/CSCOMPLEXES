@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useEffect, useState, useMemo, useRef } from 'react';
@@ -366,7 +367,7 @@ export default function StaffFinance() {
       // Header banner (Royal Blue)
       doc.setFillColor(43, 76, 126);
       doc.rect(5, 5, 200, 45, 'F');
-      
+
       // Draw school logo
       try {
         doc.addImage(CIRCULAR_LOGO, 'PNG', 15, 12, 30, 30);
@@ -383,7 +384,7 @@ export default function StaffFinance() {
       doc.setTextColor(200, 220, 245); // light blue-gray
       doc.text(`${SCHOOL_CONFIG.subtitle} — BULLETIN DE PAIE DU PERSONNEL`, 52, 30);
       doc.text(SCHOOL_CONFIG.contact, 52, 36);
-      
+
       doc.setTextColor(255, 255, 255);
       doc.text(`Généré le: ${new Date().toLocaleDateString()}`, 196, 22, { align: 'right' });
 
@@ -405,11 +406,12 @@ export default function StaffFinance() {
 
       // Employee info
       doc.setFont('Helvetica', 'bold');
-      doc.text('Profil de l\'employé:', 120, 80);
+      doc.text('Profil de employé:', 120, 80);
       doc.setFont('Helvetica', 'normal');
       doc.text(`Nom: ${staffName}`, 120, 87);
       doc.text(`Rôle: ${staffRole}`, 120, 94);
       doc.text(`Email: ${staffEmail}`, 120, 101);
+      
 
       // Payroll breakdown
       autoTable(doc, {
@@ -418,7 +420,7 @@ export default function StaffFinance() {
         body: [
           ['Salaire de base', base.toLocaleString()],
           ['Allocations (+)', `+ ${allow.toLocaleString()}`],
-          ['Retenues (−)', `− ${ded.toLocaleString()}`],
+          ['Retenues (-)', `- ${ded.toLocaleString()}`],
           ['Solde net dû', net.toLocaleString()],
           ['Total décaissé', totalDisbursed.toLocaleString()],
           ['Solde restant', outstanding.toLocaleString()]
