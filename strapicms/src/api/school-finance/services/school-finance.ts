@@ -128,6 +128,11 @@ export default () => ({
       }
     });
 
+    // Total collected across all time (from all approved payments, not year-filtered)
+    const totalCollected = payments.reduce((sum, p) => sum + Number(p.amount || 0), 0);
+    // Amount-based payment completion rate: how much of the total invoiced has been collected
+    const paymentCompletionRate = totalInvoiced > 0 ? Math.round((totalCollected / totalInvoiced) * 100) : 0;
+
     // ── Year-filtered payments ────────────────────────────────────────────────
     const yearPayments = payments.filter(p => {
       const d = new Date(p.paymentDate || p.createdAt || new Date());
@@ -208,6 +213,9 @@ export default () => ({
       billedStudents: billedStudents.size,
       paidStudents: paidStudents.size,
       debtorStudents: billedStudents.size - paidStudents.size,
+      totalInvoiced,
+      totalCollected,
+      paymentCompletionRate,
       monthlyRevenue: totalRevenue,
       tuitionRevenue,
       transportationRevenue,
@@ -347,7 +355,7 @@ export default () => ({
         totalPaid: 0,
         remainingBalance: subtotal,
         submittedBy: userId,
-        currency: 'GNF'
+        currency: dto.currency || 'GNF'
       },
       populate: ['student']
     }) as any;
@@ -437,6 +445,9 @@ export default () => ({
         invoice: dto.invoiceId,
         student: dto.studentId,
         amount: Number(dto.amount),
+        originalAmount: dto.originalAmount != null ? Number(dto.originalAmount) : Number(dto.amount),
+        exchangeRate: dto.exchangeRate != null ? Number(dto.exchangeRate) : 1,
+        currency: dto.currency || 'GNF',
         paymentDate: dto.paymentDate || new Date().toISOString(),
         paymentMethod: dto.paymentMethod,
         paymentCategory: dto.paymentCategory,

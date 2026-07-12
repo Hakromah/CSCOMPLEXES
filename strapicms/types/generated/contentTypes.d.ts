@@ -1694,6 +1694,7 @@ export interface ApiSalaryPaymentSalaryPayment
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    currency: Schema.Attribute.String & Schema.Attribute.DefaultTo<'GNF'>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -1754,6 +1755,7 @@ export interface ApiSalaryRecordSalaryRecord
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    currency: Schema.Attribute.String & Schema.Attribute.DefaultTo<'GNF'>;
     deductions: Schema.Attribute.Decimal & Schema.Attribute.DefaultTo<0>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
@@ -2277,6 +2279,8 @@ export interface ApiStudentPaymentStudentPayment
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    currency: Schema.Attribute.String & Schema.Attribute.DefaultTo<'GNF'>;
+    exchangeRate: Schema.Attribute.Decimal;
     invoice: Schema.Attribute.Relation<
       'manyToOne',
       'api::student-invoice.student-invoice'
@@ -2288,6 +2292,7 @@ export interface ApiStudentPaymentStudentPayment
     > &
       Schema.Attribute.Private;
     notes: Schema.Attribute.Text;
+    originalAmount: Schema.Attribute.Decimal;
     paymentCategory: Schema.Attribute.Enumeration<
       ['TUITION', 'TRANSPORT', 'TSHIRT', 'REGISTRATION', 'OTHER']
     > &

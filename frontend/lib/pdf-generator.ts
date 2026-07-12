@@ -345,14 +345,14 @@ export async function generatePayslip(data: PayslipData): Promise<jsPDF> {
   // Payroll breakdown table
   autoTable(doc, {
     startY: 115,
-    head: [['Composant de la paie', 'Montant (GNF)']],
+    head: [['Composant de la paie', 'Montant (' + (data.currency || 'GNF') + ')']],
     body: [
-      ['Salaire de base', base.toLocaleString('fr-FR')],
-      ['Allocations (+)', `+ ${allow.toLocaleString('fr-FR')}`],
-      ['Retenues (-)', `- ${ded.toLocaleString('fr-FR')}`],
-      ['Solde net dû', net.toLocaleString('fr-FR')],
-      ['Total décaissé', disbursed.toLocaleString('fr-FR')],
-      ['Solde restant', outstanding.toLocaleString('fr-FR')],
+      ['Salaire de base', base.toLocaleString('en-US')],
+      ['Allocations (+)', `+ ${allow.toLocaleString('en-US')}`],
+      ['Retenues (-)', `- ${ded.toLocaleString('en-US')}`],
+      ['Solde net dû', net.toLocaleString('en-US')],
+      ['Total décaissé', disbursed.toLocaleString('en-US')],
+      ['Solde restant', outstanding.toLocaleString('en-US')],
     ],
     theme: 'striped',
     headStyles: { fillColor: [43, 76, 126] as any },
@@ -366,7 +366,7 @@ export async function generatePayslip(data: PayslipData): Promise<jsPDF> {
   // QR Code — anchored to bottom-right corner
   try {
     const QRCode = (await import('qrcode')).default;
-    const qrContent = `${SCHOOL_CONFIG.name}\nBULLETIN DE PAIE DU PERSONNEL\nRecord: ${data.recordNumber || 'N/A'}\nEmployé: ${data.employeeName}\nPériode: ${data.month} ${data.year}\nSalaire net: ${net.toLocaleString('fr-FR')} GNF\nStatut: ${data.status || 'N/A'}`;
+    const qrContent = `${SCHOOL_CONFIG.name}\nBULLETIN DE PAIE DU PERSONNEL\nRecord: ${data.recordNumber || 'N/A'}\nEmployé: ${data.employeeName}\nPériode: ${data.month} ${data.year}\nSalaire net: ${net.toLocaleString('fr-FR')} ${data.currency || 'GNF'}\nStatut: ${data.status || 'N/A'}`;
     const qrDataUrl = await QRCode.toDataURL(qrContent);
     doc.addImage(qrDataUrl, 'PNG', 155, 242, 42, 42);
     doc.setFontSize(7);

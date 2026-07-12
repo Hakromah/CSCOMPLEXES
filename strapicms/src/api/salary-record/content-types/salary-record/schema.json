@@ -71,6 +71,10 @@
       "type": "relation",
       "relation": "manyToOne",
       "target": "plugin::users-permissions.user"
+    },
+    "currency": {
+      "type": "string",
+      "default": "GNF"
     }
   }
 }

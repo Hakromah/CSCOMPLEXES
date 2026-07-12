@@ -39,6 +39,7 @@ export default {
       dueDate: inv.dueDate,
       rejectionReason: inv.rejectionReason,
       createdAt: inv.createdAt,
+      currency: inv.currency || 'GNF',
       // Flat student fields
       studentId: inv.student?.id || null,
       studentDocumentId: inv.student?.documentId || null,
@@ -61,6 +62,9 @@ export default {
         notes: pay.notes,
         rejectionReason: pay.rejectionReason,
         createdAt: pay.createdAt,
+        currency: pay.currency || 'GNF',
+        originalAmount: pay.originalAmount || pay.amount,
+        exchangeRate: pay.exchangeRate || 1,
         // Flat invoice fields
         invoiceId: pay.invoice?.id || null,
         invoiceDocumentId: pay.invoice?.documentId || null,
@@ -109,6 +113,7 @@ export default {
       notes: rec.notes,
       rejectionReason: rec.rejectionReason,
       createdAt: rec.createdAt,
+      currency: rec.currency || 'GNF',
       staffId: rec.staff?.id || null,
       staffDocumentId: rec.staff?.documentId || null,
       staffName: rec.staff?.username || rec.staff?.name || null,
@@ -128,6 +133,7 @@ export default {
       notes: pay.notes,
       rejectionReason: pay.rejectionReason,
       createdAt: pay.createdAt,
+      currency: pay.currency || 'GNF',
       salaryRecordId: pay.salaryRecord?.id || null,
       salaryRecordDocumentId: pay.salaryRecord?.documentId || null,
       salaryRecordNumber: pay.salaryRecord?.recordNumber || null,
@@ -325,6 +331,7 @@ export default {
     if (body.status) {
       updateData.status = body.status;
     }
+    if (body.currency) updateData.currency = body.currency;
 
     // Update base fields
     await (strapi.entityService.update as any)('api::student-invoice.student-invoice', id, { data: updateData });
@@ -358,6 +365,9 @@ export default {
     if (body.invoiceId) updateData.invoice = Number(body.invoiceId);
     if (body.studentId) updateData.student = Number(body.studentId);
     if (body.amount !== undefined) updateData.amount = Number(body.amount);
+    if (body.originalAmount !== undefined) updateData.originalAmount = Number(body.originalAmount);
+    if (body.exchangeRate !== undefined) updateData.exchangeRate = Number(body.exchangeRate);
+    if (body.currency) updateData.currency = body.currency;
     if (body.paymentMethod) updateData.paymentMethod = body.paymentMethod;
     if (body.paymentCategory) updateData.paymentCategory = body.paymentCategory;
     if (body.notes !== undefined) updateData.notes = body.notes;

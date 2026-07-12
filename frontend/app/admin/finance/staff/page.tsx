@@ -124,6 +124,9 @@ export default function StaffFinance() {
   const [allowances, setAllowances] = useState<number>(0);
   const [deductions, setDeductions] = useState<number>(0);
   const [salaryNotes, setSalaryNotes] = useState<string>('');
+  const [salaryCurrency, setSalaryCurrency] = useState<string>('GNF');
+  const [showCustomSalaryCurrency, setShowCustomSalaryCurrency] = useState<boolean>(false);
+  const [customSalaryCurrency, setCustomSalaryCurrency] = useState<string>('');
 
   // Payout Disbursement Form State
   const [payoutTargetRecord, setPayoutTargetRecord] = useState<any>(null); // the salary record being paid out
@@ -173,6 +176,7 @@ export default function StaffFinance() {
     if (!selectedStaffId) { toast.error('Veuillez sélectionner un membre du personnel'); return; }
     if (Number(baseSalary) <= 0) { toast.error('Veuillez spécifier un salaire de base positif'); return; }
 
+    const currencyPayload = showCustomSalaryCurrency ? customSalaryCurrency : salaryCurrency;
     const tid = toast.loading(editingRecord ? 'Enregistrement des modifications...' : 'Génération de l\'enregistrement...');
     try {
       if (editingRecord) {
@@ -183,7 +187,8 @@ export default function StaffFinance() {
           baseSalary: Number(baseSalary),
           allowances: Number(allowances),
           deductions: Number(deductions),
-          notes: salaryNotes
+          notes: salaryNotes,
+          currency: currencyPayload,
         });
         toast.success('Mise à jour réussie de la déclaration de salaire', { id: tid });
       } else {
@@ -194,7 +199,8 @@ export default function StaffFinance() {
           baseSalary: Number(baseSalary),
           allowances: Number(allowances),
           deductions: Number(deductions),
-          notes: salaryNotes
+          notes: salaryNotes,
+          currency: currencyPayload,
         });
         toast.success('Dossier de salaire généré à l\'état DRAFT', { id: tid });
       }
@@ -215,6 +221,9 @@ export default function StaffFinance() {
     setDeductions(0);
     setSalaryNotes('');
     setSelectedRecordIds([]);
+    setSalaryCurrency('GNF');
+    setShowCustomSalaryCurrency(false);
+    setCustomSalaryCurrency('');
   };
 
   const startEditRecord = (rec: any) => {
@@ -226,6 +235,18 @@ export default function StaffFinance() {
     setAllowances(Number(rec.allowances));
     setDeductions(Number(rec.deductions));
     setSalaryNotes(rec.notes || '');
+
+    const cur = rec.currency || 'GNF';
+    if (cur === 'GNF' || cur === 'USD') {
+      setSalaryCurrency(cur);
+      setShowCustomSalaryCurrency(false);
+      setCustomSalaryCurrency('');
+    } else {
+      setSalaryCurrency('CUSTOM');
+      setShowCustomSalaryCurrency(true);
+      setCustomSalaryCurrency(cur);
+    }
+
     setIsSalaryOpen(true);
   };
 
@@ -320,7 +341,8 @@ export default function StaffFinance() {
         staffId: payoutTargetRecord.staffId,
         amount: Number(payoutAmount),
         paymentMethod: payoutMethod,
-        notes: payoutNotes
+        notes: payoutNotes,
+        currency: payoutTargetRecord.currency || 'GNF',
       });
 
       // Step 2: Immediately approve it — use the returned ID directly
@@ -411,12 +433,12 @@ export default function StaffFinance() {
       doc.text(`Nom: ${staffName}`, 120, 87);
       doc.text(`Rôle: ${staffRole}`, 120, 94);
       doc.text(`Email: ${staffEmail}`, 120, 101);
-      
+
 
       // Payroll breakdown
       autoTable(doc, {
         startY: 115,
-        head: [['Composant de la paie', 'Montant (GNF)']],
+        head: [['Composant de la paie', `Montant (${rec.currency || 'GNF'})`]],
         body: [
           ['Salaire de base', base.toLocaleString()],
           ['Allocations (+)', `+ ${allow.toLocaleString()}`],
@@ -435,7 +457,8 @@ export default function StaffFinance() {
       });
 
       // QR Code — anchored to bottom-right corner
-      const qrContent = `${SCHOOL_CONFIG.name}\nBULLETIN DE PAIE DU PERSONNEL\nRecord: ${rec.recordNumber}\nEmployé: ${staffName}\nPériode: ${rec.month} ${rec.year}\nSalaire net: ${net.toLocaleString()} GNF\nStatut: ${rec.status}\nVérifier: ${SCHOOL_CONFIG.verifyUrl}`;
+      const recCurrency = rec.currency || 'GNF';
+      const qrContent = `${SCHOOL_CONFIG.name}\nBULLETIN DE PAIE DU PERSONNEL\nRecord: ${rec.recordNumber}\nEmployé: ${staffName}\nPériode: ${rec.month} ${rec.year}\nSalaire net: ${net.toLocaleString()} ${recCurrency}\nStatut: ${rec.status}\nVérifier: ${SCHOOL_CONFIG.verifyUrl}`;
       const qrDataUrl = await QRCode.toDataURL(qrContent);
       // Fixed bottom-right position
       doc.addImage(qrDataUrl, 'PNG', 155, 242, 42, 42);
@@ -477,6 +500,7 @@ export default function StaffFinance() {
   };
 
   // ─── Render ────────────────────────────────────────────────────────────────
+  const selectedCurr = showCustomSalaryCurrency ? customSalaryCurrency : salaryCurrency;
   return (
     <div className="p-8 space-y-8 bg-slate-50/50 min-h-screen">
 
@@ -597,8 +621,8 @@ export default function StaffFinance() {
                       </TableCell>
                       <TableCell><Badge variant="secondary" className="font-bold text-[10px] uppercase tracking-wider">{rec.staffRole || 'N/A'}</Badge></TableCell>
                       <TableCell className="font-medium text-slate-600 text-sm">{rec.month} {rec.year}</TableCell>
-                      <TableCell className="font-black text-slate-900">{Number(rec.baseSalary || 0).toLocaleString()} <span className="text-[10px] text-slate-400">GNF</span></TableCell>
-                      <TableCell className="font-black text-blue-600">{Number(rec.netSalary || 0).toLocaleString()} <span className="text-[10px] text-blue-300">GNF</span></TableCell>
+                      <TableCell className="font-black text-slate-900">{Number(rec.baseSalary || 0).toLocaleString()} <span className="text-[10px] text-slate-400">{rec.currency || 'GNF'}</span></TableCell>
+                      <TableCell className="font-black text-blue-600">{Number(rec.netSalary || 0).toLocaleString()} <span className="text-[10px] text-blue-300">{rec.currency || 'GNF'}</span></TableCell>
                       <TableCell className="text-xs text-slate-500 max-w-[120px] truncate" title={rec.notes || ''}>
                         {rec.notes ? <span className="italic">{rec.notes}</span> : <span className="text-slate-300">—</span>}
                       </TableCell>
@@ -723,7 +747,7 @@ export default function StaffFinance() {
                     </TableCell>
                     <TableCell><Badge variant="secondary" className="font-bold text-[10px] uppercase">{rec.staffRole || 'N/A'}</Badge></TableCell>
                     <TableCell className="text-sm text-slate-600">{rec.month} {rec.year}</TableCell>
-                    <TableCell className="font-black text-blue-600">{Number(rec.netSalary || 0).toLocaleString()} <span className="text-[10px] text-blue-300">GNF</span></TableCell>
+                    <TableCell className="font-black text-blue-600">{Number(rec.netSalary || 0).toLocaleString()} <span className="text-[10px] text-blue-300">{rec.currency || 'GNF'}</span></TableCell>
                     <TableCell><Badge className="bg-blue-600 hover:bg-blue-700">APProuvé</Badge></TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-2">
@@ -798,10 +822,10 @@ export default function StaffFinance() {
                         </div>
                       </TableCell>
                       <TableCell className="text-sm text-slate-600">{rec.month} {rec.year}</TableCell>
-                      <TableCell className="font-black text-slate-900">{netSalary.toLocaleString()} <span className="text-[10px] text-slate-400">GNF</span></TableCell>
-                      <TableCell className="font-bold text-emerald-600">{totalDisbursed.toLocaleString()} <span className="text-[10px] text-emerald-300">GNF</span></TableCell>
+                      <TableCell className="font-black text-slate-900">{netSalary.toLocaleString()} <span className="text-[10px] text-slate-400">{rec.currency || 'GNF'}</span></TableCell>
+                      <TableCell className="font-bold text-emerald-600">{totalDisbursed.toLocaleString()} <span className="text-[10px] text-emerald-300">{rec.currency || 'GNF'}</span></TableCell>
                       <TableCell className={`font-bold ${outstanding > 0 ? 'text-amber-600' : 'text-slate-400'}`}>
-                        {outstanding > 0 ? `${outstanding.toLocaleString()} GNF` : '—'}
+                        {outstanding > 0 ? `${outstanding.toLocaleString()} ${rec.currency || 'GNF'}` : '—'}
                       </TableCell>
                       <TableCell>{statusBadge(rec.status)}</TableCell>
                       <TableCell className="text-right">
@@ -860,7 +884,7 @@ export default function StaffFinance() {
                     <SelectValue placeholder="Mois" />
                   </SelectTrigger>
                   <SelectContent>
-                    {['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'].map((m) => (
+                    {['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'].map((m) => (
                       <SelectItem key={m} value={m}>{m}</SelectItem>
                     ))}
                   </SelectContent>
@@ -878,7 +902,7 @@ export default function StaffFinance() {
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-black uppercase text-slate-400">Salaire de base (GNF)</label>
+              <label className="text-xs font-black uppercase text-slate-400">Salaire de base ({salaryCurrency || 'GNF'})</label>
               <Input
                 type="number"
                 value={baseSalary || ''}
@@ -889,7 +913,7 @@ export default function StaffFinance() {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1">
-                <label className="text-xs font-black uppercase text-slate-400">Indemnités (GNF)</label>
+                <label className="text-xs font-black uppercase text-slate-400">Indemnités ({salaryCurrency || 'GNF'})</label>
                 <Input
                   type="number"
                   value={allowances || ''}
@@ -898,7 +922,7 @@ export default function StaffFinance() {
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-xs font-black uppercase text-slate-400">Retenues (GNF)</label>
+                <label className="text-xs font-black uppercase text-slate-400">Retenues ({salaryCurrency || 'GNF'})</label>
                 <Input
                   type="number"
                   value={deductions || ''}
@@ -910,7 +934,38 @@ export default function StaffFinance() {
 
             <div className="p-4 bg-slate-50 border rounded-2xl flex justify-between items-center">
               <span className="text-xs font-black text-slate-400 uppercase tracking-widest">Salaire net à verser</span>
-              <span className="text-lg font-black text-blue-600">{computedNetSalary.toLocaleString()} GNF</span>
+              <span className="text-lg font-black text-blue-600">{computedNetSalary.toLocaleString()} {salaryCurrency || 'GNF'}</span>
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-xs font-black uppercase text-slate-400">Devise (Currency)</label>
+              <div className="flex gap-2">
+                <Select value={salaryCurrency} onValueChange={(val) => {
+                  setSalaryCurrency(val);
+                  if (val === 'CUSTOM') {
+                    setShowCustomSalaryCurrency(true);
+                  } else {
+                    setShowCustomSalaryCurrency(false);
+                  }
+                }}>
+                  <SelectTrigger className="h-11 rounded-xl bg-slate-50 flex-1">
+                    <SelectValue placeholder="Choisir la devise" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="GNF">GNF</SelectItem>
+                    <SelectItem value="USD">USD</SelectItem>
+                    <SelectItem value="CUSTOM">Ajouter une devise...</SelectItem>
+                  </SelectContent>
+                </Select>
+                {showCustomSalaryCurrency && (
+                  <Input
+                    placeholder="Écrivez votre devise..."
+                    value={customSalaryCurrency}
+                    onChange={(e) => setCustomSalaryCurrency(e.target.value.toUpperCase())}
+                    className="h-11 rounded-xl bg-slate-50 w-1/2"
+                  />
+                )}
+              </div>
             </div>
 
             <div className="space-y-1">
@@ -949,11 +1004,11 @@ export default function StaffFinance() {
                 <p className="text-xs font-black uppercase text-slate-400 tracking-widest">Dossier de paie</p>
                 <p className="font-bold text-slate-900">{payoutTargetRecord.recordNumber}</p>
                 <p className="text-sm text-slate-600">{payoutTargetRecord.staffName} — {payoutTargetRecord.month} {payoutTargetRecord.year}</p>
-                <p className="text-xs text-slate-500">Salaire net dû: <span className="font-black text-blue-600">{Number(payoutTargetRecord.netSalary || 0).toLocaleString()} GNF</span></p>
+                <p className="text-xs text-slate-500">Salaire net dû: <span className="font-black text-blue-600">{Number(payoutTargetRecord.netSalary || 0).toLocaleString()} {payoutTargetRecord.currency || 'GNF'}</span></p>
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-black uppercase text-slate-400">Montant à verser (GNF)</label>
+                <label className="text-xs font-black uppercase text-slate-400">Montant à verser ({payoutTargetRecord.currency || 'GNF'})</label>
                 <Input
                   type="number"
                   value={payoutAmount || ''}

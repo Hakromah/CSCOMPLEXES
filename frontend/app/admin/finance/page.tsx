@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useEffect, useState, useMemo, useCallback } from 'react';
@@ -87,12 +88,8 @@ export default function FinanceDashboard() {
     fetchStats(barYear);
   }, [barYear]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Payment completion ratio — use billedStudents as denominator
-  const paidRatio = useMemo(() => {
-    const billed = stats?.billedStudents || 0;
-    const paid = stats?.paidStudents || 0;
-    return billed > 0 ? Math.round((paid / billed) * 100) : 0;
-  }, [stats]);
+  // Payment completion ratio — amount-based: total collected / total invoiced
+  const paidRatio = stats?.paymentCompletionRate ?? 0;
 
   // Bar chart data — uses yearlyTrends per-month category breakdown when a month is selected
   const barData = useMemo(() => {
@@ -155,7 +152,7 @@ export default function FinanceDashboard() {
     {
       title: 'Pourcentage de paiement',
       value: `${paidRatio}%`,
-      desc: `${stats?.paidStudents || 0} des ${stats?.billedStudents || 0} élèves facturés entièrement payés`,
+      desc: `${fmtGNF(stats?.totalCollected || 0)} GNF collectés sur ${fmtGNF(stats?.totalInvoiced || 0)} GNF facturés`,
       icon: Percent,
       color: paidRatio >= 75
         ? 'text-emerald-600 bg-emerald-50 border-emerald-100'
