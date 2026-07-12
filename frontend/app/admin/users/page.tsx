@@ -38,9 +38,9 @@ import EditUserForm from '@/components/forms/EditUserForm';
 import DeleteUserAlert from '@/components/forms/DeleteUserAlert';
 
 const userFormSchema = z.object({
-   name: z.string().min(1, 'Name is required'),
-   email: z.string().email('Invalid email'),
-   password: z.string().min(6, 'Min 6 characters'),
+   name: z.string().min(1, 'Le nom est requis'),
+   email: z.string().email('Adresse e-mail invalide'),
+   password: z.string().min(6, 'Minimum 6 caracteres'),
    role: z.enum(['STUDENT', 'TEACHER', 'ADMIN', 'ACCOUNTANT', 'ACCOUNTLEAD', 'DRIVER', 'WORKER', 'PARENT']),
    birthDate: z.string().optional(),
    birthCountry: z.string().optional(),
@@ -95,11 +95,11 @@ export default function UserManagement() {
       const counts = { STUDENT: 0, TEACHER: 0, ADMIN: 0, ACCOUNTANT: 0, ACCOUNTLEAD: 0, DRIVER: 0, WORKER: 0 };
       users.forEach(u => { if (counts[u.role as keyof typeof counts] !== undefined) counts[u.role as keyof typeof counts]++; });
       return [
-         { name: 'Students', value: counts.STUDENT, color: '#10b981' },
-         { name: 'Teachers', value: counts.TEACHER, color: '#3b82f6' },
-         { name: 'Admins', value: counts.ADMIN, color: '#f59e0b' },
-         { name: 'Accountants', value: counts.ACCOUNTANT + counts.ACCOUNTLEAD, color: '#8b5cf6' },
-         { name: 'Drivers/Workers', value: counts.DRIVER + counts.WORKER, color: '#6366f1' }
+         { name: 'Eleves', value: counts.STUDENT, color: '#10b981' },
+         { name: 'Enseignants', value: counts.TEACHER, color: '#3b82f6' },
+         { name: 'Administrateurs', value: counts.ADMIN, color: '#f59e0b' },
+         { name: 'Comptables', value: counts.ACCOUNTANT + counts.ACCOUNTLEAD, color: '#8b5cf6' },
+         { name: 'Chauffeurs/Agents', value: counts.DRIVER + counts.WORKER, color: '#6366f1' }
       ];
    }, [users]);
 
@@ -114,7 +114,7 @@ export default function UserManagement() {
          }));
          setUsers(mappedUsers);
       } catch (error) {
-         toast.error('Registry sync failed');
+         toast.error('Echec de la synchronisation du registre');
          console.log(error)
 
       } finally {
@@ -127,13 +127,13 @@ export default function UserManagement() {
    // --- HANDLERS ---
    const handleCreateSubmit = async (values: z.infer<typeof userFormSchema>) => {
       if (emailDuplicate) {
-         toast.error(`Cannot create user: Email "${values.email}" is already registered.`);
+         toast.error(`Impossible de creer l'utilisateur : l'e-mail "${values.email}" est deja enregistre.`);
          return;
       }
       setIsSubmitting(true);
       try {
          await api.post('/admin/users', values);
-         toast.success('Identity generated and stored in ledger');
+         toast.success('Identite generee et enregistree dans le registre');
          setIsCreateOpen(false);
          form.reset();
          setEmailDuplicate(null);
@@ -141,7 +141,7 @@ export default function UserManagement() {
       } catch (error: any) {
          const msg = error?.response?.data?.error?.message
             || error?.response?.data?.message
-            || 'Generation failed — check the email address';
+            || 'La generation a echoue — verifiez l adresse e-mail';
          toast.error(msg);
       } finally {
          setIsSubmitting(false);
@@ -200,18 +200,18 @@ export default function UserManagement() {
    const processImport = async () => {
       if (csvPreview.length === 0) return;
 
-      const tid = toast.loading("Processing registry injection...");
+      const tid = toast.loading("Traitement de l injection dans le registre...");
       setImporting(true);
 
       try {
          const response = await api.post('/admin/users/bulk', csvPreview);
          setImportSummary(response.data); // Receives {imported, skipped, totalProcessed}
-         toast.success("Injection successful", { id: tid });
+         toast.success("Injection reussie", { id: tid });
          fetchUsers();
       } catch (error: any) {
          console.error("Import Error Detail:", error.response?.data);
          const errorMsg = error.response?.data?.message || "Check CSV headers and date formats";
-         toast.error(`Registry mismatch: ${errorMsg}`, { id: tid });
+         toast.error(`Erreur de registre : ${errorMsg}`, { id: tid });
       } finally {
          setImporting(false);
       }
@@ -231,7 +231,7 @@ export default function UserManagement() {
       try {
          const res = await api.get(`/admin/students/${studentId}/classes`);
          setStudentClasses(res.data);
-      } catch (e) { toast.error('Retrieval failed'); console.log(e) }
+      } catch (e) { toast.error('Echec de la recuperation'); console.log(e) }
       finally { setIsLoadingClasses(false); }
    };
 
@@ -265,6 +265,16 @@ export default function UserManagement() {
          PARENT: "bg-rose-500 hover:bg-rose-600"
       };
 
+      const roleLabels: Record<string, string> = {
+         ADMIN: 'Administrateur',
+         TEACHER: 'Enseignant',
+         STUDENT: 'Eleve',
+         ACCOUNTANT: 'Comptable',
+         ACCOUNTLEAD: 'Chef comptable',
+         DRIVER: 'Chauffeur',
+         WORKER: 'Agent',
+         PARENT: 'Parent',
+      };
       return (
          <Badge className={`${styles[role] || 'bg-slate-500'} border-none px-3 py-1 flex w-fit items-center gap-1 uppercase text-[10px] font-black tracking-widest text-white`}>
             {role === 'ADMIN' && <ShieldCheck size={10} />}
@@ -274,7 +284,7 @@ export default function UserManagement() {
             {(role === 'ACCOUNTANT' || role === 'ACCOUNTLEAD') && <Landmark size={10} />}
             {role === 'DRIVER' && <Bus size={10} />}
             {role === 'WORKER' && <Briefcase size={10} />}
-            {role}
+            {roleLabels[role] || role}
          </Badge>
       );
    };
@@ -375,14 +385,14 @@ export default function UserManagement() {
                   <div className="flex-1 overflow-y-auto">
                      <AnimatePresence mode="wait">
                         {isLoadingClasses ? (
-                           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-2 text-slate-400 font-black text-xs uppercase"><Loader2 className="animate-spin size-4" /> Fetching ledger...</motion.div>
+                           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-2 text-slate-400 font-black text-xs uppercase"><Loader2 className="animate-spin size-4" /> Chargement du registre...</motion.div>
                         ) : selectedStudentId && studentClasses.length > 0 ? (
                            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="grid grid-cols-1 md:grid-cols-2 gap-3">
                               {studentClasses.map(c => (
                                  <div key={c.id} className="p-3 bg-indigo-50 border border-indigo-100 rounded-2xl flex justify-between items-center">
                                     <div>
                                        <p className="text-xs font-black text-indigo-700 uppercase">{c.name}</p>
-                                       <p className="text-[10px] text-indigo-500 font-bold">Lvl: {c.grade}</p>
+                                       <p className="text-[10px] text-indigo-500 font-bold">Niveau: {c.grade}</p>
                                     </div>
 
                                     <Badge className="bg-indigo-200 text-indigo-700 hover:bg-indigo-200 text-[9px] font-black px-2 uppercase">
@@ -413,8 +423,18 @@ export default function UserManagement() {
                      <Input placeholder="Rechercher dans le registre par nom, e-mail ou identifiant biométrique..." className="pl-12 h-12 bg-slate-50 border-none rounded-xl focus-visible:ring-2 focus-visible:ring-blue-600 font-medium" value={search} onChange={(e) => setSearch(e.target.value)} />
                   </div>
                   <div className="flex p-1 bg-slate-100 rounded-2xl gap-1 overflow-x-auto max-w-full">
-                     {['ALL', 'ADMIN', 'TEACHER', 'STUDENT', 'PARENT', 'ACCOUNTANT', 'ACCOUNTLEAD', 'DRIVER', 'WORKER'].map((role) => (
-                        <Button key={role} variant="ghost" size="sm" onClick={() => setRoleFilter(role)} className={`rounded-xl h-10 px-5 font-black uppercase text-[10px] tracking-widest transition-all shrink-0 ${roleFilter === role ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500'}`}>{role}</Button>
+                     {[
+                        { val: 'ALL', label: 'TOUS' },
+                        { val: 'ADMIN', label: 'ADMIN' },
+                        { val: 'TEACHER', label: 'ENSEIGNANT' },
+                        { val: 'STUDENT', label: 'ELEVE' },
+                        { val: 'PARENT', label: 'PARENT' },
+                        { val: 'ACCOUNTANT', label: 'COMPTABLE' },
+                        { val: 'ACCOUNTLEAD', label: 'CHEF COMPTA' },
+                        { val: 'DRIVER', label: 'CHAUFFEUR' },
+                        { val: 'WORKER', label: 'AGENT' },
+                     ].map(({ val, label }) => (
+                        <Button key={val} variant="ghost" size="sm" onClick={() => setRoleFilter(val)} className={`rounded-xl h-10 px-5 font-black uppercase text-[10px] tracking-widest transition-all shrink-0 ${roleFilter === val ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500'}`}>{label}</Button>
                      ))}
                   </div>
                </div>

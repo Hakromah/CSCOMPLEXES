@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { SCHOOL_CONFIG } from './school-config';
@@ -255,6 +256,7 @@ export function generateStatement(data: StatementData): jsPDF {
 export interface PayslipData {
   employeeName: string;
   employeeId?: string;
+  employeeEmail?: string;
   role: string;
   month: string;
   year: number;
@@ -262,49 +264,118 @@ export interface PayslipData {
   allowances: number;
   deductions: number;
   netSalary: number;
+  totalDisbursed?: number;
+  outstanding?: number;
   paymentDate?: string;
   paymentMethod?: string;
   currency?: string;
+  recordNumber?: string;
+  status?: string;
+  notes?: string;
 }
 
-export function generatePayslip(data: PayslipData): jsPDF {
-  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-  addSchoolHeader(doc, 'Salary Payslip');
-  const currency = data.currency || 'GNF';
+export async function generatePayslip(data: PayslipData): Promise<jsPDF> {
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' }) as any;
 
-  let y = 52;
+  const base = Number(data.baseSalary || 0);
+  const allow = Number(data.allowances || 0);
+  const ded = Number(data.deductions || 0);
+  const net = Number(data.netSalary || 0);
+  const disbursed = Number(data.totalDisbursed ?? net);
+  const outstanding = Number(data.outstanding ?? Math.max(0, net - disbursed));
 
-  doc.setFillColor(...COLORS.primaryDark);
-  doc.roundedRect(15, y, doc.internal.pageSize.getWidth() - 30, 12, 3, 3, 'F');
-  doc.setFont('helvetica', 'bold');
+  // Green outer border
+  doc.setDrawColor(110, 190, 68);
+  doc.setLineWidth(1.5);
+  doc.rect(5, 5, 200, 287);
+
+  // Header banner (Royal Blue)
+  doc.setFillColor(43, 76, 126);
+  doc.rect(5, 5, 200, 45, 'F');
+
+  // Logo
+  try {
+    doc.addImage(CIRCULAR_LOGO, 'PNG', 15, 12, 30, 30);
+  } catch (e) {
+    console.error('Failed to add logo to payslip', e);
+  }
+
+  // School name
+  doc.setTextColor(255, 255, 255);
+  doc.setFont('Helvetica', 'bold');
+  doc.setFontSize(22);
+  doc.text(SCHOOL_CONFIG.name, 52, 23);
+  doc.setFontSize(9);
+  doc.setFont('Helvetica', 'normal');
+  doc.setTextColor(200, 220, 245);
+  doc.text(`${SCHOOL_CONFIG.subtitle || SCHOOL_CONFIG.address || ''} — BULLETIN DE PAIE DU PERSONNEL`, 52, 30);
+  doc.text(SCHOOL_CONFIG.contact || '', 52, 36);
+
+  doc.setTextColor(255, 255, 255);
+  doc.text(`Généré le: ${new Date().toLocaleDateString('fr-FR')}`, 196, 22, { align: 'right' });
+
+  // Title
+  doc.setTextColor(43, 76, 126);
+  doc.setFontSize(20);
+  doc.setFont('Helvetica', 'bold');
+  doc.text('BULLETIN DE PAIE DU PERSONNEL', 15, 70);
   doc.setFontSize(10);
-  doc.setTextColor(...COLORS.white);
-  doc.text(`Pay Period: ${data.month} ${data.year}`, 20, y + 8);
-  y += 20;
+  doc.setFont('Helvetica', 'normal');
 
-  y = addInfoBox(doc, [
-    { label: 'Employee', value: data.employeeName },
-    { label: 'ID', value: data.employeeId || '—' },
-    { label: 'Role', value: data.role },
-    { label: 'Payment Date', value: data.paymentDate || '—' },
-  ], y);
+  // Record info (left column)
+  doc.setTextColor(30, 30, 30);
+  doc.text(`ID dossier: ${data.recordNumber || 'N/A'}`, 15, 80);
+  doc.text(`Période de paie: ${data.month} ${data.year}`, 15, 87);
+  doc.text(`Statut: ${data.status || (disbursed >= net ? 'PAID' : 'APPROVED')}`, 15, 94);
+  if (data.notes) {
+    doc.text(`Notes: ${data.notes}`, 15, 101);
+  }
 
+  // Employee info (right column)
+  doc.setFont('Helvetica', 'bold');
+  doc.text('Profil de employé:', 120, 80);
+  doc.setFont('Helvetica', 'normal');
+  doc.text(`Nom: ${data.employeeName}`, 120, 87);
+  doc.text(`Rôle: ${data.role}`, 120, 94);
+  doc.text(`Email: ${data.employeeEmail || 'N/A'}`, 120, 101);
+  if (data.employeeId) {
+    doc.text(`ID: ${data.employeeId}`, 120, 108);
+  }
+
+  // Payroll breakdown table
   autoTable(doc, {
-    startY: y,
-    head: [['Component', 'Amount']],
+    startY: 115,
+    head: [['Composant de la paie', 'Montant (GNF)']],
     body: [
-      ['Base Salary', `${currency} ${data.baseSalary.toLocaleString()}`],
-      ['Allowances', `+ ${currency} ${data.allowances.toLocaleString()}`],
-      ['Deductions', `- ${currency} ${data.deductions.toLocaleString()}`],
+      ['Salaire de base', base.toLocaleString('fr-FR')],
+      ['Allocations (+)', `+ ${allow.toLocaleString('fr-FR')}`],
+      ['Retenues (-)', `- ${ded.toLocaleString('fr-FR')}`],
+      ['Solde net dû', net.toLocaleString('fr-FR')],
+      ['Total décaissé', disbursed.toLocaleString('fr-FR')],
+      ['Solde restant', outstanding.toLocaleString('fr-FR')],
     ],
-    foot: [['NET SALARY', `${currency} ${data.netSalary.toLocaleString()}`]],
-    styles: { fontSize: 10, cellPadding: 5 },
-    headStyles: { fillColor: COLORS.primary, textColor: COLORS.white as [number, number, number] },
-    footStyles: { fillColor: COLORS.primaryDark, textColor: COLORS.white as [number, number, number], fontStyle: 'bold', fontSize: 12 },
-    columnStyles: { 1: { halign: 'right' } },
+    theme: 'striped',
+    headStyles: { fillColor: [43, 76, 126] as any },
+    bodyStyles: { fontSize: 10 },
+    didParseCell: (cellData: any) => {
+      if (cellData.row.index === 3) cellData.cell.styles.fontStyle = 'bold';
+      if (cellData.row.index === 5 && outstanding > 0) cellData.cell.styles.textColor = [220, 38, 38];
+    },
   });
 
-  addPageFooter(doc);
+  // QR Code — anchored to bottom-right corner
+  try {
+    const QRCode = (await import('qrcode')).default;
+    const qrContent = `${SCHOOL_CONFIG.name}\nBULLETIN DE PAIE DU PERSONNEL\nRecord: ${data.recordNumber || 'N/A'}\nEmployé: ${data.employeeName}\nPériode: ${data.month} ${data.year}\nSalaire net: ${net.toLocaleString('fr-FR')} GNF\nStatut: ${data.status || 'N/A'}`;
+    const qrDataUrl = await QRCode.toDataURL(qrContent);
+    doc.addImage(qrDataUrl, 'PNG', 155, 242, 42, 42);
+    doc.setFontSize(7);
+    doc.setTextColor(148, 163, 184);
+    doc.text('Scannez pour vérifier le bulletin de paie', 155, 286);
+  } catch (e) {
+    console.error('QR generation failed', e);
+  }
+
   return doc;
 }
 

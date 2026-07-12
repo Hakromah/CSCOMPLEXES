@@ -108,7 +108,7 @@ export default function TeacherClassesPage() {
                   </div>
 
                   <Button className="w-full h-14 rounded-3xl bg-slate-900 md:hover:bg-blue-600 duration-500 text-white font-black uppercase text-[10px] tracking-[0.15em] transition-all group-hover:shadow-xl group-hover:shadow-blue-200" asChild>
-                    <a href={`/teacher/timetables`}>
+                    <a href={`/teacher/timetable`}>
                       Voir l'emploi du temps <ArrowRight size={14} className="ml-2 group-hover:translate-x-1 transition-transform" />
                     </a>
                   </Button>
