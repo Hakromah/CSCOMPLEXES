@@ -498,8 +498,8 @@ export default () => ({
     const qrSignature = crypto.createHash('sha256').update(`${approvedPayment.paymentNumber}-${approvedPayment.amount}`).digest('hex').slice(0, 20).toUpperCase();
     const receiptNumber = `REC-${approvedPayment.paymentNumber.split('-')[2] || 'GEN'}-${Date.now().toString().slice(-4)}`;
     // QR code contains human-readable data: invoice number, student name, student userId
-    const qrContent = `AMFOFANA ACADEMY\nReceipt: ${receiptNumber}\nInvoice: ${invoiceNumber}\nStudent: ${studentName}\nID: ${studentUserId}\nAmount: ${Number(approvedPayment.amount).toLocaleString()} GNF\nVerify: https://verify.amfofana.edu/receipt/${qrSignature}`;
-    
+    const qrContent = `2CSCOMPLEXE SCOLAIRE\nRÉFÉRENCE: ${receiptNumber}\nRÉFÉRENCE: ${invoiceNumber}\nELÈVE: ${studentName}\nMATRICULE: ${studentUserId}\nMONTANT: ${Number(approvedPayment.amount).toLocaleString()} GNF\nVérifier: https://verify.amfofana.edu/receipt/${qrSignature}`;
+
     await (strapi.entityService.create as any)('api::receipt.receipt' as any, {
       data: {
         receiptNumber,
@@ -788,7 +788,7 @@ export default () => ({
     // 2. Generate downloadable receipt record with QR verification signature
     const qrSignature = crypto.createHash('sha256').update(`${approvedPayment.paymentNumber}-${approvedPayment.amount}`).digest('hex').slice(0, 20).toUpperCase();
     const receiptNumber = `REC-SAL-${approvedPayment.paymentNumber.split('-')[2] || 'GEN'}-${Date.now().toString().slice(-4)}`;
-    
+
     await (strapi.entityService.create as any)('api::receipt.receipt' as any, {
       data: {
         receiptNumber,

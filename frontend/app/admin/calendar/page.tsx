@@ -49,7 +49,7 @@ export default function CalendarManagement() {
       const res = await api.get('/admin/events');
       setEvents(res.data || []);
     } catch (err) {
-      toast.error('Failed to load school events registry');
+      toast.error('Échec du chargement du registre des événements scolaires');
     }
   };
 
@@ -84,12 +84,12 @@ export default function CalendarManagement() {
       };
 
       await api.post('/admin/events', payload);
-      toast.success('School event registered and scheduled successfully');
+      toast.success('Événement scolaire enregistré et planifié avec succès');
       setIsCreateOpen(false);
       resetForm();
       fetchEvents();
     } catch (err) {
-      toast.error('Failed to schedule event');
+      toast.error('Échec de la planification de l\'événement');
     }
   };
 
@@ -104,24 +104,24 @@ export default function CalendarManagement() {
       };
 
       await api.put(`/admin/events/${selectedEvent.id}`, payload);
-      toast.success('Event details modified successfully');
+      toast.success('Les détails de l\'événement ont été modifiés avec succès');
       setIsEditOpen(false);
       setSelectedEvent(null);
       resetForm();
       fetchEvents();
     } catch (err) {
-      toast.error('Failed to update event');
+      toast.error('Échec de la mise à jour de l\'événement');
     }
   };
 
   const handleDelete = async (id: number) => {
-    if (!confirm('Are you sure you want to remove this event from the calendar?')) return;
+    if (!confirm('Êtes-vous sûr de vouloir supprimer cet événement du calendrier ?')) return;
     try {
       await api.delete(`/admin/events/${id}`);
-      toast.success('Event removed from scheduling');
+      toast.success('Événement supprimé du calendrier');
       fetchEvents();
     } catch (err) {
-      toast.error('Failed to remove event');
+      toast.error('Échec de la suppression de l\'événement');
     }
   };
 
@@ -187,15 +187,15 @@ export default function CalendarManagement() {
         <div>
           <h1 className="text-3xl font-black text-slate-900 tracking-tighter flex items-center gap-2">
             <CalendarIcon size={32} className="text-primary" />
-            School Calendar Manager
+            Gestion du Calendrier Scolaire
           </h1>
           <p className="text-slate-400 text-xs font-bold uppercase tracking-widest mt-1">
-            Plan activities, announce holidays, and schedule class meetings
+            Planifier les activités, les jours fériés et les réunions de classe
           </p>
         </div>
         <Button onClick={() => { resetForm(); setIsCreateOpen(true); }} className="bg-primary hover:bg-blue-700 text-white rounded-2xl h-12 px-6 font-bold shadow-sm flex items-center gap-2">
           <Plus size={18} />
-          Add Calendar Event
+          Ajouter un évenement
         </Button>
       </header>
 
@@ -203,7 +203,7 @@ export default function CalendarManagement() {
       <Card className="rounded-3xl border border-transparent shadow-sm bg-white overflow-hidden">
         <CardHeader className="border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4 p-6">
           <CardTitle className="text-lg font-black uppercase tracking-wider text-slate-800">
-            Scheduled Events Directory
+            Répertoire des événements prévus
           </CardTitle>
           <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
             <Select onValueChange={setAudienceFilter} value={audienceFilter}>
@@ -211,18 +211,18 @@ export default function CalendarManagement() {
                 <SelectValue placeholder="Audience Filter" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="ALL_FILTERS">All Audiences</SelectItem>
-                <SelectItem value="ALL">All Portal Users</SelectItem>
-                <SelectItem value="STUDENTS">Students Only</SelectItem>
-                <SelectItem value="PARENTS">Parents Only</SelectItem>
-                <SelectItem value="STAFF">Staff Only</SelectItem>
-                <SelectItem value="CLASS">Specific Class</SelectItem>
+                <SelectItem value="ALL_FILTERS">Tous les utilisateurs</SelectItem>
+                <SelectItem value="ALL">Tous les utilisateurs</SelectItem>
+                <SelectItem value="STUDENTS">Etudiants seulement</SelectItem>
+                <SelectItem value="PARENTS">Parents seulement</SelectItem>
+                <SelectItem value="STAFF">Personnels seulement</SelectItem>
+                <SelectItem value="CLASS">Classe Spécifique</SelectItem>
               </SelectContent>
             </Select>
             <div className="relative w-full sm:w-64">
               <Search className="absolute left-3 top-3.5 text-slate-400" size={16} />
               <Input
-                placeholder="Search events..."
+                placeholder="Rechercher un événement..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="pl-10 h-11 border-slate-200 rounded-xl focus:border-primary focus:ring-1 focus:ring-primary"
@@ -234,21 +234,21 @@ export default function CalendarManagement() {
           {loading ? (
             <div className="flex flex-col items-center justify-center py-20 gap-3">
               <span className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-              <p className="text-slate-400 font-bold uppercase tracking-widest text-[10px]">Loading school calendar...</p>
+              <p className="text-slate-400 font-bold uppercase tracking-widest text-[10px]">Chargement du calendrier scolaire...</p>
             </div>
           ) : filteredEvents.length === 0 ? (
             <div className="text-center py-20 text-slate-400 font-bold uppercase tracking-widest text-xs">
-              No calendar events scheduled
+              Aucun événement scolaire programmé
             </div>
           ) : (
             <Table>
               <TableHeader className="bg-slate-50/50">
                 <TableRow>
-                  <TableHead className="font-bold text-slate-500 uppercase text-[10px] tracking-wider pl-6">Event Info</TableHead>
-                  <TableHead className="font-bold text-slate-500 uppercase text-[10px] tracking-wider">Schedule</TableHead>
-                  <TableHead className="font-bold text-slate-500 uppercase text-[10px] tracking-wider">Type & Audience</TableHead>
-                  <TableHead className="font-bold text-slate-500 uppercase text-[10px] tracking-wider">Location</TableHead>
-                  <TableHead className="font-bold text-slate-500 uppercase text-[10px] tracking-wider">Status</TableHead>
+                  <TableHead className="font-bold text-slate-500 uppercase text-[10px] tracking-wider pl-6">Informations sur l'événement</TableHead>
+                  <TableHead className="font-bold text-slate-500 uppercase text-[10px] tracking-wider">Programme</TableHead>
+                  <TableHead className="font-bold text-slate-500 uppercase text-[10px] tracking-wider">Type et Public</TableHead>
+                  <TableHead className="font-bold text-slate-500 uppercase text-[10px] tracking-wider">Lieu</TableHead>
+                  <TableHead className="font-bold text-slate-500 uppercase text-[10px] tracking-wider">Statut</TableHead>
                   <TableHead className="font-bold text-slate-500 uppercase text-[10px] tracking-wider pr-6 text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -261,9 +261,9 @@ export default function CalendarManagement() {
                     </TableCell>
                     <TableCell>
                       <div className="text-xs space-y-0.5">
-                        <p className="font-bold text-slate-700">Starts: {new Date(e.startDate).toLocaleString()}</p>
+                        <p className="font-bold text-slate-700">Début: {new Date(e.startDate).toLocaleString()}</p>
                         {e.endDate && (
-                          <p className="text-slate-400 font-medium">Ends: {new Date(e.endDate).toLocaleString()}</p>
+                          <p className="text-slate-400 font-medium">Fin: {new Date(e.endDate).toLocaleString()}</p>
                         )}
                       </div>
                     </TableCell>
@@ -273,7 +273,7 @@ export default function CalendarManagement() {
                           {e.type}
                         </Badge>
                         <Badge variant="outline" className="text-[9px] font-bold uppercase py-0 text-slate-500 bg-slate-100">
-                          {e.targetAudience === 'CLASS' ? `Class: ${e.targetClass?.name || 'N/A'}` : `${e.targetAudience} AUDIENCE`}
+                          {e.targetAudience === 'CLASS' ? `Classe: ${e.targetClass?.name || 'N/A'}` : `${e.targetAudience}`}
                         </Badge>
                       </div>
                     </TableCell>
@@ -286,11 +286,11 @@ export default function CalendarManagement() {
                     <TableCell>
                       <div className="flex flex-col gap-1 items-start">
                         <Badge variant="outline" className={`text-[10px] font-black uppercase tracking-wider ${e.isPublished ? 'text-emerald-600 border-emerald-100 bg-emerald-50/50' : 'text-slate-400 border-slate-100 bg-slate-50/50'}`}>
-                          {e.isPublished ? 'Published' : 'Draft'}
+                          {e.isPublished ? 'Publié' : 'Brouillon'}
                         </Badge>
                         {e.requiresConfirmation && (
                           <span className="text-[9px] font-black uppercase text-amber-500 tracking-wider flex items-center gap-0.5">
-                            <HelpCircle size={10} /> RSVP Required
+                            <HelpCircle size={10} /> RSVP Requis
                           </span>
                         )}
                       </div>
@@ -318,51 +318,51 @@ export default function CalendarManagement() {
         <DialogContent className="max-w-2xl bg-white rounded-3xl p-6 overflow-y-auto max-h-[85vh]">
           <DialogHeader>
             <DialogTitle className="text-xl font-black text-slate-900 tracking-tight">
-              {isCreateOpen ? 'Schedule School Event' : 'Modify Calendar Event'}
+              {isCreateOpen ? 'Planifier un événement scolaire' : 'Modifier un événement du calendrier'}
             </DialogTitle>
           </DialogHeader>
           <form onSubmit={isCreateOpen ? handleCreate : handleEdit} className="space-y-6 mt-4">
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-2 md:col-span-2">
-                <label className="text-xs font-black uppercase text-slate-400 tracking-wider">Event Title</label>
+                <label className="text-xs font-black uppercase text-slate-400 tracking-wider">Titre de l'événement</label>
                 <Input
                   required
-                  placeholder="e.g. End of Term Parent-Teacher Association Meeting"
+                  placeholder="Exemple: Réunion de l'association parents-professeurs de fin de trimestre"
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-black uppercase text-slate-400 tracking-wider">Event Type</label>
+                <label className="text-xs font-black uppercase text-slate-400 tracking-wider">Type d'événement</label>
                 <Select onValueChange={(val) => setFormData({ ...formData, type: val })} value={formData.type}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select type" />
+                    <SelectValue placeholder="Sélectionner le type" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="ACADEMIC">Academic</SelectItem>
-                    <SelectItem value="EXAM">Exam Session</SelectItem>
-                    <SelectItem value="HOLIDAY">School Holiday</SelectItem>
-                    <SelectItem value="MEETING">PTA / Staff Meeting</SelectItem>
-                    <SelectItem value="SPORTS">Sports Event</SelectItem>
-                    <SelectItem value="CULTURAL">Cultural Event</SelectItem>
-                    <SelectItem value="TRIP">Educational Trip</SelectItem>
-                    <SelectItem value="OTHER">Other Activity</SelectItem>
+                    <SelectItem value="ACADEMIC">Académique</SelectItem>
+                    <SelectItem value="EXAM">Session d'examen</SelectItem>
+                    <SelectItem value="HOLIDAY">Vacances scolaires</SelectItem>
+                    <SelectItem value="MEETING">Réunion PTA / Staff</SelectItem>
+                    <SelectItem value="SPORTS">Événement sportif</SelectItem>
+                    <SelectItem value="CULTURAL">Événement culturel</SelectItem>
+                    <SelectItem value="TRIP">Sortie éducative</SelectItem>
+                    <SelectItem value="OTHER">Autre activité</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-black uppercase text-slate-400 tracking-wider">Event Location / Link</label>
+                <label className="text-xs font-black uppercase text-slate-400 tracking-wider">Lieu ou lien de l'événement</label>
                 <Input
-                  placeholder="e.g. Auditorium / Zoom Link"
+                  placeholder="e.g. Auditorium / Lien Zoom"
                   value={formData.location}
                   onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-black uppercase text-slate-400 tracking-wider">Start Date & Time</label>
+                <label className="text-xs font-black uppercase text-slate-400 tracking-wider">Date et heure de début</label>
                 <Input
                   type="datetime-local"
                   required
@@ -372,7 +372,7 @@ export default function CalendarManagement() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-black uppercase text-slate-400 tracking-wider">End Date & Time</label>
+                <label className="text-xs font-black uppercase text-slate-400 tracking-wider">Date et heure de fin</label>
                 <Input
                   type="datetime-local"
                   value={formData.endDate}
@@ -381,27 +381,27 @@ export default function CalendarManagement() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-black uppercase text-slate-400 tracking-wider">Target Audience</label>
+                <label className="text-xs font-black uppercase text-slate-400 tracking-wider">Public visé</label>
                 <Select onValueChange={(val) => setFormData({ ...formData, targetAudience: val })} value={formData.targetAudience}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select target audience" />
+                    <SelectValue placeholder="Sélectionner le public cible" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="ALL">All Portal Users</SelectItem>
-                    <SelectItem value="STUDENTS">Students Only</SelectItem>
-                    <SelectItem value="PARENTS">Parents Only</SelectItem>
-                    <SelectItem value="STAFF">Staff / Teachers Only</SelectItem>
-                    <SelectItem value="CLASS">Specific Class Only</SelectItem>
+                    <SelectItem value="ALL">Tous les utilisateurs du portail</SelectItem>
+                    <SelectItem value="STUDENTS">Élèves uniquement</SelectItem>
+                    <SelectItem value="PARENTS">Parents uniquement</SelectItem>
+                    <SelectItem value="STAFF">Staff / Enseignants uniquement</SelectItem>
+                    <SelectItem value="CLASS">Classe spécifique uniquement</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               {formData.targetAudience === 'CLASS' && (
                 <div className="space-y-2 animate-in fade-in duration-200">
-                  <label className="text-xs font-black uppercase text-slate-400 tracking-wider">Select Class</label>
+                  <label className="text-xs font-black uppercase text-slate-400 tracking-wider">Classe concernée</label>
                   <Select onValueChange={(val) => setFormData({ ...formData, targetClass: val })} value={formData.targetClass}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select a class" />
+                      <SelectValue placeholder="Sélectionner une classe" />
                     </SelectTrigger>
                     <SelectContent>
                       {classes.map((c) => (
@@ -416,10 +416,10 @@ export default function CalendarManagement() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-black uppercase text-slate-400 tracking-wider">Detailed Description</label>
+              <label className="text-xs font-black uppercase text-slate-400 tracking-wider">Description détaillée</label>
               <textarea
                 rows={3}
-                placeholder="Details about the event, agenda, links, instructions..."
+                placeholder="Description détaillée, programme, liens, instructions..."
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 className="w-full border border-slate-200 rounded-xl p-3 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
@@ -436,7 +436,7 @@ export default function CalendarManagement() {
                   className="rounded border-slate-300 text-primary focus:ring-primary"
                 />
                 <label htmlFor="isPublished" className="text-xs font-black uppercase text-slate-500 tracking-wider cursor-pointer">
-                  Publish to Calendar immediately
+                  Publier sur le calendrier immédiatement
                 </label>
               </div>
 
@@ -449,14 +449,14 @@ export default function CalendarManagement() {
                   className="rounded border-slate-300 text-primary focus:ring-primary"
                 />
                 <label htmlFor="requiresConfirmation" className="text-xs font-black uppercase text-slate-500 tracking-wider cursor-pointer">
-                  RSVP Required
+                  RSVP Requis
                 </label>
               </div>
             </div>
 
             <DialogFooter>
-              <Button type="button" variant="ghost" onClick={() => { setIsCreateOpen(false); setIsEditOpen(false); setSelectedEvent(null); resetForm(); }}>Cancel</Button>
-              <Button type="submit" className="bg-primary hover:bg-blue-700 text-white rounded-xl">Schedule Event</Button>
+              <Button type="button" variant="ghost" onClick={() => { setIsCreateOpen(false); setIsEditOpen(false); setSelectedEvent(null); resetForm(); }}>Annuler</Button>
+              <Button type="submit" className="bg-primary hover:bg-blue-700 text-white rounded-xl">Planifier l'événement</Button>
             </DialogFooter>
           </form>
         </DialogContent>

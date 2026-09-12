@@ -38,7 +38,7 @@ export default function ParentDocumentsPage() {
           setSelectedChildId(String(res.data[0].id));
         }
       } catch (err) {
-        toast.error('Failed to load children profiles');
+        toast.error('Echec du chargement des profils des enfants');
         console.error(err);
       } finally {
         setLoading(false);
@@ -61,7 +61,7 @@ export default function ParentDocumentsPage() {
         setTranscripts(transcriptsRes.data || []);
         setFinanceData(financeRes.data);
       } catch (err) {
-        console.error('Failed to sync child documents', err);
+        console.error('Echec de la synchronisation des documents de l\'enfant', err);
       } finally {
         setLoadingDocs(false);
       }
@@ -81,7 +81,7 @@ export default function ParentDocumentsPage() {
   const downloadTranscript = async (t: any) => {
     const docKey = `transcript-${t.id}`;
     setDownloadingId(docKey);
-    const toastId = toast.loading('Compiling report card PDF...');
+    const toastId = toast.loading('Compilation du relevé de notes PDF...');
     try {
       const previewRes = await api.get(`/parent/children/${selectedChildId}/transcripts/${t.id}/preview`);
       const data = previewRes.data;
@@ -91,12 +91,12 @@ export default function ParentDocumentsPage() {
       const sum = data.summary;
       const meta = data.metadata;
 
-      const qrString = `AMF ACADEMY OFFICIAL TRANSCRIPT\n` +
-        `Ref: ${meta.referenceNumber}\n` +
-        `Student: ${s.name}\n` +
-        `Student ID: ${s.userId || String(s.id)}\n` +
-        `Academic Year: ${meta.academicYears.join(', ')}\n` +
-        `Status: Verified by Administration`;
+      const qrString = ` 2CSCOMPLEXES RELEVE DES NOTES\n` +
+        `Réf: ${meta.referenceNumber}\n` +
+        `Élève: ${s.name}\n` +
+        `ID Élève: ${s.userId || String(s.id)}\n` +
+        `Année scolaire: ${meta.academicYears.join(', ')}\n` +
+        `Statut: Vérifié par l'administration`;
 
       const qrCodeUrl = await QRCode.toDataURL(qrString, { margin: 2, scale: 4 });
 
@@ -105,7 +105,7 @@ export default function ParentDocumentsPage() {
       // Header Branding (Royal Blue)
       doc.setFillColor(43, 76, 126);
       doc.rect(0, 0, 210, 45, 'F');
-      
+
       // Divider line in school green
       doc.setFillColor(110, 190, 68);
       doc.rect(0, 45, 210, 1.5, 'F');
@@ -114,39 +114,39 @@ export default function ParentDocumentsPage() {
       try {
         doc.addImage(CIRCULAR_LOGO, 'PNG', 14, 10, 25, 25);
       } catch (e) {
-        console.error("Failed to add logo to transcript", e);
+        console.error("Echec de l'ajout du logo au relevé de notes", e);
       }
 
       doc.setTextColor(255, 255, 255);
       doc.setFont('Helvetica', 'bold');
       doc.setFontSize(20);
-      doc.text((sch.name || 'School').toUpperCase(), 45, 18);
+      doc.text((sch.name || '2CSCOMPLEXES').toUpperCase(), 45, 18);
       doc.setFont('Helvetica', 'normal');
       doc.setFontSize(9);
       doc.setTextColor(200, 220, 245); // light blue-gray
-      doc.text(`Official Academic Transcript • Registries System`, 45, 25);
-      doc.text(`Address: ${sch.address || ''} | Email: ${sch.email || ''} | Phone: ${sch.phone || ''}`, 45, 32);
+      doc.text(`RELEVE DES NOTES • ENREGISTREMENT DES NOTES`, 45, 25);
+      doc.text(`Adresse: ${sch.address || ''} | Email: ${sch.email || ''} | Téléphone: ${sch.phone || ''}`, 45, 32);
 
       // Title
       doc.setTextColor(15, 23, 42);
       doc.setFont('Helvetica', 'bold');
       doc.setFontSize(13);
-      doc.text('OFFICIAL STUDENT TRANSCRIPT', 14, 55);
+      doc.text('RELEVE DES NOTES', 14, 55);
       doc.setDrawColor(226, 232, 240);
       doc.line(14, 58, 196, 58);
 
       // Student Profile
       doc.setFont('Helvetica', 'bold');
       doc.setFontSize(9);
-      doc.text('STUDENT PROFILE', 14, 66);
+      doc.text('PROFIL DE L\'ELEVE', 14, 66);
       doc.setFont('Helvetica', 'normal');
       doc.setFontSize(9.5);
-      doc.text(`Name: ${s.name || 'N/A'}`, 14, 72);
+      doc.text(`Nom: ${s.name || 'N/A'}`, 14, 72);
       doc.text(`ID: ${s.userId || 'N/A'}`, 14, 78);
       doc.text(`Email: ${s.email || 'N/A'}`, 14, 84);
-      doc.text(`Class: ${(s.classes || []).join(', ') || 'N/A'}`, 120, 72);
-      doc.text(`Birth Date: ${s.birthDate ? new Date(s.birthDate).toLocaleDateString() : 'N/A'}`, 120, 78);
-      doc.text(`Phone: ${s.phoneNumber || 'N/A'}`, 120, 84);
+      doc.text(`Classe: ${(s.classes || []).join(', ') || 'N/A'}`, 120, 72);
+      doc.text(`Date de naissance: ${s.birthDate ? new Date(s.birthDate).toLocaleDateString() : 'N/A'}`, 120, 78);
+      doc.text(`Téléphone: ${s.phoneNumber || 'N/A'}`, 120, 84);
 
       // Meta Box
       doc.setFillColor(248, 250, 252);
@@ -155,10 +155,10 @@ export default function ParentDocumentsPage() {
       doc.setFont('Helvetica', 'bold');
       doc.setFontSize(8);
       doc.setTextColor(100, 116, 139);
-      doc.text('REFERENCE NUMBER', 18, 95);
-      doc.text('DATE OF ISSUE', 70, 95);
-      doc.text('SEMESTERS', 110, 95);
-      doc.text('TERMS', 155, 95);
+      doc.text('NUMERO DE REFERENCE', 18, 95);
+      doc.text('DATE DE DELIVRANCE', 70, 95);
+      doc.text('SEMESTRES', 110, 95);
+      doc.text('TERMES', 155, 95);
       doc.setTextColor(15, 23, 42);
       doc.text(meta.referenceNumber || 'N/A', 18, 101);
       doc.text(meta.generationDate || 'N/A', 70, 101);
@@ -168,7 +168,7 @@ export default function ParentDocumentsPage() {
       // Results Table
       doc.setFont('Helvetica', 'bold');
       doc.setFontSize(9);
-      doc.text('ACADEMIC PERFORMANCE SUMMARY', 14, 116);
+      doc.text('BILAN DES PERFORMANCES SCOLAIRES', 14, 116);
 
       const tableBody = (data.results || []).map((r: any) => [
         r.subjectName || 'N/A',
@@ -182,7 +182,7 @@ export default function ParentDocumentsPage() {
 
       autoTable(doc, {
         startY: 120,
-        head: [['Subject Name', 'Class', 'Exam', 'Semester (Term)', 'Score', 'Grade', 'Remarks']],
+        head: [['LISTE DES MATIERES', 'Classe', 'Examen', 'Semestre (Trimestre)', 'Note', 'Mention', 'Remarques']],
         body: tableBody,
         theme: 'striped',
         headStyles: { fillColor: [43, 76, 126] as any, fontSize: 8.5, fontStyle: 'bold' },
@@ -201,9 +201,9 @@ export default function ParentDocumentsPage() {
       doc.setTextColor(255, 255, 255);
       doc.setFont('Helvetica', 'bold');
       doc.setFontSize(9);
-      doc.text('ROSTER INDEX', 20, currentY + 8);
-      doc.text('AVERAGE PERFORMANCE', 70, currentY + 8);
-      doc.text('CUMULATIVE GPA', 135, currentY + 8);
+      doc.text('LISTE DES MATIERES', 20, currentY + 8);
+      doc.text('PERFORMANCE MOYENNE', 70, currentY + 8);
+      doc.text('MOYENNE GENERALE', 135, currentY + 8);
       doc.setFontSize(18);
       doc.text(String(sum.totalSubjectsCount || 0), 20, currentY + 18);
       doc.text(`${sum.weightedAverageScore || 0}%`, 70, currentY + 18);
@@ -215,9 +215,9 @@ export default function ParentDocumentsPage() {
       doc.setFont('Helvetica', 'bold');
       doc.setFontSize(8);
       doc.line(14, sigY + 14, 74, sigY + 14);
-      doc.text('OFFICE OF THE REGISTRAR', 14, sigY + 19);
+      doc.text('LE SECRÉTAIRE GÉNÉRAL', 14, sigY + 19);
       doc.line(136, sigY + 14, 196, sigY + 14);
-      doc.text('PRINCIPAL / DEAN SIGNATURE', 136, sigY + 19);
+      doc.text('SIGNATURE DU DIRECTEUR GÉNÉRAL', 136, sigY + 19);
 
       if (qrCodeUrl) {
         doc.addImage(qrCodeUrl, 'PNG', 93, sigY - 2, 24, 24);
@@ -225,10 +225,10 @@ export default function ParentDocumentsPage() {
 
       const safeName = studentName.replace(/\s+/g, '_').toLowerCase();
       doc.save(`Transcript-${safeName}-${meta.referenceNumber || 'GEN'}.pdf`);
-      toast.success('Transcript PDF downloaded successfully', { id: toastId });
+      toast.success('Relevé téléchargé avec succès', { id: toastId });
     } catch (err) {
       console.error(err);
-      toast.error('Failed to generate PDF', { id: toastId });
+      toast.error('Échec de la génération du relevé', { id: toastId });
     } finally {
       setDownloadingId(null);
     }
@@ -239,7 +239,7 @@ export default function ParentDocumentsPage() {
     if (!financeData) return;
     const docKey = `statement-${selectedChildId}`;
     setDownloadingId(docKey);
-    const toastId = toast.loading('Compiling ledger statement...');
+    const toastId = toast.loading('Compilation du relevé des comptes...');
     try {
       const doc = new jsPDF();
       doc.setDrawColor(110, 190, 68); // school green
@@ -249,12 +249,12 @@ export default function ParentDocumentsPage() {
       // Header Banner (Royal Blue)
       doc.setFillColor(43, 76, 126);
       doc.rect(5, 5, 200, 45, 'F');
-      
+
       // Draw school logo
       try {
         doc.addImage(CIRCULAR_LOGO, 'PNG', 15, 12, 30, 30);
       } catch (e) {
-        console.error("Failed to add logo to statement", e);
+        console.error("Échec de l'ajout du logo au relevé", e);
       }
 
       doc.setTextColor(255, 255, 255);
@@ -264,21 +264,21 @@ export default function ParentDocumentsPage() {
       doc.setFontSize(10);
       doc.setFont('Helvetica', 'normal');
       doc.setTextColor(200, 220, 245); // light blue-gray
-      doc.text('STATEMENT OF ACCOUNT', 52, 30);
-      doc.text(`Conakry, Guinea | ${SCHOOL_CONFIG.contact}`, 52, 37);
-      
+      doc.text('RELEVÉ DES COMPTES', 52, 30);
+      doc.text(`Conakry, Guinée | ${SCHOOL_CONFIG.contact}`, 52, 37);
+
       doc.setTextColor(255, 255, 255);
-      doc.text(`Generated: ${new Date().toLocaleDateString()}`, 196, 22, { align: 'right' });
+      doc.text(`Généré le: ${new Date().toLocaleDateString()}`, 196, 22, { align: 'right' });
 
       // Student info
       doc.setTextColor(15, 23, 42);
       doc.setFontSize(11);
       doc.setFont('Helvetica', 'bold');
-      doc.text('Student Information', 15, 58);
+      doc.text('Informations sur l\'étudiant', 15, 58);
       doc.setFont('Helvetica', 'normal');
       doc.setFontSize(10);
-      doc.text(`Name: ${studentName}`, 15, 66);
-      doc.text(`Student ID: ${selectedChild?.userId || 'N/A'}`, 15, 73);
+      doc.text(`Nom: ${studentName}`, 15, 66);
+      doc.text(`ID de l'étudiant: ${selectedChild?.userId || 'N/A'}`, 15, 73);
       doc.text(`Email: ${selectedChild?.email || 'N/A'}`, 15, 80);
 
       // Summary Card
@@ -286,11 +286,11 @@ export default function ParentDocumentsPage() {
       doc.rect(120, 54, 85, 35);
       doc.setFontSize(9);
       doc.setFont('Helvetica', 'bold');
-      doc.text('Account Summary', 125, 62);
+      doc.text('Résume du compte', 125, 62);
       doc.setFont('Helvetica', 'normal');
-      doc.text(`Total Billed: ${Number(financeData.totalCharged || 0).toLocaleString()} GNF`, 125, 70);
-      doc.text(`Total Paid:   ${Number(financeData.totalPaid || 0).toLocaleString()} GNF`, 125, 77);
-      doc.text(`Outstanding:  ${Number(financeData.outstandingBalance || 0).toLocaleString()} GNF`, 125, 84);
+      doc.text(`Total Facturé: ${Number(financeData.totalCharged || 0).toLocaleString()} GNF`, 125, 70);
+      doc.text(`Total Payé:   ${Number(financeData.totalPaid || 0).toLocaleString()} GNF`, 125, 77);
+      doc.text(`Solde:  ${Number(financeData.outstandingBalance || 0).toLocaleString()} GNF`, 125, 84);
 
       // Merge activity
       const activities: any[] = [];
@@ -341,27 +341,27 @@ export default function ParentDocumentsPage() {
 
       doc.setFontSize(11);
       doc.setFont('Helvetica', 'bold');
-      doc.text('Account Activity Ledger (Chronological)', 15, 96);
+      doc.text('Historique des transactions (Chronologique)', 15, 96);
 
       autoTable(doc, {
         startY: 100,
-        head: [['Date', 'Reference #', 'Type', 'Description', 'Billed (Dr)', 'Paid (Cr)', 'Balance']],
-        body: ledgerRows.length > 0 ? ledgerRows : [['—', '—', '—', 'No transactions logged', '—', '—', '—']],
+        head: [['Date', 'Référence #', 'Type', 'Description', 'Billed (Dr)', 'Paid (Cr)', 'Balance']],
+        body: ledgerRows.length > 0 ? ledgerRows : [['—', '—', '—', 'Aucune transaction enregistrée', '—', '—', '—']],
         theme: 'grid',
         headStyles: { fillColor: [43, 76, 126], textColor: [255, 255, 255], fontSize: 8 },
         styles: { fontSize: 8 }
       });
 
-      const qrContent = `AMFOFANA ACADEMY\nFinancial Statement\nStudent: ${studentName}\nTotal Billed: ${Number(financeData.totalCharged || 0).toLocaleString()} GNF\nOutstanding: ${Number(financeData.outstandingBalance || 0).toLocaleString()} GNF`;
+      const qrContent = `2CSCOMPLEXE SCOLAIRE\nRELEVE DE COMPTE\nEleve : ${studentName}\nTotal facturé: ${Number(financeData.totalCharged || 0).toLocaleString()} GNF\nEn souffrance: ${Number(financeData.outstandingBalance || 0).toLocaleString()} GNF`;
       const qrDataUrl = await QRCode.toDataURL(qrContent);
       doc.addImage(qrDataUrl, 'PNG', 155, 242, 42, 42);
 
       const safeName = studentName.replace(/\s+/g, '_').toLowerCase();
       doc.save(`Statement-${safeName}.pdf`);
-      toast.success('Account statement downloaded successfully', { id: toastId });
+      toast.success('Compte rendu téléchargé avec succès', { id: toastId });
     } catch (err) {
       console.error(err);
-      toast.error('Failed to generate statement', { id: toastId });
+      toast.error('Échec de la génération du relevé de compte', { id: toastId });
     } finally {
       setDownloadingId(null);
     }
@@ -381,7 +381,7 @@ export default function ParentDocumentsPage() {
       // Header Banner (Royal Blue)
       doc.setFillColor(43, 76, 126);
       doc.rect(5, 5, 200, 45, 'F');
-      
+
       // Draw school logo
       try {
         doc.addImage(CIRCULAR_LOGO, 'PNG', 15, 12, 30, 30);
@@ -396,32 +396,32 @@ export default function ParentDocumentsPage() {
       doc.setFontSize(9);
       doc.setFont('Helvetica', 'normal');
       doc.setTextColor(200, 220, 245); // light blue-gray
-      doc.text('ENTERPRISE FINANCIAL LEDGER RECEIPT', 52, 30);
+      doc.text('2CSCOMPLEXE SCOLAIRE', 52, 30);
       doc.text(`Conakry, Guinea | ${SCHOOL_CONFIG.contact}`, 52, 36);
 
       doc.setTextColor(43, 76, 126);
       doc.setFontSize(20);
       doc.setFont('Helvetica', 'bold');
-      doc.text('PAYMENT RECEIPT', 15, 70);
+      doc.text('REÇU DE PAIEMENT', 15, 70);
       doc.setFontSize(10);
       doc.setFont('Helvetica', 'normal');
-      doc.text(`Receipt Reference: ${pay.paymentNumber}`, 15, 80);
-      doc.text(`Invoice Ref: ${pay.invoice?.invoiceNumber || 'N/A'}`, 15, 87);
-      doc.text(`Payment Date: ${new Date(pay.paymentDate || pay.createdAt).toLocaleDateString()}`, 15, 94);
+      doc.text(`Référence du reçu : ${pay.paymentNumber}`, 15, 80);
+      doc.text(`Référence de la facture : ${pay.invoice?.invoiceNumber || 'N/A'}`, 15, 87);
+      doc.text(`Date de paiement : ${new Date(pay.paymentDate || pay.createdAt).toLocaleDateString()}`, 15, 94);
 
       doc.setFont('Helvetica', 'bold');
-      doc.text('Billed Student Profile:', 120, 80);
+      doc.text('Profil de l\'étudiant facturé :', 120, 80);
       doc.setFont('Helvetica', 'normal');
-      doc.text(`Name: ${studentName}`, 120, 87);
-      doc.text(`Student ID: ${selectedChild?.userId || 'N/A'}`, 120, 94);
+      doc.text(`Nom : ${studentName}`, 120, 87);
+      doc.text(`ID de l'étudiant : ${selectedChild?.userId || 'N/A'}`, 120, 94);
 
       autoTable(doc, {
         startY: 115,
-        head: [['Category', 'Method', 'Description', 'Amount Paid']],
+        head: [['Catégorie', 'Méthode', 'Description', 'Montant payé']],
         body: [[
-          pay.paymentCategory || 'Fee Payment',
+          pay.paymentCategory || 'Paiement de frais',
           pay.paymentMethod || 'MOBILE_MONEY',
-          pay.notes || 'Payment processed successfully',
+          pay.notes || 'Paiement traité avec succès',
           `${Number(pay.amount || 0).toLocaleString()} GNF`
         ]],
         theme: 'grid',
@@ -430,17 +430,17 @@ export default function ParentDocumentsPage() {
 
       const finalY = (doc as any).lastAutoTable?.finalY || 140;
       doc.setFont('Helvetica', 'bold');
-      doc.text('Ledger Summary Status: APPROVED', 15, finalY + 20);
+      doc.text('Statut du relevé de compte : APPROUVÉ', 15, finalY + 20);
 
-      const qrContent = `AMFOFANA ACADEMY RECEIPT\nReceipt: ${pay.paymentNumber}\nStudent: ${studentName}\nAmount: ${Number(pay.amount || 0).toLocaleString()} GNF`;
+      const qrContent = `2CSCOMPLEXE SCOLAIRE\nRÉFÉRENCE: ${pay.paymentNumber}\nELÈVE: ${studentName}\nMONTANT: ${Number(pay.amount || 0).toLocaleString()} GNF`;
       const qrDataUrl = await QRCode.toDataURL(qrContent);
       doc.addImage(qrDataUrl, 'PNG', 155, 242, 42, 42);
 
       doc.save(`Receipt-${pay.paymentNumber}.pdf`);
-      toast.success('Payment receipt PDF downloaded', { id: toastId });
+      toast.success('Reçu PDF téléchargé avec succès', { id: toastId });
     } catch (err) {
       console.error(err);
-      toast.error('Failed to generate receipt PDF', { id: toastId });
+      toast.error('Échec de la génération du reçu PDF', { id: toastId });
     } finally {
       setDownloadingId(null);
     }
@@ -452,7 +452,7 @@ export default function ParentDocumentsPage() {
     return (
       <div className="h-[80vh] flex flex-col items-center justify-center gap-4">
         <Loader2 size={40} className="animate-spin text-primary" />
-        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Loading Documents Library...</p>
+        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Chargement du Centre de documents...</p>
       </div>
     );
   }
@@ -462,10 +462,10 @@ export default function ParentDocumentsPage() {
       {/* Header */}
       <header className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <p className="text-xs font-extrabold uppercase tracking-widest text-slate-400">Repository</p>
-          <h1 className="text-3xl font-black text-slate-900 mt-1">Documents Center</h1>
+          <p className="text-xs font-extrabold uppercase tracking-widest text-slate-400">Documents Center</p>
+          <h1 className="text-3xl font-black text-slate-900 mt-1">Centre de documents</h1>
           <p className="text-xs text-slate-400 mt-1 font-semibold uppercase tracking-wider">
-            Official academic reports, fee statements and receipts
+            Relevés de notes officiels, relevés de frais et reçus
           </p>
         </div>
 
@@ -494,9 +494,9 @@ export default function ParentDocumentsPage() {
       {children.length === 0 ? (
         <Card className="border-2 border-dashed border-slate-200 rounded-3xl bg-white p-12 text-center max-w-2xl mx-auto space-y-4">
           <Landmark className="mx-auto text-slate-200" size={60} />
-          <h2 className="text-xl font-black text-slate-900 uppercase tracking-tight">No Children Registered</h2>
+          <h2 className="text-xl font-black text-slate-900 uppercase tracking-tight">Aucun élève enregistré</h2>
           <p className="text-slate-400 text-xs font-bold leading-relaxed max-w-md mx-auto">
-            You do not currently have any student profiles linked to your parent account. Contact administration to establish parent-student bindings.
+            Vous n'avez actuellement aucun profil d'élève lié à votre compte parent. Contactez l'administration pour établir les liens parent-élève.
           </p>
         </Card>
       ) : (
@@ -504,9 +504,9 @@ export default function ParentDocumentsPage() {
           {/* Tabs */}
           <div className="flex gap-2 bg-slate-100 p-1 rounded-2xl w-fit">
             {[
-              { id: 'transcripts', label: 'Report Cards' },
-              { id: 'statements', label: 'Ledger Statements' },
-              { id: 'receipts', label: 'Payment Receipts' }
+              { id: 'transcripts', label: 'Relevés' },
+              { id: 'statements', label: 'Relevés de compte' },
+              { id: 'receipts', label: 'Reçus de paiement' }
             ].map((t) => (
               <button
                 key={t.id}
@@ -525,7 +525,7 @@ export default function ParentDocumentsPage() {
             {loadingDocs ? (
               <div className="flex flex-col items-center justify-center py-20 gap-3">
                 <Loader2 className="w-10 h-10 border-4 animate-spin text-primary" />
-                <p className="text-slate-400 font-bold uppercase tracking-widest text-[10px]">Loading files...</p>
+                <p className="text-slate-400 font-bold uppercase tracking-widest text-[10px]">Chargement des documents...</p>
               </div>
             ) : (
               <AnimatePresence mode="wait">
@@ -540,8 +540,8 @@ export default function ParentDocumentsPage() {
                     {transcripts.length === 0 ? (
                       <div className="col-span-full bg-white border border-slate-100 rounded-3xl p-12 text-center text-slate-400">
                         <FileText className="w-12 h-12 opacity-30 mx-auto mb-3" />
-                        <p className="font-bold text-sm uppercase">No report cards generated yet</p>
-                        <p className="text-xs text-slate-400 mt-1">Transcripts will appear here once published by school administrators.</p>
+                        <p className="font-bold text-sm uppercase">Aucun relevé généré pour le moment</p>
+                        <p className="text-xs text-slate-400 mt-1">Les relevés apparaîtront ici une fois publiés par les administrateurs de l'école.</p>
                       </div>
                     ) : transcripts.map((t) => (
                       <Card key={t.id} className="border border-slate-100 rounded-3xl bg-white shadow-sm hover:border-primary transition-colors p-6 flex items-center gap-4">
@@ -549,8 +549,8 @@ export default function ParentDocumentsPage() {
                           <FileText className="w-6 h-6" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-black text-slate-900 truncate">Academic Report Card</h3>
-                          <p className="text-xs font-bold text-slate-500 mt-0.5">{t.academicYear?.name || 'Academic Year'}</p>
+                          <h3 className="font-black text-slate-900 truncate"> Relevés de notes</h3>
+                          <p className="text-xs font-bold text-slate-500 mt-0.5">{t.academicYear?.name || 'Année Académique'}</p>
                           <p className="text-[10px] text-slate-400 mt-1 font-bold">Ref: {t.referenceNumber}</p>
                         </div>
                         <button
@@ -580,7 +580,7 @@ export default function ParentDocumentsPage() {
                     {!financeData ? (
                       <div className="bg-white border border-slate-100 rounded-3xl p-12 text-center text-slate-400">
                         <Landmark className="w-12 h-12 opacity-30 mx-auto mb-3" />
-                        <p className="font-bold text-sm uppercase">No financial record found</p>
+                        <p className="font-bold text-sm uppercase">Aucun relevé de compte trouvé</p>
                       </div>
                     ) : (
                       <Card className="border border-slate-100 rounded-3xl bg-white shadow-sm p-6 flex items-center justify-between gap-4">
@@ -589,10 +589,10 @@ export default function ParentDocumentsPage() {
                             <Landmark className="w-6 h-6" />
                           </div>
                           <div>
-                            <h3 className="font-black text-slate-900">Consolidated Account Ledger</h3>
-                            <p className="text-xs text-slate-500 font-semibold mt-0.5">Chronological Statement of Billed Fees & Payments</p>
+                            <h3 className="font-black text-slate-900">Relevés de compte</h3>
+                            <p className="text-xs text-slate-500 font-semibold mt-0.5"> Chronologique des frais facturés et des paiements</p>
                             <div className="flex gap-4 mt-2">
-                              <span className="text-[10px] font-black text-slate-400 uppercase">Outstanding: <span className="text-rose-600">{Number(financeData.outstandingBalance || 0).toLocaleString()} GNF</span></span>
+                              <span className="text-[10px] font-black text-slate-400 uppercase">Restant: <span className="text-rose-600">{Number(financeData.outstandingBalance || 0).toLocaleString()} GNF</span></span>
                             </div>
                           </div>
                         </div>
@@ -623,8 +623,8 @@ export default function ParentDocumentsPage() {
                     {approvedPayments.length === 0 ? (
                       <div className="col-span-full bg-white border border-slate-100 rounded-3xl p-12 text-center text-slate-400">
                         <ShieldCheck className="w-12 h-12 opacity-30 mx-auto mb-3" />
-                        <p className="font-bold text-sm uppercase">No payment receipts available</p>
-                        <p className="text-xs text-slate-400 mt-1">Receipts are generated instantly once a payment collection is cleared and approved by school administration.</p>
+                        <p className="font-bold text-sm uppercase">Aucun reçu de paiement disponible</p>
+                        <p className="text-xs text-slate-400 mt-1">Les reçus sont générés instantanément une fois qu'une collecte de paiement est effacée et approuvée par l'administration de l'école.</p>
                       </div>
                     ) : approvedPayments.map((p: any) => (
                       <Card key={p.id} className="border border-slate-100 rounded-3xl bg-white shadow-sm hover:border-primary transition-colors p-6 flex items-center gap-4">
@@ -632,7 +632,7 @@ export default function ParentDocumentsPage() {
                           <ShieldCheck className="w-6 h-6" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-black text-slate-900 truncate">{p.paymentCategory || 'School Fee Receipt'}</h3>
+                          <h3 className="font-black text-slate-900 truncate">{p.paymentCategory || 'Reçu de paiement de frais de scolarité'}</h3>
                           <p className="text-xs font-bold text-emerald-600 mt-0.5">{Number(p.amount).toLocaleString()} GNF</p>
                           <p className="text-[10px] text-slate-400 mt-1 font-bold">Ref: {p.paymentNumber} • {new Date(p.paymentDate || p.createdAt).toLocaleDateString()}</p>
                         </div>

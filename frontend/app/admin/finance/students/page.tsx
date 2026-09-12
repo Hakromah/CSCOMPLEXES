@@ -841,7 +841,7 @@ export default function StudentFinance() {
       });
 
       // Add QR code — always anchored to bottom-right corner of the page
-      const qrContent = `AMFOFANA ACADEMY\nStatement of Account\nStudent: ${studentName}\nID: ${studentUserId}\nTotal Billed: ${Number(data.totalInvoiced || 0).toLocaleString()} GNF\nTotal Paid: ${Number(data.totalPaid || 0).toLocaleString()} GNF\nOutstanding: ${Number(data.outstandingBalance || 0).toLocaleString()} GNF`;
+      const qrContent = `2CSCOMPLEXE SCOLAIRE\nRELEVE DE COMPTE\nEleve : ${studentName}\nID: ${studentUserId}\nTotal facturé: ${Number(data.totalInvoiced || 0).toLocaleString()} GNF\nTotal payé: ${Number(data.totalPaid || 0).toLocaleString()} GNF\nEn souffrance: ${Number(data.outstandingBalance || 0).toLocaleString()} GNF`;
       const qrDataUrl = await QRCode.toDataURL(qrContent);
       doc.addImage(qrDataUrl, 'PNG', 155, 242, 42, 42);
       doc.setFontSize(7);

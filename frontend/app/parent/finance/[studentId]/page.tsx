@@ -82,10 +82,10 @@ export default function ChildStatementPage({ params }: { params: Promise<{ stude
       amount: payment.amount,
       currency: payment.currency || 'GNF',
       paymentMethod: payment.paymentMethod,
-      description: `${payment.paymentCategory} — ${payment.invoice?.invoiceNumber || 'Payment'}`,
+      description: `${payment.paymentCategory} — ${payment.invoice?.invoiceNumber || 'Frais de scolarité'}`,
     });
     doc.save(`receipt_${payment.paymentNumber}.pdf`);
-    toast.success('Receipt downloaded');
+    toast.success('Reçu téléchargé');
   };
 
   if (loading) return (
@@ -103,7 +103,7 @@ export default function ChildStatementPage({ params }: { params: Promise<{ stude
             <span>/</span>
             <span className="text-slate-700">{studentName}</span>
           </div>
-          <h1 className="text-2xl font-black text-slate-900">{studentName} — Statement</h1>
+          <h1 className="text-2xl font-black text-slate-900">{studentName} — Relevé de frais</h1>
         </div>
         <button
           onClick={handleDownloadStatement}
@@ -116,9 +116,9 @@ export default function ChildStatementPage({ params }: { params: Promise<{ stude
       {/* Summary */}
       <div className="grid grid-cols-3 gap-4">
         {[
-          { label: 'Total Charged', value: totalCharged, cls: 'bg-blue-50 text-blue-700' },
-          { label: 'Total Paid', value: totalPaid, cls: 'bg-green-50 text-green-700' },
-          { label: 'Outstanding', value: outstanding, cls: outstanding > 0 ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700' },
+          { label: 'Total facturé', value: totalCharged, cls: 'bg-blue-50 text-blue-700' },
+          { label: 'Total payé', value: totalPaid, cls: 'bg-green-50 text-green-700' },
+          { label: 'Solde', value: outstanding, cls: outstanding > 0 ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700' },
         ].map(s => (
           <div key={s.label} className={`${s.cls} rounded-2xl p-5 text-center`}>
             <p className="text-2xl font-black">GNF {s.value.toLocaleString()}</p>
@@ -131,16 +131,16 @@ export default function ChildStatementPage({ params }: { params: Promise<{ stude
       <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
         <div className="p-5 border-b border-slate-50 flex items-center gap-2">
           <FileText className="w-4 h-4 text-slate-400" />
-          <h2 className="text-sm font-extrabold uppercase tracking-widest text-slate-400">Invoices</h2>
+          <h2 className="text-sm font-extrabold uppercase tracking-widest text-slate-400">Factures</h2>
         </div>
         {invoices.length === 0 ? (
-          <p className="text-sm text-slate-400 text-center py-8">No invoices</p>
+          <p className="text-sm text-slate-400 text-center py-8">Aucune facture</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-50">
-                  {['Invoice #', 'Period', 'Due Date', 'Charged', 'Paid', 'Balance', 'Status'].map(h => (
+                  {['N° de facture', 'Période', 'Date d\'échéance', 'Montant facturé', 'Payé', 'Solde', 'Statut'].map(h => (
                     <th key={h} className="px-4 py-3 text-left text-[10px] font-extrabold uppercase tracking-widest text-slate-400">{h}</th>
                   ))}
                 </tr>
@@ -171,16 +171,16 @@ export default function ChildStatementPage({ params }: { params: Promise<{ stude
       <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
         <div className="p-5 border-b border-slate-50 flex items-center gap-2">
           <CreditCard className="w-4 h-4 text-slate-400" />
-          <h2 className="text-sm font-extrabold uppercase tracking-widest text-slate-400">Payment History</h2>
+          <h2 className="text-sm font-extrabold uppercase tracking-widest text-slate-400">Historique des paiements</h2>
         </div>
         {payments.length === 0 ? (
-          <p className="text-sm text-slate-400 text-center py-8">No payments recorded</p>
+          <p className="text-sm text-slate-400 text-center py-8">Aucun paiement enregistré</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-50">
-                  {['Payment #', 'Date', 'Method', 'Amount', 'Category', 'Status', ''].map(h => (
+                  {['Payment #', 'Date', 'Méthode', 'Montant', 'Catégorie', 'Statut', ''].map(h => (
                     <th key={h} className="px-4 py-3 text-left text-[10px] font-extrabold uppercase tracking-widest text-slate-400">{h}</th>
                   ))}
                 </tr>
@@ -205,7 +205,7 @@ export default function ChildStatementPage({ params }: { params: Promise<{ stude
                         onClick={() => handleDownloadReceipt(pay)}
                         className="flex items-center gap-1 text-primary hover:bg-blue-50 px-2 py-1 rounded-lg text-xs font-bold transition-colors"
                       >
-                        <Download className="w-3 h-3" /> Receipt
+                        <Download className="w-3 h-3" /> Reçu de paiement
                       </button>
                     </td>
                   </motion.tr>
