@@ -46,27 +46,32 @@ export default function ChildStatementPage({ params }: { params: Promise<{ stude
 
   const outstanding = totalCharged - totalPaid;
 
-  const handleDownloadStatement = () => {
-    const doc = generateStatement({
-      studentName,
-      period: new Date().getFullYear().toString(),
-      invoices: invoices.map(inv => ({
-        invoiceNumber: inv.invoiceNumber,
-        month: inv.month,
-        year: inv.year,
-        dueDate: inv.dueDate,
-        subtotal: inv.subtotal,
-        totalPaid: inv.totalPaid,
-        remainingBalance: inv.remainingBalance,
-        status: inv.status,
-        currency: inv.currency,
-      })),
-      totalCharged,
-      totalPaid,
-      totalOutstanding: outstanding,
-    });
-    doc.save(`statement_${studentName.replace(/\s+/g, '_')}.pdf`);
-    toast.success('Statement downloaded');
+  const handleDownloadStatement = async () => {
+    try {
+      const doc = await generateStatement({
+        studentName,
+        period: new Date().getFullYear().toString(),
+        invoices: invoices.map(inv => ({
+          invoiceNumber: inv.invoiceNumber,
+          month: inv.month,
+          year: inv.year,
+          dueDate: inv.dueDate,
+          subtotal: inv.subtotal,
+          totalPaid: inv.totalPaid,
+          remainingBalance: inv.remainingBalance,
+          status: inv.status,
+          currency: inv.currency,
+        })),
+        totalCharged,
+        totalPaid,
+        totalOutstanding: outstanding,
+      });
+      doc.save(`statement_${studentName.replace(/\s+/g, '_')}.pdf`);
+      toast.success('Relevé téléchargé');
+    } catch (e) {
+      console.error(e);
+      toast.error('Erreur lors du téléchargement du relevé');
+    }
   };
 
   const handleDownloadReceipt = (payment: StudentPayment) => {

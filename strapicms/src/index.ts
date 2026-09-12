@@ -18,22 +18,30 @@ export default {
 
       if (authRole) {
         // Find all controllers for school-admin and school-auth
-        const schoolAdminActions = [
+                const schoolAdminActions = [
           'getAllUsers', 'createUser', 'bulkCreateUsers', 'updateUser', 'deleteUser',
           'getAllClasses', 'createClass', 'updateClass', 'deleteClass', 'assignTeacher',
           'assignStudent', 'getClassesForStudent', 'getAllSubjects', 'createSubject',
           'updateSubject', 'deleteSubject', 'getAllMaterials', 'createMaterial',
-          'deleteMaterial', 'getMaterialAnalytics', 'getAllTimetables', 'createTimetable', 'updateTimetable',
-          'deleteTimetable', 'getExams', 'lockSemesterExams', 'filterResults',
+          'deleteMaterial', 'getMaterialAnalytics', 'getAllTimetables', 'createTimetable', 'updateTimetable', 'deleteTimetable',
+          'validateTimetable', 'auditTimetable', 'duplicateDay', 'duplicateClass', 'duplicateTerm', 'publishTimetable', 'bulkDeleteTimetable', 'getTimetableAnalytics',
+          'getAllRooms', 'createRoom', 'updateRoom', 'deleteRoom',
+          'getAllTimeSlots', 'createTimeSlot', 'updateTimeSlot', 'deleteTimeSlot', 'getExams', 'lockSemesterExams', 'filterResults',
           'getSummaryReport', 'getSemesterGPA', 'finalizeSemester', 'updateProfile',
-          'changePassword', 'generateTranscript', 'getStudentTranscriptsList'
+          'changePassword', 'generateTranscript', 'getStudentTranscriptsList',
+          'generateTranscriptAuto', 'getAssessmentCategories', 'createAssessmentCategory', 'updateAssessmentCategory', 'deleteAssessmentCategory',
+          'getAssessmentBlueprints', 'createAssessmentBlueprint', 'updateAssessmentBlueprint', 'deleteAssessmentBlueprint',
+          'getGradingSchemes', 'createGradingScheme', 'updateGradingScheme', 'deleteGradingScheme',
+          'getStudentAcademicResults', 'getClassAcademicResults', 'recalculateStudent', 'recalculateClass',
+          'getDynamicGradebook', 'getAcademicPeriods', 'createAcademicPeriod', 'updateAcademicPeriod', 'deleteAcademicPeriod',
+          'getAllParents', 'createParent', 'sendAdminNotification', 'broadcastAdminAnnouncement'
         ].map(act => `api::school-admin.school-admin.${act}`);
         
         const schoolAuthActions = [
           'logout', 'me'
         ].map(act => `api::school-auth.school-auth.${act}`);
 
-        const schoolTeacherActions = [
+                const schoolTeacherActions = [
           'getMyClasses', 'getStudentsByClass', 'getMyStudents', 'submitAttendance',
           'updateAttendance', 'getAttendanceHistory', 'createExam', 'getMyExams',
           'updateExam', 'deleteExam', 'toggleExamStatus', 'getGradebook',
@@ -41,14 +49,16 @@ export default {
           'getResults', 'filterResults', 'submitMarks', 'getMyTimetable',
           'getAllSubjects', 'updateProfile', 'changePassword',
           'getTeacherMaterials', 'getMyClassesForMaterials', 'uploadTeacherMaterial', 'deleteTeacherMaterial',
-          'getStudentTranscriptsList', 'previewTranscript'
+          'getStudentTranscriptsList', 'previewTranscript',
+          'getDynamicGradebook', 'getAssessmentCategories', 'getAssessmentBlueprints', 'getGradingSchemes', 'getTeacherAcademicResults'
         ].map(act => `api::school-teacher.school-teacher.${act}`);
 
-        const schoolStudentActions = [
+                const schoolStudentActions = [
           'getProfile', 'updateProfile', 'changePassword',
           'getMyClasses', 'getMyAttendance', 'getMyTimetable',
           'getMyExams', 'getMyResults', 'getMaterialsByClass',
-          'getSemesterTranscript', 'getDashboardStats', 'previewTranscript', 'getStudentTranscriptsList'
+          'getSemesterTranscript', 'getDashboardStats', 'previewTranscript', 'getStudentTranscriptsList',
+          'getMyEvents', 'getCalendar', 'getAcademicResults'
         ].map(act => `api::school-student.school-student.${act}`);
 
         const schoolFinanceActions = [
@@ -128,6 +138,15 @@ export default {
           'findPublished', 'find', 'findOne'
         ].map(act => `api::school-event.school-event.${act}`);
 
+        const paymentSettingActions = ['find', 'findOne', 'create', 'update', 'delete'].map(act => `api::payment-setting.payment-setting.${act}`);
+        const assessmentCategoryActions = ['find', 'findOne', 'create', 'update', 'delete'].map(act => `api::assessment-category.assessment-category.${act}`);
+        const gradingSchemeActions = ['find', 'findOne', 'create', 'update', 'delete'].map(act => `api::grading-scheme.grading-scheme.${act}`);
+        const assessmentBlueprintActions = ['find', 'findOne', 'create', 'update', 'delete'].map(act => `api::assessment-blueprint.assessment-blueprint.${act}`);
+        const academicResultActions = ['find', 'findOne', 'create', 'update', 'delete'].map(act => `api::academic-result.academic-result.${act}`);
+        const schoolRoomActions = ['find', 'findOne', 'create', 'update', 'delete'].map(act => `api::school-room.school-room.${act}`);
+        const timeSlotActions = ['find', 'findOne', 'create', 'update', 'delete'].map(act => `api::time-slot.time-slot.${act}`);
+        const timetableEntryActions = ['find', 'findOne', 'create', 'update', 'delete'].map(act => `api::timetable-entry.timetable-entry.${act}`);
+
         const allActions = [
           ...schoolAdminActions, 
           ...schoolAuthActions, 
@@ -157,6 +176,14 @@ export default {
           ...familyActions,
           ...parentStudentRelationActions,
           ...calendarEventActions,
+          ...paymentSettingActions,
+          ...assessmentCategoryActions,
+          ...gradingSchemeActions,
+          ...assessmentBlueprintActions,
+          ...academicResultActions,
+          ...schoolRoomActions,
+          ...timeSlotActions,
+          ...timetableEntryActions,
           'api::contact-message.contact-message.create',
           'api::newsletter-subscription.newsletter-subscription.create',
           'plugin::users-permissions.user.find',
@@ -330,6 +357,39 @@ export default {
         }
       } catch (e: any) {
         strapi.log.error(`[Bootstrap] Error creating default login page: ${e.message}`);
+      }
+
+      // Automatically bootstrap default payment-setting entry if none exists
+      try {
+        const paymentSettingCount = await strapi.db.query('api::payment-setting.payment-setting').count();
+        if (paymentSettingCount === 0) {
+          await strapi.db.query('api::payment-setting.payment-setting').create({
+            data: {
+              bankName: 'Banque Centrale / Vista Bank Guinée',
+              accountHolder: '2CS COMPLEXE SCOLAIRE',
+              rib: 'GN04 0001 2345 6789 0123 45',
+              branchCode: '01001',
+              swift: 'VISTGNCON',
+              bankInstructions: 'Mentionnez impérativement le N° de Facture et votre ID Élève en référence de votre virement pour un rapprochement comptable immédiat.',
+              isBankTransferActive: true,
+              orangeMoneyMerchant: '#144*2*1*XXXXX#',
+              orangeMoneyInstructions: 'Composez le code USSD ci-dessus pour effectuer le paiement direct sécurisé.',
+              isOrangeMoneyActive: true,
+              mtnMoMoCode: '*440*XXXXXX#',
+              mtnMoMoInstructions: 'Paiement marchand via le code court MTN Mobile Money.',
+              isMtnMoMoActive: true,
+              cashierLocation: 'Bâtiment Administratif, RDC',
+              cashierHours: 'Lundi au Vendredi: 08h00 — 16h00',
+              isCashierActive: true,
+              contactEmail: 'accounts@2cscomplexes.com',
+              contactPhone: '+224 620 00 00 00',
+              additionalNotes: 'Conservez précieusement vos reçus de versement pour tout contrôle administratif.'
+            }
+          });
+          strapi.log.info('[Bootstrap] Created default payment settings entry.');
+        }
+      } catch (e: any) {
+        strapi.log.warn(`[Bootstrap] Error seeding default payment settings: ${e.message}`);
       }
 
       // 2. Attach a permanent database lifecycle hook so future dashboard users never get locked out again

@@ -1,0 +1,50 @@
+{
+  "kind": "collectionType",
+  "collectionName": "school_rooms",
+  "info": {
+    "singularName": "school-room",
+    "pluralName": "school-rooms",
+    "displayName": "School Room"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "code": {
+      "type": "string"
+    },
+    "building": {
+      "type": "string"
+    },
+    "capacity": {
+      "type": "integer",
+      "default": 40
+    },
+    "roomType": {
+      "type": "enumeration",
+      "enum": [
+        "CLASSROOM",
+        "LABORATORY",
+        "COMPUTER_LAB",
+        "LIBRARY",
+        "SPORTS_HALL",
+        "AUDITORIUM",
+        "WORKSHOP",
+        "OTHER"
+      ],
+      "default": "CLASSROOM"
+    },
+    "facilities": {
+      "type": "json"
+    },
+    "isActive": {
+      "type": "boolean",
+      "default": true
+    }
+  }
+}

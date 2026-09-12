@@ -20,7 +20,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import Image from 'next/image';
 
 const loadLogo = (): Promise<HTMLImageElement> => {
   return new Promise((resolve, reject) => {
@@ -621,7 +620,7 @@ export default function TeacherTranscriptsPage() {
                             <Building2 size={240} />
                           </div>
                           <div className="flex items-center gap-6 z-10">
-                            <Image
+                            <img
                               src="/logo/2cslogo.jpeg"
                               alt="Logo"
                               className="w-20 h-20 rounded-full border-2 border-white bg-white object-contain shadow-lg print:w-16 print:h-16"
@@ -759,7 +758,7 @@ export default function TeacherTranscriptsPage() {
                             <div className="flex flex-col items-center justify-center space-y-1.5 p-2 bg-slate-50 border border-slate-100 rounded-2xl print:bg-white print:border-none">
                               {qrCodeUrl ? (
                                 <>
-                                  <Image src={qrCodeUrl} alt="Transcript Verification QR" className="w-20 h-20 object-contain mix-blend-multiply" />
+                                  <img src={qrCodeUrl} alt="Transcript Verification QR" className="w-20 h-20 object-contain mix-blend-multiply" />
                                   <p className="text-[8px] font-black tracking-widest text-slate-500">Vérifier l'Authenticité</p>
                                   <p className="text-[7px] font-mono text-slate-400 select-all">{transcriptData.metadata.referenceNumber}</p>
                                 </>

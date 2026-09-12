@@ -1,0 +1,87 @@
+{
+  "kind": "singleType",
+  "collectionName": "payment_settings",
+  "info": {
+    "singularName": "payment-setting",
+    "pluralName": "payment-settings",
+    "displayName": "Payment Settings & Methods"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "bankName": {
+      "type": "string",
+      "default": "Banque Centrale / Vista Bank Guinée"
+    },
+    "accountHolder": {
+      "type": "string",
+      "default": "2CS COMPLEXE SCOLAIRE"
+    },
+    "rib": {
+      "type": "string",
+      "default": "GN04 0001 2345 6789 0123 45"
+    },
+    "branchCode": {
+      "type": "string",
+      "default": "01001"
+    },
+    "swift": {
+      "type": "string",
+      "default": "VISTGNCON"
+    },
+    "bankInstructions": {
+      "type": "text"
+    },
+    "isBankTransferActive": {
+      "type": "boolean",
+      "default": true
+    },
+    "orangeMoneyMerchant": {
+      "type": "string",
+      "default": "#144*2*1*XXXXX#"
+    },
+    "orangeMoneyInstructions": {
+      "type": "string"
+    },
+    "isOrangeMoneyActive": {
+      "type": "boolean",
+      "default": true
+    },
+    "mtnMoMoCode": {
+      "type": "string",
+      "default": "*440*XXXXXX#"
+    },
+    "mtnMoMoInstructions": {
+      "type": "string"
+    },
+    "isMtnMoMoActive": {
+      "type": "boolean",
+      "default": true
+    },
+    "cashierLocation": {
+      "type": "string",
+      "default": "Bâtiment Administratif, RDC"
+    },
+    "cashierHours": {
+      "type": "string",
+      "default": "Lundi au Vendredi: 08h00 — 16h00"
+    },
+    "isCashierActive": {
+      "type": "boolean",
+      "default": true
+    },
+    "contactEmail": {
+      "type": "string",
+      "default": "accounts@2cscomplexes.com"
+    },
+    "contactPhone": {
+      "type": "string",
+      "default": "+224 620 00 00 00"
+    },
+    "additionalNotes": {
+      "type": "text"
+    }
+  }
+}

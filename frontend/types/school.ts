@@ -90,6 +90,27 @@ export interface Term {
   semester?: Semester;
 }
 
+export interface SchoolRoom {
+  id: number;
+  name: string;
+  code?: string;
+  building?: string;
+  capacity?: number;
+  roomType?: string;
+  isActive?: boolean;
+}
+
+export interface TimeSlot {
+  id: number;
+  name: string;
+  code?: string;
+  startTime: string;
+  endTime: string;
+  slotType?: string;
+  order?: number;
+  isActive?: boolean;
+}
+
 export interface TimetableEntry {
   id: number;
   dayOfWeek: 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY';
@@ -98,6 +119,14 @@ export interface TimetableEntry {
   classe?: SchoolClass;
   subject?: Subject;
   teacher?: SchoolUser;
+  academicYear?: AcademicYear;
+  semester?: Semester;
+  room?: SchoolRoom;
+  roomName?: string;
+  periodName?: string;
+  lessonType?: string;
+  status?: 'DRAFT' | 'PUBLISHED';
+  notes?: string;
 }
 
 export interface SchoolExam {

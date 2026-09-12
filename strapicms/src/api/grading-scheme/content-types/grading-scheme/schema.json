@@ -1,0 +1,17 @@
+{
+  "kind": "collectionType",
+  "collectionName": "grading_schemes",
+  "info": {
+    "singularName": "grading-scheme",
+    "pluralName": "grading-schemes",
+    "displayName": "Grading Scheme"
+  },
+  "options": { "draftAndPublish": false },
+  "pluginOptions": {},
+  "attributes": {
+    "name": { "type": "string", "required": true },
+    "isDefault": { "type": "boolean", "default": false },
+    "passingScore": { "type": "decimal", "default": 50 },
+    "grades": { "type": "json" }
+  }
+}

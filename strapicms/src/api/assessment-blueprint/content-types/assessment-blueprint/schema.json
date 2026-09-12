@@ -1,0 +1,43 @@
+{
+  "kind": "collectionType",
+  "collectionName": "assessment_blueprints",
+  "info": {
+    "singularName": "assessment-blueprint",
+    "pluralName": "assessment-blueprints",
+    "displayName": "Assessment Blueprint"
+  },
+  "options": { "draftAndPublish": false },
+  "pluginOptions": {},
+  "attributes": {
+    "name": { "type": "string", "required": true },
+    "description": { "type": "text" },
+    "isDefault": { "type": "boolean", "default": false },
+    "totalWeightTarget": { "type": "integer", "default": 100 },
+    "categoryWeights": { "type": "json" },
+    "academicYear": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::academic-year.academic-year"
+    },
+    "semester": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::semester.semester"
+    },
+    "classe": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::school-class.school-class"
+    },
+    "subject": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::subject.subject"
+    },
+    "gradingScheme": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::grading-scheme.grading-scheme"
+    }
+  }
+}

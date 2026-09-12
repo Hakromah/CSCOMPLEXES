@@ -579,6 +579,64 @@ export interface ApiAcademicResourceAcademicResource
   };
 }
 
+export interface ApiAcademicResultAcademicResult
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'academic_results';
+  info: {
+    displayName: 'Academic Result';
+    pluralName: 'academic-results';
+    singularName: 'academic-result';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    academicYear: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::academic-year.academic-year'
+    >;
+    blueprint: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::assessment-blueprint.assessment-blueprint'
+    >;
+    calculatedAt: Schema.Attribute.DateTime;
+    classe: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::school-class.school-class'
+    >;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    credits: Schema.Attribute.Decimal & Schema.Attribute.DefaultTo<1>;
+    gradePoint: Schema.Attribute.Decimal;
+    letterGrade: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::academic-result.academic-result'
+    > &
+      Schema.Attribute.Private;
+    percentage: Schema.Attribute.Decimal;
+    publishedAt: Schema.Attribute.DateTime;
+    remarks: Schema.Attribute.Text;
+    scoreBreakdown: Schema.Attribute.JSON;
+    semester: Schema.Attribute.Relation<'manyToOne', 'api::semester.semester'>;
+    status: Schema.Attribute.Enumeration<
+      ['DRAFT', 'CALCULATED', 'REVIEWED', 'APPROVED', 'PUBLISHED']
+    > &
+      Schema.Attribute.DefaultTo<'DRAFT'>;
+    student: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    subject: Schema.Attribute.Relation<'manyToOne', 'api::subject.subject'>;
+    totalScore: Schema.Attribute.Decimal;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiAcademicSectionAcademicSection
   extends Struct.CollectionTypeSchema {
   collectionName: 'academic_sections';
@@ -689,6 +747,88 @@ export interface ApiAccountingLogAccountingLog
     previousValues: Schema.Attribute.JSON;
     publishedAt: Schema.Attribute.DateTime;
     timestamp: Schema.Attribute.DateTime & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiAssessmentBlueprintAssessmentBlueprint
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'assessment_blueprints';
+  info: {
+    displayName: 'Assessment Blueprint';
+    pluralName: 'assessment-blueprints';
+    singularName: 'assessment-blueprint';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    academicYear: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::academic-year.academic-year'
+    >;
+    categoryWeights: Schema.Attribute.JSON;
+    classe: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::school-class.school-class'
+    >;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Text;
+    gradingScheme: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::grading-scheme.grading-scheme'
+    >;
+    isDefault: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::assessment-blueprint.assessment-blueprint'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    semester: Schema.Attribute.Relation<'manyToOne', 'api::semester.semester'>;
+    subject: Schema.Attribute.Relation<'manyToOne', 'api::subject.subject'>;
+    totalWeightTarget: Schema.Attribute.Integer &
+      Schema.Attribute.DefaultTo<100>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiAssessmentCategoryAssessmentCategory
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'assessment_categories';
+  info: {
+    displayName: 'Assessment Category';
+    pluralName: 'assessment-categories';
+    singularName: 'assessment-category';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    code: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Text;
+    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::assessment-category.assessment-category'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -994,6 +1134,10 @@ export interface ApiExamResultExamResult extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    enteredBy: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
     exam: Schema.Attribute.Relation<
       'manyToOne',
       'api::school-exam.school-exam'
@@ -1001,6 +1145,7 @@ export interface ApiExamResultExamResult extends Struct.CollectionTypeSchema {
     grade: Schema.Attribute.Enumeration<
       ['A', 'A_MINUS', 'B_PLUS', 'B', 'B_MINUS', 'C_PLUS', 'C', 'D', 'F']
     >;
+    gradePoint: Schema.Attribute.Decimal;
     letterGrade: Schema.Attribute.String;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
@@ -1009,8 +1154,16 @@ export interface ApiExamResultExamResult extends Struct.CollectionTypeSchema {
     > &
       Schema.Attribute.Private;
     marks: Schema.Attribute.Decimal & Schema.Attribute.Required;
+    maxScore: Schema.Attribute.Decimal;
+    percentage: Schema.Attribute.Decimal;
+    previousScore: Schema.Attribute.Decimal;
     publishedAt: Schema.Attribute.DateTime;
+    rawScore: Schema.Attribute.Decimal;
     remarks: Schema.Attribute.String;
+    scoreStatus: Schema.Attribute.Enumeration<
+      ['NUMERIC', 'MISSING', 'ABSENT', 'EXCUSED', 'NOT_SUBMITTED']
+    > &
+      Schema.Attribute.DefaultTo<'NUMERIC'>;
     status: Schema.Attribute.Enumeration<['DRAFT', 'SUBMITTED', 'GRADED']> &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<'DRAFT'>;
@@ -1021,6 +1174,8 @@ export interface ApiExamResultExamResult extends Struct.CollectionTypeSchema {
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    weight: Schema.Attribute.Decimal;
+    weightedScore: Schema.Attribute.Decimal;
   };
 }
 
@@ -1230,6 +1385,38 @@ export interface ApiGalleryItemGalleryItem extends Struct.CollectionTypeSchema {
     thumbnail: Schema.Attribute.Media<'videos'>;
     title: Schema.Attribute.String;
     type: Schema.Attribute.Enumeration<['image', 'video']>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiGradingSchemeGradingScheme
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'grading_schemes';
+  info: {
+    displayName: 'Grading Scheme';
+    pluralName: 'grading-schemes';
+    singularName: 'grading-scheme';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    grades: Schema.Attribute.JSON;
+    isDefault: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::grading-scheme.grading-scheme'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    passingScore: Schema.Attribute.Decimal & Schema.Attribute.DefaultTo<50>;
+    publishedAt: Schema.Attribute.DateTime;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1629,6 +1816,66 @@ export interface ApiPaymentCategoryPaymentCategory
   };
 }
 
+export interface ApiPaymentSettingPaymentSetting
+  extends Struct.SingleTypeSchema {
+  collectionName: 'payment_settings';
+  info: {
+    displayName: 'Payment Settings & Methods';
+    pluralName: 'payment-settings';
+    singularName: 'payment-setting';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    accountHolder: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'2CS COMPLEXE SCOLAIRE'>;
+    additionalNotes: Schema.Attribute.Text;
+    bankInstructions: Schema.Attribute.Text;
+    bankName: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Banque Centrale / Vista Bank Guin\u00E9e'>;
+    branchCode: Schema.Attribute.String & Schema.Attribute.DefaultTo<'01001'>;
+    cashierHours: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Lundi au Vendredi: 08h00 \u2014 16h00'>;
+    cashierLocation: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'B\u00E2timent Administratif, RDC'>;
+    contactEmail: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'accounts@2cscomplexes.com'>;
+    contactPhone: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'+224 620 00 00 00'>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    isBankTransferActive: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<true>;
+    isCashierActive: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<true>;
+    isMtnMoMoActive: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<true>;
+    isOrangeMoneyActive: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<true>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::payment-setting.payment-setting'
+    > &
+      Schema.Attribute.Private;
+    mtnMoMoCode: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'*440*XXXXXX#'>;
+    mtnMoMoInstructions: Schema.Attribute.String;
+    orangeMoneyInstructions: Schema.Attribute.String;
+    orangeMoneyMerchant: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'#144*2*1*XXXXX#'>;
+    publishedAt: Schema.Attribute.DateTime;
+    rib: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'GN04 0001 2345 6789 0123 45'>;
+    swift: Schema.Attribute.String & Schema.Attribute.DefaultTo<'VISTGNCON'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiReceiptReceipt extends Struct.CollectionTypeSchema {
   collectionName: 'receipts';
   info: {
@@ -1933,6 +2180,14 @@ export interface ApiSchoolExamSchoolExam extends Struct.CollectionTypeSchema {
       'manyToOne',
       'api::academic-year.academic-year'
     >;
+    assessmentCategory: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::assessment-category.assessment-category'
+    >;
+    blueprint: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::assessment-blueprint.assessment-blueprint'
+    >;
     classe: Schema.Attribute.Relation<
       'manyToOne',
       'api::school-class.school-class'
@@ -1942,7 +2197,20 @@ export interface ApiSchoolExamSchoolExam extends Struct.CollectionTypeSchema {
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     date: Schema.Attribute.Date & Schema.Attribute.Required;
+    dueDate: Schema.Attribute.Date;
     endTime: Schema.Attribute.Time & Schema.Attribute.Required;
+    examStatus: Schema.Attribute.Enumeration<
+      [
+        'DRAFT',
+        'PUBLISHED',
+        'OPEN',
+        'CLOSED',
+        'GRADING',
+        'COMPLETED',
+        'ARCHIVED',
+      ]
+    > &
+      Schema.Attribute.DefaultTo<'DRAFT'>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -1950,6 +2218,7 @@ export interface ApiSchoolExamSchoolExam extends Struct.CollectionTypeSchema {
     > &
       Schema.Attribute.Private;
     locked: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    maxScore: Schema.Attribute.Decimal & Schema.Attribute.DefaultTo<100>;
     name: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<'Exam'>;
@@ -2089,6 +2358,52 @@ export interface ApiSchoolNotificationSchoolNotification
   };
 }
 
+export interface ApiSchoolRoomSchoolRoom extends Struct.CollectionTypeSchema {
+  collectionName: 'school_rooms';
+  info: {
+    displayName: 'School Room';
+    pluralName: 'school-rooms';
+    singularName: 'school-room';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    building: Schema.Attribute.String;
+    capacity: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<40>;
+    code: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    facilities: Schema.Attribute.JSON;
+    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::school-room.school-room'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    roomType: Schema.Attribute.Enumeration<
+      [
+        'CLASSROOM',
+        'LABORATORY',
+        'COMPUTER_LAB',
+        'LIBRARY',
+        'SPORTS_HALL',
+        'AUDITORIUM',
+        'WORKSHOP',
+        'OTHER',
+      ]
+    > &
+      Schema.Attribute.DefaultTo<'CLASSROOM'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiSemesterSemester extends Struct.CollectionTypeSchema {
   collectionName: 'semesters';
   info: {
@@ -2107,6 +2422,7 @@ export interface ApiSemesterSemester extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    endDate: Schema.Attribute.Date;
     exams: Schema.Attribute.Relation<
       'oneToMany',
       'api::school-exam.school-exam'
@@ -2118,7 +2434,13 @@ export interface ApiSemesterSemester extends Struct.CollectionTypeSchema {
     > &
       Schema.Attribute.Private;
     name: Schema.Attribute.String & Schema.Attribute.Required;
+    order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<1>;
+    periodType: Schema.Attribute.Enumeration<
+      ['SEMESTER', 'TERM', 'QUARTER', 'MODULE']
+    > &
+      Schema.Attribute.DefaultTo<'SEMESTER'>;
     publishedAt: Schema.Attribute.DateTime;
+    startDate: Schema.Attribute.Date;
     terms: Schema.Attribute.Relation<'oneToMany', 'api::term.term'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -2416,6 +2738,47 @@ export interface ApiTestimonialTestimonial extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiTimeSlotTimeSlot extends Struct.CollectionTypeSchema {
+  collectionName: 'time_slots';
+  info: {
+    displayName: 'Time Slot';
+    pluralName: 'time-slots';
+    singularName: 'time-slot';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    academicYear: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::academic-year.academic-year'
+    >;
+    code: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    endTime: Schema.Attribute.Time & Schema.Attribute.Required;
+    isActive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::time-slot.time-slot'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<1>;
+    publishedAt: Schema.Attribute.DateTime;
+    slotType: Schema.Attribute.Enumeration<
+      ['LESSON', 'BREAK', 'LUNCH', 'ASSEMBLY', 'EXAM', 'EXTRACURRICULAR']
+    > &
+      Schema.Attribute.DefaultTo<'LESSON'>;
+    startTime: Schema.Attribute.Time & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiTimetableEntryTimetableEntry
   extends Struct.CollectionTypeSchema {
   collectionName: 'timetable_entries';
@@ -2428,6 +2791,10 @@ export interface ApiTimetableEntryTimetableEntry
     draftAndPublish: false;
   };
   attributes: {
+    academicYear: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::academic-year.academic-year'
+    >;
     classe: Schema.Attribute.Relation<
       'manyToOne',
       'api::school-class.school-class'
@@ -2448,14 +2815,40 @@ export interface ApiTimetableEntryTimetableEntry
     > &
       Schema.Attribute.Required;
     endTime: Schema.Attribute.Time & Schema.Attribute.Required;
+    lessonType: Schema.Attribute.Enumeration<
+      [
+        'REGULAR',
+        'PRACTICAL',
+        'LAB',
+        'TUTORIAL',
+        'BREAK',
+        'LUNCH',
+        'ASSEMBLY',
+        'EXAM',
+        'STUDY',
+        'SPORTS',
+        'OTHER',
+      ]
+    > &
+      Schema.Attribute.DefaultTo<'REGULAR'>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::timetable-entry.timetable-entry'
     > &
       Schema.Attribute.Private;
+    notes: Schema.Attribute.Text;
+    periodName: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
+    room: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::school-room.school-room'
+    >;
+    roomName: Schema.Attribute.String;
+    semester: Schema.Attribute.Relation<'manyToOne', 'api::semester.semester'>;
     startTime: Schema.Attribute.Time & Schema.Attribute.Required;
+    status: Schema.Attribute.Enumeration<['DRAFT', 'PUBLISHED', 'ARCHIVED']> &
+      Schema.Attribute.DefaultTo<'PUBLISHED'>;
     subject: Schema.Attribute.Relation<'manyToOne', 'api::subject.subject'>;
     teacher: Schema.Attribute.Relation<
       'manyToOne',
@@ -3178,9 +3571,12 @@ declare module '@strapi/strapi' {
       'api::about-page.about-page': ApiAboutPageAboutPage;
       'api::academic-program.academic-program': ApiAcademicProgramAcademicProgram;
       'api::academic-resource.academic-resource': ApiAcademicResourceAcademicResource;
+      'api::academic-result.academic-result': ApiAcademicResultAcademicResult;
       'api::academic-section.academic-section': ApiAcademicSectionAcademicSection;
       'api::academic-year.academic-year': ApiAcademicYearAcademicYear;
       'api::accounting-log.accounting-log': ApiAccountingLogAccountingLog;
+      'api::assessment-blueprint.assessment-blueprint': ApiAssessmentBlueprintAssessmentBlueprint;
+      'api::assessment-category.assessment-category': ApiAssessmentCategoryAssessmentCategory;
       'api::attendance-record.attendance-record': ApiAttendanceRecordAttendanceRecord;
       'api::attendance-session.attendance-session': ApiAttendanceSessionAttendanceSession;
       'api::behavior-record.behavior-record': ApiBehaviorRecordBehaviorRecord;
@@ -3194,6 +3590,7 @@ declare module '@strapi/strapi' {
       'api::financial-statement.financial-statement': ApiFinancialStatementFinancialStatement;
       'api::footer.footer': ApiFooterFooter;
       'api::gallery-item.gallery-item': ApiGalleryItemGalleryItem;
+      'api::grading-scheme.grading-scheme': ApiGradingSchemeGradingScheme;
       'api::hero-slide.hero-slide': ApiHeroSlideHeroSlide;
       'api::learning-material.learning-material': ApiLearningMaterialLearningMaterial;
       'api::login-page.login-page': ApiLoginPageLoginPage;
@@ -3204,6 +3601,7 @@ declare module '@strapi/strapi' {
       'api::opportunity.opportunity': ApiOpportunityOpportunity;
       'api::parent-student-relation.parent-student-relation': ApiParentStudentRelationParentStudentRelation;
       'api::payment-category.payment-category': ApiPaymentCategoryPaymentCategory;
+      'api::payment-setting.payment-setting': ApiPaymentSettingPaymentSetting;
       'api::receipt.receipt': ApiReceiptReceipt;
       'api::salary-payment.salary-payment': ApiSalaryPaymentSalaryPayment;
       'api::salary-record.salary-record': ApiSalaryRecordSalaryRecord;
@@ -3213,6 +3611,7 @@ declare module '@strapi/strapi' {
       'api::school-exam.school-exam': ApiSchoolExamSchoolExam;
       'api::school-message.school-message': ApiSchoolMessageSchoolMessage;
       'api::school-notification.school-notification': ApiSchoolNotificationSchoolNotification;
+      'api::school-room.school-room': ApiSchoolRoomSchoolRoom;
       'api::semester.semester': ApiSemesterSemester;
       'api::staff-member.staff-member': ApiStaffMemberStaffMember;
       'api::student-invoice.student-invoice': ApiStudentInvoiceStudentInvoice;
@@ -3221,6 +3620,7 @@ declare module '@strapi/strapi' {
       'api::subject.subject': ApiSubjectSubject;
       'api::term.term': ApiTermTerm;
       'api::testimonial.testimonial': ApiTestimonialTestimonial;
+      'api::time-slot.time-slot': ApiTimeSlotTimeSlot;
       'api::timetable-entry.timetable-entry': ApiTimetableEntryTimetableEntry;
       'api::transcript.transcript': ApiTranscriptTranscript;
       'api::transport-assignment.transport-assignment': ApiTransportAssignmentTransportAssignment;

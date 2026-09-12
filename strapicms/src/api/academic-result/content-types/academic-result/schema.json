@@ -1,0 +1,56 @@
+{
+  "kind": "collectionType",
+  "collectionName": "academic_results",
+  "info": {
+    "singularName": "academic-result",
+    "pluralName": "academic-results",
+    "displayName": "Academic Result"
+  },
+  "options": { "draftAndPublish": false },
+  "pluginOptions": {},
+  "attributes": {
+    "totalScore": { "type": "decimal" },
+    "percentage": { "type": "decimal" },
+    "letterGrade": { "type": "string" },
+    "gradePoint": { "type": "decimal" },
+    "credits": { "type": "decimal", "default": 1 },
+    "status": {
+      "type": "enumeration",
+      "enum": ["DRAFT","CALCULATED","REVIEWED","APPROVED","PUBLISHED"],
+      "default": "DRAFT"
+    },
+    "calculatedAt": { "type": "datetime" },
+    "remarks": { "type": "text" },
+    "scoreBreakdown": { "type": "json" },
+    "student": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    },
+    "subject": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::subject.subject"
+    },
+    "semester": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::semester.semester"
+    },
+    "academicYear": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::academic-year.academic-year"
+    },
+    "classe": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::school-class.school-class"
+    },
+    "blueprint": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::assessment-blueprint.assessment-blueprint"
+    }
+  }
+}

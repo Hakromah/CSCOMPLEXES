@@ -38,6 +38,26 @@ export default {
     { method: 'POST',   path: '/admin/timetables',                 handler: 'school-admin.createTimetable' },
     { method: 'PUT',    path: '/admin/timetables/:id',             handler: 'school-admin.updateTimetable' },
     { method: 'DELETE', path: '/admin/timetables/:id',             handler: 'school-admin.deleteTimetable' },
+    { method: 'POST',   path: '/admin/timetables/validate',        handler: 'school-admin.validateTimetable' },
+    { method: 'POST',   path: '/admin/timetables/audit',           handler: 'school-admin.auditTimetable' },
+    { method: 'POST',   path: '/admin/timetables/duplicate-day',   handler: 'school-admin.duplicateDay' },
+    { method: 'POST',   path: '/admin/timetables/duplicate-class', handler: 'school-admin.duplicateClass' },
+    { method: 'POST',   path: '/admin/timetables/duplicate-term',  handler: 'school-admin.duplicateTerm' },
+    { method: 'POST',   path: '/admin/timetables/publish',         handler: 'school-admin.publishTimetable' },
+    { method: 'POST',   path: '/admin/timetables/bulk-delete',     handler: 'school-admin.bulkDeleteTimetable' },
+    { method: 'GET',    path: '/admin/timetables/analytics',       handler: 'school-admin.getTimetableAnalytics' },
+
+    // Rooms
+    { method: 'GET',    path: '/admin/rooms',                      handler: 'school-admin.getAllRooms' },
+    { method: 'POST',   path: '/admin/rooms',                      handler: 'school-admin.createRoom' },
+    { method: 'PUT',    path: '/admin/rooms/:id',                  handler: 'school-admin.updateRoom' },
+    { method: 'DELETE', path: '/admin/rooms/:id',                  handler: 'school-admin.deleteRoom' },
+
+    // Time Slots
+    { method: 'GET',    path: '/admin/time-slots',                 handler: 'school-admin.getAllTimeSlots' },
+    { method: 'POST',   path: '/admin/time-slots',                 handler: 'school-admin.createTimeSlot' },
+    { method: 'PUT',    path: '/admin/time-slots/:id',             handler: 'school-admin.updateTimeSlot' },
+    { method: 'DELETE', path: '/admin/time-slots/:id',             handler: 'school-admin.deleteTimeSlot' },
 
     // Exams
     { method: 'GET',    path: '/admin/exams',                      handler: 'school-admin.getExams' },
@@ -64,5 +84,49 @@ export default {
     { method: 'POST',   path: '/admin/parents',                    handler: 'school-admin.createParent' },
     { method: 'POST',   path: '/admin/notifications/send',         handler: 'school-admin.sendAdminNotification' },
     { method: 'POST',   path: '/admin/notifications/broadcast',    handler: 'school-admin.broadcastAdminAnnouncement' },
+
+    // ─── Assessment Engine ─────────────────────────────────────────────────────
+    // Auto-transcript (no semesterIds needed — discovers everything from academicYearId)
+    { method: 'GET',    path: '/admin/transcripts/auto',                     handler: 'school-admin.generateTranscriptAuto' },
+
+    // Assessment Categories
+    { method: 'GET',    path: '/admin/assessment-categories',                handler: 'school-admin.getAssessmentCategories' },
+    { method: 'POST',   path: '/admin/assessment-categories',                handler: 'school-admin.createAssessmentCategory' },
+    { method: 'PUT',    path: '/admin/assessment-categories/:id',             handler: 'school-admin.updateAssessmentCategory' },
+    { method: 'DELETE', path: '/admin/assessment-categories/:id',             handler: 'school-admin.deleteAssessmentCategory' },
+
+    // Assessment Blueprints
+    { method: 'GET',    path: '/admin/assessment-blueprints',                 handler: 'school-admin.getAssessmentBlueprints' },
+    { method: 'POST',   path: '/admin/assessment-blueprints',                 handler: 'school-admin.createAssessmentBlueprint' },
+    { method: 'PUT',    path: '/admin/assessment-blueprints/:id',              handler: 'school-admin.updateAssessmentBlueprint' },
+    { method: 'DELETE', path: '/admin/assessment-blueprints/:id',              handler: 'school-admin.deleteAssessmentBlueprint' },
+
+    // Grading Schemes
+    { method: 'GET',    path: '/admin/grading-schemes',                       handler: 'school-admin.getGradingSchemes' },
+    { method: 'POST',   path: '/admin/grading-schemes',                       handler: 'school-admin.createGradingScheme' },
+    { method: 'PUT',    path: '/admin/grading-schemes/:id',                   handler: 'school-admin.updateGradingScheme' },
+    { method: 'DELETE', path: '/admin/grading-schemes/:id',                   handler: 'school-admin.deleteGradingScheme' },
+
+    // Academic Results (calculated snapshots)
+    { method: 'GET',    path: '/admin/academic-results/student/:studentId',   handler: 'school-admin.getStudentAcademicResults' },
+    { method: 'GET',    path: '/admin/academic-results/class/:classId',       handler: 'school-admin.getClassAcademicResults' },
+
+    // Recalculate triggers
+    { method: 'POST',   path: '/admin/recalculate/student/:studentId',        handler: 'school-admin.recalculateStudent' },
+    { method: 'POST',   path: '/admin/recalculate/class/:classId',            handler: 'school-admin.recalculateClass' },
+
+    // Dynamic Gradebook (category-aware)
+    { method: 'GET',    path: '/admin/gradebook/:classId',                    handler: 'school-admin.getDynamicGradebook' },
+
+    // Academic Periods (semesters) management
+    { method: 'GET',    path: '/admin/academic-years',                  handler: 'school-admin.getAllAcademicYears' },
+    { method: 'POST',   path: '/admin/academic-years',                  handler: 'school-admin.createAcademicYear' },
+    { method: 'PUT',    path: '/admin/academic-years/:id',              handler: 'school-admin.updateAcademicYear' },
+    { method: 'DELETE', path: '/admin/academic-years/:id',              handler: 'school-admin.deleteAcademicYear' },
+    
+    { method: 'GET',    path: '/admin/academic-periods',                      handler: 'school-admin.getAcademicPeriods' },
+    { method: 'POST',   path: '/admin/academic-periods',                      handler: 'school-admin.createAcademicPeriod' },
+    { method: 'PUT',    path: '/admin/academic-periods/:id',                  handler: 'school-admin.updateAcademicPeriod' },
+    { method: 'DELETE', path: '/admin/academic-periods/:id',                  handler: 'school-admin.deleteAcademicPeriod' },
   ],
 };

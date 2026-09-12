@@ -179,6 +179,42 @@ export default {
       path: '/school-finance/payment-providers',
       handler: 'school-finance.getPaymentProviders',
       config: { middlewares: [] }
+    },
+    {
+      method: 'GET',
+      path: '/finance/payment-providers',
+      handler: 'school-finance.getPaymentProviders',
+      config: { middlewares: [] }
+    },
+    {
+      method: 'GET',
+      path: '/school-finance/payment-methods',
+      handler: 'school-finance.getPaymentMethodsSettings',
+      config: { middlewares: [] }
+    },
+    {
+      method: 'GET',
+      path: '/finance/payment-methods',
+      handler: 'school-finance.getPaymentMethodsSettings',
+      config: { middlewares: [] }
+    },
+    {
+      method: 'PUT',
+      path: '/school-finance/payment-methods',
+      handler: 'school-finance.updatePaymentMethodsSettings',
+      config: { middlewares: [] }
+    },
+    {
+      method: 'PUT',
+      path: '/finance/payment-methods',
+      handler: 'school-finance.updatePaymentMethodsSettings',
+      config: { middlewares: [] }
+    },
+    {
+      method: 'PUT',
+      path: '/admin/payment-methods',
+      handler: 'school-finance.updatePaymentMethodsSettings',
+      config: { middlewares: [] }
     }
   ]
 };

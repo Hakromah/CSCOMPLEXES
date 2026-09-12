@@ -196,7 +196,7 @@ export default {
     if (!classIds.length) { ctx.body = []; return; }
     const entries = await strapi.db.query('api::timetable-entry.timetable-entry').findMany({
       where: { classe: { id: { $in: classIds } } },
-      populate: ['subject', 'classe', 'teacher'],
+      populate: ['subject', 'classe', 'teacher', 'room', 'academicYear', 'semester'],
       orderBy: [{ dayOfWeek: 'asc' }, { startTime: 'asc' }],
     });
     ctx.body = entries;

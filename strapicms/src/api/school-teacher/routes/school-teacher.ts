@@ -44,5 +44,11 @@ export default {
     { method: 'GET',    path: '/teacher/calendar',                           handler: 'school-teacher.getMyEvents' },
     { method: 'GET',    path: '/teacher/notifications',                      handler: 'school-teacher.getMyNotifications' },
     { method: 'POST',   path: '/teacher/attendance/import',                  handler: 'school-teacher.importAttendanceCsv' },
+
+    // ─── Assessment Engine (Teacher) ──────────────────────────────────────────
+    { method: 'GET',   path: '/teacher/classes/:classId/dynamic-gradebook', handler: 'school-teacher.getDynamicGradebook' },
+    { method: 'GET',   path: '/teacher/assessment-categories',              handler: 'school-teacher.getAssessmentCategories' },
+    { method: 'GET',   path: '/teacher/blueprints',                         handler: 'school-teacher.getBlueprintsForTeacher' },
+    { method: 'GET',   path: '/teacher/transcripts/auto',                   handler: 'school-teacher.generateTranscriptAuto' },
   ],
 };

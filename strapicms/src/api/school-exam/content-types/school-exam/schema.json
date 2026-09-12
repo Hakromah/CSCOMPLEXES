@@ -78,6 +78,28 @@
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::subject.subject"
+    },
+    "examStatus": {
+      "type": "enumeration",
+      "enum": ["DRAFT", "PUBLISHED", "OPEN", "CLOSED", "GRADING", "COMPLETED", "ARCHIVED"],
+      "default": "DRAFT"
+    },
+    "maxScore": {
+      "type": "decimal",
+      "default": 100
+    },
+    "dueDate": {
+      "type": "date"
+    },
+    "assessmentCategory": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::assessment-category.assessment-category"
+    },
+    "blueprint": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::assessment-blueprint.assessment-blueprint"
     }
   }
 }

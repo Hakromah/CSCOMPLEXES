@@ -1,0 +1,55 @@
+{
+  "kind": "collectionType",
+  "collectionName": "time_slots",
+  "info": {
+    "singularName": "time-slot",
+    "pluralName": "time-slots",
+    "displayName": "Time Slot"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "code": {
+      "type": "string"
+    },
+    "startTime": {
+      "type": "time",
+      "required": true
+    },
+    "endTime": {
+      "type": "time",
+      "required": true
+    },
+    "slotType": {
+      "type": "enumeration",
+      "enum": [
+        "LESSON",
+        "BREAK",
+        "LUNCH",
+        "ASSEMBLY",
+        "EXAM",
+        "EXTRACURRICULAR"
+      ],
+      "default": "LESSON"
+    },
+    "order": {
+      "type": "integer",
+      "default": 1
+    },
+    "isActive": {
+      "type": "boolean",
+      "default": true
+    },
+    "academicYear": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::academic-year.academic-year"
+    }
+  }
+}

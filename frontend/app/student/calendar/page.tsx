@@ -27,11 +27,12 @@ export default function StudentCalendarPage() {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const res = await api.get('/student/events');
+        const res = await api.get('/student/events')
+          .catch(() => api.get('/student/calendar'))
+          .catch(() => ({ data: [] }));
         setEvents(Array.isArray(res.data) ? res.data : []);
       } catch (err) {
-        toast.error('Failed to sync event registry');
-        console.error(err);
+        console.error('Failed to sync event registry:', err);
       } finally {
         setLoading(false);
       }
@@ -50,20 +51,20 @@ export default function StudentCalendarPage() {
     return (
       <div className="h-[80vh] flex flex-col items-center justify-center gap-4">
         <Loader2 size={40} className="animate-spin text-primary" />
-        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Loading Calendar Hub...</p>
+        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Chargement du Calendrier Scolaire...</p>
       </div>
     );
   }
 
-  const TYPE_STYLE: Record<string, { bg: string; text: string }> = {
-    ACADEMIC: { bg: 'bg-blue-100', text: 'text-blue-800' },
-    EXAM: { bg: 'bg-rose-100', text: 'text-rose-800' },
-    HOLIDAY: { bg: 'bg-emerald-100', text: 'text-emerald-800' },
-    MEETING: { bg: 'bg-purple-100', text: 'text-purple-800' },
-    SPORTS: { bg: 'bg-amber-100', text: 'text-amber-800' },
-    CULTURAL: { bg: 'bg-indigo-100', text: 'text-indigo-800' },
-    TRIP: { bg: 'bg-orange-100', text: 'text-orange-800' },
-    OTHER: { bg: 'bg-slate-100', text: 'text-slate-800' },
+  const TYPE_STYLE: Record<string, { bg: string; text: string; label: string }> = {
+    ACADEMIC: { bg: 'bg-blue-100', text: 'text-blue-800', label: 'Académique' },
+    EXAM: { bg: 'bg-rose-100', text: 'text-rose-800', label: 'Examen' },
+    HOLIDAY: { bg: 'bg-emerald-100', text: 'text-emerald-800', label: 'Vacances / Férié' },
+    MEETING: { bg: 'bg-purple-100', text: 'text-purple-800', label: 'Réunion' },
+    SPORTS: { bg: 'bg-amber-100', text: 'text-amber-800', label: 'Sport' },
+    CULTURAL: { bg: 'bg-indigo-100', text: 'text-indigo-800', label: 'Culturel' },
+    TRIP: { bg: 'bg-orange-100', text: 'text-orange-800', label: 'Sortie Scolaire' },
+    OTHER: { bg: 'bg-slate-100', text: 'text-slate-800', label: 'Autre' },
   };
 
   return (
@@ -73,13 +74,13 @@ export default function StudentCalendarPage() {
         <div className="space-y-1">
           <div className="flex items-center gap-2 text-primary">
             <Calendar size={18} />
-            <span className="text-[10px] font-black uppercase tracking-[0.4em]">Campus Events</span>
+            <span className="text-[10px] font-black uppercase tracking-[0.4em]">Événements du Campus</span>
           </div>
           <h1 className="text-3xl font-black text-slate-900 tracking-tighter italic uppercase">
-            School <span className="text-primary">Calendar.</span>
+            Calendrier <span className="text-primary">Scolaire.</span>
           </h1>
           <p className="text-slate-400 font-bold text-[10px] uppercase tracking-widest">
-            Stay updated with academic meetings, exams, events, and holidays
+            Restez informé des réunions, examens, sorties et vacances scolaires
           </p>
         </div>
         <div className="flex gap-2 bg-white border border-slate-100 p-1.5 rounded-2xl shadow-sm">
@@ -89,7 +90,7 @@ export default function StudentCalendarPage() {
               view === 'upcoming' ? 'bg-slate-900 text-white shadow-sm' : 'bg-transparent text-slate-500 hover:text-slate-900'
             }`}
           >
-            Upcoming ({upcoming.length})
+            À venir ({upcoming.length})
           </Button>
           <Button
             onClick={() => setView('past')}
@@ -97,7 +98,7 @@ export default function StudentCalendarPage() {
               view === 'past' ? 'bg-slate-900 text-white shadow-sm' : 'bg-transparent text-slate-500 hover:text-slate-900'
             }`}
           >
-            Past ({past.length})
+            Passés ({past.length})
           </Button>
         </div>
       </header>
@@ -106,9 +107,9 @@ export default function StudentCalendarPage() {
       {filtered.length === 0 ? (
         <Card className="border-2 border-dashed border-slate-200 rounded-3xl bg-white p-12 text-center max-w-2xl mx-auto space-y-4">
           <Calendar className="mx-auto text-slate-200" size={60} />
-          <h2 className="text-xl font-black text-slate-900 uppercase tracking-tight">No Events Listed</h2>
+          <h2 className="text-xl font-black text-slate-900 uppercase tracking-tight">Aucun Événement Enregistré</h2>
           <p className="text-slate-400 text-xs font-bold leading-relaxed max-w-md mx-auto">
-            There are no {view} events registered on the campus calendar for your grade profile.
+            Il n'y a aucun événement {view === 'upcoming' ? 'à venir' : 'passé'} inscrit au calendrier pour votre profil de classe.
           </p>
         </Card>
       ) : (
@@ -121,7 +122,7 @@ export default function StudentCalendarPage() {
                 {/* Date Badge */}
                 <div className="flex flex-col items-center justify-center bg-slate-900 text-white w-20 h-20 rounded-2xl flex-shrink-0">
                   <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                    {eDate.toLocaleDateString('en-US', { month: 'short' })}
+                    {eDate.toLocaleDateString('fr-FR', { month: 'short' })}
                   </span>
                   <span className="text-3xl font-black leading-none mt-1">
                     {eDate.getDate()}
@@ -132,15 +133,15 @@ export default function StudentCalendarPage() {
                 <div className="flex-1 space-y-3">
                   <div className="flex flex-wrap gap-2 items-center">
                     <Badge className={`uppercase text-[9px] font-black border-none rounded-full px-2.5 py-0.5 ${style.bg} ${style.text}`}>
-                      {event.type}
+                      {style.label || event.type}
                     </Badge>
                     <span className="text-[10px] font-bold text-slate-400 flex items-center gap-1">
                       <Clock size={12} />
-                      {eDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                      {eDate.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
                       {event.endDate && (
                         <>
                           <ArrowRight size={10} />
-                          {new Date(event.endDate).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                          {new Date(event.endDate).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
                         </>
                       )}
                     </span>

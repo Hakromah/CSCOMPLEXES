@@ -40,6 +40,37 @@
       "type": "relation",
       "relation": "manyToOne",
       "target": "plugin::users-permissions.user"
+    },
+    "rawScore": {
+      "type": "decimal"
+    },
+    "maxScore": {
+      "type": "decimal"
+    },
+    "weight": {
+      "type": "decimal"
+    },
+    "weightedScore": {
+      "type": "decimal"
+    },
+    "percentage": {
+      "type": "decimal"
+    },
+    "gradePoint": {
+      "type": "decimal"
+    },
+    "scoreStatus": {
+      "type": "enumeration",
+      "enum": ["NUMERIC", "MISSING", "ABSENT", "EXCUSED", "NOT_SUBMITTED"],
+      "default": "NUMERIC"
+    },
+    "previousScore": {
+      "type": "decimal"
+    },
+    "enteredBy": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
     }
   }
 }

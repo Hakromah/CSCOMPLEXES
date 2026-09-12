@@ -32,6 +32,21 @@
       "relation": "oneToMany",
       "target": "api::school-exam.school-exam",
       "mappedBy": "semesterRel"
+    },
+    "startDate": {
+      "type": "date"
+    },
+    "endDate": {
+      "type": "date"
+    },
+    "periodType": {
+      "type": "enumeration",
+      "enum": ["SEMESTER", "TERM", "QUARTER", "MODULE"],
+      "default": "SEMESTER"
+    },
+    "order": {
+      "type": "integer",
+      "default": 1
     }
   }
 }

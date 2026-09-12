@@ -312,4 +312,52 @@ export default {
 
     ctx.body = { message: 'Attendance imported successfully' };
   },
+
+  // ─── Assessment Engine Methods for Teacher ────────────────────────────────────
+  async getDynamicGradebook(ctx: any) {
+    const { classId } = ctx.params;
+    const { subjectId, semesterId } = ctx.query;
+    try {
+      const { academicEngine } = require('../../school-admin/services/academic-engine');
+      const data = await academicEngine.getDynamicGradebook(
+        Number(classId),
+        subjectId ? Number(subjectId) : undefined,
+        semesterId ? Number(semesterId) : undefined
+      );
+      ctx.body = data;
+    } catch (err: any) {
+      ctx.status = 500; ctx.body = { error: err.message };
+    }
+  },
+
+  async getAssessmentCategories(ctx: any) {
+    const items = await (strapi.entityService.findMany as any)('api::assessment-category.assessment-category', {
+      filters: { isActive: true }, sort: [{ name: 'asc' }]
+    });
+    ctx.body = items;
+  },
+
+  async getBlueprintsForTeacher(ctx: any) {
+    const { academicYearId, semesterId, classId } = ctx.query;
+    const filters: any = {};
+    if (academicYearId) filters.academicYear = { id: Number(academicYearId) };
+    if (semesterId) filters.semester = { id: Number(semesterId) };
+    if (classId) filters.classe = { id: Number(classId) };
+    const items = await (strapi.entityService.findMany as any)('api::assessment-blueprint.assessment-blueprint', {
+      filters, populate: ['academicYear', 'semester', 'classe', 'subject', 'gradingScheme']
+    });
+    ctx.body = items;
+  },
+
+  async generateTranscriptAuto(ctx: any) {
+    const { studentId, academicYearId } = ctx.query;
+    if (!studentId || !academicYearId) return ctx.badRequest('studentId and academicYearId are required');
+    try {
+      const { academicEngine } = require('../../school-admin/services/academic-engine');
+      const data = await academicEngine.generateTranscriptAuto(Number(studentId), Number(academicYearId));
+      ctx.body = data;
+    } catch (err: any) {
+      ctx.status = 500; ctx.body = { error: err.message };
+    }
+  },
 };

@@ -1,3 +1,4 @@
+import timetableEngine from './timetable-engine';
 /**
  * school-admin service
  * Replicates all AdminService + AdminMaterialService logic from Spring Boot
@@ -110,7 +111,7 @@ export default () => ({
 
   async getAllClasses() {
     return strapi.entityService.findMany('api::school-class.school-class', {
-      populate: ['teachers', 'students'],
+      populate: ['teachers', 'students', 'academicYear'],
     });
   },
 
@@ -206,44 +207,225 @@ export default () => ({
     });
   },
 
-  // ─── Timetable Management ─────────────────────────────────────────
+  // ─── Timetable & Scheduling Management ──────────────────────────────
 
-  async getAllTimetables() {
-    return strapi.entityService.findMany('api::timetable-entry.timetable-entry', {
-      populate: ['classe', 'subject'],
+  async getAllTimetables(filters?: any) {
+    const f: any = {};
+    if (filters?.academicYearId) f.academicYear = { id: Number(filters.academicYearId) };
+    if (filters?.semesterId) f.semester = { id: Number(filters.semesterId) };
+    if (filters?.classId) f.classe = { id: Number(filters.classId) };
+    if (filters?.teacherId) f.teacher = { id: Number(filters.teacherId) };
+    if (filters?.roomId) f.room = { id: Number(filters.roomId) };
+    if (filters?.status) f.status = filters.status;
+    if (filters?.dayOfWeek) f.dayOfWeek = filters.dayOfWeek;
+
+    return (strapi.entityService.findMany as any)('api::timetable-entry.timetable-entry', {
+      filters: f,
+      populate: ['classe', 'subject', 'teacher', 'room', 'academicYear', 'semester'],
+      sort: [{ dayOfWeek: 'asc' }, { startTime: 'asc' }],
     });
   },
 
   async createTimetable(data: any) {
-    const classeId = data.classe?.id || (typeof data.classe === 'number' ? data.classe : null);
-    const subjectId = data.subject?.id || (typeof data.subject === 'number' ? data.subject : null);
-    return strapi.entityService.create('api::timetable-entry.timetable-entry', {
+    const { timetableEngine } = require('./timetable-engine');
+    const allEntries = await (strapi.entityService.findMany as any)('api::timetable-entry.timetable-entry', {
+      filters: { dayOfWeek: data.dayOfWeek },
+      populate: ['classe', 'subject', 'teacher', 'room'],
+    }) as any[];
+
+    const classeId = data.classe?.id || (typeof data.classe === 'number' ? data.classe : (data.classId ? Number(data.classId) : null));
+    const subjectId = data.subject?.id || (typeof data.subject === 'number' ? data.subject : (data.subjectId ? Number(data.subjectId) : null));
+    const teacherId = data.teacher?.id || (typeof data.teacher === 'number' ? data.teacher : (data.teacherId ? Number(data.teacherId) : null));
+    const roomId = data.room?.id || (typeof data.room === 'number' ? data.room : (data.roomId ? Number(data.roomId) : null));
+    const academicYearId = data.academicYear?.id || (typeof data.academicYear === 'number' ? data.academicYear : (data.academicYearId ? Number(data.academicYearId) : null));
+    const semesterId = data.semester?.id || (typeof data.semester === 'number' ? data.semester : (data.semesterId ? Number(data.semesterId) : null));
+
+    const check = timetableEngine.detectConflicts({
+      dayOfWeek: data.dayOfWeek,
+      startTime: data.startTime,
+      endTime: data.endTime,
+      classId: classeId,
+      teacherId,
+      roomId,
+    }, allEntries);
+
+    if (check.hasConflict && !data.overrideConflicts && !data.force) {
+      const err: any = new Error('Conflit détecté');
+      err.status = 409;
+      err.conflicts = check.conflicts;
+      throw err;
+    }
+
+    return (strapi.entityService.create as any)('api::timetable-entry.timetable-entry', {
       data: {
         dayOfWeek: data.dayOfWeek,
         startTime: data.startTime,
         endTime: data.endTime,
+        roomName: data.roomName || null,
+        periodName: data.periodName || null,
+        lessonType: data.lessonType || 'REGULAR',
+        status: data.status || 'PUBLISHED',
+        notes: data.notes || null,
         ...(classeId ? { classe: { connect: [{ id: classeId }] } } : {}),
         ...(subjectId ? { subject: { connect: [{ id: subjectId }] } } : {}),
+        ...(teacherId ? { teacher: { connect: [{ id: teacherId }] } } : {}),
+        ...(roomId ? { room: { connect: [{ id: roomId }] } } : {}),
+        ...(academicYearId ? { academicYear: { connect: [{ id: academicYearId }] } } : {}),
+        ...(semesterId ? { semester: { connect: [{ id: semesterId }] } } : {}),
       } as any,
+      populate: ['classe', 'subject', 'teacher', 'room', 'academicYear', 'semester'],
     });
   },
 
   async updateTimetable(id: number, data: any) {
-    const classeId = data.classe?.id || (typeof data.classe === 'number' ? data.classe : null);
-    const subjectId = data.subject?.id || (typeof data.subject === 'number' ? data.subject : null);
-    return strapi.entityService.update('api::timetable-entry.timetable-entry', id, {
-      data: {
-        dayOfWeek: data.dayOfWeek,
-        startTime: data.startTime,
-        endTime: data.endTime,
-        ...(classeId ? { classe: { connect: [{ id: classeId }] } } : {}),
-        ...(subjectId ? { subject: { connect: [{ id: subjectId }] } } : {}),
-      } as any,
+    const { timetableEngine } = require('./timetable-engine');
+    const allEntries = await (strapi.entityService.findMany as any)('api::timetable-entry.timetable-entry', {
+      filters: { dayOfWeek: data.dayOfWeek },
+      populate: ['classe', 'subject', 'teacher', 'room'],
+    }) as any[];
+
+    const classeId = data.classe?.id || (typeof data.classe === 'number' ? data.classe : (data.classId ? Number(data.classId) : undefined));
+    const subjectId = data.subject?.id || (typeof data.subject === 'number' ? data.subject : (data.subjectId ? Number(data.subjectId) : undefined));
+    const teacherId = data.teacher?.id || (typeof data.teacher === 'number' ? data.teacher : (data.teacherId ? Number(data.teacherId) : undefined));
+    const roomId = data.room?.id || (typeof data.room === 'number' ? data.room : (data.roomId ? Number(data.roomId) : undefined));
+    const academicYearId = data.academicYear?.id || (typeof data.academicYear === 'number' ? data.academicYear : (data.academicYearId ? Number(data.academicYearId) : undefined));
+    const semesterId = data.semester?.id || (typeof data.semester === 'number' ? data.semester : (data.semesterId ? Number(data.semesterId) : undefined));
+
+    const check = timetableEngine.detectConflicts({
+      id,
+      dayOfWeek: data.dayOfWeek,
+      startTime: data.startTime,
+      endTime: data.endTime,
+      classId: classeId,
+      teacherId,
+      roomId,
+    }, allEntries, id);
+
+    if (check.hasConflict && !data.overrideConflicts && !data.force) {
+      const err: any = new Error('Conflit détecté');
+      err.status = 409;
+      err.conflicts = check.conflicts;
+      throw err;
+    }
+
+    const payload: any = {
+      ...(data.dayOfWeek ? { dayOfWeek: data.dayOfWeek } : {}),
+      ...(data.startTime ? { startTime: data.startTime } : {}),
+      ...(data.endTime ? { endTime: data.endTime } : {}),
+      ...(data.roomName !== undefined ? { roomName: data.roomName } : {}),
+      ...(data.periodName !== undefined ? { periodName: data.periodName } : {}),
+      ...(data.lessonType !== undefined ? { lessonType: data.lessonType } : {}),
+      ...(data.status !== undefined ? { status: data.status } : {}),
+      ...(data.notes !== undefined ? { notes: data.notes } : {}),
+    };
+
+    if (classeId !== undefined) payload.classe = classeId ? { set: [{ id: classeId }] } : { set: [] };
+    if (subjectId !== undefined) payload.subject = subjectId ? { set: [{ id: subjectId }] } : { set: [] };
+    if (teacherId !== undefined) payload.teacher = teacherId ? { set: [{ id: teacherId }] } : { set: [] };
+    if (roomId !== undefined) payload.room = roomId ? { set: [{ id: roomId }] } : { set: [] };
+    if (academicYearId !== undefined) payload.academicYear = academicYearId ? { set: [{ id: academicYearId }] } : { set: [] };
+    if (semesterId !== undefined) payload.semester = semesterId ? { set: [{ id: semesterId }] } : { set: [] };
+
+    return (strapi.entityService.update as any)('api::timetable-entry.timetable-entry', id, {
+      data: payload,
+      populate: ['classe', 'subject', 'teacher', 'room', 'academicYear', 'semester'],
     });
   },
 
   async deleteTimetable(id: number) {
-    return strapi.entityService.delete('api::timetable-entry.timetable-entry', id);
+    return (strapi.entityService.delete as any)('api::timetable-entry.timetable-entry', id);
+  },
+
+  async validateTimetable(data: any) {
+    const { timetableEngine } = require('./timetable-engine');
+    const allEntries = await (strapi.entityService.findMany as any)('api::timetable-entry.timetable-entry', {
+      filters: { dayOfWeek: data.dayOfWeek },
+      populate: ['classe', 'subject', 'teacher', 'room'],
+    }) as any[];
+
+    return timetableEngine.detectConflicts(data, allEntries, data.id);
+  },
+
+  async auditTimetable(filters: any) {
+    const { timetableEngine } = require('./timetable-engine');
+    return timetableEngine.auditTimetable(filters || {});
+  },
+
+  async duplicateDay(params: any) {
+    const { timetableEngine } = require('./timetable-engine');
+    return timetableEngine.duplicateDay(params);
+  },
+
+  async duplicateClass(params: any) {
+    const { timetableEngine } = require('./timetable-engine');
+    return timetableEngine.duplicateClass(params);
+  },
+
+  async duplicateTerm(params: any) {
+    const { timetableEngine } = require('./timetable-engine');
+    return timetableEngine.duplicateTerm(params);
+  },
+
+  async publishTimetable(params: any) {
+    const { timetableEngine } = require('./timetable-engine');
+    return timetableEngine.publishTimetable(params);
+  },
+
+  async bulkDeleteTimetable(params: any) {
+    const { timetableEngine } = require('./timetable-engine');
+    return timetableEngine.bulkDelete(params);
+  },
+
+  async getTimetableAnalytics(academicYearId?: number, semesterId?: number) {
+    const { timetableEngine } = require('./timetable-engine');
+    return timetableEngine.getTimetableAnalytics(academicYearId, semesterId);
+  },
+
+  // ─── Room Management ───────────────────────────────────────────────
+
+  async getAllRooms(filters?: any) {
+    const f: any = {};
+    if (filters?.isActive !== undefined) f.isActive = filters.isActive === 'true' || filters.isActive === true;
+    if (filters?.roomType) f.roomType = filters.roomType;
+    return (strapi.entityService.findMany as any)('api::school-room.school-room', {
+      filters: f,
+      sort: [{ name: 'asc' }],
+    });
+  },
+
+  async createRoom(data: any) {
+    return (strapi.entityService.create as any)('api::school-room.school-room', { data });
+  },
+
+  async updateRoom(id: number, data: any) {
+    return (strapi.entityService.update as any)('api::school-room.school-room', id, { data });
+  },
+
+  async deleteRoom(id: number) {
+    return (strapi.entityService.delete as any)('api::school-room.school-room', id);
+  },
+
+  // ─── Time Slot Management ──────────────────────────────────────────
+
+  async getAllTimeSlots(academicYearId?: number) {
+    const f: any = {};
+    if (academicYearId) f.academicYear = { id: academicYearId };
+    return (strapi.entityService.findMany as any)('api::time-slot.time-slot', {
+      filters: f,
+      sort: [{ order: 'asc' }, { startTime: 'asc' }],
+    });
+  },
+
+  async createTimeSlot(data: any) {
+    return (strapi.entityService.create as any)('api::time-slot.time-slot', { data });
+  },
+
+  async updateTimeSlot(id: number, data: any) {
+    return (strapi.entityService.update as any)('api::time-slot.time-slot', id, { data });
+  },
+
+  async deleteTimeSlot(id: number) {
+    return (strapi.entityService.delete as any)('api::time-slot.time-slot', id);
   },
 
   // ─── Exam Management ──────────────────────────────────────────────
