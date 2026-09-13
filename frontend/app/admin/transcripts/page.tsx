@@ -419,7 +419,7 @@ export default function AdminTranscriptsPage() {
         referenceNumber: transcriptData.metadata?.referenceNumber || transcriptData.referenceNumber || 'N/A'
       };
 
-      const qrString = `RELEVE DE NOTES OFFICIEL DE 2CS COMPLEXE SCOLAIRE\n` +
+      const qrString = `RELEVE DE NOTES OFFICIEL DE 2CSCOMPLEXE SCOLAIRE\n` +
         `Ref: ${qrData.referenceNumber}\n` +
         `Nom et prénoms: ${qrData.name}\n` +
         `Matricule: ${qrData.studentId}\n` +
@@ -440,7 +440,7 @@ export default function AdminTranscriptsPage() {
     try {
       const doc = new jsPDF() as any;
       const s = transcriptData.student || {};
-      const sch = transcriptData.school || { name: '2CS COMPLEXE SCOLAIRE', address: '', email: '', phone: '' };
+      const sch = transcriptData.school || { name: '2CSCOMPLEXE SCOLAIRE', address: '', email: '', phone: '' };
       const sum = transcriptData.summary || { totalSubjectsCount: 0, weightedAverageScore: 0, gpa: 0 };
       const meta = transcriptData.metadata || { referenceNumber: 'N/A', generationDate: 'N/A', semesters: [], terms: [] };
 
@@ -461,7 +461,7 @@ export default function AdminTranscriptsPage() {
         doc.setTextColor(255, 255, 255);
         doc.setFont('Helvetica', 'bold');
         doc.setFontSize(18);
-        doc.text((sch.name || '2CS COMPLEXE SCOLAIRE').toUpperCase(), 45, 18);
+        doc.text((sch.name || '2CSCOMPLEXE SCOLAIRE').toUpperCase(), 45, 18);
 
         doc.setFont('Helvetica', 'normal');
         doc.setFontSize(8.5);
@@ -472,7 +472,7 @@ export default function AdminTranscriptsPage() {
         doc.setTextColor(255, 255, 255);
         doc.setFont('Helvetica', 'bold');
         doc.setFontSize(20);
-        doc.text((sch.name || '2CS COMPLEXE SCOLAIRE').toUpperCase(), 14, 18);
+        doc.text((sch.name || '2CSCOMPLEXE SCOLAIRE').toUpperCase(), 14, 18);
 
         doc.setFont('Helvetica', 'normal');
         doc.setFontSize(9);
