@@ -1,4 +1,4 @@
-﻿/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
@@ -334,21 +334,21 @@ function BlueprintsTab() {
               </Select>
             </div>
             <div className="space-y-1"><Label>Période (optionnel)</Label>
-              <Select value={form.semester} onValueChange={v => setForm(f => ({ ...f, semester: v }))}>
+              <Select value={form.semester || '__all__'} onValueChange={v => setForm(f => ({ ...f, semester: v === '__all__' ? '' : v }))}>
                 <SelectTrigger><SelectValue placeholder="Toutes..." /></SelectTrigger>
-                <SelectContent><SelectItem value="">Toutes les périodes</SelectItem>{periods.map(p => <SelectItem key={p.id} value={String(p.id)}>{p.name}</SelectItem>)}</SelectContent>
+                <SelectContent><SelectItem value="__all__">Toutes les périodes</SelectItem>{periods.map(p => <SelectItem key={p.id} value={String(p.id)}>{p.name}</SelectItem>)}</SelectContent>
               </Select>
             </div>
             <div className="space-y-1"><Label>Classe (optionnel)</Label>
-              <Select value={form.classe} onValueChange={v => setForm(f => ({ ...f, classe: v }))}>
+              <Select value={form.classe || '__all__'} onValueChange={v => setForm(f => ({ ...f, classe: v === '__all__' ? '' : v }))}>
                 <SelectTrigger><SelectValue placeholder="Toutes..." /></SelectTrigger>
-                <SelectContent><SelectItem value="">Toutes les classes</SelectItem>{classes.map(c => <SelectItem key={c.id} value={String(c.id)}>{c.name}</SelectItem>)}</SelectContent>
+                <SelectContent><SelectItem value="__all__">Toutes les classes</SelectItem>{classes.map(c => <SelectItem key={c.id} value={String(c.id)}>{c.name}</SelectItem>)}</SelectContent>
               </Select>
             </div>
             <div className="space-y-1"><Label>Barème de notation</Label>
-              <Select value={form.gradingScheme} onValueChange={v => setForm(f => ({ ...f, gradingScheme: v }))}>
+              <Select value={form.gradingScheme || '__default__'} onValueChange={v => setForm(f => ({ ...f, gradingScheme: v === '__default__' ? '' : v }))}>
                 <SelectTrigger><SelectValue placeholder="Par défaut..." /></SelectTrigger>
-                <SelectContent><SelectItem value="">Par défaut</SelectItem>{schemes.map(s => <SelectItem key={s.id} value={String(s.id)}>{s.name}</SelectItem>)}</SelectContent>
+                <SelectContent><SelectItem value="__default__">Par défaut</SelectItem>{schemes.map(s => <SelectItem key={s.id} value={String(s.id)}>{s.name}</SelectItem>)}</SelectContent>
               </Select>
             </div>
           </div>

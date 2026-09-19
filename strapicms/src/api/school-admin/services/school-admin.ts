@@ -21,7 +21,10 @@ export default () => ({
   },
 
   async createUser(data: any) {
-    const userId = data.userId || generateUserId();
+    const firstName = data.firstName || data.name?.split(' ')[0] || 'X';
+    const lastName  = data.lastName  || data.name?.split(' ').slice(1).join(' ') || 'X';
+
+    const userId = data.userId || await generateUserId(firstName, lastName);
 
     // ── Email uniqueness guard ──────────────────────────────────────────────
     if (data.email) {
@@ -42,11 +45,12 @@ export default () => ({
       filters: { type: 'authenticated' },
     }) as any[];
 
-    // Map frontend Next.js payload to Strapi schema
-    const username = data.name || data.username || `user_${Date.now()}`;
+    // Use the email prefix as username — email is already unique, so this prevents
+    // the "attribute must be unique" error when two users share the same full name.
+    const username = data.email.trim().toLowerCase().split('@')[0];
     const schoolRole = data.role || data.schoolRole || 'STUDENT';
 
-    // Remove the frontend 'name' and 'role' fields to prevent DB conflict
+    // Remove the frontend fields to prevent DB conflicts
     const cleanData = { ...data };
     delete cleanData.name;
     delete cleanData.role;
@@ -55,8 +59,10 @@ export default () => ({
     return await strapi.entityService.create('plugin::users-permissions.user' as any, {
       data: {
         ...cleanData,
-        email: data.email.trim().toLowerCase(),  // normalise to lowercase
+        email: data.email.trim().toLowerCase(),
         username,
+        firstName,
+        lastName,
         schoolRole,
         userId,
         password: data.password,

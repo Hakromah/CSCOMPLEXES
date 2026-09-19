@@ -11,9 +11,28 @@
 import crypto from 'crypto';
 
 
-function generateUserId(): string {
-  // 12-character alphanumeric unique ID, matching Spring Boot's userId field
-  return crypto.randomBytes(6).toString('hex').toUpperCase().substring(0, 12);
+async function generateUserId(firstName: string, lastName: string, registrationYear?: number): Promise<string> {
+  const year = registrationYear ?? new Date().getFullYear();
+  const fi = (firstName?.[0] ?? 'X').toUpperCase().replace(/[^A-Z]/g, 'X');
+  const li = (lastName?.[0] ?? 'X').toUpperCase().replace(/[^A-Z]/g, 'X');
+  const yy = String(year).slice(-2);
+  const prefix = `${fi}${li}${yy}`; // e.g. "HK26"
+
+  // strapi.db.query uses raw SQL LIKE — works on uid and string fields alike
+  const existing = await strapi.db.query('plugin::users-permissions.user').findMany({
+    where: { userId: { $startsWith: prefix } },
+    select: ['userId'],
+  }) as Array<{ userId: string }>;
+
+  let maxSeq = 0;
+  for (const user of existing) {
+    const tail = user.userId?.slice(4);
+    const seq = parseInt(tail ?? '0', 10);
+    if (!isNaN(seq) && seq > maxSeq) maxSeq = seq;
+  }
+
+  const nextSeq = maxSeq + 1;
+  return `${prefix}${String(nextSeq).padStart(5, '0')}`;
 }
 
 export default (plugin: any) => {
@@ -57,9 +76,10 @@ export default (plugin: any) => {
     // Auto-generate userId before calling original register
     const body = ctx.request.body;
     if (!body.userId) {
-      // We'll add userId after user creation via lifecycle or by calling the
-      // original and then updating — simplest: just pre-set it on the body
-      body.userId = generateUserId();
+      body.userId = await generateUserId(
+        body.firstName || body.username?.split(' ')[0] || 'X',
+        body.lastName  || body.username?.split(' ')[1] || 'X'
+      );
     }
 
     // Set schoolRole from the request (defaults to STUDENT)
@@ -68,7 +88,7 @@ export default (plugin: any) => {
     }
 
     await originalRegister.call(this, ctx);
-    };
+  };
 
-    return plugin;
+  return plugin;
 };

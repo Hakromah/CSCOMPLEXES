@@ -38,7 +38,8 @@ import EditUserForm from '@/components/forms/EditUserForm';
 import DeleteUserAlert from '@/components/forms/DeleteUserAlert';
 
 const userFormSchema = z.object({
-   name: z.string().min(1, 'Le nom est requis'),
+   firstName: z.string().min(1, 'Le prénom est requis'),
+   lastName: z.string().min(1, 'Le nom de famille est requis'),
    email: z.string().email('Adresse e-mail invalide'),
    password: z.string().min(6, 'Minimum 6 caracteres'),
    role: z.enum(['STUDENT', 'TEACHER', 'ADMIN', 'ACCOUNTANT', 'ACCOUNTLEAD', 'DRIVER', 'WORKER', 'PARENT']),
@@ -85,7 +86,7 @@ export default function UserManagement() {
    const form = useForm<z.infer<typeof userFormSchema>>({
       resolver: zodResolver(userFormSchema),
       defaultValues: {
-         role: 'STUDENT', name: '', email: '', password: '',
+         role: 'STUDENT', firstName: '', lastName: '', email: '', password: '',
          birthDate: '', birthCountry: '', birthCity: '', address: '', gender: '', phoneNumber: ''
       },
    });
@@ -110,7 +111,9 @@ export default function UserManagement() {
          const mappedUsers = response.data.map((u: any) => ({
             ...u,
             role: u.schoolRole,
-            name: u.username || u.name,
+            name: u.firstName && u.lastName
+               ? `${u.firstName} ${u.lastName}`
+               : (u.firstName || u.lastName || u.username || ''),
          }));
          setUsers(mappedUsers);
       } catch (error) {
@@ -531,44 +534,78 @@ export default function UserManagement() {
                <div className="p-8">
                   <Form {...form}>
                      <form onSubmit={form.handleSubmit(handleCreateSubmit)} className="space-y-6">
+
+                        {/* ── Row 1: Prénom + Nom de famille ── */}
                         <div className="grid grid-cols-2 gap-6">
-                           <FormField control={form.control} name="name" render={({ field }) => (
-                              <FormItem><FormLabel className="text-[10px] font-black uppercase text-slate-400">Nom complet</FormLabel><FormControl><Input placeholder="Nom complet" className="rounded-xl bg-slate-50 border-none h-11 px-4" {...field} /></FormControl><FormMessage /></FormItem>
-                           )} />
-                           <FormField control={form.control} name="email" render={({ field }) => (
+                           <FormField control={form.control} name="firstName" render={({ field }) => (
                               <FormItem>
-                                 <FormLabel className="text-[10px] font-black uppercase text-slate-400">Adresse e-mail institutionnelle</FormLabel>
+                                 <FormLabel className="text-[10px] font-black uppercase text-slate-400 flex items-center gap-1.5">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-blue-500 shrink-0" />
+                                    Prénom
+                                 </FormLabel>
                                  <FormControl>
-                                    <div className="relative">
-                                       <Input
-                                          placeholder="email@amf.edu"
-                                          className={`rounded-xl bg-slate-50 border h-11 px-4 transition-colors ${emailDuplicate ? 'border-rose-400 bg-rose-50 focus-visible:ring-rose-300' : 'border-transparent'
-                                             }`}
-                                          {...field}
-                                          onChange={(e) => {
-                                             field.onChange(e);
-                                             checkEmailDuplicate(e.target.value);
-                                          }}
-                                       />
-                                       {emailDuplicate && (
-                                          <AlertCircle size={15} className="absolute right-3 top-3.5 text-rose-500" />
-                                       )}
-                                    </div>
+                                    <Input
+                                       placeholder="ex: Hasan"
+                                       className="rounded-xl bg-slate-50 border border-transparent h-11 px-4 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:border-blue-300 transition-colors"
+                                       {...field}
+                                    />
                                  </FormControl>
                                  <FormMessage />
-                                 {emailDuplicate && (
-                                    <div className="flex items-start gap-2 bg-rose-50 border border-rose-200 rounded-xl px-3 py-2 mt-1">
-                                       <AlertCircle size={14} className="text-rose-500 shrink-0 mt-0.5" />
-                                       <p className="text-[11px] font-bold text-rose-700 leading-snug">
-                                          Cette adresse e-mail est déjà enregistrée pour{' '}
-                                          <span className="font-black">{emailDuplicate.name}</span>{' '}
-                                          <span className="bg-rose-100 text-rose-600 px-1.5 py-0.5 rounded font-black text-[9px] uppercase">{emailDuplicate.role}</span>
-                                       </p>
-                                    </div>
-                                 )}
+                              </FormItem>
+                           )} />
+                           <FormField control={form.control} name="lastName" render={({ field }) => (
+                              <FormItem>
+                                 <FormLabel className="text-[10px] font-black uppercase text-slate-400 flex items-center gap-1.5">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 shrink-0" />
+                                    Nom de famille
+                                 </FormLabel>
+                                 <FormControl>
+                                    <Input
+                                       placeholder="ex: Kromah"
+                                       className="rounded-xl bg-slate-50 border border-transparent h-11 px-4 focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:border-indigo-300 transition-colors"
+                                       {...field}
+                                    />
+                                 </FormControl>
+                                 <FormMessage />
                               </FormItem>
                            )} />
                         </div>
+
+                        {/* ── Row 2: Email (full width) ── */}
+                        <FormField control={form.control} name="email" render={({ field }) => (
+                           <FormItem>
+                              <FormLabel className="text-[10px] font-black uppercase text-slate-400">Adresse e-mail institutionnelle</FormLabel>
+                              <FormControl>
+                                 <div className="relative">
+                                    <Input
+                                       placeholder="email@amf.edu"
+                                       className={`rounded-xl bg-slate-50 border h-11 px-4 transition-colors ${emailDuplicate ? 'border-rose-400 bg-rose-50 focus-visible:ring-rose-300' : 'border-transparent'}`}
+                                       {...field}
+                                       onChange={(e) => {
+                                          field.onChange(e);
+                                          checkEmailDuplicate(e.target.value);
+                                       }}
+                                    />
+                                    {emailDuplicate && (
+                                       <AlertCircle size={15} className="absolute right-3 top-3.5 text-rose-500" />
+                                    )}
+                                 </div>
+                              </FormControl>
+                              <FormMessage />
+                              {emailDuplicate && (
+                                 <div className="flex items-start gap-2 bg-rose-50 border border-rose-200 rounded-xl px-3 py-2 mt-1">
+                                    <AlertCircle size={14} className="text-rose-500 shrink-0 mt-0.5" />
+                                    <p className="text-[11px] font-bold text-rose-700 leading-snug">
+                                       Cette adresse e-mail est déjà enregistrée pour{' '}
+                                       <span className="font-black">{emailDuplicate.name}</span>{' '}
+                                       <span className="bg-rose-100 text-rose-600 px-1.5 py-0.5 rounded font-black text-[9px] uppercase">{emailDuplicate.role}</span>
+                                    </p>
+                                 </div>
+                              )}
+                           </FormItem>
+                        )} />
+
+                        {/* ── Row 3: Mot de passe + Niveau d'accès ── */}
                         <div className="grid grid-cols-2 gap-6 border-t pt-6">
                            <FormField control={form.control} name="password" render={({ field }) => (
                               <FormItem><FormLabel className="text-[10px] font-black uppercase text-slate-400">Mot de passe initial</FormLabel><FormControl><Input type="password" placeholder="••••••••" className="rounded-xl bg-slate-50 border-none h-11 px-4" {...field} /></FormControl><FormMessage /></FormItem>
@@ -591,6 +628,8 @@ export default function UserManagement() {
                               </FormItem>
                            )} />
                         </div>
+
+                        {/* ── Row 4: Date de naissance + Numéro de contact ── */}
                         <div className="grid grid-cols-2 gap-6">
                            <FormField control={form.control} name="birthDate" render={({ field }) => (
                               <FormItem><FormLabel className="text-[10px] font-black uppercase text-slate-400">Date de naissance</FormLabel><FormControl><Input type="date" className="rounded-xl bg-slate-50 border-none h-11 px-4" {...field} /></FormControl></FormItem>
@@ -599,6 +638,8 @@ export default function UserManagement() {
                               <FormItem><FormLabel className="text-[10px] font-black uppercase text-slate-400">Numéro de contact</FormLabel><FormControl><Input placeholder="+..." className="rounded-xl bg-slate-50 border-none h-11 px-4" {...field} /></FormControl></FormItem>
                            )} />
                         </div>
+
+                        {/* ── Row 5: Pays + Ville + Genre ── */}
                         <div className="grid grid-cols-3 gap-4">
                            <FormField control={form.control} name="birthCountry" render={({ field }) => (
                               <FormItem><FormLabel className="text-[10px] font-black uppercase text-slate-400">Pays</FormLabel><FormControl><Input placeholder="Pays" className="rounded-xl bg-slate-50 border-none h-11 px-4" {...field} /></FormControl></FormItem>
@@ -615,9 +656,12 @@ export default function UserManagement() {
                               </FormItem>
                            )} />
                         </div>
+
+                        {/* ── Row 6: Adresse ── */}
                         <FormField control={form.control} name="address" render={({ field }) => (
                            <FormItem><FormLabel className="text-[10px] font-black uppercase text-slate-400">Adresse complète</FormLabel><FormControl><Input placeholder="Adresse complète" className="rounded-xl bg-slate-50 border-none h-11 px-4" {...field} /></FormControl></FormItem>
                         )} />
+
                         <Button
                            type="submit"
                            disabled={isSubmitting || !!emailDuplicate}
