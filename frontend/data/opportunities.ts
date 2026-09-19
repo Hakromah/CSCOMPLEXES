@@ -28,7 +28,7 @@ export const opportunities: Opportunity[] = [
         details: {
             intro: "The Comprehensive Education Scholarship acts as a bridge for students who demonstrate exceptional academic potential but face financial barriers. This program is not just about funding; it's about creating a support system that nurtures talent and fosters leadership.",
             requirements: [
-                "Must be a current student or applicant to AMFOFANA High School.",
+                "Must be a current student or applicant to CSCOMPLEXES.",
                 "Minimum GPA of 3.5 or equivalent.",
                 "Demonstrated financial need.",
                 "Two letters of recommendation from former teachers.",
@@ -77,7 +77,7 @@ export const opportunities: Opportunity[] = [
         publishedDate: "March 10 2026",
         deadline: "April",
         dateNumber: "20 2026",
-      
+
         details: {
             intro: "We believe in the power of expression. The Arts & Culture Grant provides materials, studio time, and exhibition space for students excelling in visual arts, music, or performing arts.",
             requirements: [

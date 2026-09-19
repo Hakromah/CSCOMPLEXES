@@ -67,7 +67,7 @@ export default function DeleteUserAlert({
             Confirmation de Suppression
           </AlertDialogTitle>
           <AlertDialogDescription className="text-slate-500 font-medium">
-            Cette action supprimera définitivement cette identité du registre AMF.
+            Cette action supprimera définitivement cette identité du registre 2CS.
             Les données historiques comme les notes peuvent être archivées, mais le compte sera inaccessible.
           </AlertDialogDescription>
         </AlertDialogHeader>

@@ -57,7 +57,7 @@ export default function BlogPage({ initialPosts = [] }: BlogPageProps) {
             {/* Header */}
             <Breadcrumb
                 title={breadcrumbData?.breadcrumb_title || "School News & Updates"}
-                description={breadcrumbData?.description || "Stay informed about the latest happenings, achievements, and stories from the AMFOFANA community."}
+                description={breadcrumbData?.description || "Stay informed about the latest happenings, achievements, and stories from the 2CSCOMPLEXES community."}
                 image={breadcrumbData?.imageUrl || "https://images.unsplash.com/photo-1544531586-fde5298cdd40?q=80&w=2070&auto=format&fit=crop"}
                 alt={breadcrumbData?.breadcrumb_title || "Blog Header"}
             />

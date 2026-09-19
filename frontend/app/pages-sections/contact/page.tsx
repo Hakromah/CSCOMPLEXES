@@ -142,10 +142,10 @@ export default function ContactPage({ contactInfo, mapSetting }: ContactPageProp
                                 ) : (
                                     <>
                                         <p className="text-gray-600 text-sm leading-relaxed">
-                                            <a href="" className='block w-fit h-fit'> info@amfofana.edu.lr </a>
+                                            <a href="" className='block w-fit h-fit'> info@2cscomplexes.com</a>
                                         </p>
                                         <p className="text-gray-600 text-sm leading-relaxed">
-                                            <a href="" className='block w-fit h-fit'> info@amfofana.edu.lr </a>
+                                            <a href="" className='block w-fit h-fit'> info@2cscomplexes.com </a>
                                         </p>
                                     </>
                                 )}

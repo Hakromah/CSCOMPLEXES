@@ -10,7 +10,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                <div className="flex items-center gap-3">
                   <SchoolLogo className="h-12 w-12" />
                   <div>
-                     <h1 className="text-xl font-bold">Amfofana High School</h1>
+                     <h1 className="text-xl font-bold">2CSCOMPLEXES SCOLAIRES</h1>
                      <p className="text-xs text-gray-500">Inspiring excellence since 1998</p>
                   </div>
                </div>

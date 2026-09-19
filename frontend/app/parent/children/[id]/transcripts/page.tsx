@@ -70,8 +70,8 @@ export default function ChildTranscriptsPage({ params }: { params: Promise<{ id:
         status: 'Verified by Administration',
         referenceNumber: meta.referenceNumber
       };
-      
-      const qrString = `AMF ACADEMY OFFICIAL TRANSCRIPT\n` +
+
+      const qrString = `2CSCOMPLEXES ACADEMIC TRANSCRIPT\n` +
         `Ref: ${qrData.referenceNumber}\n` +
         `Student: ${qrData.name}\n` +
         `Student ID: ${qrData.studentId}\n` +
@@ -97,7 +97,7 @@ export default function ChildTranscriptsPage({ params }: { params: Promise<{ id:
 
       if (logoImg) {
         doc.addImage(logoImg, 'JPEG', 14, 10, 25, 25);
-        
+
         doc.setTextColor(255, 255, 255);
         doc.setFont('Helvetica', 'bold');
         doc.setFontSize(18);
@@ -163,7 +163,7 @@ export default function ChildTranscriptsPage({ params }: { params: Promise<{ id:
       doc.setTextColor(15, 23, 42); // slate-900
       doc.text(meta.referenceNumber || 'N/A', 18, 101);
       doc.text(meta.generationDate || 'N/A', 70, 101);
-      
+
       const semsText = doc.splitTextToSize((meta.semesters || []).join(', ') || 'N/A', 40);
       const termsText = doc.splitTextToSize((meta.terms || []).join(', ') || 'N/A', 35);
       doc.text(semsText, 110, 101);
@@ -240,7 +240,7 @@ export default function ChildTranscriptsPage({ params }: { params: Promise<{ id:
       doc.setTextColor(100, 116, 139);
       doc.setFont('Helvetica', 'bold');
       doc.setFontSize(8);
-      
+
       doc.line(14, sigY + 14, 74, sigY + 14);
       doc.text('OFFICE OF THE REGISTRAR', 14, sigY + 19);
 

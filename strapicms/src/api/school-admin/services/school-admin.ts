@@ -100,7 +100,7 @@ export default () => ({
     if (username) cleanData.username = username;
     const schoolRole = data.role || data.schoolRole;
     if (schoolRole) cleanData.schoolRole = schoolRole;
-    
+
     delete cleanData.name;
     delete cleanData.role;
 
@@ -206,7 +206,7 @@ export default () => ({
   async getMaterialAnalytics() {
     const classes = await strapi.entityService.findMany('api::school-class.school-class') as any[];
     const materials = await strapi.entityService.findMany('api::learning-material.learning-material', { populate: ['classe'] }) as any[];
-    
+
     return classes.map(c => {
       const count = materials.filter(m => m.classe?.id === c.id).length;
       return { className: c.name, downloads: count };
@@ -601,19 +601,19 @@ export default () => ({
     if (!student) throw new Error('Student not found');
 
     // 2. Fetch School / Institutional Details (Contact Info + Navbar)
-    let schoolInfo = { name: 'AMF Academy', address: '', email: '', phone: '' };
+    let schoolInfo = { name: '2CS COMPLEXES', address: '', email: '', phone: '' };
     try {
       const contactInfo = await strapi.entityService.findMany('api::contact-info.contact-info' as any, {
         populate: ['phones', 'email'] as any
       }) as any;
-      
+
       const realContact = Array.isArray(contactInfo) ? contactInfo[0] : contactInfo;
       if (realContact) {
         schoolInfo.address = realContact.address || '';
         schoolInfo.phone = realContact.phones?.[0]?.phones || '';
         schoolInfo.email = realContact.email?.[0]?.address || '';
       }
-      
+
       const navbar = await strapi.entityService.findMany('api::navbar.navbar' as any) as any;
       const realNavbar = Array.isArray(navbar) ? navbar[0] : navbar;
       if (realNavbar) {

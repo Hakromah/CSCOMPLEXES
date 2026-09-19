@@ -16,7 +16,6 @@ const config: Core.Config.Middlewares = [
         'http://localhost:3001',
         'http://127.0.0.1:3001',
         'http://192.168.1.137:3001',
-        'https://amfofana.vercel.app'
       ],
       methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'],
       headers: ['Content-Type', 'Authorization', 'Origin', 'Accept'],

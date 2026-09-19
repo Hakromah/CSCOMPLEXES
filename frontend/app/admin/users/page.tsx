@@ -224,10 +224,10 @@ export default function UserManagement() {
    };
 
    const downloadTemplate = () => {
-      const csv = "name,email,password,role,birthDate,birthCountry,birthCity,address,gender,phoneNumber\nJohn Doe,john@amf.edu,pass123,STUDENT,2005-12-01,USA,New York,123 Broadway,Male,+123456";
+      const csv = "name,email,password,role,birthDate,birthCountry,birthCity,address,gender,phoneNumber\nJohn Doe,john@2cscomplexes.com,pass123,STUDENT,2005-12-01,USA,New York,123 Broadway,Male,+123456";
       const blob = new Blob([csv], { type: 'text/csv' });
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a'); a.href = url; a.download = 'amf_template.csv'; a.click();
+      const a = document.createElement('a'); a.href = url; a.download = '2CSCOMPLEXES_template.csv'; a.click();
    };
 
    const handleStudentSelect = async (studentId: string) => {
@@ -581,7 +581,7 @@ export default function UserManagement() {
                               <FormControl>
                                  <div className="relative">
                                     <Input
-                                       placeholder="email@amf.edu"
+                                       placeholder="email@2cscomplexes.com"
                                        className={`rounded-xl bg-slate-50 border h-11 px-4 transition-colors ${emailDuplicate ? 'border-rose-400 bg-rose-50 focus-visible:ring-rose-300' : 'border-transparent'}`}
                                        {...field}
                                        onChange={(e) => {

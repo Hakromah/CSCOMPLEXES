@@ -47,7 +47,7 @@ export default function AuditLogs() {
 
   const handleExportCSV = () => {
     if (logs.length === 0) return toast.error('No audit logs to export');
-    
+
     const headers = ['ID', 'Action Type', 'Entity Name', 'Entity ID', 'Performed By', 'Timestamp', 'Notes'];
     const rows = logs.map((log) => [
       log.id,
@@ -59,13 +59,13 @@ export default function AuditLogs() {
       log.notes || ''
     ]);
 
-    const csvContent = "data:text/csv;charset=utf-8," 
+    const csvContent = "data:text/csv;charset=utf-8,"
       + [headers.join(','), ...rows.map(e => e.map(val => `"${val.replace(/"/g, '""')}"`).join(","))].join("\n");
-    
+
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `AMFOFANA_System_Audit_Ledger_${new Date().toISOString().split('T')[0]}.csv`);
+    link.setAttribute("download", `2CSCOMPLEXES_System_Audit_Ledger_${new Date().toISOString().split('T')[0]}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -78,7 +78,7 @@ export default function AuditLogs() {
       (log.entityName || '').toLowerCase().includes(search.toLowerCase()) ||
       (log.performedBy?.username || log.performedBy?.name || '').toLowerCase().includes(search.toLowerCase()) ||
       (log.notes || '').toLowerCase().includes(search.toLowerCase());
-    
+
     const matchesAction = actionFilter === 'ALL' || log.actionType === actionFilter;
     return matchesSearch && matchesAction;
   });

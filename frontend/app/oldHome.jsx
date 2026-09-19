@@ -13,7 +13,7 @@ export default function HomePage() {
             <div className="flex flex-col justify-center space-y-4">
               <div className="space-y-2">
                 <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
-                  A.M.FOFANA HIGH SCHOOL
+                  2CS COMPLEXES
                 </h1>
                 <p className="max-w-[600px] text-muted-foreground md:text-xl">
                   Excellence in Education. Future Leaders in the Making.
@@ -97,7 +97,7 @@ export default function HomePage() {
             <div className="space-y-2">
               <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">About Our School</h2>
               <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                Founded on the principles of academic rigor, innovation, and inclusivity, AMFOFANA High School has been a cornerstone of the community for over 50 years. We are dedicated to nurturing well-rounded individuals who are prepared to excel in a rapidly changing world. Our holistic approach to education balances academic achievement with personal growth, encouraging students to explore their passions and develop critical thinking skills.
+                Founded on the principles of academic rigor, innovation, and inclusivity, 2CS COMPLEXES has been a cornerstone of the community for over 50 years. We are dedicated to nurturing well-rounded individuals who are prepared to excel in a rapidly changing world. Our holistic approach to education balances academic achievement with personal growth, encouraging students to explore their passions and develop critical thinking skills.
               </p>
             </div>
           </div>
