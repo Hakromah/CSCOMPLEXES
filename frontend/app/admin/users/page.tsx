@@ -55,8 +55,11 @@ interface User {
    id: number;
    name: string;
    email: string;
+   lastName: string;
+   firstName: string;
    // ... other fields
 }
+
 
 export default function UserManagement() {
    const [users, setUsers] = useState<any[]>([]);

@@ -15,7 +15,7 @@ export default () => ({
     if (role) filters.schoolRole = role.toUpperCase();
     return strapi.entityService.findMany('plugin::users-permissions.user' as any, {
       filters,
-      fields: ['id', 'userId', 'username', 'email', 'schoolRole', 'birthDate',
+      fields: ['id', 'userId', 'username', 'firstName', 'lastName', 'email', 'schoolRole', 'birthDate',
         'birthCountry', 'birthCity', 'address', 'gender', 'phoneNumber', 'createdAt'] as any,
     });
   },
