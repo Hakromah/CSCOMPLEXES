@@ -1,7 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
-// Teacher certificates page — same logic as student view
-// Teachers can view & download certificates issued to them
 
 import { useEffect, useState } from 'react';
 import { Award, Printer, QrCode, Loader2, ShieldCheck, CheckCircle2, XCircle } from 'lucide-react';
@@ -12,13 +10,17 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { buildCertPDF } from '@/app/admin/certificates/page';
+import { buildCertPDF, type CertRecord } from '@/app/admin/certificates/page';
 
-interface CertRecord {
-  id: number; serialNumber: string; studentName: string; studentUserId: string;
-  certificateType: string; programme: string; issueDate: string;
-  verificationHash: string; status: 'Valide' | 'Révoqué';
-  mention?: string; gpa?: number; maxGpa?: number;
+function StatusBadge({ cert }: { cert: CertRecord }) {
+  const isRevoked = String(cert.status || cert.certStatus || '').toLowerCase().includes('revoq') || String(cert.status || cert.certStatus || '').toLowerCase().includes('révoq');
+  const displayStatus = isRevoked ? 'Révoqué' : 'Valide';
+  return (
+    <Badge className={`text-[9px] font-black uppercase border-none px-2 py-0.5 ${isRevoked ? 'bg-rose-100 text-rose-600' : 'bg-emerald-100 text-emerald-700'}`}>
+      {isRevoked ? <XCircle size={9} className="mr-1 inline" /> : <CheckCircle2 size={9} className="mr-1 inline" />}
+      {displayStatus}
+    </Badge>
+  );
 }
 
 export default function TeacherCertificatesPage() {
@@ -38,6 +40,8 @@ export default function TeacherCertificatesPage() {
     load();
   }, []);
 
+  const validCount = certs.filter(c => !String(c.status || c.certStatus || '').toLowerCase().includes('revoq') && !String(c.status || c.certStatus || '').toLowerCase().includes('révoq')).length;
+
   return (
     <div className="p-[clamp(1rem,2vw+1rem,2rem)] space-y-6 bg-slate-50/50 min-h-screen">
       <motion.div initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }}>
@@ -52,7 +56,7 @@ export default function TeacherCertificatesPage() {
       <motion.div initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }} className="grid grid-cols-2 gap-4">
         {[
           { label: 'Total', value: certs.length, bg: 'bg-blue-50', color: 'text-blue-600', icon: <Award size={16}/> },
-          { label: 'Valides', value: certs.filter(c => c.status === 'Valide').length, bg: 'bg-emerald-50', color: 'text-emerald-600', icon: <CheckCircle2 size={16}/> },
+          { label: 'Valides', value: validCount, bg: 'bg-emerald-50', color: 'text-emerald-600', icon: <CheckCircle2 size={16}/> },
         ].map(s => (
           <Card key={s.label} className="border border-slate-100 shadow-sm bg-white rounded-2xl">
             <CardContent className="p-4 flex items-center gap-3">
@@ -103,9 +107,7 @@ export default function TeacherCertificatesPage() {
                       <TableCell className="text-[11px] text-slate-600 max-w-[200px] truncate">{cert.programme}</TableCell>
                       <TableCell className="font-mono text-[11px] text-slate-600">{cert.issueDate}</TableCell>
                       <TableCell>
-                        <Badge className={`text-[9px] font-black uppercase border-none px-2 py-0.5 ${cert.status==='Valide' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-600'}`}>
-                          {cert.status === 'Valide' ? <CheckCircle2 size={9} className="mr-1 inline"/> : <XCircle size={9} className="mr-1 inline"/>}{cert.status}
-                        </Badge>
+                        <StatusBadge cert={cert} />
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-1.5">

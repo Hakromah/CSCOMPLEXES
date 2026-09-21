@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { Users, GraduationCap, Calendar, BarChart2, BookOpen, Shield, ChevronRight, AlertCircle, Bus } from 'lucide-react';
+import { Users, GraduationCap, Calendar, BarChart2, BookOpen, Shield, ChevronRight, AlertCircle, Bus, Award, FileText } from 'lucide-react';
 import api from '@/lib/api';
 import type { SchoolUser } from '@/types/school';
 
@@ -13,6 +13,8 @@ const navCards = [
   { label: 'Exams', href: 'exams', icon: GraduationCap, color: 'bg-amber-50 text-amber-600 border-amber-100' },
   { label: 'Timetable', href: 'timetable', icon: Calendar, color: 'bg-green-50 text-green-600 border-green-100' },
   { label: 'Materials', href: 'materials', icon: BookOpen, color: 'bg-indigo-50 text-indigo-600 border-indigo-100' },
+  { label: 'Certificates', href: 'certificates', icon: Award, color: 'bg-amber-50 text-amber-600 border-amber-100' },
+  { label: 'Transcripts', href: 'transcripts', icon: FileText, color: 'bg-emerald-50 text-emerald-600 border-emerald-100' },
   { label: 'Behavior', href: 'behavior', icon: Shield, color: 'bg-rose-50 text-rose-600 border-rose-100' },
   { label: 'Transport Details', href: 'transport', icon: Bus, color: 'bg-teal-50 text-teal-600 border-teal-100' },
 ];

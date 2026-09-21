@@ -940,34 +940,68 @@ export default () => ({
   },
 
   async getMyCertificates(userId: number) {
-    // First get the user to know their schoolRole and userId string
+    // 1. Fetch the user details
     const users = await strapi.entityService.findMany('plugin::users-permissions.user' as any, {
       filters: { id: userId } as any,
       fields: ['id', 'userId', 'firstName', 'lastName', 'username', 'schoolRole'] as any,
     }) as any[];
     if (!users.length) return [];
     const user = users[0];
-    const userStudentId = (user.userId || user.username || '').toLowerCase();
-    const fullName = (user.firstName && user.lastName)
-      ? (user.firstName + ' ' + user.lastName).toLowerCase()
-      : (user.username || '').toLowerCase();
 
-    // Find certificates where recipientUser = this user OR studentUserId matches
+    const targetUserIds: number[] = [user.id];
+    const targetStudentUserIds: string[] = [
+      (user.userId || '').toLowerCase(),
+      (user.username || '').toLowerCase()
+    ].filter(Boolean);
+    const targetNames: string[] = [
+      (user.firstName && user.lastName) ? (user.firstName + ' ' + user.lastName).toLowerCase() : '',
+      (user.username || '').toLowerCase()
+    ].filter(s => s.length > 2);
+
+    // If PARENT, add all children from their family
+    if (user.schoolRole === 'PARENT') {
+      try {
+        const families = await strapi.db.query('api::family.family').findMany({
+          where: { parents: { id: user.id }, isActive: true },
+          populate: ['students'],
+        }) as any[];
+        const children = families.flatMap((f: any) => f.students || []);
+        for (const child of children) {
+          if (child.id) targetUserIds.push(child.id);
+          if (child.userId) targetStudentUserIds.push(child.userId.toLowerCase());
+          if (child.username) targetStudentUserIds.push(child.username.toLowerCase());
+          const childFullName = (child.firstName && child.lastName)
+            ? (child.firstName + ' ' + child.lastName).toLowerCase()
+            : (child.username || '').toLowerCase();
+          if (childFullName && childFullName.length > 2) targetNames.push(childFullName);
+        }
+      } catch (err) {
+        strapi.log.error('Failed to load parent family children:', err);
+      }
+    }
+
+    // 2. Fetch all certificates with recipientUser
     const all = await strapi.entityService.findMany('api::certificate.certificate' as any, {
       sort: { createdAt: 'desc' },
+      populate: ['recipientUser'],
     }) as any[];
 
-    return all.map((c: any) => ({
-      ...c,
-      status: c.certStatus === 'Revoque' ? 'Révoqué' : 'Valide',
-    })).filter((c: any) => {
+    // 3. Filter and normalize status
+    return (all || []).filter((c: any) => {
+      const rId = c.recipientUser?.id;
       const cUserId = (c.studentUserId || '').toLowerCase();
-      const cName   = (c.studentName  || '').toLowerCase();
-      return (
-        (userStudentId && (cUserId === userStudentId || cUserId.includes(userStudentId))) ||
-        (fullName.length > 2 && (cName.includes(fullName) || fullName.includes(cName)))
-      );
-    });
+      const cName = (c.studentName || '').toLowerCase();
+
+      const matchesRecipient = rId ? targetUserIds.includes(rId) : false;
+      const matchesUserId = targetStudentUserIds.some(uid => uid && (cUserId === uid || cUserId.includes(uid)));
+      const matchesName = targetNames.some(name => name && (cName.includes(name) || name.includes(cName)));
+
+      return matchesRecipient || matchesUserId || matchesName;
+    }).map((c: any) => ({
+      ...c,
+      status: (c.certStatus === 'Revoque' || c.status === 'Révoqué' || c.status === 'Revoque') ? 'Révoqué' : 'Valide',
+      certStatus: (c.certStatus === 'Revoque' || c.status === 'Révoqué' || c.status === 'Revoque') ? 'Revoque' : 'Valide',
+    }));
   },
 
 });

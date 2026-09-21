@@ -1,7 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
-// Parent certificates page — shows certificates issued to their children
-// Parents are matched by their linked student's userId
 
 import { useEffect, useState } from 'react';
 import { Award, Printer, QrCode, Loader2, ShieldCheck, CheckCircle2, XCircle, Users } from 'lucide-react';
@@ -12,13 +10,17 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { buildCertPDF } from '@/app/admin/certificates/page';
+import { buildCertPDF, type CertRecord } from '@/app/admin/certificates/page';
 
-interface CertRecord {
-  id: number; serialNumber: string; studentName: string; studentUserId: string;
-  certificateType: string; programme: string; issueDate: string;
-  verificationHash: string; status: 'Valide' | 'Révoqué';
-  mention?: string; gpa?: number; maxGpa?: number;
+function StatusBadge({ cert }: { cert: CertRecord }) {
+  const isRevoked = String(cert.status || cert.certStatus || '').toLowerCase().includes('revoq') || String(cert.status || cert.certStatus || '').toLowerCase().includes('révoq');
+  const displayStatus = isRevoked ? 'Révoqué' : 'Valide';
+  return (
+    <Badge className={`text-[9px] font-black uppercase border-none px-2 py-0.5 ${isRevoked ? 'bg-rose-100 text-rose-600' : 'bg-emerald-100 text-emerald-700'}`}>
+      {isRevoked ? <XCircle size={9} className="mr-1 inline" /> : <CheckCircle2 size={9} className="mr-1 inline" />}
+      {displayStatus}
+    </Badge>
+  );
 }
 
 export default function ParentCertificatesPage() {
@@ -114,9 +116,7 @@ export default function ParentCertificatesPage() {
                         </TableCell>
                         <TableCell className="font-mono text-[11px] text-slate-600">{cert.issueDate}</TableCell>
                         <TableCell>
-                          <Badge className={`text-[9px] font-black uppercase border-none px-2 py-0.5 ${cert.status==='Valide' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-600'}`}>
-                            {cert.status === 'Valide' ? <CheckCircle2 size={9} className="mr-1 inline"/> : <XCircle size={9} className="mr-1 inline"/>}{cert.status}
-                          </Badge>
+                          <StatusBadge cert={cert} />
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center gap-1.5">

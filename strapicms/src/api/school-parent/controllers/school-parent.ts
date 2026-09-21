@@ -234,6 +234,45 @@ export default {
     ctx.body = transcripts;
   },
 
+  // ─── Certificates ────────────────────────────────────────────────────
+  async getChildCertificates(ctx: any) {
+    const user = ctx.state.user;
+    if (!user || user.schoolRole !== 'PARENT') return ctx.unauthorized('Access denied');
+    try { await _verifyParentAccess(user, Number(ctx.params.id)); } catch (e: any) { ctx.status = e.status; return (ctx.body = { error: e.message }); }
+    const student = await strapi.db.query('plugin::users-permissions.user').findOne({
+      where: { id: Number(ctx.params.id) },
+      select: ['id', 'userId', 'username', 'firstName', 'lastName'],
+    }) as any;
+    if (!student) return ctx.notFound('Student not found');
+    const studentId = student.id;
+    const studentUserId = (student.userId || '').toLowerCase();
+    const fullName = (student.firstName && student.lastName)
+      ? (student.firstName + ' ' + student.lastName).toLowerCase()
+      : (student.username || '').toLowerCase();
+
+    const certs = await strapi.entityService.findMany('api::certificate.certificate' as any, {
+      sort: { createdAt: 'desc' },
+      populate: ['recipientUser'],
+    }) as any[];
+
+    const filtered = (certs || []).filter((c: any) => {
+      const rId = c.recipientUser?.id;
+      const cUserId = (c.studentUserId || '').toLowerCase();
+      const cName = (c.studentName || '').toLowerCase();
+      return (
+        (rId && rId === studentId) ||
+        (studentUserId && (cUserId === studentUserId || cUserId.includes(studentUserId))) ||
+        (fullName.length > 2 && (cName.includes(fullName) || fullName.includes(cName)))
+      );
+    }).map((c: any) => ({
+      ...c,
+      status: (c.certStatus === 'Revoque' || c.status === 'Révoqué' || c.status === 'Revoque') ? 'Révoqué' : 'Valide',
+      certStatus: (c.certStatus === 'Revoque' || c.status === 'Révoqué' || c.status === 'Revoque') ? 'Revoque' : 'Valide',
+    }));
+
+    ctx.body = filtered;
+  },
+
   // ─── Finance ──────────────────────────────────────────────────────────
   async getFamilyFinance(ctx: any) {
     const user = ctx.state.user;

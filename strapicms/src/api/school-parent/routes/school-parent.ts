@@ -15,6 +15,7 @@ export default {
     { method: 'GET',   path: '/parent/children/:id/timetable',          handler: 'school-parent.getChildTimetable' },
     { method: 'GET',   path: '/parent/children/:id/materials',          handler: 'school-parent.getChildMaterials' },
     { method: 'GET',   path: '/parent/children/:id/transcripts',        handler: 'school-parent.getChildTranscripts' },
+    { method: 'GET',   path: '/parent/children/:id/certificates',       handler: 'school-parent.getChildCertificates' },
     { method: 'GET',   path: '/parent/children/:studentId/transcripts/:id/preview', handler: 'school-parent.previewChildTranscript' },
     // Finance
     { method: 'GET',   path: '/parent/finance',                         handler: 'school-parent.getFamilyFinance' },
