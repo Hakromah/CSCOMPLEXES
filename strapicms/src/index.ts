@@ -28,7 +28,7 @@ export default {
           'getAllRooms', 'createRoom', 'updateRoom', 'deleteRoom',
           'getAllTimeSlots', 'createTimeSlot', 'updateTimeSlot', 'deleteTimeSlot', 'getExams', 'lockSemesterExams', 'filterResults',
           'getSummaryReport', 'getSemesterGPA', 'finalizeSemester', 'updateProfile',
-          'changePassword', 'generateTranscript', 'getStudentTranscriptsList',
+          'changePassword', 'generateTranscript', 'getStudentTranscriptsList', 'deleteTranscript',
           'generateTranscriptAuto', 'getAssessmentCategories', 'createAssessmentCategory', 'updateAssessmentCategory', 'deleteAssessmentCategory',
           'getAssessmentBlueprints', 'createAssessmentBlueprint', 'updateAssessmentBlueprint', 'deleteAssessmentBlueprint',
           'getGradingSchemes', 'createGradingScheme', 'updateGradingScheme', 'deleteGradingScheme',

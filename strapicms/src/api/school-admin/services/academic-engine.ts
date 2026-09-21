@@ -187,6 +187,24 @@ export const academicEngine = {
         if (exam.subject?.id) subjectMap.set(exam.subject.id, exam.subject);
       }
 
+      // Also discover any subjects where the student has recorded exam results for this semester & year
+      const studentResults = await (strapi.entityService.findMany as any)('api::exam-result.exam-result', {
+        filters: {
+          student: { id: studentId },
+          exam: {
+            semesterRel: { id: semesterId },
+            academicYear: { id: academicYearId }
+          }
+        },
+        populate: ['exam', 'exam.subject']
+      }) as any[];
+
+      for (const res of (studentResults || [])) {
+        if (res.exam?.subject?.id) {
+          subjectMap.set(res.exam.subject.id, res.exam.subject);
+        }
+      }
+
       const subjectResults: any[] = [];
       for (const [subjectId, subject] of subjectMap.entries()) {
         const result = await this.calculateSubjectResult(studentId, subjectId, semesterId, academicYearId);
@@ -248,9 +266,11 @@ export const academicEngine = {
     };
   },
 
-  async generateTranscriptAuto(studentId: number, academicYearId: number): Promise<any> {
+  async generateTranscriptAuto(studentId: number, academicYearId: number, saveToLedger: boolean = false): Promise<any> {
     const crypto = require('crypto');
-    const student = await (strapi.entityService.findOne as any)('plugin::users-permissions.user', studentId) as any;
+    const student = await (strapi.entityService.findOne as any)('plugin::users-permissions.user', studentId, {
+      populate: ['enrolledClasses']
+    }) as any;
     if (!student) throw new Error('Student not found with ID: ' + studentId);
 
     const academicYear = await (strapi.entityService.findOne as any)('api::academic-year.academic-year', academicYearId) as any;
@@ -260,6 +280,9 @@ export const academicEngine = {
       filters: { students: { id: studentId } }
     }) as any[];
     const classNames = (studentClasses || []).map((c: any) => c.name);
+    if (classNames.length === 0 && student.enrolledClasses) {
+      classNames.push(...student.enrolledClasses.map((c: any) => c.name));
+    }
 
     let schoolInfo = { name: '2CS COMPLEXE SCOLAIRE', address: '', email: '', phone: '' };
     try {
@@ -285,26 +308,53 @@ export const academicEngine = {
     const generationDate = new Date().toISOString();
     const friendlyDate = new Date().toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' });
 
-    try {
-      const existing = await (strapi.entityService.findMany as any)('api::transcript.transcript', { filters: { referenceNumber: refNum } }) as any[];
-      const payload: any = {
-        referenceNumber: refNum,
-        generationDate,
-        gpa: annualResult.annualGPA,
-        averageScore: annualResult.annualAverage,
-        student: studentId,
-        academicYear: academicYearId,
-        class: studentClasses?.[0]?.id || null,
-        semesters: annualResult.periodResults.map((p: any) => p.semesterId),
-        terms: []
-      };
-      if (existing && existing.length > 0) {
-        await (strapi.entityService.update as any)('api::transcript.transcript', existing[0].id, { data: payload });
-      } else {
-        await (strapi.entityService.create as any)('api::transcript.transcript', { data: payload });
+    // Build standardized results list of all evaluated subjects with scores
+    const results: any[] = [];
+    for (const pr of (annualResult.periodResults || [])) {
+      for (const sr of (pr.subjectResults || [])) {
+        if (sr.hasScores) {
+          results.push({
+            id: `${pr.semesterId}-${sr.subjectId}`,
+            subjectId: sr.subjectId,
+            subjectCode: sr.subjectCode || 'N/A',
+            subjectName: sr.subjectName || 'N/A',
+            className: classNames.join(', ') || 'N/A',
+            examName: pr.semesterName || 'Évaluation',
+            semester: pr.semesterName || 'Période',
+            term: pr.periodType || 'Semestre',
+            academicYear: academicYear.name || 'N/A',
+            marks: sr.percentage,
+            letterGrade: sr.letterGrade,
+            gradePoint: sr.gradePoint,
+            remarks: sr.remark || '',
+            scoreBreakdown: sr.scoreBreakdown || []
+          });
+        }
       }
-    } catch (dbErr) {
-      strapi.log.warn('Failed to save auto-transcript to registry:', dbErr);
+    }
+
+    if (saveToLedger) {
+      try {
+        const existing = await (strapi.entityService.findMany as any)('api::transcript.transcript', { filters: { referenceNumber: refNum } }) as any[];
+        const payload: any = {
+          referenceNumber: refNum,
+          generationDate,
+          gpa: annualResult.annualGPA,
+          averageScore: annualResult.annualAverage,
+          student: studentId,
+          academicYear: academicYearId,
+          class: studentClasses?.[0]?.id || null,
+          semesters: annualResult.periodResults.map((p: any) => p.semesterId),
+          terms: []
+        };
+        if (existing && existing.length > 0) {
+          await (strapi.entityService.update as any)('api::transcript.transcript', existing[0].id, { data: payload });
+        } else {
+          await (strapi.entityService.create as any)('api::transcript.transcript', { data: payload });
+        }
+      } catch (dbErr) {
+        strapi.log.warn('Failed to save auto-transcript to registry:', dbErr);
+      }
     }
 
     return {
@@ -320,18 +370,27 @@ export const academicEngine = {
       school: schoolInfo,
       academicYear: { id: academicYearId, name: academicYear.name },
       annualResult,
+      results,
       summary: {
+        totalSubjectsCount: annualResult.totalSubjects,
+        totalSubjects: annualResult.totalSubjects,
+        weightedAverageScore: annualResult.annualAverage,
+        averageScore: annualResult.annualAverage,
         annualAverage: annualResult.annualAverage,
+        gpa: annualResult.annualGPA,
         annualGPA: annualResult.annualGPA,
         annualGrade: annualResult.annualGrade,
         annualRemark: annualResult.annualRemark,
-        totalSubjects: annualResult.totalSubjects,
-        totalPeriods: annualResult.totalPeriods
+        totalPeriods: annualResult.totalPeriods,
+        periodsWithData: annualResult.periodsWithData
       },
       metadata: {
         referenceNumber: refNum,
         generationDate: friendlyDate,
+        academicYears: [academicYear.name],
         academicYearName: academicYear.name,
+        semesters: (annualResult.periodResults || []).map((p: any) => p.semesterName),
+        terms: [],
         generatedAt: generationDate
       }
     };

@@ -70,6 +70,7 @@ export default {
     { method: 'PUT',    path: '/admin/semester/finalize',          handler: 'school-admin.finalizeSemester' },
     { method: 'GET',    path: '/admin/transcripts/generate',       handler: 'school-admin.generateTranscript' },
     { method: 'GET',    path: '/admin/transcripts/student/:studentId', handler: 'school-admin.getStudentTranscriptsList' },
+    { method: 'DELETE', path: '/admin/transcripts/:id',            handler: 'school-admin.deleteTranscript', config: { auth: false } },
 
     // Profile & Password
     { method: 'PUT',    path: '/admin/profile',                    handler: 'school-admin.updateProfile' },

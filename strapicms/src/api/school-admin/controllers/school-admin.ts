@@ -285,7 +285,7 @@ export default {
   },
 
   async generateTranscript(ctx: any) {
-    const { studentId, academicYearId, classId, semesterIds, termIds } = ctx.query;
+    const { studentId, academicYearId, classId, semesterIds, termIds, save } = ctx.query;
     
     if (!studentId) {
       ctx.status = 400;
@@ -305,13 +305,14 @@ export default {
     
     const parsedSemesterIds = parseArray(semesterIds);
     const parsedTermIds = parseArray(termIds);
+    const saveToLedger = save === 'true' || save === true;
 
     ctx.body = await strapi.service('api::school-admin.school-admin').getStudentTranscript(parsedStudentId, {
       academicYearId: parsedAcademicYearId,
       classId: parsedClassId,
       semesterIds: parsedSemesterIds,
       termIds: parsedTermIds
-    });
+    }, saveToLedger);
   },
 
   async getStudentTranscriptsList(ctx: any) {
@@ -326,6 +327,15 @@ export default {
       populate: ['academicYear', 'class', 'semesters', 'terms']
     });
     ctx.body = list;
+  },
+
+  async deleteTranscript(ctx: any) {
+    const user = await _verifyAdmin(ctx);
+    if (!user) return;
+    const { id } = ctx.params;
+    if (!id) return ctx.badRequest('Transcript ID is required');
+    await (strapi.entityService.delete as any)('api::transcript.transcript', Number(id));
+    ctx.body = { deleted: true, id: Number(id) };
   },
 
   // ─── Attendance (Admin read/analytics/delete) ─────────────────────────────
@@ -475,11 +485,12 @@ export default {
   // ─── Assessment Engine Controller Extensions ──────────────────────────────────
   // Auto-transcript: only needs studentId + academicYearId in query
   async generateTranscriptAuto(ctx: any) {
-    const { studentId, academicYearId } = ctx.query;
+    const { studentId, academicYearId, save } = ctx.query;
     if (!studentId || !academicYearId) return ctx.badRequest('studentId and academicYearId are required');
     try {
       const { academicEngine } = require('../services/academic-engine');
-      const data = await academicEngine.generateTranscriptAuto(Number(studentId), Number(academicYearId));
+      const saveToLedger = save === 'true' || save === true;
+      const data = await academicEngine.generateTranscriptAuto(Number(studentId), Number(academicYearId), saveToLedger);
       ctx.body = data;
     } catch (err: any) {
       ctx.status = 500; ctx.body = { error: err.message };

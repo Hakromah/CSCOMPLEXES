@@ -8,7 +8,7 @@ import {
   Award, GraduationCap, CheckSquare, Square,
   Building2, Phone, Mail, UserCheck, Eye, ArrowLeft, Plus,
   Sparkles, Calculator, Users, TrendingUp, CheckCircle2,
-  AlertCircle, Layers, Check
+  AlertCircle, Layers, Check, Trash2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
@@ -310,39 +310,9 @@ export default function AdminTranscriptsPage() {
 
     setGenerating(true);
     try {
-      const response = await api.get(`/admin/transcripts/auto?studentId=${selectedStudentId}&academicYearId=${yearId}`);
+      const response = await api.get(`/admin/transcripts/auto?studentId=${selectedStudentId}&academicYearId=${yearId}&save=true`);
       const data = response.data;
-      const formattedResults = (data.annualResult?.periodResults || []).flatMap((pr: any) =>
-        (pr.subjectResults || []).map((sr: any) => ({
-          id: `${pr.semesterId}-${sr.subjectId}`,
-          subjectName: sr.subjectName || 'N/A',
-          className: data.student?.classes?.join(', ') || 'N/A',
-          examName: pr.semesterName || 'Évaluation',
-          semester: pr.semesterName || 'Période',
-          term: pr.periodType || 'Semestre',
-          marks: sr.percentage,
-          letterGrade: sr.letterGrade,
-          remarks: sr.remark || '',
-        }))
-      );
-
-      const completeTranscript = {
-        ...data,
-        results: formattedResults.length > 0 ? formattedResults : (data.results || []),
-        summary: {
-          totalSubjectsCount: data.annualResult?.totalSubjects || data.summary?.totalSubjects || 0,
-          weightedAverageScore: data.annualResult?.annualAverage || data.summary?.annualAverage || 0,
-          gpa: Number(data.annualResult?.annualGPA || data.summary?.annualGPA || 0),
-        },
-        metadata: {
-          ...data.metadata,
-          academicYears: [data.academicYear?.name || 'N/A'],
-          semesters: (data.annualResult?.periodResults || []).map((p: any) => p.semesterName),
-          terms: [],
-        },
-      };
-
-      setTranscriptData(completeTranscript);
+      setTranscriptData(data);
       setAutoEngineData(data);
       toast.success('Relevé de notes officiel généré et enregistré au registre avec succès');
       await loadIssuedTranscripts(selectedStudentId);
@@ -369,10 +339,11 @@ export default function AdminTranscriptsPage() {
       if (selectedClassId !== 'all') params.append('classId', selectedClassId);
       if (selectedSemesterIds.length > 0) params.append('semesterIds', selectedSemesterIds.join(','));
       if (selectedTermIds.length > 0) params.append('termIds', selectedTermIds.join(','));
+      params.append('save', 'true');
 
       const response = await api.get(`/admin/transcripts/generate?${params.toString()}`);
       setTranscriptData(response.data);
-      toast.success('Le relevé personnalisé a été compilé avec succès');
+      toast.success('Le relevé personnalisé a été compilé et enregistré avec succès');
       await loadIssuedTranscripts(selectedStudentId);
       setActiveTab('preview');
     } catch (error) {
@@ -383,10 +354,17 @@ export default function AdminTranscriptsPage() {
     }
   };
 
-  // View existing transcript from ledger
+  // View existing transcript from ledger (read-only, no save param)
   const handleViewTranscript = async (t: any) => {
     setGenerating(true);
     try {
+      if (t.referenceNumber?.startsWith('TR-AUTO-') && t.academicYear?.id) {
+        const response = await api.get(`/admin/transcripts/auto?studentId=${selectedStudentId}&academicYearId=${t.academicYear.id}`);
+        setTranscriptData(response.data);
+        setActiveTab('preview');
+        return;
+      }
+
       const semesterIdsParam = t.semesters?.map((s: any) => s.id).join(',');
       const termIdsParam = t.terms?.map((tm: any) => tm.id).join(',');
 
@@ -405,6 +383,27 @@ export default function AdminTranscriptsPage() {
       console.error(err);
     } finally {
       setGenerating(false);
+    }
+  };
+
+  // Delete transcript from registry
+  const handleDeleteTranscript = async (id: number) => {
+    if (!window.confirm('Êtes-vous sûr de vouloir supprimer ce relevé de notes du registre officiel ?')) {
+      return;
+    }
+    try {
+      try {
+        await api.delete(`/admin/transcripts/${id}`);
+      } catch (adminErr) {
+        await api.delete(`/transcripts/${id}`);
+      }
+      toast.success('Relevé de notes supprimé du registre avec succès');
+      if (selectedStudentId) {
+        await loadIssuedTranscripts(selectedStudentId);
+      }
+    } catch (err: any) {
+      toast.error('Erreur lors de la suppression: ' + (err?.response?.data?.error || err.message));
+      console.error(err);
     }
   };
 
@@ -508,26 +507,63 @@ export default function AdminTranscriptsPage() {
 
       // Metadata Grid
       doc.setFillColor(248, 250, 252);
-      doc.rect(14, 90, 182, 18, 'F');
+      doc.rect(14, 90, 182, 19, 'F');
       doc.setDrawColor(226, 232, 240);
-      doc.rect(14, 90, 182, 18, 'S');
+      doc.rect(14, 90, 182, 19, 'S');
 
+      // Subtle vertical dividers
+      doc.setDrawColor(235, 240, 245);
+      doc.line(90, 92, 90, 107);
+      doc.line(135, 92, 135, 107);
+      doc.line(168, 92, 168, 107);
+
+      // Col 1: Reference Number
       doc.setFont('Helvetica', 'bold');
-      doc.setFontSize(8);
+      doc.setFontSize(7.5);
       doc.setTextColor(100, 116, 139);
       doc.text('NUMÉRO DE RÉFÉRENCE', 18, 95);
-      doc.text('DATE D\'ÉMISSION', 70, 95);
-      doc.text('SEMESTRES', 110, 95);
-      doc.text('TRIMESTRES', 155, 95);
 
+      doc.setFont('Helvetica', 'bold');
+      doc.setFontSize(7.5);
       doc.setTextColor(15, 23, 42);
-      doc.text(meta.referenceNumber || 'N/A', 18, 101);
-      doc.text(meta.generationDate || 'N/A', 70, 101);
+      const refText = doc.splitTextToSize(meta.referenceNumber || 'N/A', 70);
+      doc.text(refText, 18, 101);
 
-      const semsText = doc.splitTextToSize((meta.semesters || []).join(', ') || 'N/A', 40);
-      const termsText = doc.splitTextToSize((meta.terms || []).join(', ') || 'N/A', 35);
-      doc.text(semsText, 110, 101);
-      doc.text(termsText, 155, 101);
+      // Col 2: Date of Issue
+      doc.setFont('Helvetica', 'bold');
+      doc.setFontSize(7.5);
+      doc.setTextColor(100, 116, 139);
+      doc.text('DATE D\'ÉMISSION', 94, 95);
+
+      doc.setFont('Helvetica', 'normal');
+      doc.setFontSize(8);
+      doc.setTextColor(15, 23, 42);
+      const dateText = doc.splitTextToSize(meta.generationDate || 'N/A', 38);
+      doc.text(dateText, 94, 101);
+
+      // Col 3: Semesters
+      doc.setFont('Helvetica', 'bold');
+      doc.setFontSize(7.5);
+      doc.setTextColor(100, 116, 139);
+      doc.text('SEMESTRES', 139, 95);
+
+      doc.setFont('Helvetica', 'normal');
+      doc.setFontSize(7.5);
+      doc.setTextColor(15, 23, 42);
+      const semsText = doc.splitTextToSize((meta.semesters || []).join(', ') || 'Tous les semestres', 27);
+      doc.text(semsText, 139, 101);
+
+      // Col 4: Terms
+      doc.setFont('Helvetica', 'bold');
+      doc.setFontSize(7.5);
+      doc.setTextColor(100, 116, 139);
+      doc.text('TRIMESTRES', 172, 95);
+
+      doc.setFont('Helvetica', 'normal');
+      doc.setFontSize(7.5);
+      doc.setTextColor(15, 23, 42);
+      const termsText = doc.splitTextToSize((meta.terms || []).length > 0 ? (meta.terms || []).join(', ') : 'Tous les trimestres', 22);
+      doc.text(termsText, 172, 101);
 
       // Results Table
       doc.setFont('Helvetica', 'bold');
@@ -1109,12 +1145,21 @@ export default function AdminTranscriptsPage() {
                                       <TableCell className="text-xs text-slate-500 font-semibold">
                                         {pubDate}
                                       </TableCell>
-                                      <TableCell className="text-right pr-6 py-4">
+                                      <TableCell className="text-right pr-6 py-4 flex items-center justify-end gap-2">
                                         <Button
                                           onClick={() => handleViewTranscript(t)}
                                           className="h-10 bg-slate-900 hover:bg-primary text-white rounded-xl font-bold uppercase text-[9px] tracking-wider transition-all"
                                         >
                                           <Eye size={12} className="mr-1.5" /> Afficher
+                                        </Button>
+                                        <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          onClick={() => handleDeleteTranscript(t.id)}
+                                          className="h-10 w-10 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-xl transition-all"
+                                          title="Supprimer du registre"
+                                        >
+                                          <Trash2 size={14} />
                                         </Button>
                                       </TableCell>
                                     </TableRow>

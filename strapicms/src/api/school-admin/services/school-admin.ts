@@ -15,7 +15,7 @@ export default () => ({
     if (role) filters.schoolRole = role.toUpperCase();
     return strapi.entityService.findMany('plugin::users-permissions.user' as any, {
       filters,
-      fields: ['id', 'userId', 'username', 'firstName', 'lastName', 'email', 'schoolRole', 'birthDate',
+      fields: ['id', 'userId', 'username', 'email', 'schoolRole', 'birthDate',
         'birthCountry', 'birthCity', 'address', 'gender', 'phoneNumber', 'createdAt'] as any,
     });
   },
@@ -50,7 +50,7 @@ export default () => ({
     const username = data.email.trim().toLowerCase().split('@')[0];
     const schoolRole = data.role || data.schoolRole || 'STUDENT';
 
-    // Remove the frontend fields to prevent DB conflicts
+    // Remove the frontend 'name' and 'role' fields to prevent DB conflict
     const cleanData = { ...data };
     delete cleanData.name;
     delete cleanData.role;
@@ -100,7 +100,7 @@ export default () => ({
     if (username) cleanData.username = username;
     const schoolRole = data.role || data.schoolRole;
     if (schoolRole) cleanData.schoolRole = schoolRole;
-
+    
     delete cleanData.name;
     delete cleanData.role;
 
@@ -206,7 +206,7 @@ export default () => ({
   async getMaterialAnalytics() {
     const classes = await strapi.entityService.findMany('api::school-class.school-class') as any[];
     const materials = await strapi.entityService.findMany('api::learning-material.learning-material', { populate: ['classe'] }) as any[];
-
+    
     return classes.map(c => {
       const count = materials.filter(m => m.classe?.id === c.id).length;
       return { className: c.name, downloads: count };
@@ -592,7 +592,7 @@ export default () => ({
     classId?: number;
     semesterIds?: number[];
     termIds?: number[];
-  }) {
+  }, saveToLedger: boolean = false) {
     // 1. Fetch Student details
     const student = await strapi.entityService.findOne('plugin::users-permissions.user' as any, studentId, {
       fields: ['id', 'userId', 'username', 'email', 'birthDate', 'phoneNumber'] as any,
@@ -625,8 +625,7 @@ export default () => ({
 
     // 3. Query Exam Results
     const queryFilters: any = {
-      student: { id: studentId },
-      status: { $in: ['SUBMITTED', 'GRADED'] }
+      student: { id: studentId }
     };
 
     const examFilters: any = {};
@@ -639,7 +638,7 @@ export default () => ({
       queryFilters.exam = examFilters;
     }
 
-    const results = await strapi.entityService.findMany('api::exam-result.exam-result', {
+    let results = await strapi.entityService.findMany('api::exam-result.exam-result', {
       filters: queryFilters,
       populate: {
         exam: {
@@ -648,22 +647,56 @@ export default () => ({
       } as any
     }) as any[];
 
+    // Fallback: If class filter was specified but yielded no results, query without class filter
+    if ((!results || results.length === 0) && filters.classId) {
+      const fallbackExamFilters = { ...examFilters };
+      delete fallbackExamFilters.classe;
+      const fallbackQueryFilters: any = { student: { id: studentId } };
+      if (Object.keys(fallbackExamFilters).length > 0) {
+        fallbackQueryFilters.exam = fallbackExamFilters;
+      }
+      results = await strapi.entityService.findMany('api::exam-result.exam-result', {
+        filters: fallbackQueryFilters,
+        populate: {
+          exam: {
+            populate: ['subject', 'classe', 'academicYear', 'semesterRel', 'termRel']
+          }
+        } as any
+      }) as any[];
+    }
+
     // 4. Map results
-    const transcriptResults = results.map(r => ({
-      id: r.id,
-      examId: r.exam?.id,
-      examName: r.exam?.name,
-      subjectCode: r.exam?.subject?.code,
-      subjectName: r.exam?.subject?.name || 'N/A',
-      className: r.exam?.classe?.name || 'N/A',
-      academicYear: r.exam?.academicYear?.name || r.exam?.academicYear?.year || 'N/A',
-      semester: r.exam?.semesterRel?.name || r.exam?.semester || 'N/A',
-      term: r.exam?.termRel?.name || r.exam?.term || 'N/A',
-      marks: r.marks,
-      letterGrade: r.letterGrade,
-      weight: r.exam?.weight || 0,
-      remarks: r.remarks || ''
-    }));
+    const scoreToGrade = (score: number) => {
+      if (score >= 90) return { letter: 'A', remark: 'Excellent' };
+      if (score >= 85) return { letter: 'A-', remark: 'Tres Bien' };
+      if (score >= 80) return { letter: 'B+', remark: 'Bien' };
+      if (score >= 75) return { letter: 'B', remark: 'Assez Bien' };
+      if (score >= 70) return { letter: 'B-', remark: 'Satisfaisant' };
+      if (score >= 65) return { letter: 'C+', remark: 'Passable' };
+      if (score >= 60) return { letter: 'C', remark: 'Passable' };
+      if (score >= 50) return { letter: 'D', remark: 'Insuffisant' };
+      return { letter: 'F', remark: 'Echec' };
+    };
+
+    const transcriptResults = (results || []).map(r => {
+      const scoreVal = r.marks != null ? Number(r.marks) : (r.rawScore != null ? Number(r.rawScore) : null);
+      const gradeInfo = scoreVal != null ? scoreToGrade(scoreVal) : { letter: 'N/A', remark: '' };
+      return {
+        id: r.id,
+        examId: r.exam?.id,
+        examName: r.exam?.name || 'Assessment',
+        subjectCode: r.exam?.subject?.code || 'N/A',
+        subjectName: r.exam?.subject?.name || 'N/A',
+        className: r.exam?.classe?.name || (student.enrolledClasses || []).map((c: any) => c.name).join(', ') || 'N/A',
+        academicYear: r.exam?.academicYear?.name || r.exam?.academicYear?.year || 'N/A',
+        semester: r.exam?.semesterRel?.name || r.exam?.semester || 'N/A',
+        term: r.exam?.termRel?.name || r.exam?.term || 'N/A',
+        marks: scoreVal,
+        letterGrade: r.letterGrade || gradeInfo.letter,
+        weight: Number(r.exam?.weight || 0),
+        remarks: r.remarks || gradeInfo.remark
+      };
+    });
 
     // 5. Calculate GPA and Average
     let totalWeightedScore = 0;
@@ -671,20 +704,7 @@ export default () => ({
     let totalScore = 0;
     let scoreCount = 0;
 
-    for (const r of transcriptResults) {
-      if (r.marks != null) {
-        totalWeightedScore += r.marks * (r.weight || 1);
-        totalWeight += (r.weight || 1);
-        totalScore += r.marks;
-        scoreCount++;
-      }
-    }
-
-    const averageScore = scoreCount > 0 ? (totalScore / scoreCount).toFixed(2) : '0.00';
-    const weightedAverageScore = totalWeight > 0 ? (totalWeightedScore / totalWeight).toFixed(2) : '0.00';
-
     // standard GPA mapping on a 4.0 scale
-    // AA/A: 4.0, BA/A-: 3.7, BB/B+: 3.3, B: 3.0, CB/B-: 2.7, CC/C+: 2.3, C: 2.0, DC/D: 1.0, FF/F: 0.0
     const scoreToGPA = (score: number) => {
       if (score >= 90) return 4.0;
       if (score >= 85) return 3.7;
@@ -698,53 +718,61 @@ export default () => ({
     };
 
     let totalGPA = 0;
-    let gpaCount = 0;
     for (const r of transcriptResults) {
-      if (r.marks != null) {
+      if (r.marks != null && !isNaN(r.marks)) {
+        const w = r.weight > 0 ? r.weight : 1;
+        totalWeightedScore += r.marks * w;
+        totalWeight += w;
+        totalScore += r.marks;
         totalGPA += scoreToGPA(r.marks);
-        gpaCount++;
+        scoreCount++;
       }
     }
-    const gpa = gpaCount > 0 ? (totalGPA / gpaCount).toFixed(2) : '0.00';
 
-    // Save/Update in DB dynamically to register the official transcript
-    const sortedSemesterIds = (filters.semesterIds || []).slice().sort((a,b) => a - b).join(',');
-    const sortedTermIds = (filters.termIds || []).slice().sort((a,b) => a - b).join(',');
+    const averageScore = scoreCount > 0 ? parseFloat((totalScore / scoreCount).toFixed(2)) : 0;
+    const weightedAverageScore = totalWeight > 0 ? parseFloat((totalWeightedScore / totalWeight).toFixed(2)) : 0;
+    const gpa = scoreCount > 0 ? parseFloat((totalGPA / scoreCount).toFixed(2)) : 0;
+
+    // Save/Update in DB dynamically ONLY if saveToLedger is true
+    const sortedSemesterIds = (filters.semesterIds || []).slice().sort((a: number, b: number) => a - b).join(',');
+    const sortedTermIds = (filters.termIds || []).slice().sort((a: number, b: number) => a - b).join(',');
     const crypto = require('crypto');
     const hashInput = `${studentId}-${filters.academicYearId || 'all'}-${filters.classId || 'all'}-${sortedSemesterIds}-${sortedTermIds}`;
     const hash = crypto.createHash('md5').update(hashInput).digest('hex').substring(0, 8).toUpperCase();
     const referenceNumber = `TR-${student.userId || student.id}-${hash}`;
     const generationDate = new Date().toISOString(); // ISO datetime
-    const friendlyDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    const friendlyDate = new Date().toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' });
 
-    try {
-      const existing = await strapi.entityService.findMany('api::transcript.transcript' as any, {
-        filters: { referenceNumber }
-      }) as any[];
+    if (saveToLedger) {
+      try {
+        const existing = await strapi.entityService.findMany('api::transcript.transcript' as any, {
+          filters: { referenceNumber }
+        }) as any[];
 
-      const transcriptPayload: any = {
-        referenceNumber,
-        generationDate,
-        gpa: parseFloat(gpa),
-        averageScore: parseFloat(weightedAverageScore),
-        student: studentId,
-        academicYear: filters.academicYearId || null,
-        class: filters.classId || null,
-        semesters: filters.semesterIds || [],
-        terms: filters.termIds || []
-      };
+        const transcriptPayload: any = {
+          referenceNumber,
+          generationDate,
+          gpa: gpa,
+          averageScore: weightedAverageScore,
+          student: studentId,
+          academicYear: filters.academicYearId || null,
+          class: filters.classId || null,
+          semesters: filters.semesterIds || [],
+          terms: filters.termIds || []
+        };
 
-      if (existing.length > 0) {
-        await strapi.entityService.update('api::transcript.transcript' as any, existing[0].id, {
-          data: transcriptPayload as any
-        });
-      } else {
-        await strapi.entityService.create('api::transcript.transcript' as any, {
-          data: transcriptPayload as any
-        });
+        if (existing.length > 0) {
+          await strapi.entityService.update('api::transcript.transcript' as any, existing[0].id, {
+            data: transcriptPayload as any
+          });
+        } else {
+          await strapi.entityService.create('api::transcript.transcript' as any, {
+            data: transcriptPayload as any
+          });
+        }
+      } catch (dbError) {
+        strapi.log.error('Failed to save transcript to registry database:', dbError);
       }
-    } catch (dbError) {
-      strapi.log.error('Failed to save transcript to registry database:', dbError);
     }
 
     return {
@@ -760,10 +788,13 @@ export default () => ({
       school: schoolInfo,
       results: transcriptResults,
       summary: {
-        averageScore: parseFloat(averageScore),
-        weightedAverageScore: parseFloat(weightedAverageScore),
-        gpa: parseFloat(gpa),
-        totalSubjectsCount: scoreCount
+        averageScore,
+        weightedAverageScore,
+        annualAverage: weightedAverageScore,
+        gpa,
+        annualGPA: gpa,
+        totalSubjectsCount: scoreCount,
+        totalSubjects: scoreCount
       },
       metadata: {
         referenceNumber,
@@ -866,7 +897,7 @@ export default () => ({
     return strapi.entityService.delete('api::attendance-session.attendance-session', sessionId);
   },
 
-  // ─── Certificates ───────────────────────────────────────────────────────────
+  // ─── Certificates ─────────────────────────────────────────────────────────
 
   async getAllCertificates() {
     const list = await strapi.entityService.findMany('api::certificate.certificate' as any, {
@@ -875,12 +906,13 @@ export default () => ({
     }) as any[];
     return (list || []).map((c: any) => ({
       ...c,
-      status: c.certStatus === 'Revoque' ? 'Révoqué' : 'Valide',
+      status: (c.certStatus === 'Revoque' || c.status === 'Révoqué' || c.status === 'Revoque') ? 'Révoqué' : 'Valide',
+      certStatus: (c.certStatus === 'Revoque' || c.status === 'Révoqué' || c.status === 'Revoque') ? 'Revoque' : 'Valide',
     }));
   },
 
   async createCertificate(data: any) {
-    // Find recipientUser by userId string if provided
+    // Find recipientUser by userId string or id if provided
     let recipientUserId: number | undefined;
     if (data.recipientUserId) {
       const users = await strapi.entityService.findMany('plugin::users-permissions.user' as any, {
@@ -914,6 +946,7 @@ export default () => ({
     return {
       ...created,
       status: 'Valide',
+      certStatus: 'Valide',
     };
   },
 
@@ -924,6 +957,7 @@ export default () => ({
     return {
       ...updated,
       status: 'Révoqué',
+      certStatus: 'Revoque',
     };
   },
 
