@@ -137,31 +137,122 @@ export default () => ({
     const cls = await strapi.entityService.findOne('api::school-class.school-class', classId, {
       populate: ['teachers'],
     }) as any;
-    const existingTeacherIds = (cls.teachers || []).map((t: any) => t.id);
-    if (!existingTeacherIds.includes(teacherId)) {
-      await strapi.entityService.update('api::school-class.school-class' as any, classId, {
-        data: { teachers: { connect: [{ id: teacherId }] } as any },
-      });
+    const existingTeacherIds = (cls?.teachers || []).map((t: any) => t.id);
+    const alreadyAssigned = existingTeacherIds.includes(Number(teacherId));
+    if (!alreadyAssigned) {
+      try {
+        await strapi.entityService.update('api::school-class.school-class' as any, classId, {
+          data: { teachers: [...existingTeacherIds, Number(teacherId)] as any },
+        });
+      } catch {
+        const knex = strapi.db.connection;
+        await knex('school_classes_teachers_lnk').insert({
+          school_class_id: Number(classId),
+          user_id: Number(teacherId),
+        });
+      }
     }
+    return { alreadyAssigned };
   },
 
   async assignStudentToClass(studentId: number, classId: number) {
     const cls = await strapi.entityService.findOne('api::school-class.school-class', classId, {
       populate: ['students'],
     }) as any;
-    const existingStudentIds = (cls.students || []).map((s: any) => s.id);
-    if (!existingStudentIds.includes(studentId)) {
-      await strapi.entityService.update('api::school-class.school-class' as any, classId, {
-        data: { students: { connect: [{ id: studentId }] } as any },
-      });
+    const existingStudentIds = (cls?.students || []).map((s: any) => s.id);
+    const alreadyAssigned = existingStudentIds.includes(Number(studentId));
+    if (!alreadyAssigned) {
+      try {
+        await strapi.entityService.update('api::school-class.school-class' as any, classId, {
+          data: { students: [...existingStudentIds, Number(studentId)] as any },
+        });
+      } catch {
+        const knex = strapi.db.connection;
+        await knex('school_classes_students_lnk').insert({
+          school_class_id: Number(classId),
+          user_id: Number(studentId),
+        });
+      }
     }
+    return { alreadyAssigned };
   },
 
   async getClassesForStudent(studentId: number) {
-    return strapi.entityService.findMany('api::school-class.school-class', {
-      filters: { students: { id: studentId } },
-      populate: ['teachers', 'students'],
-    });
+    try {
+      const allClasses = await strapi.entityService.findMany('api::school-class.school-class', {
+        populate: ['teachers', 'students'],
+      }) as any[];
+      return (allClasses || []).filter((cls: any) =>
+        (cls.students || []).some((s: any) => s.id === Number(studentId))
+      );
+    } catch {
+      const knex = strapi.db.connection;
+      const classRows = await knex('school_classes as sc')
+        .join('school_classes_students_lnk as lnk', 'lnk.school_class_id', 'sc.id')
+        .where('lnk.user_id', Number(studentId))
+        .select('sc.id', 'sc.name', 'sc.grade');
+      return classRows;
+    }
+  },
+
+  async getClassesForTeacher(teacherId: number) {
+    try {
+      const allClasses = await strapi.entityService.findMany('api::school-class.school-class', {
+        populate: ['teachers', 'students'],
+      }) as any[];
+      return (allClasses || []).filter((cls: any) =>
+        (cls.teachers || []).some((t: any) => t.id === Number(teacherId))
+      );
+    } catch {
+      const knex = strapi.db.connection;
+      const classRows = await knex('school_classes as sc')
+        .join('school_classes_teachers_lnk as lnk', 'lnk.school_class_id', 'sc.id')
+        .where('lnk.user_id', Number(teacherId))
+        .select('sc.id', 'sc.name', 'sc.grade');
+      return classRows;
+    }
+  },
+
+  async unassignTeacherFromClass(teacherId: number, classId: number) {
+    try {
+      const cls = await strapi.entityService.findOne('api::school-class.school-class', classId, {
+        populate: ['teachers'],
+      }) as any;
+      if (cls && cls.teachers) {
+        const remainingTeachers = cls.teachers
+          .filter((t: any) => t.id !== Number(teacherId))
+          .map((t: any) => t.id);
+        await strapi.entityService.update('api::school-class.school-class' as any, classId, {
+          data: { teachers: remainingTeachers as any },
+        });
+      }
+    } catch {
+      const knex = strapi.db.connection;
+      await knex('school_classes_teachers_lnk')
+        .where({ school_class_id: Number(classId), user_id: Number(teacherId) })
+        .del();
+    }
+  },
+
+  async unassignStudentFromClass(studentId: number, classId: number) {
+    try {
+      const cls = await strapi.entityService.findOne('api::school-class.school-class', classId, {
+        populate: ['students'],
+      }) as any;
+      if (cls && cls.students) {
+        const remainingStudents = cls.students
+          .filter((s: any) => s.id !== Number(studentId))
+          .map((s: any) => s.id);
+        await strapi.entityService.update('api::school-class.school-class' as any, classId, {
+          data: { students: remainingStudents as any },
+        });
+      }
+    } catch {
+      const knex = strapi.db.connection;
+      await knex('school_classes_students_lnk')
+        .where({ school_class_id: Number(classId), user_id: Number(studentId) })
+        .del();
+    }
   },
 
   // ─── Subject Management ───────────────────────────────────────────

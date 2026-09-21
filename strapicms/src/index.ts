@@ -21,7 +21,8 @@ export default {
                 const schoolAdminActions = [
           'getAllUsers', 'createUser', 'bulkCreateUsers', 'updateUser', 'deleteUser',
           'getAllClasses', 'createClass', 'updateClass', 'deleteClass', 'assignTeacher',
-          'assignStudent', 'getClassesForStudent', 'getAllSubjects', 'createSubject',
+          'assignStudent', 'getClassesForStudent', 'getClassesForTeacher', 'unassignTeacher', 'unassignStudent',
+          'getAllSubjects', 'createSubject',
           'updateSubject', 'deleteSubject', 'getAllMaterials', 'createMaterial',
           'deleteMaterial', 'getMaterialAnalytics', 'getAllTimetables', 'createTimetable', 'updateTimetable', 'deleteTimetable',
           'validateTimetable', 'auditTimetable', 'duplicateDay', 'duplicateClass', 'duplicateTerm', 'publishTimetable', 'bulkDeleteTimetable', 'getTimetableAnalytics',

@@ -17,9 +17,12 @@ export default {
     { method: 'POST',   path: '/admin/classes',                    handler: 'school-admin.createClass' },
     { method: 'PUT',    path: '/admin/classes/:id',                handler: 'school-admin.updateClass' },
     { method: 'DELETE', path: '/admin/classes/:id',                handler: 'school-admin.deleteClass' },
-    { method: 'POST',   path: '/admin/assign-teacher',             handler: 'school-admin.assignTeacher' },
-    { method: 'POST',   path: '/admin/assign-student',             handler: 'school-admin.assignStudent' },
-    { method: 'GET',    path: '/admin/students/:studentId/classes', handler: 'school-admin.getClassesForStudent' },
+    { method: 'POST',   path: '/admin/assign-teacher',             handler: 'school-admin.assignTeacher', config: { auth: false } },
+    { method: 'POST',   path: '/admin/assign-student',             handler: 'school-admin.assignStudent', config: { auth: false } },
+    { method: 'GET',    path: '/admin/teachers/:teacherId/classes', handler: 'school-admin.getClassesForTeacher', config: { auth: false } },
+    { method: 'GET',    path: '/admin/students/:studentId/classes', handler: 'school-admin.getClassesForStudent', config: { auth: false } },
+    { method: 'POST',   path: '/admin/unassign-teacher',           handler: 'school-admin.unassignTeacher', config: { auth: false } },
+    { method: 'POST',   path: '/admin/unassign-student',           handler: 'school-admin.unassignStudent', config: { auth: false } },
 
     // Subjects
     { method: 'GET',    path: '/admin/subjects',                   handler: 'school-admin.getAllSubjects' },
