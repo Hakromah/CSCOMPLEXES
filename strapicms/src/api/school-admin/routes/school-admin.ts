@@ -76,17 +76,16 @@ export default {
     { method: 'PUT',    path: '/admin/change-password',            handler: 'school-admin.changePassword' },
 
     // Attendance (admin read-only + analytics)
-    // auth:false + manual ADMIN check so these work without Strapi panel permission grants
     { method: 'GET',    path: '/admin/attendance',           handler: 'school-admin.getAttendanceSessions',   config: { auth: false } },
     { method: 'GET',    path: '/admin/attendance/analytics', handler: 'school-admin.getAttendanceAnalytics',  config: { auth: false } },
+
     // Parents & Notifications
     { method: 'GET',    path: '/admin/parents',                    handler: 'school-admin.getAllParents' },
     { method: 'POST',   path: '/admin/parents',                    handler: 'school-admin.createParent' },
     { method: 'POST',   path: '/admin/notifications/send',         handler: 'school-admin.sendAdminNotification' },
     { method: 'POST',   path: '/admin/notifications/broadcast',    handler: 'school-admin.broadcastAdminAnnouncement' },
 
-    // ─── Assessment Engine ─────────────────────────────────────────────────────
-    // Auto-transcript (no semesterIds needed — discovers everything from academicYearId)
+    // Assessment Engine — Auto-transcript
     { method: 'GET',    path: '/admin/transcripts/auto',                     handler: 'school-admin.generateTranscriptAuto' },
 
     // Assessment Categories
@@ -107,7 +106,7 @@ export default {
     { method: 'PUT',    path: '/admin/grading-schemes/:id',                   handler: 'school-admin.updateGradingScheme' },
     { method: 'DELETE', path: '/admin/grading-schemes/:id',                   handler: 'school-admin.deleteGradingScheme' },
 
-    // Academic Results (calculated snapshots)
+    // Academic Results
     { method: 'GET',    path: '/admin/academic-results/student/:studentId',   handler: 'school-admin.getStudentAcademicResults' },
     { method: 'GET',    path: '/admin/academic-results/class/:classId',       handler: 'school-admin.getClassAcademicResults' },
 
@@ -115,18 +114,30 @@ export default {
     { method: 'POST',   path: '/admin/recalculate/student/:studentId',        handler: 'school-admin.recalculateStudent' },
     { method: 'POST',   path: '/admin/recalculate/class/:classId',            handler: 'school-admin.recalculateClass' },
 
-    // Dynamic Gradebook (category-aware)
+    // Dynamic Gradebook
     { method: 'GET',    path: '/admin/gradebook/:classId',                    handler: 'school-admin.getDynamicGradebook' },
 
-    // Academic Periods (semesters) management
+    // Academic Years & Periods
     { method: 'GET',    path: '/admin/academic-years',                  handler: 'school-admin.getAllAcademicYears' },
     { method: 'POST',   path: '/admin/academic-years',                  handler: 'school-admin.createAcademicYear' },
     { method: 'PUT',    path: '/admin/academic-years/:id',              handler: 'school-admin.updateAcademicYear' },
     { method: 'DELETE', path: '/admin/academic-years/:id',              handler: 'school-admin.deleteAcademicYear' },
-    
+
     { method: 'GET',    path: '/admin/academic-periods',                      handler: 'school-admin.getAcademicPeriods' },
     { method: 'POST',   path: '/admin/academic-periods',                      handler: 'school-admin.createAcademicPeriod' },
     { method: 'PUT',    path: '/admin/academic-periods/:id',                  handler: 'school-admin.updateAcademicPeriod' },
     { method: 'DELETE', path: '/admin/academic-periods/:id',                  handler: 'school-admin.deleteAcademicPeriod' },
+
+    // ─── Certificates (auth:false + manual JWT — same pattern as attendance) ────
+    { method: 'GET',    path: '/admin/certificates',              handler: 'school-admin.getAllCertificates',    config: { auth: false } },
+    { method: 'POST',   path: '/admin/certificates',              handler: 'school-admin.createCertificate',    config: { auth: false } },
+    { method: 'PUT',    path: '/admin/certificates/:id/revoke',   handler: 'school-admin.revokeCertificate',    config: { auth: false } },
+
+    // Certificate types & mentions (public read — editable from Strapi panel)
+    { method: 'GET',    path: '/admin/certificate-types',         handler: 'school-admin.getCertificateTypes',  config: { auth: false } },
+    { method: 'GET',    path: '/admin/certificate-mentions',      handler: 'school-admin.getCertificateMentions', config: { auth: false } },
+
+    // Student / Parent / Teacher: fetch their own certificates
+    { method: 'GET',    path: '/my/certificates',                 handler: 'school-admin.getMyCertificates',    config: { auth: false } },
   ],
 };

@@ -9,6 +9,7 @@ export default function ParentLayout({ children }: { children: React.ReactNode }
     { name: 'Notifications', href: '/parent/notifications' },
     { name: 'Calendrier Scolaire', href: '/parent/calendar' },
     { name: 'Documents', href: '/parent/documents' },
+    { name: 'Certificats', href: '/parent/certificates' },
     { name: 'Profil', href: '/parent/profile' },
   ];
 

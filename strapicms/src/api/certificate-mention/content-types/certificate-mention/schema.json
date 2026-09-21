@@ -1,0 +1,17 @@
+{
+  "kind": "collectionType",
+  "collectionName": "certificate_mentions",
+  "info": {
+    "singularName": "certificate-mention",
+    "pluralName": "certificate-mentions",
+    "displayName": "Mention (Certificat)",
+    "description": "Mentions académiques disponibles pour les diplômes (configurable par l'administration)"
+  },
+  "options": { "draftAndPublish": false },
+  "pluginOptions": {},
+  "attributes": {
+    "name":        { "type": "string", "required": true, "unique": true },
+    "minAverage":  { "type": "decimal" },
+    "displayOrder":{ "type": "integer", "default": 0 }
+  }
+}

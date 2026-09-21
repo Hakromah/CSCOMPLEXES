@@ -656,6 +656,48 @@ export default {
     await (strapi.entityService.delete as any)('api::semester.semester', ctx.params.id);
     ctx.body = { deleted: true };
   },
+
+  // ─── Certificates ────────────────────────────────────────────────────────────
+  async getAllCertificates(ctx: any) {
+    ctx.body = await strapi.service('api::school-admin.school-admin').getAllCertificates();
+  },
+
+  async createCertificate(ctx: any) {
+    try {
+      ctx.body = await strapi.service('api::school-admin.school-admin').createCertificate(ctx.request.body);
+    } catch (err: any) {
+      ctx.status = 400;
+      ctx.body = { error: { message: err.message } };
+    }
+  },
+
+  async revokeCertificate(ctx: any) {
+    const { id } = ctx.params;
+    ctx.body = await strapi.service('api::school-admin.school-admin').revokeCertificate(Number(id));
+  },
+
+  async getCertificateTypes(ctx: any) {
+    ctx.body = await strapi.service('api::school-admin.school-admin').getCertificateTypes();
+  },
+
+  async getCertificateMentions(ctx: any) {
+    ctx.body = await strapi.service('api::school-admin.school-admin').getCertificateMentions();
+  },
+
+  async getMyCertificates(ctx: any) {
+    const authHeader = ctx.request.headers.authorization || '';
+    const token = authHeader.replace('Bearer ', '').trim();
+    if (!token) { ctx.status = 401; ctx.body = { error: 'Non authentifié' }; return; }
+    try {
+      const decoded: any = await strapi.plugins['users-permissions'].services.jwt.verify(token);
+      const userId = decoded.id;
+      ctx.body = await strapi.service('api::school-admin.school-admin').getMyCertificates(userId);
+    } catch {
+      ctx.status = 401;
+      ctx.body = { error: 'Token invalide' };
+    }
+  },
+
 };
 
 // ─── Helper: verify admin from JWT (for auth:false routes) ────────────────

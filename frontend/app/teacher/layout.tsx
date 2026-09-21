@@ -16,6 +16,7 @@ export default function TeacherLayout({
     { name: 'Gestion des Résultats', href: '/teacher/results' },
     { name: 'Upload des Matériels', href: '/teacher/materials' },
     { name: 'Relevés de notes', href: '/teacher/transcripts' },
+    { name: 'Mes Certificats', href: '/teacher/certificates' },
     { name: 'Messages', href: '/teacher/messages' },
     { name: 'Mon Salaire', href: '/teacher/finance/my-salary' },
     { name: 'Profil', href: '/teacher/profile' },

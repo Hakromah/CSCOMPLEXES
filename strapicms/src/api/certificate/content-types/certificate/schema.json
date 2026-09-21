@@ -1,0 +1,40 @@
+{
+  "kind": "collectionType",
+  "collectionName": "certificates",
+  "info": {
+    "singularName": "certificate",
+    "pluralName": "certificates",
+    "displayName": "Certificat",
+    "description": "Certificats et diplômes officiels émis aux élèves, enseignants et personnels"
+  },
+  "options": { "draftAndPublish": false },
+  "pluginOptions": {},
+  "attributes": {
+    "serialNumber":    { "type": "string", "required": true, "unique": true },
+    "studentName":     { "type": "string", "required": true },
+    "studentUserId":   { "type": "string" },
+    "certificateType": { "type": "string", "required": true },
+    "programme":       { "type": "text" },
+    "issueDate":       { "type": "string" },
+    "verificationHash":{ "type": "string", "unique": true },
+    "certStatus": {
+      "type": "enumeration",
+      "enum": ["Valide", "Revoque"],
+      "default": "Valide",
+      "required": true
+    },
+    "mention":       { "type": "string" },
+    "gpa":           { "type": "decimal" },
+    "maxGpa":        { "type": "decimal" },
+    "totalCredits":  { "type": "integer" },
+    "classRank":     { "type": "string" },
+    "className":     { "type": "string" },
+    "issuedByRole":  { "type": "string" },
+    "note":          { "type": "text" },
+    "recipientUser": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
+    }
+  }
+}

@@ -865,4 +865,109 @@ export default () => ({
     ));
     return strapi.entityService.delete('api::attendance-session.attendance-session', sessionId);
   },
+
+  // ─── Certificates ───────────────────────────────────────────────────────────
+
+  async getAllCertificates() {
+    const list = await strapi.entityService.findMany('api::certificate.certificate' as any, {
+      sort: { createdAt: 'desc' },
+      populate: ['recipientUser'],
+    }) as any[];
+    return (list || []).map((c: any) => ({
+      ...c,
+      status: c.certStatus === 'Revoque' ? 'Révoqué' : 'Valide',
+    }));
+  },
+
+  async createCertificate(data: any) {
+    // Find recipientUser by userId string if provided
+    let recipientUserId: number | undefined;
+    if (data.recipientUserId) {
+      const users = await strapi.entityService.findMany('plugin::users-permissions.user' as any, {
+        filters: { id: data.recipientUserId } as any,
+      }) as any[];
+      if (users.length > 0) recipientUserId = users[0].id;
+    }
+
+    const created = await strapi.entityService.create('api::certificate.certificate' as any, {
+      data: {
+        serialNumber:     data.serialNumber,
+        studentName:      data.studentName,
+        studentUserId:    data.studentUserId,
+        certificateType:  data.certificateType,
+        programme:        data.programme,
+        issueDate:        data.issueDate,
+        verificationHash: data.verificationHash,
+        certStatus:       'Valide',
+        mention:          data.mention,
+        gpa:              data.gpa,
+        maxGpa:           data.maxGpa,
+        totalCredits:     data.totalCredits,
+        classRank:        data.classRank,
+        className:        data.className,
+        issuedByRole:     data.issuedByRole || 'ADMIN',
+        note:             data.note,
+        ...(recipientUserId ? { recipientUser: recipientUserId } : {}),
+      } as any,
+    }) as any;
+
+    return {
+      ...created,
+      status: 'Valide',
+    };
+  },
+
+  async revokeCertificate(id: number) {
+    const updated = await strapi.entityService.update('api::certificate.certificate' as any, id, {
+      data: { certStatus: 'Revoque' } as any,
+    }) as any;
+    return {
+      ...updated,
+      status: 'Révoqué',
+    };
+  },
+
+  async getCertificateTypes() {
+    return strapi.entityService.findMany('api::certificate-type.certificate-type' as any, {
+      sort: { displayOrder: 'asc', name: 'asc' },
+    });
+  },
+
+  async getCertificateMentions() {
+    return strapi.entityService.findMany('api::certificate-mention.certificate-mention' as any, {
+      sort: { displayOrder: 'asc', name: 'asc' },
+    });
+  },
+
+  async getMyCertificates(userId: number) {
+    // First get the user to know their schoolRole and userId string
+    const users = await strapi.entityService.findMany('plugin::users-permissions.user' as any, {
+      filters: { id: userId } as any,
+      fields: ['id', 'userId', 'firstName', 'lastName', 'username', 'schoolRole'] as any,
+    }) as any[];
+    if (!users.length) return [];
+    const user = users[0];
+    const userStudentId = (user.userId || user.username || '').toLowerCase();
+    const fullName = (user.firstName && user.lastName)
+      ? (user.firstName + ' ' + user.lastName).toLowerCase()
+      : (user.username || '').toLowerCase();
+
+    // Find certificates where recipientUser = this user OR studentUserId matches
+    const all = await strapi.entityService.findMany('api::certificate.certificate' as any, {
+      sort: { createdAt: 'desc' },
+    }) as any[];
+
+    return all.map((c: any) => ({
+      ...c,
+      status: c.certStatus === 'Revoque' ? 'Révoqué' : 'Valide',
+    })).filter((c: any) => {
+      const cUserId = (c.studentUserId || '').toLowerCase();
+      const cName   = (c.studentName  || '').toLowerCase();
+      return (
+        (userStudentId && (cUserId === userStudentId || cUserId.includes(userStudentId))) ||
+        (fullName.length > 2 && (cName.includes(fullName) || fullName.includes(cName)))
+      );
+    });
+  },
+
 });

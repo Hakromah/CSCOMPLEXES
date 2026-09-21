@@ -1018,6 +1018,127 @@ export interface ApiBlogPostBlogPost extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiCertificateMentionCertificateMention
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'certificate_mentions';
+  info: {
+    description: "Mentions acad\u00E9miques disponibles pour les dipl\u00F4mes (configurable par l'administration)";
+    displayName: 'Mention (Certificat)';
+    pluralName: 'certificate-mentions';
+    singularName: 'certificate-mention';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    displayOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::certificate-mention.certificate-mention'
+    > &
+      Schema.Attribute.Private;
+    minAverage: Schema.Attribute.Decimal;
+    name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiCertificateTypeCertificateType
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'certificate_types';
+  info: {
+    description: "Liste des types de certificats disponibles (configurable par l'administration)";
+    displayName: 'Type de Certificat';
+    pluralName: 'certificate-types';
+    singularName: 'certificate-type';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    defaultProgramme: Schema.Attribute.Text;
+    displayOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    isGraduation: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::certificate-type.certificate-type'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiCertificateCertificate extends Struct.CollectionTypeSchema {
+  collectionName: 'certificates';
+  info: {
+    description: 'Certificats et dipl\u00F4mes officiels \u00E9mis aux \u00E9l\u00E8ves, enseignants et personnels';
+    displayName: 'Certificat';
+    pluralName: 'certificates';
+    singularName: 'certificate';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    certificateType: Schema.Attribute.String & Schema.Attribute.Required;
+    certStatus: Schema.Attribute.Enumeration<['Valide', 'Revoque']> &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'Valide'>;
+    className: Schema.Attribute.String;
+    classRank: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    gpa: Schema.Attribute.Decimal;
+    issueDate: Schema.Attribute.String;
+    issuedByRole: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::certificate.certificate'
+    > &
+      Schema.Attribute.Private;
+    maxGpa: Schema.Attribute.Decimal;
+    mention: Schema.Attribute.String;
+    note: Schema.Attribute.Text;
+    programme: Schema.Attribute.Text;
+    publishedAt: Schema.Attribute.DateTime;
+    recipientUser: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
+    serialNumber: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    studentName: Schema.Attribute.String & Schema.Attribute.Required;
+    studentUserId: Schema.Attribute.String;
+    totalCredits: Schema.Attribute.Integer;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    verificationHash: Schema.Attribute.String & Schema.Attribute.Unique;
+  };
+}
+
 export interface ApiContactInfoContactInfo extends Struct.SingleTypeSchema {
   collectionName: 'contact_infos';
   info: {
@@ -3581,6 +3702,9 @@ declare module '@strapi/strapi' {
       'api::attendance-session.attendance-session': ApiAttendanceSessionAttendanceSession;
       'api::behavior-record.behavior-record': ApiBehaviorRecordBehaviorRecord;
       'api::blog-post.blog-post': ApiBlogPostBlogPost;
+      'api::certificate-mention.certificate-mention': ApiCertificateMentionCertificateMention;
+      'api::certificate-type.certificate-type': ApiCertificateTypeCertificateType;
+      'api::certificate.certificate': ApiCertificateCertificate;
       'api::contact-info.contact-info': ApiContactInfoContactInfo;
       'api::contact-message.contact-message': ApiContactMessageContactMessage;
       'api::donation.donation': ApiDonationDonation;
