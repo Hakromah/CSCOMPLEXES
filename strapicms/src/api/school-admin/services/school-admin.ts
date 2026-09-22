@@ -15,7 +15,7 @@ export default () => ({
     if (role) filters.schoolRole = role.toUpperCase();
     return strapi.entityService.findMany('plugin::users-permissions.user' as any, {
       filters,
-      fields: ['id', 'userId', 'username', 'email', 'schoolRole', 'birthDate',
+      fields: ['id', 'userId', 'username', 'email', 'firstName', 'lastName', 'schoolRole', 'birthDate',
         'birthCountry', 'birthCity', 'address', 'gender', 'phoneNumber', 'createdAt'] as any,
     });
   },
@@ -96,6 +96,11 @@ export default () => ({
 
   async updateUser(id: number, data: any) {
     const cleanData = { ...data };
+    if (data.name && !data.firstName && !data.lastName) {
+      const parts = data.name.trim().split(/\s+/);
+      cleanData.firstName = parts[0] || '';
+      cleanData.lastName = parts.slice(1).join(' ') || '';
+    }
     const username = data.name || data.username;
     if (username) cleanData.username = username;
     const schoolRole = data.role || data.schoolRole;
