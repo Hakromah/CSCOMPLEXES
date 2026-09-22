@@ -364,12 +364,12 @@ export default function AdminResultsPage() {
 
       {/* ── Tabs ── */}
       <Tabs defaultValue="list" className="w-full">
-        <TabsList className="grid grid-cols-2 max-w-xs rounded-2xl bg-slate-100 p-1">
+        <TabsList className="grid grid-cols-2 sm:max-w-xs rounded-2xl bg-slate-100 max-sm:w-full p-1">
           <TabsTrigger value="list" className="rounded-xl gap-2 font-bold text-xs uppercase tracking-wider data-[state=active]:bg-slate-900 data-[state=active]:text-white transition-all">
-            <ListFilter size={14} /> Afficher les résultats
+            <ListFilter size={14} className='max-sm:hidden' /> Afficher les résultats
           </TabsTrigger>
           <TabsTrigger value="gradebook" className="rounded-xl gap-2 font-bold text-xs uppercase tracking-wider data-[state=active]:bg-slate-900 data-[state=active]:text-white transition-all">
-            <LayoutGrid size={14} /> Cahier de notes
+            <LayoutGrid size={14} className='max-sm:hidden' /> Cahier de notes
           </TabsTrigger>
         </TabsList>
 

@@ -174,9 +174,9 @@ export default function FinanceDashboard() {
   return (
     <div className="p-8 space-y-8 bg-slate-50/50 min-h-screen">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between max-sm:flex-wrap gap-4">
         <div className="space-y-1">
-          <h1 className="text-3xl font-black tracking-tight text-slate-900 leading-none italic uppercase">Centre de commande de la finance</h1>
+          <h1 className="text-3xl max-md:text-2xl font-black tracking-tight text-slate-900 leading-none italic uppercase">Centre de commande de la finance</h1>
           <p className="text-sm text-slate-500 font-medium">Total des audits du grand livre en temps réel et analyse de l'achèvement des paiements</p>
         </div>
         <button

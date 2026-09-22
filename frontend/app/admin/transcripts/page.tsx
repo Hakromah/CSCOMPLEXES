@@ -808,11 +808,11 @@ export default function AdminTranscriptsPage() {
         {/* Right Main Panel */}
         <section className="lg:col-span-8 space-y-6">
           {!selectedStudentId ? (
-            <Card className="h-[480px] flex flex-col items-center justify-center border-2 border-dashed border-slate-200 rounded-[2.5rem] bg-white p-10 print:hidden">
+            <Card className="sm:h-[480px] flex flex-col items-center justify-center border-2 border-dashed border-slate-200 rounded-[2.5rem] bg-white p-10 print:hidden">
               <div className="p-6 bg-[#F8FAFC] border border-slate-100 shadow-xl rounded-3xl mb-6 text-slate-400">
                 <FileText size={44} className="animate-bounce text-primary" />
               </div>
-              <h3 className="text-xl font-black text-slate-900 uppercase tracking-tight">Aucun étudiant sélectionné</h3>
+              <h3 className="text-xl text-center font-black text-slate-900 uppercase tracking-tight">Aucun étudiant sélectionné</h3>
               <p className="text-slate-400 text-xs font-bold uppercase tracking-wider text-center mt-2 max-w-sm">
                 Sélectionnez un étudiant dans la liste pour activer le moteur d'évaluation automatisé et générer son relevé officiel.
               </p>

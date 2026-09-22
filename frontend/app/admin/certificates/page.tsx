@@ -502,12 +502,12 @@ export default function CertificatesPage() {
 
   // ─── Render ──────────────────────────────────────────────────────────────────
   return (
-    <div className="p-[clamp(1rem,2vw+1rem,2rem)] space-y-6 bg-slate-50/50 min-h-screen">
+    <div className="p-[clamp(1rem,2vw+1rem,2rem)] space-y-6 bg-slate-50/50 md:min-h-screen">
 
       {/* ── Header ──────────────────────────────────────────────────────────── */}
       <motion.div initial={{ x:-20, opacity:0 }} animate={{ x:0, opacity:1 }} className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-[clamp(1.2rem,2vw+1rem,1.8rem)] font-black text-slate-900 tracking-tighter flex items-center gap-3 italic">
+          <h1 className="text-[clamp(1.2rem,2vw+1rem,1.8rem)] max-sm:text-2xl font-black text-slate-900 tracking-tighter flex items-center gap-3 italic">
             REGISTRE DES CERTIFICATS <Award className="text-amber-500" size={22}/>
           </h1>
           <p className="text-slate-400 font-bold text-[10px] uppercase tracking-[0.3em] mt-0.5">
@@ -709,7 +709,7 @@ export default function CertificatesPage() {
       {/* ── Registry Table ──────────────────────────────────────────────────── */}
       <motion.div initial={{ y:20, opacity:0 }} animate={{ y:0, opacity:1 }} transition={{ delay:0.2 }}>
         <Card className="border border-slate-100 shadow bg-white rounded-3xl overflow-hidden">
-          <CardHeader className="bg-slate-900 text-white py-4 px-6 flex flex-row items-center justify-between">
+          <CardHeader className="bg-slate-900 text-white py-4 px-6 flex flex-row items-center justify-between max-sm:flex-wrap">
             <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-2">
               <Award size={13} className="text-amber-400"/> Registre des certificats émis
             </CardTitle>

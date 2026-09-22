@@ -61,7 +61,7 @@ export default function AccountingUtilities() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="space-y-1">
-          <h1 className="text-3xl font-black tracking-tight text-slate-900 italic uppercase">Outils comptables système</h1>
+          <h1 className="text-3xl max-md:text-2xl font-black tracking-tight text-slate-900 italic uppercase">Outils comptables système</h1>
           <p className="text-sm text-slate-500 font-medium">Réparation automatique du grand livre, recalcul des statistiques et pistes d'audit immuables</p>
         </div>
       </div>

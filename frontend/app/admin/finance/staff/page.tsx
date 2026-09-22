@@ -505,13 +505,13 @@ export default function StaffFinance() {
     <div className="p-8 space-y-8 bg-slate-50/50 min-h-screen">
 
       {/* ── Header ── */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between max-sm:flex-wrap gap-4">
         <div className="space-y-1">
-          <h1 className="text-3xl font-black tracking-tight text-slate-900 italic uppercase"> Paie & Finances RH</h1>
+          <h1 className="text-3xl max-md:text-2xl font-black tracking-tight text-slate-900 italic uppercase"> Paie & Finances RH</h1>
           <p className="text-sm text-slate-500 font-medium">Gérer les salaires mensuels et les décaissements pour les enseignants, chauffeurs et travailleurs</p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 max-sm:flex-wrap">
           {/* Bulk Submit — Accountant only */}
           {role === 'ACCOUNTANT' && selectedRecordIds.length > 0 && (
             <Button
@@ -543,7 +543,7 @@ export default function StaffFinance() {
 
       {/* ── TABLE 1: Employee Monthly Payroll Accounts ── */}
       <Card className="border-0 shadow-xl shadow-slate-100/50 bg-white rounded-3xl overflow-hidden">
-        <CardHeader className="px-6 py-5 border-b border-slate-50">
+        <CardHeader className="px-6 sm:py-5 border-b border-slate-50">
           <CardTitle className="text-sm font-black uppercase tracking-wider text-slate-500">Comptes de paie mensuels du personnel</CardTitle>
         </CardHeader>
         <CardContent className="p-0">

@@ -199,7 +199,7 @@ export default function FamilyManagement() {
     <div className="min-h-screen bg-[#fcfcfd] p-6 space-y-6">
       <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tighter flex items-center gap-2">
+          <h1 className="text-3xl font-black text-slate-900 max-sm:text-2xl tracking-tighter flex items-center gap-3">
             <Users size={32} className="text-primary" />
             Family Management
           </h1>
@@ -214,7 +214,7 @@ export default function FamilyManagement() {
       </header>
 
       {/* Stats Cards */}
-      <div className="grid gap-6 md:grid-cols-3">
+      <div className="grid gap-6 md:grid-cols-3 grid-cols-2">
         <Card className="rounded-3xl border border-transparent shadow-sm bg-white">
           <CardContent className="p-6">
             <h3 className="text-xs font-black uppercase text-slate-400 tracking-widest">Total Families</h3>
@@ -229,7 +229,7 @@ export default function FamilyManagement() {
             </p>
           </CardContent>
         </Card>
-        <Card className="rounded-3xl border border-transparent shadow-sm bg-white">
+        <Card className="rounded-3xl border border-transparent shadow-sm bg-white max-md:col-span-2">
           <CardContent className="p-6">
             <h3 className="text-xs font-black uppercase text-slate-400 tracking-widest">Linked Students</h3>
             <p className="text-4xl font-black text-slate-900 mt-2">

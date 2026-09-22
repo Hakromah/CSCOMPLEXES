@@ -119,7 +119,7 @@ export default function AdminMaterialsPage() {
    return (
       <div className="min-h-screen bg-[#F8FAFC] p-[clamp(1rem,2vw+1rem,2rem)] space-y-[clamp(1rem,2vw+1rem,2rem)]">
          {/* 1. Header Section */}
-         <header className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-end gap-6">
+         <header className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between md:items-end gap-6">
             <div className="space-y-2">
                <div className="flex items-center gap-2 text-rose-600 font-black text-[10px] uppercase tracking-[0.4em]">
                   <HardDrive size={14} /> Registre du Matériel Global
@@ -147,10 +147,10 @@ export default function AdminMaterialsPage() {
          </header>
 
          {/* 2. ✅ INTEGRATED DOWNLOAD ANALYTICS MINI-GRID */}
-         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-4">
+         <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4">
             {analytics.length > 0 ? (
                analytics.map((item, idx) => (
-                  <Card key={idx} className="p-6 rounded-[clamp(1rem,2vw+1rem,2rem)] shadow-sm border border-primary/0 lg:hover:border-primary duration-300 bg-white flex items-center justify-between border-l-4">
+                  <Card key={idx} className="p-6 rounded-[clamp(1rem,2vw+1rem,2rem)] shadow-sm border border-primary/0 lg:hover:border-primary duration-300 bg-white flex max-sm:flex-col flex-row justify-between border-l-4">
                      <div>
                         <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest leading-none mb-1">
                            {item.className}

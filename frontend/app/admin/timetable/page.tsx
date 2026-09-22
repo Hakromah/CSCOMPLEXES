@@ -726,7 +726,7 @@ export default function TimetableManagement() {
       {/* ─── HEADER ────────────────────────────────────────────────────────── */}
       <header className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
-          <div className="flex items-center gap-2 mb-2">
+          <div className="flex items-center gap-2 mb-2 max-md:mb-3 max-sm:flex-wrap">
             <Badge className="bg-blue-600/10 text-blue-600 border-none px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5">
               <Sparkles size={12} /> Système d'Emploi du Temps Secondaire
             </Badge>
@@ -736,7 +736,7 @@ export default function TimetableManagement() {
               </Badge>
             )}
           </div>
-          <h1 className="text-3xl lg:text-4xl font-black text-slate-950 tracking-tight">
+          <h1 className="text-3xl lg:text-4xl max-md:text-2xl font-black text-slate-950 tracking-tight">
             Centre de Gestion des Emplois du Temps
           </h1>
           <p className="text-xs text-slate-500 font-medium mt-1">

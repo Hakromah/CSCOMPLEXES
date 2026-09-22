@@ -203,7 +203,7 @@ export default function ReportsPage() {
             <LucidePieChart className="text-slate-400" size={20} />
             <h2 className="text-sm font-black uppercase tracking-widest text-slate-400">Indice du capital humain</h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 gap-6">
             <StatCard
               label="Inscription des étudiants"
               value={report?.totalStudents}
@@ -361,7 +361,7 @@ function StatCard({ label, value, icon: Icon, color, sub }: any) {
       </div>
       <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2">{label}</p>
       <div className="flex items-end gap-2 mb-2">
-        <h3 className="text-5xl font-black text-slate-900 tracking-tighter italic leading-none">{value}</h3>
+        <h3 className="text-5xl max-md:text-2xl font-black text-slate-900 tracking-tighter italic leading-none">{value}</h3>
         <TrendingUp size={20} className="text-emerald-500 mb-1" />
       </div>
       <p className="text-xs font-bold text-slate-400">{sub}</p>

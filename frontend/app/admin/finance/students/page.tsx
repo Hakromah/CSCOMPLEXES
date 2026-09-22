@@ -889,13 +889,13 @@ export default function StudentFinance() {
   return (
     <div className="p-8 space-y-8 bg-slate-50/50 min-h-screen">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between max-sm:flex-wrap gap-4">
         <div className="space-y-1">
-          <h1 className="text-3xl font-black tracking-tight text-slate-900 italic uppercase">Grand Livre des Finances des Élèves</h1>
+          <h1 className="text-3xl max-md:text-2xl font-black tracking-tight text-slate-900 italic uppercase">Grand Livre des Finances des Élèves</h1>
           <p className="text-sm text-slate-500 font-medium">Gérer la facturation des élèves, les catégories de facturation et les flux d approbation</p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 max-sm:flex-wrap">
           {role === 'ACCOUNTANT' && selectedInvoiceIds.length > 0 && (
             <Button
               onClick={handleSubmitSelectedInvoices}
@@ -916,14 +916,14 @@ export default function StudentFinance() {
 
           <Button
             onClick={() => { setEditingInvoice(null); setSelectedStudentId(''); setIsInvoiceOpen(true); }}
-            className="flex items-center gap-2 px-5 bg-slate-900 text-white rounded-xl font-bold uppercase tracking-wider text-xs"
+            className="flex items-center gap-2 max-sm:w-full px-5 bg-slate-900 text-white rounded-xl font-bold uppercase tracking-wider text-xs"
           >
             <Plus className="w-4 h-4" /> Créer une facture
           </Button>
 
           <Button
             onClick={() => { setEditingPayment(null); setSelectedInvoiceId(''); setIsPaymentOpen(true); }}
-            className="flex items-center gap-2 px-5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold uppercase tracking-wider text-xs"
+            className="flex items-center gap-2 px-5 max-sm:w-full bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold uppercase tracking-wider text-xs"
           >
             <DollarSign className="w-4 h-4" /> Enregistrer un paiement
           </Button>

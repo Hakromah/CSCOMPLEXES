@@ -92,11 +92,11 @@ export default function FinancialReports() {
   };
 
   return (
-    <div className="p-8 space-y-8 bg-slate-50/50 min-h-screen">
+    <div className="p-8 space-y-8 bg-slate-50/50 md:min-h-screen">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="space-y-1">
-          <h1 className="text-3xl font-black tracking-tight text-slate-900 italic uppercase">Rapports financiers & Exportations</h1>
+          <h1 className="text-3xl max-md:text-2xl font-black tracking-tight text-slate-900 italic uppercase">Rapports financiers & Exportations</h1>
           <p className="text-sm text-slate-500 font-medium">Compiler les audits trimestriels/annuels des profits et pertes, les dettes impayées et l'analyse des revenus</p>
         </div>
       </div>

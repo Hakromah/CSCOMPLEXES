@@ -123,7 +123,7 @@ export default function AdminMessagesPage() {
             <Mail size={18} className="text-primary" />
             <span className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">Message Center</span>
           </div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tighter italic uppercase">
+          <h1 className="text-3xl max-md:text-2xl font-black text-slate-900 tracking-tighter italic uppercase">
             Internal <span className="text-primary">Mailbox.</span>
           </h1>
           <p className="text-slate-400 font-bold text-[10px] uppercase tracking-widest">
@@ -132,7 +132,7 @@ export default function AdminMessagesPage() {
         </div>
 
         <Dialog open={openCompose} onOpenChange={setOpenCompose}>
-          <DialogTrigger asChild>
+          <DialogTrigger asChild className='max-sm:w-full max-sm:max-w-full'>
             <Button className="bg-primary hover:bg-blue-600 text-white rounded-2xl h-12 px-6 font-black transition-all cursor-pointer shadow-md">
               <Plus size={16} className="mr-2" /> New Message
             </Button>
@@ -196,10 +196,10 @@ export default function AdminMessagesPage() {
       </header>
 
       {/* Tabs */}
-      <div className="flex gap-3">
+      <div className="flex gap-3 max-sm:w-full max-sm:justify-between">
         <Button
           onClick={() => { setTab('inbox'); setSelectedMessage(null); }}
-          className={`rounded-2xl font-black text-[10px] uppercase tracking-widest px-6 h-10 gap-2 transition-all cursor-pointer ${
+          className={`rounded-2xl font-black text-[10px] uppercase tracking-widest px-6 max-sm:flex-1 h-10 gap-2 transition-all cursor-pointer ${
             tab === 'inbox' ? 'bg-slate-900 text-white shadow-md' : 'bg-white text-slate-600 border border-slate-200'
           }`}
         >
@@ -207,7 +207,7 @@ export default function AdminMessagesPage() {
         </Button>
         <Button
           onClick={() => { setTab('sent'); setSelectedMessage(null); }}
-          className={`rounded-2xl font-black text-[10px] uppercase tracking-widest px-6 h-10 gap-2 transition-all cursor-pointer ${
+          className={`rounded-2xl font-black text-[10px] uppercase tracking-widest px-6 max-sm:flex-1 h-10 gap-2 transition-all cursor-pointer ${
             tab === 'sent' ? 'bg-slate-900 text-white shadow-md' : 'bg-white text-slate-600 border border-slate-200'
           }`}
         >
@@ -269,7 +269,7 @@ export default function AdminMessagesPage() {
         </Card>
 
         {/* Message Details */}
-        <Card className="lg:col-span-2 border border-slate-100 rounded-3xl bg-white shadow-sm overflow-hidden min-h-[500px] flex flex-col justify-between">
+        <Card className="lg:col-span-2 border border-slate-100 rounded-3xl bg-white shadow-sm overflow-hidden sm:min-h-[500px] flex flex-col justify-between">
           {selectedMessage ? (
             <div className="flex-1 flex flex-col justify-between">
               {/* Message Header */}
@@ -314,7 +314,7 @@ export default function AdminMessagesPage() {
               )}
             </div>
           ) : (
-            <div className="flex-1 flex flex-col items-center justify-center text-slate-400 gap-3 p-12">
+            <div className="sm:flex-1 flex flex-col items-center justify-center text-slate-400 gap-3 p-12">
               <Mail size={40} className="text-slate-200" />
               <p className="text-xs font-bold uppercase tracking-widest">Select a message to view detail</p>
             </div>

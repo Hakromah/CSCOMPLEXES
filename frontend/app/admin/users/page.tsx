@@ -481,7 +481,7 @@ export default function UserManagement() {
                                     <span className="text-xs text-slate-400 flex items-center gap-1 font-medium"><Mail size={12} /> {user.email}</span>
                                  </div>
                               </TableCell>
-                              <TableCell><code className="text-[10px] font-black bg-slate-100 px-2 py-1 rounded text-slate-600 uppercase tracking-tighter">{user.userId}</code></TableCell>
+                              <TableCell><code className="text-[10px] font-black bg-slate-100 px-2 py-1 rounded text-slate-600 uppercase tracking-normal">{user.userId}</code></TableCell>
                               <TableCell>{getRoleBadge(user.role)}</TableCell>
                               <TableCell className="text-xs font-bold text-slate-500 uppercase">{user.gender || '—'}</TableCell>
                               <TableCell className="text-right">

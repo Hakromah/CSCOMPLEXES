@@ -290,13 +290,13 @@ function StatCard({ title, value, icon: Icon, color, sub }: any) {
     <motion.div whileHover={{ y: -5 }} transition={{ type: "spring", stiffness: 300 }}>
       <Card className="border border-slate-100 md:hover:border-primary duration-500 transition-colors shadow-sm relative overflow-hidden bg-white rounded-3xl py-4">
         <div className={`absolute top-0 left-0 w-2 h-full ${colorMap[color].split(' ')[0]}`} />
-        <CardHeader className="flex flex-row items-center justify-between pb-2">
+        <CardHeader className="flex flex-row items-center justify-between pb-2 max-sm:pb-0">
           <CardTitle className="text-[10px] font-black uppercase text-slate-400 tracking-widest">{title}</CardTitle>
           <div className="p-2 rounded-xl bg-slate-50">
             <Icon className={`w-5 h-5 ${colorMap[color].split(' ')[1]}`} />
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="max-sm:flex max-sm:gap-2">
           <div className="text-4xl font-black text-slate-900 tracking-tighter">{value?.toLocaleString() ?? 0}</div>
           <p className="text-[10px] font-bold text-slate-400 mt-2 uppercase flex items-center gap-1">
             <TrendingUp className="w-3 h-3 text-emerald-500" /> {sub}

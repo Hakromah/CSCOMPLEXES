@@ -189,7 +189,7 @@ export default function AdvancedClassesPage() {
                   </DropdownMenu>
                 </div>
 
-                <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-100 md:hover:border-primary duration-500 hover:shadow-2xl hover:-translate-y-2 transition-all h-full flex flex-col justify-between relative">
+                <div className="bg-white max-sm:border max-sm:border-primary/30 rounded-[2.5rem] p-8 max-sm:p-5 shadow-sm  md:hover:border-primary duration-500 hover:shadow-2xl lg:hover:-translate-y-2 transition-all h-full flex flex-col justify-between relative">
                   <div>
                     <div className="w-14 h-14 rounded-2xl bg-slate-900 flex items-center justify-center text-white mb-8">
                       <Landmark size={24} />
@@ -199,13 +199,13 @@ export default function AdvancedClassesPage() {
                       <Badge className="bg-blue-50 text-primary hover:bg-blue-50 border-none rounded-lg font-black text-[9px] px-3 mb-2 tracking-[0.2em]">
                         NIVEAU {c.grade}
                       </Badge>
-                      <h3 className="text-3xl font-black text-slate-900 tracking-tighter italic uppercase group-hover:text-primary transition-colors pr-8">
+                      <h3 className="text-3xl max-sm:text-xl font-black text-slate-900 tracking-tighter italic uppercase group-hover:text-primary transition-colors pr-8">
                         {c.name}
                       </h3>
                     </div>
                   </div>
 
-                  <div className="mt-8 pt-6 border-t border-slate-50 flex items-center justify-between">
+                  <div className="mt-8 max-sm:mt-3 sm:pt-6 border-t border-slate-50 flex items-center justify-between">
                     <div className="flex flex-col">
                       <span className="text-[9px] font-black text-slate-300 uppercase tracking-widest">ENREGISTREMENT</span>
                       <div className="flex items-center gap-1.5 text-slate-600 font-bold">

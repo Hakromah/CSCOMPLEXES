@@ -221,7 +221,7 @@ export default function Sidebar({ menuItems }: SidebarProps) {
 
 
    const renderContent = () => (
-      <div className="flex flex-col h-full bg-white">
+      <div className="flex flex-col h-full bg-white border-r border-primary/30">
          {/* Branding Section */}
          <div className="flex items-center justify-between px-7 h-24 border-b border-slate-50">
             <div className="flex items-center gap-3">
@@ -260,10 +260,10 @@ export default function Sidebar({ menuItems }: SidebarProps) {
                         return (
                            <Link key={item.name} href={item.href} className="group">
                               <div
-                                 className={`relative flex items-center gap-3 h-11 px-4 rounded-xl transition-all
+                                 className={`group/list relative flex items-center gap-3 h-11 px-4 rounded-xl transition-all
                                     ${isActive
                                        ? 'bg-slate-900 text-white'
-                                       : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
+                                       : 'text-slate-500 lg:hover:bg-primary lg:hover:text-white duration-500'
                                     }`}
                               >
                                  {/* Active Indicator */}
@@ -278,13 +278,13 @@ export default function Sidebar({ menuItems }: SidebarProps) {
                                     {getIcon(item.name)}
                                  </span> */}
                                  <span
-                                    className={`transition-colors ${isActive
+                                    className={`transition-colors group/list ${isActive
                                        ? 'text-blue-400'
-                                       : 'text-slate-400 group-hover:text-slate-700'
+                                       : 'text-slate-500  lg:group-hover/list:text-white duration-500'
                                        }`}
                                  >
                                     {Icon ? (
-                                       <Icon className="w-4 h-4 text-indigo-600" />
+                                       <Icon className="w-4 h-4  text-indigo-600 lg:group-hover/list:text-white duration-500" />
                                     ) : (
                                        getIcon(item.name)
                                     )}

@@ -169,7 +169,7 @@ export default function AdvancedSubjectsPage() {
                   exit={{ opacity: 0, scale: 0.9 }}
                   className="group relative"
                 >
-                  <div className="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 md:hover:border-primary duration-500 hover:shadow-2xl hover:-translate-y-2 transition-all h-full flex flex-col justify-between">
+                  <div className="bg-white rounded-3xl p-5 sm:shadow-sm border border-slate-100 max-sm:border-primary/30 md:hover:border-primary duration-500 hover:shadow-2xl hover:-translate-y-2 transition-all h-full flex flex-col justify-between">
                     <div className="flex justify-between items-start mb-4">
                       <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-primary group-hover:bg-blue-600 group-hover:text-white transition-colors duration-500">
                         <BookOpen size={20} />

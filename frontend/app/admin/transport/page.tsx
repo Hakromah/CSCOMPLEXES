@@ -203,10 +203,10 @@ export default function TransportManagement() {
   );
 
   return (
-    <div className="min-h-screen bg-[#fcfcfd] p-6 space-y-6">
+    <div className="sm:min-h-screen bg-[#fcfcfd] p-6 space-y-6">
       <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tighter flex items-center gap-2">
+          <h1 className="text-3xl max-md:text-2xl font-black text-slate-900 tracking-tighter flex items-center gap-2">
             <Bus size={32} className="text-primary" />
             School Transport Assignments
           </h1>
