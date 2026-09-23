@@ -30,19 +30,20 @@ import {
 const calculateLetterGrade = (marks: number | string): string => {
   const score = typeof marks === 'string' ? parseFloat(marks) : marks;
   if (isNaN(score)) return '-';
-  if (score >= 90) return 'AA';
-  if (score >= 85) return 'BA';
-  if (score >= 80) return 'BB';
-  if (score >= 75) return 'CB';
-  if (score >= 70) return 'CC';
-  if (score >= 60) return 'DC';
-  if (score >= 50) return 'DD';
-  return 'FF';
+  const val = score > 20 ? score / 5 : score;
+  if (val >= 18) return 'A+';
+  if (val >= 16) return 'A';
+  if (val >= 14) return 'B';
+  if (val >= 12) return 'C';
+  if (val >= 10) return 'D';
+  if (val >= 8) return 'E';
+  return 'F';
 };
 
 const gradeColor = (score: number) => {
-  if (score >= 80) return 'text-emerald-600';
-  if (score >= 60) return 'text-amber-600';
+  const val = score > 20 ? score / 5 : score;
+  if (val >= 14) return 'text-emerald-600';
+  if (val >= 10) return 'text-amber-600';
   return 'text-red-500';
 };
 
@@ -61,10 +62,10 @@ const exportGradebookPDF = (
   try {
     const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' }) as any;
     const pageW = doc.internal.pageSize.getWidth();
-    const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    const date = new Date().toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' });
 
     // ── Dark header bar ──
-    doc.setFillColor(15, 23, 42);
+    doc.setFillColor(43, 76, 126);
     doc.rect(0, 0, pageW, 28, 'F');
 
     doc.setTextColor(255, 255, 255);
@@ -74,23 +75,23 @@ const exportGradebookPDF = (
 
     doc.setFont('Helvetica', 'normal');
     doc.setFontSize(8);
-    doc.setTextColor(156, 163, 175);
-    doc.text('Rapport de notes officiel  •  Système de gestion des résultats', 14, 17);
+    doc.setTextColor(200, 220, 245);
+    doc.text('Carnet de notes officiel (Barème sur 20)  •  Système de gestion des résultats', 14, 17);
     doc.text(`Généré le : ${date}`, 14, 22);
 
     // Class badge (right side)
-    doc.setFillColor(37, 99, 235);
+    doc.setFillColor(110, 190, 68);
     doc.roundedRect(pageW - 60, 6, 46, 16, 3, 3, 'F');
     doc.setTextColor(255, 255, 255);
     doc.setFont('Helvetica', 'bold');
     doc.setFontSize(10);
-    doc.text(`CLASS: ${className}`, pageW - 37, 16, { align: 'center' });
+    doc.text(`CLASSE: ${className}`, pageW - 37, 16, { align: 'center' });
 
     // ── Section title ──
     doc.setTextColor(15, 23, 42);
     doc.setFont('Helvetica', 'bold');
     doc.setFontSize(11);
-    doc.text('MATRICE DE PERFORMANCE ACADÉMIQUE', 14, 38);
+    doc.text('MATRICE DE PERFORMANCE ACADÉMIQUE (SUR 20)', 14, 38);
 
     doc.setFont('Helvetica', 'normal');
     doc.setFontSize(8);
@@ -99,9 +100,9 @@ const exportGradebookPDF = (
 
     // ── Table columns ──
     const head = [
-      ['#', 'Nom et prénom de l\'élève', 'ID de l\'élève',
-        ...exams.map((e: any) => `${e?.name || '?'}\n(${e?.weight ?? 0}%)`),
-        'Moyenne pondérée', 'Note',
+      ['#', 'Nom et prénom de l\'élève', 'Matricule',
+        ...exams.map((e: any) => `${e?.name || '?'}\n(Coef: ${e?.weight ?? 1})`),
+        'Moyenne (/20)', 'Mention',
       ],
     ];
 
@@ -114,14 +115,19 @@ const exportGradebookPDF = (
       const avg = validScores.length > 0
         ? (validScores.reduce((a: number, b: number) => a + b, 0) / validScores.length)
         : null;
-      const avgStr = avg !== null ? `${avg.toFixed(1)}%` : '-';
-      const grade = avg !== null ? calculateLetterGrade(avg) : '-';
+      const avgVal20 = avg !== null ? (avg > 20 ? avg / 5 : avg) : null;
+      const avgStr = avgVal20 !== null ? `${avgVal20.toFixed(2)} / 20` : '-';
+      const grade = avgVal20 !== null ? calculateLetterGrade(avgVal20) : '-';
 
       return [
         String(idx + 1),
-        student.name || 'Unknown',
+        student.name || 'Inconnu',
         student.userId || 'N/A',
-        ...scores.map((s: any) => (s !== null ? String(s) : '-')),
+        ...scores.map((s: any) => {
+          if (s === null) return '-';
+          const sVal20 = s > 20 ? s / 5 : s;
+          return `${Number(sVal20).toFixed(2)}`;
+        }),
         avgStr,
         grade,
       ];
@@ -133,7 +139,7 @@ const exportGradebookPDF = (
       body,
       theme: 'grid',
       headStyles: {
-        fillColor: [15, 23, 42] as any,
+        fillColor: [43, 76, 126] as any,
         textColor: [255, 255, 255],
         fontSize: 7.5,
         fontStyle: 'bold',
@@ -152,8 +158,8 @@ const exportGradebookPDF = (
         1: { cellWidth: 38, fontStyle: 'bold' },
         2: { cellWidth: 28, font: 'courier', fontSize: 7 },
         // exam columns: auto width
-        [exams.length + 3]: { halign: 'center', cellWidth: 20, fontStyle: 'bold', textColor: [37, 99, 235] as any },
-        [exams.length + 4]: { halign: 'center', cellWidth: 14, fontStyle: 'bold' },
+        [exams.length + 3]: { halign: 'center', cellWidth: 22, fontStyle: 'bold', textColor: [43, 76, 126] as any },
+        [exams.length + 4]: { halign: 'center', cellWidth: 16, fontStyle: 'bold' },
       },
       didParseCell: (data: any) => {
         if (data.section === 'body') {
@@ -162,10 +168,10 @@ const exportGradebookPDF = (
           if (colIdx >= 3 && colIdx < exams.length + 3) {
             const raw = parseFloat(data.cell.raw as string);
             if (!isNaN(raw)) {
-              if (raw < 50) {
+              if (raw < 10) {
                 data.cell.styles.textColor = [220, 38, 38]; // red
                 data.cell.styles.fontStyle = 'bold';
-              } else if (raw >= 80) {
+              } else if (raw >= 14) {
                 data.cell.styles.textColor = [5, 150, 105]; // green
               }
               data.cell.styles.halign = 'center';
@@ -174,8 +180,8 @@ const exportGradebookPDF = (
           // Grade column
           if (colIdx === exams.length + 4) {
             const grade = data.cell.raw as string;
-            if (grade === 'FF' || grade === 'DD') data.cell.styles.textColor = [220, 38, 38];
-            else if (grade === 'AA' || grade === 'BA') data.cell.styles.textColor = [5, 150, 105];
+            if (grade === 'F' || grade === 'E') data.cell.styles.textColor = [220, 38, 38];
+            else if (grade === 'A+' || grade === 'A' || grade === 'B') data.cell.styles.textColor = [5, 150, 105];
             data.cell.styles.halign = 'center';
           }
         }
@@ -309,15 +315,21 @@ export default function AdminResultsPage() {
   const getChartData = (student: any) =>
     exams.map((exam: any) => {
       const allScores = reportData
-        .map((s: any) => s.marks[exam.id]?.val)
+        .map((s: any) => {
+          const raw = s.marks[exam.id]?.val;
+          if (raw == null) return null;
+          return raw > 20 ? raw / 5 : raw;
+        })
         .filter((v: any) => v != null) as number[];
       const avg = allScores.length > 0
         ? allScores.reduce((a: number, b: number) => a + b, 0) / allScores.length
         : 0;
+      const rawStudent = student.marks[exam.id]?.val;
+      const studentScore20 = rawStudent != null ? (rawStudent > 20 ? rawStudent / 5 : rawStudent) : 0;
       return {
         name: exam.name,
-        studentScore: student.marks[exam.id]?.val || 0,
-        classAverage: parseFloat(avg.toFixed(1)),
+        studentScore: parseFloat(studentScore20.toFixed(2)),
+        classAverage: parseFloat(avg.toFixed(2)),
       };
     });
 
@@ -434,7 +446,8 @@ export default function AdminResultsPage() {
                       </TableCell>
                     </TableRow>
                   ) : filteredResults.length > 0 ? filteredResults.map(r => {
-                    const isPassing = r.marks >= 50;
+                    const marks20 = r.marks != null ? (r.marks > 20 ? r.marks / 5 : r.marks) : 0;
+                    const isPassing = marks20 >= 10.0;
                     return (
                       <TableRow key={r.id} className="hover:bg-slate-50/70 border-slate-100">
                         <TableCell className="pl-6 py-4">
@@ -456,24 +469,24 @@ export default function AdminResultsPage() {
                             <span className="text-[9px] text-slate-400 font-bold uppercase">{r.exam?.semester}</span>
                           </div>
                         </TableCell>
-                        <TableCell className="text-center font-bold text-slate-500">{r.exam?.weight}%</TableCell>
+                        <TableCell className="text-center font-bold text-slate-500">Coef: {r.exam?.weight ?? 1}</TableCell>
                         <TableCell className="text-center">
-                          <span className={`text-lg font-black ${gradeColor(r.marks)}`}>{r.marks}</span>
+                          <span className={`text-base font-black ${gradeColor(marks20)}`}>{Number(marks20).toFixed(2)} / 20</span>
                         </TableCell>
                         <TableCell className="text-center">
                           <div className="w-10 h-10 mx-auto flex items-center justify-center rounded-xl bg-slate-100 font-black text-xs border border-slate-200 text-slate-700">
-                            {r.grade || calculateLetterGrade(r.marks)}
+                            {r.grade || calculateLetterGrade(marks20)}
                           </div>
                         </TableCell>
                         <TableCell className="text-right pr-6 py-4">
                           <div className="flex flex-col items-end gap-1">
                             {isPassing ? (
                               <Badge className="bg-emerald-50 text-emerald-700 border border-emerald-100 font-black text-[9px] rounded-md px-2 py-0.5">
-                                <CheckCircle2 size={10} className="mr-1" /> RÉUSSI
+                                <CheckCircle2 size={10} className="mr-1" /> ADMIS
                               </Badge>
                             ) : (
                               <Badge className="bg-rose-50 text-rose-600 border border-rose-100 font-black text-[9px] rounded-md px-2 py-0.5">
-                                <AlertCircle size={10} className="mr-1" /> ÉCHOUÉ
+                                <AlertCircle size={10} className="mr-1" /> AJOURNÉ
                               </Badge>
                             )}
                             <Badge variant="outline" className={`font-black text-[9px] rounded-md px-2 py-0.5 ${r.status === 'DRAFT' ? 'bg-orange-50 text-orange-600 border-orange-100' : 'bg-green-50 text-green-700 border-green-100'
@@ -534,12 +547,12 @@ export default function AdminResultsPage() {
                   <LineChart data={getChartData(selectedStudentForChart)}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} />
                     <XAxis dataKey="name" tick={{ fontSize: 11, fontWeight: 700 }} />
-                    <YAxis domain={[0, 100]} tick={{ fontSize: 11 }} />
+                    <YAxis domain={[0, 20]} tick={{ fontSize: 11 }} />
                     <Tooltip
                       contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 30px rgba(0,0,0,0.12)' }}
-                      formatter={(value: any, name?: string) => [value, name === 'studentScore' ? 'Note' : 'Moyenne']}
+                      formatter={(value: any, name?: string) => [`${value} / 20`, name === 'studentScore' ? 'Note' : 'Moyenne']}
                     />
-                    <Legend formatter={(value) => value === 'studentScore' ? 'Note' : 'Moyenne'} />
+                    <Legend formatter={(value) => value === 'studentScore' ? 'Note (/20)' : 'Moyenne de classe (/20)'} />
                     <Line name="studentScore" type="monotone" dataKey="studentScore" stroke="#2563eb" strokeWidth={3} dot={{ r: 5, fill: '#2563eb' }} />
                     <Line name="classAverage" type="monotone" dataKey="classAverage" stroke="#94a3b8" strokeDasharray="5 5" strokeWidth={2} dot={false} />
                   </LineChart>
@@ -554,11 +567,11 @@ export default function AdminResultsPage() {
               <div className="space-y-0.5">
                 <div className="flex items-center gap-2">
                   <BookOpen size={16} className="text-primary" />
-                  <h3 className="text-sm font-black uppercase tracking-wider text-slate-900">Matrice des performances</h3>
+                  <h3 className="text-sm font-black uppercase tracking-wider text-slate-900">Matrice des performances (Barème sur 20)</h3>
                 </div>
                 <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
                   {selectedClassId === 'all'
-                    ? 'Sélectionnez une classe pour afficher le cahier de notes'
+                    ? 'Sélectionnez une classe pour afficher le carnet de notes'
                     : `Affichage: ${selectedClassName} — Cliquez sur une ligne d'élève pour afficher son graphique`}
                 </p>
               </div>
@@ -576,7 +589,7 @@ export default function AdminResultsPage() {
               {selectedClassId === 'all' ? (
                 <div className="flex flex-col items-center justify-center py-24 text-slate-400 gap-3">
                   <LayoutGrid size={40} className="opacity-30" />
-                  <p className="text-sm font-bold italic">Sélectionnez une classe dans le menu déroulant supérieur droit pour charger le cahier de notes.</p>
+                  <p className="text-sm font-bold italic">Sélectionnez une classe dans le menu déroulant supérieur droit pour charger le carnet de notes.</p>
                 </div>
               ) : gradebookLoading ? (
                 <div className="flex justify-center py-24">
@@ -598,17 +611,21 @@ export default function AdminResultsPage() {
                           {exams.map(e => (
                             <TableHead key={e.id} className="text-white font-black text-[9px] uppercase tracking-wider text-center">
                               <div>{e?.name || '—'}</div>
-                              <div className="text-blue-400 font-bold normal-case">{e?.weight ?? 0}%</div>
+                              <div className="text-blue-400 font-bold normal-case">Coef: {e?.weight ?? 1}</div>
                             </TableHead>
                           ))}
                           <TableHead className="text-white font-black text-[9px] uppercase tracking-wider text-right pr-8">
-                            Moyenne Pondérée
+                            Moyenne (/20)
                           </TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
                         {reportData.map(student => {
-                          const scores = exams.map((e: any) => student.marks[e.id]?.val ?? null);
+                          const scores = exams.map((e: any) => {
+                            const raw = student.marks[e.id]?.val ?? null;
+                            if (raw === null) return null;
+                            return raw > 20 ? raw / 5 : raw;
+                          });
                           const valid = scores.filter((s: any) => s !== null) as number[];
                           const avg = valid.length > 0
                             ? valid.reduce((a, b) => a + b, 0) / valid.length
@@ -637,14 +654,14 @@ export default function AdminResultsPage() {
                                 </div>
                               </TableCell>
                               {exams.map((e: any) => {
-                                const cell = student.marks[e.id];
-                                const val = cell?.val ?? null;
+                                const raw = student.marks[e.id]?.val ?? null;
+                                const val = raw !== null ? (raw > 20 ? raw / 5 : raw) : null;
                                 return (
                                   <TableCell key={e.id} className="text-center py-4">
                                     {val !== null ? (
                                       <>
-                                        <div className={`text-base font-black ${val < 50 ? 'text-red-500' : val >= 80 ? 'text-emerald-600' : 'text-slate-900'
-                                          }`}>{val}</div>
+                                        <div className={`text-base font-black ${val < 10 ? 'text-red-500' : val >= 14 ? 'text-emerald-600' : 'text-slate-900'
+                                          }`}>{val.toFixed(2)}</div>
                                         <div className="text-[9px] text-slate-400 font-bold uppercase">{calculateLetterGrade(val)}</div>
                                       </>
                                     ) : (
@@ -656,7 +673,7 @@ export default function AdminResultsPage() {
                               <TableCell className="text-right pr-8 py-4">
                                 {avg !== null ? (
                                   <div>
-                                    <span className={`text-lg font-black ${gradeColor(avg)}`}>{avg.toFixed(1)}%</span>
+                                    <span className={`text-base font-black ${gradeColor(avg)}`}>{avg.toFixed(2)} / 20</span>
                                     <div className="text-[9px] text-slate-400 font-bold uppercase">{calculateLetterGrade(avg)}</div>
                                   </div>
                                 ) : (

@@ -761,73 +761,64 @@ export default () => ({
       }) as any[];
     }
 
-    // 4. Map results
-    const scoreToGrade = (score: number) => {
-      if (score >= 90) return { letter: 'A', remark: 'Excellent' };
-      if (score >= 85) return { letter: 'A-', remark: 'Tres Bien' };
-      if (score >= 80) return { letter: 'B+', remark: 'Bien' };
-      if (score >= 75) return { letter: 'B', remark: 'Assez Bien' };
-      if (score >= 70) return { letter: 'B-', remark: 'Satisfaisant' };
-      if (score >= 65) return { letter: 'C+', remark: 'Passable' };
-      if (score >= 60) return { letter: 'C', remark: 'Passable' };
-      if (score >= 50) return { letter: 'D', remark: 'Insuffisant' };
-      return { letter: 'F', remark: 'Echec' };
+    // 4. Map results to Guinea 20-point scale
+    const scoreToGrade20 = (score: number) => {
+      const s20 = score > 20 ? (score / 100) * 20 : score;
+      if (s20 >= 18) return { letter: 'A+', remark: 'Excellent', decision: 'Admis(e) avec Félicitations' };
+      if (s20 >= 16) return { letter: 'A',  remark: 'Très Bien',  decision: 'Admis(e) - Tableau d\'Honneur' };
+      if (s20 >= 14) return { letter: 'B',  remark: 'Bien',       decision: 'Admis(e) - Encouragements' };
+      if (s20 >= 12) return { letter: 'C',  remark: 'Assez Bien', decision: 'Admis(e)' };
+      if (s20 >= 10) return { letter: 'D',  remark: 'Passable',   decision: 'Admis(e)' };
+      if (s20 >= 8)  return { letter: 'E',  remark: 'Insuffisant', decision: 'Avertissement' };
+      return { letter: 'F', remark: 'Faible', decision: 'Blâme / Échec' };
     };
 
     const transcriptResults = (results || []).map(r => {
-      const scoreVal = r.marks != null ? Number(r.marks) : (r.rawScore != null ? Number(r.rawScore) : null);
-      const gradeInfo = scoreVal != null ? scoreToGrade(scoreVal) : { letter: 'N/A', remark: '' };
+      const rawVal = r.marks != null ? Number(r.marks) : (r.rawScore != null ? Number(r.rawScore) : null);
+      const maxS = Number(r.maxScore || r.exam?.maxScore || 20);
+      const score20 = rawVal != null ? (rawVal > 20 && maxS > 20 ? Math.round(((rawVal / maxS) * 20) * 100) / 100 : Math.round(rawVal * 100) / 100) : null;
+      const gradeInfo = score20 != null ? scoreToGrade20(score20) : { letter: 'N/A', remark: '', decision: '' };
       return {
         id: r.id,
         examId: r.exam?.id,
-        examName: r.exam?.name || 'Assessment',
+        examName: r.exam?.name || 'Évaluation',
         subjectCode: r.exam?.subject?.code || 'N/A',
         subjectName: r.exam?.subject?.name || 'N/A',
         className: r.exam?.classe?.name || (student.enrolledClasses || []).map((c: any) => c.name).join(', ') || 'N/A',
         academicYear: r.exam?.academicYear?.name || r.exam?.academicYear?.year || 'N/A',
         semester: r.exam?.semesterRel?.name || r.exam?.semester || 'N/A',
         term: r.exam?.termRel?.name || r.exam?.term || 'N/A',
-        marks: scoreVal,
+        marks: score20,
+        marks20: score20,
+        percentage: score20 != null ? Math.round((score20 / 20) * 100 * 100) / 100 : null,
+        coefficient: 1,
+        totalPoints: score20 != null ? score20 : 0,
         letterGrade: r.letterGrade || gradeInfo.letter,
-        weight: Number(r.exam?.weight || 0),
-        remarks: r.remarks || gradeInfo.remark
+        weight: Number(r.exam?.weight || 1),
+        remarks: r.remarks || gradeInfo.remark,
+        decision: gradeInfo.decision
       };
     });
 
-    // 5. Calculate GPA and Average
-    let totalWeightedScore = 0;
+    // 5. Calculate Average on 20
+    let totalWeightedScore20 = 0;
     let totalWeight = 0;
-    let totalScore = 0;
+    let totalScore20 = 0;
     let scoreCount = 0;
 
-    // standard GPA mapping on a 4.0 scale
-    const scoreToGPA = (score: number) => {
-      if (score >= 90) return 4.0;
-      if (score >= 85) return 3.7;
-      if (score >= 80) return 3.3;
-      if (score >= 75) return 3.0;
-      if (score >= 70) return 2.7;
-      if (score >= 65) return 2.3;
-      if (score >= 60) return 2.0;
-      if (score >= 50) return 1.0;
-      return 0.0;
-    };
-
-    let totalGPA = 0;
     for (const r of transcriptResults) {
       if (r.marks != null && !isNaN(r.marks)) {
         const w = r.weight > 0 ? r.weight : 1;
-        totalWeightedScore += r.marks * w;
+        totalWeightedScore20 += r.marks * w;
         totalWeight += w;
-        totalScore += r.marks;
-        totalGPA += scoreToGPA(r.marks);
+        totalScore20 += r.marks;
         scoreCount++;
       }
     }
 
-    const averageScore = scoreCount > 0 ? parseFloat((totalScore / scoreCount).toFixed(2)) : 0;
-    const weightedAverageScore = totalWeight > 0 ? parseFloat((totalWeightedScore / totalWeight).toFixed(2)) : 0;
-    const gpa = scoreCount > 0 ? parseFloat((totalGPA / scoreCount).toFixed(2)) : 0;
+    const averageScore = scoreCount > 0 ? parseFloat((totalScore20 / scoreCount).toFixed(2)) : 0;
+    const weightedAverageScore = totalWeight > 0 ? parseFloat((totalWeightedScore20 / totalWeight).toFixed(2)) : 0;
+    const gi = scoreToGrade20(weightedAverageScore);
 
     // Save/Update in DB dynamically ONLY if saveToLedger is true
     const sortedSemesterIds = (filters.semesterIds || []).slice().sort((a: number, b: number) => a - b).join(',');
@@ -848,7 +839,7 @@ export default () => ({
         const transcriptPayload: any = {
           referenceNumber,
           generationDate,
-          gpa: gpa,
+          gpa: weightedAverageScore,
           averageScore: weightedAverageScore,
           student: studentId,
           academicYear: filters.academicYearId || null,
@@ -871,11 +862,18 @@ export default () => ({
       }
     }
 
+    const studentFullName = (student.firstName && student.lastName)
+      ? `${student.firstName} ${student.lastName}`
+      : (student.name || student.username || 'Élève');
+
     return {
       student: {
         id: student.id,
         userId: student.userId,
-        name: student.username,
+        name: studentFullName,
+        username: student.username,
+        firstName: student.firstName,
+        lastName: student.lastName,
         email: student.email,
         birthDate: student.birthDate,
         phoneNumber: student.phoneNumber,
@@ -887,8 +885,15 @@ export default () => ({
         averageScore,
         weightedAverageScore,
         annualAverage: weightedAverageScore,
-        gpa,
-        annualGPA: gpa,
+        annualAverageDisplay: `${Number(weightedAverageScore || 0).toFixed(2)} / 20`,
+        gpa: weightedAverageScore,
+        annualGPA: weightedAverageScore,
+        annualGrade: gi.letter,
+        annualRemark: gi.remark,
+        annualDecision: gi.decision,
+        isPassing: weightedAverageScore >= 10.0,
+        scale: 20,
+        passingGrade: 10.0,
         totalSubjectsCount: scoreCount,
         totalSubjects: scoreCount
       },

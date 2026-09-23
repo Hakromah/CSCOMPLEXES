@@ -15,14 +15,14 @@ import api from '@/lib/api';
 const calculateLetterGrade = (marks: number | string): string => {
    const score = typeof marks === 'string' ? parseFloat(marks) : marks;
    if (isNaN(score)) return '-';
-   if (score >= 90) return 'AA';
-   if (score >= 85) return 'BA';
-   if (score >= 80) return 'BB';
-   if (score >= 75) return 'CB';
-   if (score >= 70) return 'CC';
-   if (score >= 60) return 'DC';
-   if (score >= 50) return 'DD';
-   return 'FF';
+   const val = score > 20 ? score / 5 : score;
+   if (val >= 18) return 'A+';
+   if (val >= 16) return 'A';
+   if (val >= 14) return 'B';
+   if (val >= 12) return 'C';
+   if (val >= 10) return 'D';
+   if (val >= 8) return 'E';
+   return 'F';
 };
 
 export default function BulkGradebookPage() {
@@ -212,13 +212,13 @@ export default function BulkGradebookPage() {
                                                 defaultValue={currentVal}
                                                 onChange={(e) => handleMarkChange(student.id, exam.id, e.target.value)}
                                              />
-                                             <span className={`text-[10px] font-bold ${letterGrade === 'FF' ? 'text-red-500' : 'text-green-600'}`}>
+                                             <span className={`text-[10px] font-bold ${letterGrade === 'F' || letterGrade === 'E' ? 'text-red-500' : 'text-green-600'}`}>
                                                 {letterGrade}
                                              </span>
                                           </div>
                                        ) : (
                                           <div className="flex flex-col items-center">
-                                             <span className={`text-sm ${activeVal < 50 ? 'text-red-500 font-bold' : ''}`}>
+                                             <span className={`text-sm ${activeVal !== '' && parseFloat(activeVal) < 10 ? 'text-red-500 font-bold' : ''}`}>
                                                 {activeVal || '-'}
                                              </span>
                                              <span className="text-[9px] text-muted-foreground font-bold">

@@ -297,22 +297,26 @@ export default function TeacherTranscriptsPage() {
       doc.text(termsText, 155, 101);
 
       // Results Table
+      // Results Table
       doc.setFont('Helvetica', 'bold');
       doc.setFontSize(9);
-      doc.text('RÉSUMÉ DES PERFORMANCES ACADÉMIQUES', 14, 116);
-      const tableBody = (transcriptData.results || []).map((r: any) => [
-        r.subjectName || 'N/A',
-        r.className || 'N/A',
-        r.examName || '—',
-        `${r.semester || 'N/A'} (${r.term || 'N/A'})`,
-        `${r.marks != null ? r.marks : '—'}%`,
-        r.letterGrade || 'N/A',
-        r.remarks || '—'
-      ]);
+      doc.text('RÉSUMÉ DES PERFORMANCES ACADÉMIQUES (BARÈME SUR 20)', 14, 116);
+      const tableBody = (transcriptData.results || []).map((r: any) => {
+        const n20 = r.marks != null ? Number(r.marks) : (r.marks20 != null ? Number(r.marks20) : (r.percentage != null ? Number(r.percentage) / 5 : 0));
+        return [
+          r.subjectName || 'N/A',
+          r.className || 'N/A',
+          r.examName || '—',
+          `${r.semester || 'N/A'} (${r.term || 'N/A'})`,
+          `${n20.toFixed(2)} / 20`,
+          r.letterGrade || 'N/A',
+          r.remarks || r.decision || '—'
+        ];
+      });
 
       autoTable(doc, {
         startY: 120,
-        head: [['Matière', 'Classe', 'Examen', 'Semestre (Term)', 'Note', 'Note', 'Remarques']],
+        head: [['Matière', 'Classe', 'Évaluation', 'Période', 'Note (/20)', 'Mention', 'Observations']],
         body: tableBody,
         theme: 'striped',
         headStyles: { fillColor: [43, 76, 126] as any, fontSize: 8.5, fontStyle: 'bold' },
@@ -322,9 +326,9 @@ export default function TeacherTranscriptsPage() {
           1: { cellWidth: 15 },
           2: { cellWidth: 25 },
           3: { cellWidth: 35 },
-          4: { cellWidth: 15, halign: 'center' },
+          4: { cellWidth: 20, halign: 'center', fontStyle: 'bold' },
           5: { cellWidth: 15, halign: 'center' },
-          6: { cellWidth: 42 }
+          6: { cellWidth: 37 }
         }
       });
 
@@ -336,31 +340,39 @@ export default function TeacherTranscriptsPage() {
         currentY = 20; // reset Y coordinate on the new page
       }
 
-      // Summary Index Card (Royal Blue with Green GPA box)
+      // Summary Index Card (Royal Blue with Decision Box)
       doc.setFillColor(43, 76, 126); // School Royal Blue (#2B4C7E)
       doc.rect(14, currentY, 182, 28, 'F');
 
-      doc.setFillColor(110, 190, 68); // School Green (#6EBE44)
-      doc.rect(132, currentY + 2, 60, 24, 'F');
+      const rawAvg = sum.annualAverage ?? sum.weightedAverageScore ?? sum.averageScore ?? 0;
+      const avgVal20 = Number(rawAvg > 20 ? rawAvg / 5 : rawAvg);
+      const isAdmis = avgVal20 >= 10.0;
+      const statusColor = isAdmis ? [110, 190, 68] : [220, 38, 38];
+
+      doc.setFillColor(statusColor[0], statusColor[1], statusColor[2]);
+      doc.rect(126, currentY + 2, 66, 24, 'F');
 
       doc.setTextColor(255, 255, 255);
       doc.setFont('Helvetica', 'bold');
-      doc.setFontSize(8.5);
-      doc.text('LISTE DES ÉVALUATIONS', 20, currentY + 8);
-      doc.text('PERFORMANCE MOYENNE', 70, currentY + 8);
-      doc.text('MOYENNE GENERALE', 136, currentY + 8);
+      doc.setFontSize(8);
+      doc.text('MATIÈRES ÉVALUÉES', 20, currentY + 8);
+      doc.text('MOYENNE PONDÉRÉE (SUR 20)', 65, currentY + 8);
+      doc.text('MENTION & DÉCISION', 130, currentY + 8);
 
-      doc.setFontSize(18);
+      doc.setFontSize(16);
       doc.text(String(sum.totalSubjectsCount || 0), 20, currentY + 18);
-      doc.text(`${sum.weightedAverageScore || 0}%`, 70, currentY + 18);
-      doc.text(typeof sum.gpa === 'number' ? sum.gpa.toFixed(2) : '0.00', 136, currentY + 18);
+      doc.text(`${avgVal20.toFixed(2)} / 20`, 65, currentY + 18);
+      
+      const mentionText = (sum.annualRemark || (avgVal20 >= 16 ? 'Très Bien' : avgVal20 >= 14 ? 'Bien' : avgVal20 >= 12 ? 'Assez Bien' : avgVal20 >= 10 ? 'Passable' : 'Insuffisant')).toUpperCase();
+      doc.setFontSize(11);
+      doc.text(mentionText, 130, currentY + 16);
+      doc.setFontSize(8.5);
+      doc.text(sum.annualDecision || (isAdmis ? 'ADMIS(E)' : 'AJOURNÉ(E)'), 130, currentY + 22);
 
-      doc.setFontSize(7.5);
-      doc.setTextColor(200, 220, 245); // light blue-gray
-      doc.text('Champs Évalués', 20, currentY + 24);
-      doc.text('Note Moyenne Pondérée', 70, currentY + 24);
-      doc.setTextColor(240, 253, 244); // very light green
-      doc.text('Sur 4.00 max', 136, currentY + 24);
+      doc.setFontSize(7);
+      doc.setTextColor(200, 220, 245);
+      doc.text('Domaines validés', 20, currentY + 24);
+      doc.text('Seuil de réussite: 10.00 / 20', 65, currentY + 24);
 
       // Signatures and QR Code Block
       const sigY = Math.max(235, currentY + 36);
@@ -553,8 +565,8 @@ export default function TeacherTranscriptsPage() {
                                 <TableRow className="border-none hover:bg-slate-900">
                                   <TableHead className="text-white font-black text-[9px] uppercase tracking-wider py-4 pl-6">Numéro de Référence</TableHead>
                                   <TableHead className="text-white font-black text-[9px] uppercase tracking-wider">Année Académique</TableHead>
-                                  <TableHead className="text-white font-black text-[9px] uppercase tracking-wider text-center">Moyenne Ponderée (GPA)</TableHead>
-                                  <TableHead className="text-white font-black text-[9px] uppercase tracking-wider text-center">Moyenne Générale</TableHead>
+                                  <TableHead className="text-white font-black text-[9px] uppercase tracking-wider text-center">Moyenne (/20)</TableHead>
+                                  <TableHead className="text-white font-black text-[9px] uppercase tracking-wider text-center">Mention</TableHead>
                                   <TableHead className="text-white font-black text-[9px] uppercase tracking-wider">Date d'Émission</TableHead>
                                   <TableHead className="text-white font-black text-[9px] uppercase tracking-wider text-right pr-6">Action</TableHead>
                                 </TableRow>
@@ -562,21 +574,26 @@ export default function TeacherTranscriptsPage() {
                               <TableBody>
                                 {issuedTranscripts.map((t: any) => {
                                   const pubDate = t.generationDate
-                                    ? new Date(t.generationDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+                                    ? new Date(t.generationDate).toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' })
                                     : 'N/A';
+                                  const rawAvg = t.annualAverage ?? t.averageScore ?? 0;
+                                  const avgVal20 = Number(rawAvg > 20 ? rawAvg / 5 : rawAvg);
+                                  const isAdmis = avgVal20 >= 10.0;
                                   return (
                                     <TableRow key={t.id} className="hover:bg-slate-50/50 border-slate-100">
                                       <TableCell className="py-4 pl-6 font-mono font-bold text-xs text-slate-800">
                                         {t.referenceNumber}
                                       </TableCell>
                                       <TableCell className="font-semibold text-slate-600 text-xs">
-                                        {t.academicYear?.name || t.class?.name || 'General Records'}
+                                        {t.academicYear?.name || t.class?.name || 'Registre Général'}
                                       </TableCell>
                                       <TableCell className="text-center font-black text-slate-900 text-sm">
-                                        {Number(t.gpa).toFixed(2)}
+                                        {avgVal20.toFixed(2)} / 20
                                       </TableCell>
-                                      <TableCell className="text-center font-bold text-blue-600 text-xs">
-                                        {t.averageScore}%
+                                      <TableCell className="text-center font-bold text-xs">
+                                        <Badge className={`font-black text-[9px] px-2 py-0.5 rounded-md border-none ${isAdmis ? 'bg-[#6EBE44] text-white' : 'bg-rose-500 text-white'}`}>
+                                          {avgVal20 >= 16 ? 'Très Bien' : avgVal20 >= 14 ? 'Bien' : avgVal20 >= 12 ? 'Assez Bien' : avgVal20 >= 10 ? 'Passable' : 'Insuffisant'}
+                                        </Badge>
                                       </TableCell>
                                       <TableCell className="text-xs text-slate-500 font-semibold">
                                         {pubDate}
@@ -694,59 +711,73 @@ export default function TeacherTranscriptsPage() {
                                 <TableHeader className="bg-[#2B4C7E] text-white">
                                   <TableRow className="border-none hover:bg-[#2B4C7E]">
                                     <TableHead className="text-white font-black text-[9px] uppercase tracking-wider py-4 pl-6">Matière / Classe</TableHead>
-                                    <TableHead className="text-white font-black text-[9px] uppercase tracking-wider">Exam / Session</TableHead>
-                                    <TableHead className="text-white font-black text-[9px] uppercase tracking-wider text-center">Note</TableHead>
+                                    <TableHead className="text-white font-black text-[9px] uppercase tracking-wider">Évaluation / Session</TableHead>
+                                    <TableHead className="text-white font-black text-[9px] uppercase tracking-wider text-center">Note (/20)</TableHead>
                                     <TableHead className="text-white font-black text-[9px] uppercase tracking-wider text-center">Mention</TableHead>
-                                    <TableHead className="text-white font-black text-[9px] uppercase tracking-wider py-4 pr-6">Commentaires du Professeur</TableHead>
+                                    <TableHead className="text-white font-black text-[9px] uppercase tracking-wider py-4 pr-6">Observations</TableHead>
                                   </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                  {transcriptData.results.map((res: any) => (
-                                    <TableRow key={res.id} className="hover:bg-slate-50/50 border-slate-100">
-                                      <TableCell className="py-4 pl-6 font-bold text-slate-900">
-                                        <div>{res.subjectName}</div>
-                                        <div className="text-[10px] text-slate-500 uppercase tracking-widest mt-0.5">{res.className}</div>
-                                      </TableCell>
-                                      <TableCell className="font-semibold text-slate-600 text-xs">
-                                        <div className="font-bold text-slate-800">{res.examName}</div>
-                                        <div className="text-[9px] text-blue-500 font-bold uppercase tracking-widest mt-0.5">{res.semester} • {res.term}</div>
-                                      </TableCell>
-                                      <TableCell className="text-center font-black text-slate-900 text-sm py-4">
-                                        {res.marks}%
-                                      </TableCell>
-                                      <TableCell className="text-center py-4">
-                                        <Badge className="bg-[#2B4C7E] text-white font-black text-[10px] px-2 py-0.5 rounded-md border-none">
-                                          {res.letterGrade}
-                                        </Badge>
-                                      </TableCell>
-                                      <TableCell className="py-4 pr-6 text-xs text-slate-500 font-semibold max-w-[200px] truncate" title={res.remarks}>
-                                        {res.remarks || <span className="text-slate-300 italic">—</span>}
-                                      </TableCell>
-                                    </TableRow>
-                                  ))}
+                                  {transcriptData.results.map((res: any) => {
+                                    const n20 = res.marks != null ? Number(res.marks) : (res.marks20 != null ? Number(res.marks20) : (res.percentage != null ? Number(res.percentage) / 5 : 0));
+                                    return (
+                                      <TableRow key={res.id} className="hover:bg-slate-50/50 border-slate-100">
+                                        <TableCell className="py-4 pl-6 font-bold text-slate-900">
+                                          <div>{res.subjectName}</div>
+                                          <div className="text-[10px] text-slate-500 uppercase tracking-widest mt-0.5">{res.className}</div>
+                                        </TableCell>
+                                        <TableCell className="font-semibold text-slate-600 text-xs">
+                                          <div className="font-bold text-slate-800">{res.examName}</div>
+                                          <div className="text-[9px] text-blue-500 font-bold uppercase tracking-widest mt-0.5">{res.semester} • {res.term}</div>
+                                        </TableCell>
+                                        <TableCell className="text-center font-black text-slate-900 text-sm py-4">
+                                          {n20.toFixed(2)} / 20
+                                        </TableCell>
+                                        <TableCell className="text-center py-4">
+                                          <Badge className="bg-[#2B4C7E] text-white font-black text-[10px] px-2 py-0.5 rounded-md border-none">
+                                            {res.letterGrade || 'N/A'}
+                                          </Badge>
+                                        </TableCell>
+                                        <TableCell className="py-4 pr-6 text-xs text-slate-500 font-semibold max-w-[200px] truncate" title={res.remarks || res.decision}>
+                                          {res.remarks || res.decision || <span className="text-slate-300 italic">—</span>}
+                                        </TableCell>
+                                      </TableRow>
+                                    );
+                                  })}
                                 </TableBody>
                               </Table>
                             </div>
                           </div>
 
                           {/* Summary Metric Card */}
-                          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 bg-[#2B4C7E] rounded-[2rem] p-8 text-white relative overflow-hidden">
-                            <div className="space-y-1">
-                              <p className="text-[9px] font-black uppercase tracking-[0.2em] text-[#6EBE44]">Index des Matières</p>
-                              <h4 className="text-4xl font-black italic tracking-tighter">{transcriptData.summary.totalSubjectsCount}</h4>
-                              <p className="text-[10px] font-bold opacity-60">Domaines Évalués</p>
-                            </div>
-                            <div className="space-y-1">
-                              <p className="text-[9px] font-black uppercase tracking-[0.2em] text-[#6EBE44]">Moyenne Générale</p>
-                              <h4 className="text-4xl font-black italic tracking-tighter">{transcriptData.summary.weightedAverageScore}%</h4>
-                              <p className="text-[10px] font-bold opacity-60">Moyenne Pondérée Générale</p>
-                            </div>
-                            <div className="space-y-1 bg-[#6EBE44] rounded-2xl p-6 shadow-lg shadow-green-900/10">
-                              <p className="text-[9px] font-black uppercase tracking-[0.2em] text-green-100">Moyenne Périodique</p>
-                              <h4 className="text-4xl font-black italic tracking-tighter">{transcriptData.summary.gpa.toFixed(2)}</h4>
-                              <p className="text-[10px] font-bold text-green-100">Sur 4.00</p>
-                            </div>
-                          </div>
+                          {(() => {
+                            const rawAvg = transcriptData.summary?.annualAverage ?? transcriptData.summary?.weightedAverageScore ?? transcriptData.summary?.averageScore ?? 0;
+                            const avgVal20 = Number(rawAvg > 20 ? rawAvg / 5 : rawAvg);
+                            const isAdmis = avgVal20 >= 10.0;
+                            return (
+                              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 bg-[#2B4C7E] rounded-[2rem] p-8 text-white relative overflow-hidden">
+                                <div className="space-y-1">
+                                  <p className="text-[9px] font-black uppercase tracking-[0.2em] text-[#6EBE44]">Matières Évaluées</p>
+                                  <h4 className="text-4xl font-black italic tracking-tighter">{transcriptData.summary?.totalSubjectsCount || 0}</h4>
+                                  <p className="text-[10px] font-bold opacity-60">Domaines validés</p>
+                                </div>
+                                <div className="space-y-1">
+                                  <p className="text-[9px] font-black uppercase tracking-[0.2em] text-[#6EBE44]">Moyenne Pondérée (Sur 20)</p>
+                                  <h4 className="text-4xl font-black italic tracking-tighter">{avgVal20.toFixed(2)} / 20</h4>
+                                  <p className="text-[10px] font-bold opacity-60">Barème national • Seuil: 10/20</p>
+                                </div>
+                                <div className={`space-y-1 ${isAdmis ? 'bg-[#6EBE44]' : 'bg-rose-600'} rounded-2xl p-6 shadow-lg`}>
+                                  <p className="text-[9px] font-black uppercase tracking-[0.2em] text-white/90">Mention & Décision</p>
+                                  <h4 className="text-2xl font-black tracking-tight uppercase">
+                                    {transcriptData.summary?.annualRemark || (avgVal20 >= 16 ? 'Très Bien' : avgVal20 >= 14 ? 'Bien' : avgVal20 >= 12 ? 'Assez Bien' : avgVal20 >= 10 ? 'Passable' : 'Insuffisant')}
+                                  </h4>
+                                  <p className="text-[10px] font-bold text-white/90">
+                                    {transcriptData.summary?.annualDecision || (isAdmis ? 'ADMIS(E)' : 'AJOURNÉ(E)')}
+                                  </p>
+                                </div>
+                              </div>
+                            );
+                          })()}
 
                           {/* Footer Authority Signatures & QR Verification */}
                           <div className="pt-12 grid grid-cols-1 md:grid-cols-3 gap-8 items-center text-center text-slate-400 font-semibold text-[10px] uppercase tracking-wider">

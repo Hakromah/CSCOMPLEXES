@@ -32,15 +32,17 @@ import { toast } from 'sonner';
 import { Award, BookOpen, TrendingUp, CheckCircle2, AlertCircle, School, Filter } from 'lucide-react';
 import api from '@/lib/api';
 
-const calculateLetterGrade = (marks: number): string => {
-   if (marks >= 90) return 'AA';
-   if (marks >= 85) return 'BA';
-   if (marks >= 80) return 'BB';
-   if (marks >= 75) return 'CB';
-   if (marks >= 70) return 'CC';
-   if (marks >= 60) return 'DC';
-   if (marks >= 50) return 'DD';
-   return 'FF';
+const calculateLetterGrade = (marks: number | string): string => {
+   const score = typeof marks === 'string' ? parseFloat(marks) : marks;
+   if (isNaN(score)) return '-';
+   const val = score > 20 ? score / 5 : score;
+   if (val >= 18) return 'A+';
+   if (val >= 16) return 'A';
+   if (val >= 14) return 'B';
+   if (val >= 12) return 'C';
+   if (val >= 10) return 'D';
+   if (val >= 8) return 'E';
+   return 'F';
 };
 
 export default function StudentResultsPage() {
@@ -74,16 +76,25 @@ export default function StudentResultsPage() {
       return results.filter(r => r.semester === selectedSemester);
    }, [results, selectedSemester]);
 
-   // Overview Statistics based on ALL results
-   const totalScore = results.reduce((acc, curr) => acc + (curr.marks || 0), 0);
-   const averageScore = results.length > 0 ? (totalScore / results.length).toFixed(1) : '0';
-   const highestScore = results.length > 0 ? Math.max(...results.map(r => r.marks)) : 0;
+   // Overview Statistics based on ALL results (Sur 20)
+   const totalScore = results.reduce((acc, curr) => {
+      const val = curr.marks != null ? (curr.marks > 20 ? curr.marks / 5 : curr.marks) : 0;
+      return acc + val;
+   }, 0);
+   const averageScore = results.length > 0 ? (totalScore / results.length).toFixed(2) : '0.00';
+   const highestScore = results.length > 0
+      ? Math.max(...results.map(r => (r.marks != null ? (r.marks > 20 ? r.marks / 5 : r.marks) : 0))).toFixed(2)
+      : '0.00';
 
-   const chartData = results.map(r => ({
-      name: r.examName || 'Examen',
-      myScore: r.marks,
-      classAvg: r.classAverage || 0,
-   }));
+   const chartData = results.map(r => {
+      const myScore20 = r.marks != null ? (r.marks > 20 ? r.marks / 5 : r.marks) : 0;
+      const classAvg20 = r.classAverage != null ? (r.classAverage > 20 ? r.classAverage / 5 : r.classAverage) : 0;
+      return {
+         name: r.examName || 'Examen',
+         myScore: parseFloat(myScore20.toFixed(2)),
+         classAvg: parseFloat(classAvg20.toFixed(2)),
+      };
+   });
 
    if (loading) {
       return (
@@ -101,14 +112,14 @@ export default function StudentResultsPage() {
          {/* HEADER */}
          <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b pb-6">
             <div>
-               <h1 className="text-[clamp(1.2rem,2.5vw+1rem,3rem)] font-black text-slate-900 tracking-tighter italic">Academic <span className="text-primary">Portal.</span></h1>
-               <p className="text-muted-foreground">Bienvenue, {results[0]?.student?.name || 'Étudiant'}. Vue sur votre croissance et performance.</p>
+               <h1 className="text-[clamp(1.2rem,2.5vw+1rem,3rem)] font-black text-slate-900 tracking-tighter italic uppercase">Portail <span className="text-primary">Académique.</span></h1>
+               <p className="text-muted-foreground">Bienvenue, {results[0]?.student?.name || 'Étudiant'}. Vue sur vos notes et performances (Barème sur 20).</p>
             </div>
             <div className="flex items-center flex-wrap gap-4">
                <div className="flex items-center gap-4 bg-primary/5 p-4 rounded-xl border border-primary/10 md:hover:border-primary duration-300">
                   <div className="text-right">
-                     <p className="text-xs uppercase text-muted-foreground font-bold">Note moyenne globale</p>
-                     <p className="text-3xl font-black text-primary">{averageScore}%</p>
+                     <p className="text-xs uppercase text-muted-foreground font-bold">Moyenne générale</p>
+                     <p className="text-3xl font-black text-primary">{averageScore} / 20</p>
                   </div>
                   <Award className="w-8 h-8 text-primary" />
                </div>
@@ -119,14 +130,14 @@ export default function StudentResultsPage() {
          <div className="flex flex-col md:flex-row items-center gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200">
             <div className="flex items-center gap-2 text-slate-500 min-w-max">
                <Filter className="w-4 h-4" />
-               <span className="text-sm font-bold uppercase"> Filtrer les resultats:</span>
+               <span className="text-sm font-bold uppercase"> Filtrer les résultats:</span>
             </div>
             <Select value={selectedSemester} onValueChange={(val) => setSelectedSemester(val)}>
                <SelectTrigger className="md:w-[200px] w-full bg-white border border-slate-200 md:hover:border-primary duration-500 transition-colors">
-                  <SelectValue placeholder="Touts les Semestres" />
+                  <SelectValue placeholder="Tous les semestres" />
                </SelectTrigger>
                <SelectContent>
-                  <SelectItem value="all">Touts les Semestres</SelectItem>
+                  <SelectItem value="all">Tous les semestres</SelectItem>
                   {uniqueSemesters.map(sem => <SelectItem key={sem} value={sem}>{sem}</SelectItem>)}
                </SelectContent>
             </Select>
@@ -138,7 +149,7 @@ export default function StudentResultsPage() {
                <CardHeader className="flex flex-row items-center justify-between">
                   <div className="flex items-center gap-2">
                      <TrendingUp className="w-5 h-5 text-blue-500" />
-                     <CardTitle className="text-base font-semibold">Évolution des scores par rapport à la moyenne de la classe</CardTitle>
+                     <CardTitle className="text-base font-semibold">Évolution des notes (/20) par rapport à la moyenne de classe</CardTitle>
                   </div>
                </CardHeader>
                <CardContent className="h-[320px]">
@@ -146,11 +157,14 @@ export default function StudentResultsPage() {
                      <LineChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                         <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 11 }} dy={10} />
-                        <YAxis domain={[0, 100]} axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 11 }} />
-                        <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }} />
-                        <Legend iconType="circle" wrapperStyle={{ paddingTop: '20px' }} />
-                        <Line name="Mon Score" type="monotone" dataKey="myScore" stroke="#2563eb" strokeWidth={4} dot={{ r: 6, fill: '#2563eb', strokeWidth: 2, stroke: '#fff' }} />
-                        <Line name="Moyenne de la classe" type="monotone" dataKey="classAvg" stroke="#cbd5e1" strokeWidth={2} strokeDasharray="6 6" dot={false} />
+                        <YAxis domain={[0, 20]} axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 11 }} />
+                        <Tooltip
+                           contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }}
+                           formatter={(value: any, name?: string) => [`${value} / 20`, name === 'myScore' ? 'Ma Note' : 'Moyenne']}
+                        />
+                        <Legend iconType="circle" wrapperStyle={{ paddingTop: '20px' }} formatter={(value) => value === 'myScore' ? 'Ma Note (/20)' : 'Moyenne de classe (/20)'} />
+                        <Line name="myScore" type="monotone" dataKey="myScore" stroke="#2563eb" strokeWidth={4} dot={{ r: 6, fill: '#2563eb', strokeWidth: 2, stroke: '#fff' }} />
+                        <Line name="classAvg" type="monotone" dataKey="classAvg" stroke="#cbd5e1" strokeWidth={2} strokeDasharray="6 6" dot={false} />
                      </LineChart>
                   </ResponsiveContainer>
                </CardContent>
@@ -159,11 +173,11 @@ export default function StudentResultsPage() {
             <div className="flex flex-col gap-4">
                <Card className="bg-primary text-primary-foreground border py-2 border-transparent md:hover:border-blue-300 duration-500 transition-colors shadow-lg">
                   <CardHeader className="pb-2">
-                     <CardTitle className="text-primary-foreground/70 text-xs font-bold uppercase">Meilleure performance</CardTitle>
+                     <CardTitle className="text-primary-foreground/70 text-xs font-bold uppercase">Meilleure note</CardTitle>
                   </CardHeader>
                   <CardContent>
-                     <h2 className="text-4xl font-black">{highestScore}%</h2>
-                     <p className="text-sm mt-1 opacity-80 font-medium">Score le plus élevé obtenu à ce jour</p>
+                     <h2 className="text-4xl font-black">{highestScore} / 20</h2>
+                     <p className="text-sm mt-1 opacity-80 font-medium">Note la plus élevée obtenue à ce jour</p>
                   </CardContent>
                </Card>
 
@@ -173,7 +187,7 @@ export default function StudentResultsPage() {
                   </CardHeader>
                   <CardContent className="flex items-center gap-4">
                      <BookOpen className="w-8 h-8 text-primary/40" />
-                     <h2 className="text-3xl font-bold">{results.length} Examens</h2>
+                     <h2 className="text-3xl font-bold">{results.length} Évaluations</h2>
                   </CardContent>
                </Card>
             </div>
@@ -185,16 +199,17 @@ export default function StudentResultsPage() {
                <Table>
                   <TableHeader className="sticky top-0 z-10 bg-white shadow-[0_1px_0_0_#e2e8f0]">
                      <TableRow className="bg-slate-50/50">
-                        <TableHead className="w-[250px] font-bold pl-6">Examen</TableHead>
-                        <TableHead className="font-bold">Term &amp; Semestre</TableHead>
-                        <TableHead className="text-center font-bold">Moyen</TableHead>
-                        <TableHead className="text-center font-bold">Note</TableHead>
-                        <TableHead className="text-right pr-6 font-bold">Resultat</TableHead>
+                        <TableHead className="w-[250px] font-bold pl-6">Évaluation</TableHead>
+                        <TableHead className="font-bold">Période &amp; Semestre</TableHead>
+                        <TableHead className="text-center font-bold">Note (/20)</TableHead>
+                        <TableHead className="text-center font-bold">Mention</TableHead>
+                        <TableHead className="text-right pr-6 font-bold">Décision</TableHead>
                      </TableRow>
                   </TableHeader>
                   <TableBody>
                      {filteredResults.length > 0 ? filteredResults.map((r) => {
-                        const isPassing = r.marks >= 50;
+                        const marks20 = r.marks != null ? (r.marks > 20 ? r.marks / 5 : r.marks) : 0;
+                        const isPassing = marks20 >= 10.0;
                         return (
                            <TableRow key={r.id} className="group duration-300 transition-colors md:hover:bg-slate-50/50">
                               <TableCell className="font-semibold py-4 text-slate-700 pl-6">
@@ -212,22 +227,22 @@ export default function StudentResultsPage() {
                                  </div>
                               </TableCell>
                               <TableCell className="text-center">
-                                 <span className={`text-base font-black ${!isPassing ? 'text-red-500' : 'text-slate-900'}`}>{r.marks}%</span>
+                                 <span className={`text-base font-black ${!isPassing ? 'text-red-500' : 'text-slate-900'}`}>{Number(marks20).toFixed(2)} / 20</span>
                               </TableCell>
                               <TableCell className="text-center">
                                  <div className="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-slate-100 text-slate-700 font-black text-xs border">
-                                    {r.grade || calculateLetterGrade(r.marks)}
+                                    {r.grade || calculateLetterGrade(marks20)}
                                  </div>
                               </TableCell>
                               <TableCell className="text-right pr-6">
                                  <div className="flex justify-end">
                                     {isPassing ? (
                                        <div className="flex items-center gap-1.5 text-emerald-600 bg-emerald-50 px-3 py-1 rounded-md text-[10px] font-bold border border-emerald-100">
-                                          <CheckCircle2 className="w-3 h-3" /> RÉUSSI
+                                          <CheckCircle2 className="w-3 h-3" /> ADMIS
                                        </div>
                                     ) : (
                                        <div className="flex items-center gap-1.5 text-rose-600 bg-rose-50 px-3 py-1 rounded-md text-[10px] font-bold border border-rose-100">
-                                          <AlertCircle className="w-3 h-3" /> ÉCHOUÉ
+                                          <AlertCircle className="w-3 h-3" /> AJOURNÉ
                                        </div>
                                     )}
                                  </div>

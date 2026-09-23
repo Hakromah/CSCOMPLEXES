@@ -97,34 +97,42 @@ export default function GradebookPage() {
          doc.setTextColor(15, 23, 42);
          doc.setFont('Helvetica', 'bold');
          doc.setFontSize(11);
-         doc.text('MATRICE DE PERFORMANCE ACADÉMIQUE', 14, 38);
+         doc.text('MATRICE DE PERFORMANCE ACADÉMIQUE (SUR 20)', 14, 38);
          doc.setFont('Helvetica', 'normal');
          doc.setFontSize(8);
          doc.setTextColor(100, 116, 139);
          doc.text(`Total des élèves: ${reportData.length}   |   Total des évaluations: ${exams.length}`, 14, 44);
 
          // Table header
-         const head = [['#', 'Nom de l\'élève', 'ID de l\'élève', ...exams.map((e: any) => `${e}\n`), 'Moy.', 'Note']];
+         const head = [['#', 'Nom de l\'élève', 'Matricule', ...exams.map((e: any) => `${e}\n`), 'Moy. (/20)', 'Mention']];
 
          // Table body
          const body = reportData.map((student: any, idx: number) => {
-            const scores = exams.map((e: any) => student.marks[e] ?? null);
+            const scores = exams.map((e: any) => {
+               const raw = student.marks[e] ?? null;
+               if (raw === null) return null;
+               return raw > 20 ? raw / 5 : raw;
+            });
             const validScores = scores.filter((s: any) => s !== null) as number[];
             const avg = validScores.length > 0
                ? validScores.reduce((a: number, b: number) => a + b, 0) / validScores.length
                : null;
             const letterGrade = (score: number) => {
-               if (score >= 90) return 'AA'; if (score >= 85) return 'BA';
-               if (score >= 80) return 'BB'; if (score >= 75) return 'CB';
-               if (score >= 70) return 'CC'; if (score >= 60) return 'DC';
-               if (score >= 50) return 'DD'; return 'FF';
+               const val = score > 20 ? score / 5 : score;
+               if (val >= 18) return 'A+';
+               if (val >= 16) return 'A';
+               if (val >= 14) return 'B';
+               if (val >= 12) return 'C';
+               if (val >= 10) return 'D';
+               if (val >= 8) return 'E';
+               return 'F';
             };
             return [
                String(idx + 1),
-               student.name || student.username || 'Unknown',
+               student.name || student.username || 'Inconnu',
                student.userId || 'N/A',
-               ...scores.map((s: any) => (s !== null ? String(s) : '-')),
-               avg !== null ? `${avg.toFixed(1)}%` : '-',
+               ...scores.map((s: any) => (s !== null ? `${Number(s).toFixed(2)}` : '-')),
+               avg !== null ? `${avg.toFixed(2)} / 20` : '-',
                avg !== null ? letterGrade(avg) : '-',
             ];
          });
@@ -135,7 +143,7 @@ export default function GradebookPage() {
             body,
             theme: 'grid',
             headStyles: {
-               fillColor: [15, 23, 42] as any,
+               fillColor: [43, 76, 126] as any,
                textColor: [255, 255, 255],
                fontSize: 7.5,
                fontStyle: 'bold',
@@ -153,8 +161,8 @@ export default function GradebookPage() {
                0: { halign: 'center', cellWidth: 8 },
                1: { cellWidth: 38, fontStyle: 'bold' },
                2: { cellWidth: 28, fontSize: 7 },
-               [exams.length + 3]: { halign: 'center', cellWidth: 20, fontStyle: 'bold', textColor: [37, 99, 235] as any },
-               [exams.length + 4]: { halign: 'center', cellWidth: 14, fontStyle: 'bold' },
+               [exams.length + 3]: { halign: 'center', cellWidth: 22, fontStyle: 'bold', textColor: [43, 76, 126] as any },
+               [exams.length + 4]: { halign: 'center', cellWidth: 16, fontStyle: 'bold' },
             },
             didParseCell: (data: any) => {
                if (data.section === 'body') {
@@ -162,15 +170,15 @@ export default function GradebookPage() {
                   if (colIdx >= 3 && colIdx < exams.length + 3) {
                      const raw = parseFloat(data.cell.raw as string);
                      if (!isNaN(raw)) {
-                        if (raw < 50) { data.cell.styles.textColor = [220, 38, 38]; data.cell.styles.fontStyle = 'bold'; }
-                        else if (raw >= 80) { data.cell.styles.textColor = [5, 150, 105]; }
+                        if (raw < 10) { data.cell.styles.textColor = [220, 38, 38]; data.cell.styles.fontStyle = 'bold'; }
+                        else if (raw >= 14) { data.cell.styles.textColor = [5, 150, 105]; }
                         data.cell.styles.halign = 'center';
                      }
                   }
                   if (colIdx === exams.length + 4) {
                      const grade = data.cell.raw as string;
-                     if (grade === 'FF' || grade === 'DD') data.cell.styles.textColor = [220, 38, 38];
-                     else if (grade === 'AA' || grade === 'BA') data.cell.styles.textColor = [5, 150, 105];
+                     if (grade === 'F' || grade === 'E') data.cell.styles.textColor = [220, 38, 38];
+                     else if (grade === 'A+' || grade === 'A' || grade === 'B') data.cell.styles.textColor = [5, 150, 105];
                      data.cell.styles.halign = 'center';
                   }
                }
@@ -238,12 +246,12 @@ export default function GradebookPage() {
                            {exams.map(examName => (
                               <TableHead key={examName} className="text-center">{examName}</TableHead>
                            ))}
-                           <TableHead className="text-right font-bold">Moyenne</TableHead>
+                           <TableHead className="text-right font-bold">Moyenne (/20)</TableHead>
                         </TableRow>
                      </TableHeader>
                      <TableBody>
                         {reportData.length > 0 ? reportData.map((student) => {
-                           const scores = Object.values(student.marks) as number[];
+                           const scores = (Object.values(student.marks) as number[]).map(s => s > 20 ? s / 5 : s);
                            const average = scores.length > 0
                               ? (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(2)
                               : '-';
@@ -251,17 +259,21 @@ export default function GradebookPage() {
                            return (
                               <TableRow key={student.userId}>
                                  <TableCell className="font-mono text-xs">{student?.userId || 'N/A'}</TableCell>
-                                 <TableCell className="font-medium">{student.username || student.name || 'unkown student'}</TableCell>
-                                 {exams.map(examName => (
-                                    <TableCell
-                                       key={examName}
-                                       className={`text-center ${student.marks[examName] < 50 ? 'text-red-500 font-bold' : ''}`}
-                                    >
-                                       {student.marks[examName] ?? '-'}
-                                    </TableCell>
-                                 ))}
+                                 <TableCell className="font-medium">{student.username || student.name || 'Inconnu'}</TableCell>
+                                 {exams.map(examName => {
+                                    const raw = student.marks[examName];
+                                    const val20 = raw != null ? (raw > 20 ? raw / 5 : raw) : null;
+                                    return (
+                                       <TableCell
+                                          key={examName}
+                                          className={`text-center ${val20 !== null && val20 < 10 ? 'text-red-500 font-bold' : ''}`}
+                                       >
+                                          {val20 !== null ? Number(val20).toFixed(2) : '-'}
+                                       </TableCell>
+                                    );
+                                 })}
                                  <TableCell className="text-right font-bold text-primary">
-                                    {average === '-' ? '-' : `${average}%`}
+                                    {average === '-' ? '-' : `${average} / 20`}
                                  </TableCell>
                               </TableRow>
                            );

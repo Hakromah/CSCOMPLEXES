@@ -20,14 +20,14 @@ import autoTable from 'jspdf-autotable';
 const calculateLetterGrade = (marks: number | string): string => {
   const score = typeof marks === 'string' ? parseFloat(marks) : marks;
   if (isNaN(score)) return '-';
-  if (score >= 90) return 'AA';
-  if (score >= 85) return 'BA';
-  if (score >= 80) return 'BB';
-  if (score >= 75) return 'CB';
-  if (score >= 70) return 'CC';
-  if (score >= 60) return 'DC';
-  if (score >= 50) return 'DD';
-  return 'FF';
+  const val = score > 20 ? score / 5 : score;
+  if (val >= 18) return 'A+';
+  if (val >= 16) return 'A';
+  if (val >= 14) return 'B';
+  if (val >= 12) return 'C';
+  if (val >= 10) return 'D';
+  if (val >= 8) return 'E';
+  return 'F';
 };
 
 // ── A4 Landscape Gradebook PDF export ────────────────────────────────────────
@@ -44,10 +44,10 @@ const exportGradebookPDF = (
   try {
     const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' }) as any;
     const pageW = doc.internal.pageSize.getWidth();
-    const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    const date = new Date().toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' });
 
     // Dark header bar
-    doc.setFillColor(15, 23, 42);
+    doc.setFillColor(43, 76, 126);
     doc.rect(0, 0, pageW, 28, 'F');
     doc.setTextColor(255, 255, 255);
     doc.setFont('Helvetica', 'bold');
@@ -55,23 +55,23 @@ const exportGradebookPDF = (
     doc.text(schoolName.toUpperCase(), 14, 11);
     doc.setFont('Helvetica', 'normal');
     doc.setFontSize(8);
-    doc.setTextColor(156, 163, 175);
-    doc.text('Rapport officiel de notes  •  Système de gestion des résultats', 14, 17);
+    doc.setTextColor(200, 220, 245);
+    doc.text('Carnet de notes officiel (Barème sur 20)  •  Système de gestion des résultats', 14, 17);
     doc.text(`Généré le : ${date}`, 14, 22);
 
     // Class badge (right side)
-    doc.setFillColor(37, 99, 235);
+    doc.setFillColor(110, 190, 68);
     doc.roundedRect(pageW - 60, 6, 46, 16, 3, 3, 'F');
     doc.setTextColor(255, 255, 255);
     doc.setFont('Helvetica', 'bold');
     doc.setFontSize(10);
-    doc.text(`CLASS: ${className}`, pageW - 37, 16, { align: 'center' });
+    doc.text(`CLASSE: ${className}`, pageW - 37, 16, { align: 'center' });
 
     // Section title
     doc.setTextColor(15, 23, 42);
     doc.setFont('Helvetica', 'bold');
     doc.setFontSize(11);
-    doc.text('MATRICE DES PERFORMANCES ACADÉMIQUES', 14, 38);
+    doc.text('MATRICE DES PERFORMANCES ACADÉMIQUES (SUR 20)', 14, 38);
     doc.setFont('Helvetica', 'normal');
     doc.setFontSize(8);
     doc.setTextColor(100, 116, 139);
@@ -79,9 +79,9 @@ const exportGradebookPDF = (
 
     // Table columns
     const head = [[
-      '#', 'Nom de l\'étudiant', 'Identifiant de l\'étudiant',
-      ...exams.map((e: any) => `${e?.name || '?'}\n(${e?.weight ?? 0}%)`),
-      'Moyenne pondérée', 'Note',
+      '#', 'Nom de l\'étudiant', 'Matricule',
+      ...exams.map((e: any) => `${e?.name || '?'}\n(Coef: ${e?.weight ?? 1})`),
+      'Moyenne (/20)', 'Mention',
     ]];
 
     const body = reportData.map((student: any, idx: number) => {
@@ -93,13 +93,21 @@ const exportGradebookPDF = (
       const avg = validScores.length > 0
         ? (validScores.reduce((a: number, b: number) => a + b, 0) / validScores.length)
         : null;
+      const avgVal20 = avg !== null ? (avg > 20 ? avg / 5 : avg) : null;
+      const avgStr = avgVal20 !== null ? `${avgVal20.toFixed(2)} / 20` : '-';
+      const grade = avgVal20 !== null ? calculateLetterGrade(avgVal20) : '-';
+
       return [
         String(idx + 1),
-        student.name || 'Unknown',
+        student.name || 'Inconnu',
         student.userId || 'N/A',
-        ...scores.map((s: any) => (s !== null ? String(s) : '-')),
-        avg !== null ? `${avg.toFixed(1)}%` : '-',
-        avg !== null ? calculateLetterGrade(avg) : '-',
+        ...scores.map((s: any) => {
+          if (s === null) return '-';
+          const sVal20 = s > 20 ? s / 5 : s;
+          return `${Number(sVal20).toFixed(2)}`;
+        }),
+        avgStr,
+        grade,
       ];
     });
 
@@ -109,7 +117,7 @@ const exportGradebookPDF = (
       body,
       theme: 'grid',
       headStyles: {
-        fillColor: [15, 23, 42] as any,
+        fillColor: [43, 76, 126] as any,
         textColor: [255, 255, 255],
         fontSize: 7.5,
         fontStyle: 'bold',
@@ -127,8 +135,8 @@ const exportGradebookPDF = (
         0: { halign: 'center', cellWidth: 8 },
         1: { cellWidth: 38, fontStyle: 'bold' },
         2: { cellWidth: 28, fontSize: 7 },
-        [exams.length + 3]: { halign: 'center', cellWidth: 20, fontStyle: 'bold', textColor: [37, 99, 235] as any },
-        [exams.length + 4]: { halign: 'center', cellWidth: 14, fontStyle: 'bold' },
+        [exams.length + 3]: { halign: 'center', cellWidth: 22, fontStyle: 'bold', textColor: [43, 76, 126] as any },
+        [exams.length + 4]: { halign: 'center', cellWidth: 16, fontStyle: 'bold' },
       },
       didParseCell: (data: any) => {
         if (data.section === 'body') {
@@ -136,15 +144,15 @@ const exportGradebookPDF = (
           if (colIdx >= 3 && colIdx < exams.length + 3) {
             const raw = parseFloat(data.cell.raw as string);
             if (!isNaN(raw)) {
-              if (raw < 50) { data.cell.styles.textColor = [220, 38, 38]; data.cell.styles.fontStyle = 'bold'; }
-              else if (raw >= 80) { data.cell.styles.textColor = [5, 150, 105]; }
+              if (raw < 10) { data.cell.styles.textColor = [220, 38, 38]; data.cell.styles.fontStyle = 'bold'; }
+              else if (raw >= 14) { data.cell.styles.textColor = [5, 150, 105]; }
               data.cell.styles.halign = 'center';
             }
           }
           if (colIdx === exams.length + 4) {
             const grade = data.cell.raw as string;
-            if (grade === 'FF' || grade === 'DD') data.cell.styles.textColor = [220, 38, 38];
-            else if (grade === 'AA' || grade === 'BA') data.cell.styles.textColor = [5, 150, 105];
+            if (grade === 'F' || grade === 'E') data.cell.styles.textColor = [220, 38, 38];
+            else if (grade === 'A+' || grade === 'A' || grade === 'B') data.cell.styles.textColor = [5, 150, 105];
             data.cell.styles.halign = 'center';
           }
         }
@@ -348,12 +356,20 @@ export default function TeacherResultsPage() {
 
   const getChartData = (student: any) => {
     return exams.map((exam) => {
-      const allScores = reportData.map((s) => s.marks[exam.id]?.val).filter(v => v != null);
+      const allScores = reportData
+        .map((s) => {
+          const raw = s.marks[exam.id]?.val;
+          if (raw == null) return null;
+          return raw > 20 ? raw / 5 : raw;
+        })
+        .filter(v => v != null) as number[];
       const avg = allScores.length > 0 ? allScores.reduce((a, b) => a + b, 0) / allScores.length : 0;
+      const rawStudent = student.marks[exam.id]?.val;
+      const studentScore20 = rawStudent != null ? (rawStudent > 20 ? rawStudent / 5 : rawStudent) : 0;
       return {
         name: exam.name,
-        studentScore: student.marks[exam.id]?.val || 0,
-        classAverage: parseFloat(avg.toFixed(1)),
+        studentScore: parseFloat(studentScore20.toFixed(2)),
+        classAverage: parseFloat(avg.toFixed(2)),
       };
     });
   };
@@ -365,7 +381,7 @@ export default function TeacherResultsPage() {
       <div className="flex justify-between items-start flex-wrap gap-5">
         <div>
           <h1 className="text-[clamp(1.3rem,1vw+0.5rem,2rem)] font-bold">Carnet de notes</h1>
-          <p className="text-muted-foreground font-medium">Gérer les notes d'évaluation et l'agrégation semestrielle.</p>
+          <p className="text-muted-foreground font-medium">Gérer les notes d'évaluation et l'agrégation semestrielle (Barème national sur 20).</p>
         </div>
         <div className="flex gap-3">
           <Select value={selectedClassId} onValueChange={setSelectedClassId}>
@@ -398,9 +414,9 @@ export default function TeacherResultsPage() {
               <LineChart data={getChartData(selectedStudentForChart)}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} />
                 <XAxis dataKey="name" />
-                <YAxis domain={[0, 100]} />
-                <Tooltip />
-                <Legend />
+                <YAxis domain={[0, 20]} />
+                <Tooltip formatter={(value: any, name?: string) => [`${value} / 20`, name === 'Score' ? 'Note' : 'Moyenne']} />
+                <Legend formatter={(value) => value === 'Score' ? 'Note (/20)' : 'Moyenne de classe (/20)'} />
                 <Line name="Score" type="monotone" dataKey="studentScore" stroke="#2563eb" strokeWidth={3} />
                 <Line name="Class Avg" type="monotone" dataKey="classAverage" stroke="#94a3b8" strokeDasharray="5 5" />
               </LineChart>
@@ -435,46 +451,49 @@ export default function TeacherResultsPage() {
                     <TableHead>Classe</TableHead>
                     <TableHead>Étudiant</TableHead>
                     <TableHead>Évaluation (Terme)</TableHead>
-                    <TableHead className="text-center">Poids</TableHead>
-                    <TableHead className="text-center">Score</TableHead>
-                    <TableHead className="text-center">Note</TableHead>
+                    <TableHead className="text-center">Coef</TableHead>
+                    <TableHead className="text-center">Note (/20)</TableHead>
+                    <TableHead className="text-center">Mention</TableHead>
                     <TableHead>Statut</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {displayedResults.length > 0 ? displayedResults.map((r) => (
-                    <TableRow key={r.id}>
-                      <TableCell className="font-medium">{r.exam?.classe?.name ?? '—'}</TableCell>
-                      <TableCell>
-                        <div className="font-semibold">{r.student?.username || r.student?.name || 'Unknown Student'}</div>
-                        <div className="text-[10px] text-muted-foreground uppercase">{r?.student?.userId || 'N/A'}</div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="font-medium">{r?.exam?.name || 'N/A'}</div>
-                        <div className="text-[10px] font-bold uppercase text-blue-700">
-                          <span className="bg-blue-100">{r?.exam?.term || 'N/A'}</span>
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-center font-bold text-slate-500">{r.exam?.weight ?? 0}%</TableCell>
-                      <TableCell className="text-center font-bold text-base">{r.marks}</TableCell>
-                      <TableCell className="text-center">
-                        <span className="bg-slate-100 px-2 py-1 rounded text-xs font-black">{calculateLetterGrade(r.marks)}</span>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex flex-col gap-1">
-                          <span className={`px-2 py-0.5 rounded-full text-[9px] font-black text-center w-fit ${r.status === 'DRAFT' ? 'bg-orange-100 text-orange-700' : 'bg-green-100 text-green-700'}`}>
-                            {r.status}
-                          </span>
-                          {r?.exam?.locked && <span className="flex items-center gap-1 text-[9px] font-bold text-slate-400"><Lock className="w-2.5 h-2.5" /> VERROUILLÉ</span>}
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        {r?.exam?.locked ? <BadgeCheck className="w-5 h-5 ml-auto text-slate-300" /> :
-                          <Button variant="ghost" size="sm" onClick={() => { setEditingResult(r); setIsDialogOpen(true) }}>Modifier</Button>}
-                      </TableCell>
-                    </TableRow>
-                  )) : (
+                  {displayedResults.length > 0 ? displayedResults.map((r) => {
+                    const marks20 = r.marks != null ? (r.marks > 20 ? r.marks / 5 : r.marks) : 0;
+                    return (
+                      <TableRow key={r.id}>
+                        <TableCell className="font-medium">{r.exam?.classe?.name ?? '—'}</TableCell>
+                        <TableCell>
+                          <div className="font-semibold">{r.student?.username || r.student?.name || 'Unknown Student'}</div>
+                          <div className="text-[10px] text-muted-foreground uppercase">{r?.student?.userId || 'N/A'}</div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="font-medium">{r?.exam?.name || 'N/A'}</div>
+                          <div className="text-[10px] font-bold uppercase text-blue-700">
+                            <span className="bg-blue-100">{r?.exam?.term || 'N/A'}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-center font-bold text-slate-500">Coef: {r.exam?.weight ?? 1}</TableCell>
+                        <TableCell className="text-center font-bold text-base">{Number(marks20).toFixed(2)} / 20</TableCell>
+                        <TableCell className="text-center">
+                          <span className="bg-slate-100 px-2 py-1 rounded text-xs font-black">{calculateLetterGrade(marks20)}</span>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex flex-col gap-1">
+                            <span className={`px-2 py-0.5 rounded-full text-[9px] font-black text-center w-fit ${r.status === 'DRAFT' ? 'bg-orange-100 text-orange-700' : 'bg-green-100 text-green-700'}`}>
+                              {r.status}
+                            </span>
+                            {r?.exam?.locked && <span className="flex items-center gap-1 text-[9px] font-bold text-slate-400"><Lock className="w-2.5 h-2.5" /> VERROUILLÉ</span>}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {r?.exam?.locked ? <BadgeCheck className="w-5 h-5 ml-auto text-slate-300" /> :
+                            <Button variant="ghost" size="sm" onClick={() => { setEditingResult(r); setIsDialogOpen(true) }}>Modifier</Button>}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  }) : (
                     <TableRow><TableCell colSpan={8} className="text-center py-10 text-muted-foreground italic">
                       {filterStudentId.trim() ? `Aucun résultat ne correspond à "${filterStudentId}".` : 'Aucun résultat trouvé.'}
                     </TableCell></TableRow>
@@ -497,7 +516,7 @@ export default function TeacherResultsPage() {
         <TabsContent value="gradebook">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
-              <div><CardTitle>Matrice de Performance</CardTitle></div>
+              <div><CardTitle>Matrice de Performance (Barème sur 20)</CardTitle></div>
               {selectedClassId !== 'all' && reportData.length > 0 && (
                 <Button
                   variant="outline"
@@ -519,27 +538,36 @@ export default function TeacherResultsPage() {
                     <TableHeader className="bg-slate-50">
                       <TableRow>
                         <TableHead>Étudiant</TableHead>
-                        {exams.map(e => <TableHead key={e.id} className="text-center">{e?.name || 'N/A'} ({e.weight}%)</TableHead>)}
-                        <TableHead className="text-right font-black">Moyenne Pondérée</TableHead>
+                        {exams.map(e => <TableHead key={e.id} className="text-center">{e?.name || 'N/A'} (Coef: {e.weight ?? 1})</TableHead>)}
+                        <TableHead className="text-right font-black">Moyenne (/20)</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {reportData.map(s => {
-                        const total = Object.values(s.marks).reduce((acc: number, curr: any) => acc + (curr.val || 0), 0);
-                        const avg = exams.length > 0 ? (total / exams.length).toFixed(1) : '0';
+                        const scores = exams.map((e: any) => {
+                          const raw = s.marks[e.id]?.val ?? null;
+                          if (raw === null) return null;
+                          return raw > 20 ? raw / 5 : raw;
+                        });
+                        const valid = scores.filter((v: any) => v !== null) as number[];
+                        const avg = valid.length > 0 ? (valid.reduce((acc, curr) => acc + curr, 0) / valid.length) : null;
                         return (
                           <TableRow key={s.id}>
                             <TableCell className="cursor-pointer hover:bg-slate-50" onClick={() => setSelectedStudentForChart(s)}>
                               <div className="font-bold">{s?.name || 'N/A'}</div>
                               <div className="text-[10px] text-muted-foreground">{s?.userId || 'N/A'}</div>
                             </TableCell>
-                            {exams.map(e => (
-                              <TableCell key={e.id} className="text-center">
-                                <div className={s.marks[e.id]?.val < 50 ? 'text-red-500 font-bold' : ''}>{s.marks[e.id]?.val ?? '-'}</div>
-                                <div className="text-[9px] text-muted-foreground">{calculateLetterGrade(s.marks[e.id]?.val)}</div>
-                              </TableCell>
-                            ))}
-                            <TableCell className="text-right font-black text-primary">{avg}%</TableCell>
+                            {exams.map(e => {
+                              const raw = s.marks[e.id]?.val ?? null;
+                              const val20 = raw !== null ? (raw > 20 ? raw / 5 : raw) : null;
+                              return (
+                                <TableCell key={e.id} className="text-center">
+                                  <div className={val20 !== null && val20 < 10 ? 'text-red-500 font-bold' : ''}>{val20 !== null ? val20.toFixed(2) : '-'}</div>
+                                  <div className="text-[9px] text-muted-foreground">{val20 !== null ? calculateLetterGrade(val20) : '-'}</div>
+                                </TableCell>
+                              );
+                            })}
+                            <TableCell className="text-right font-black text-primary">{avg !== null ? `${avg.toFixed(2)} / 20` : '-'}</TableCell>
                           </TableRow>
                         );
                       })}

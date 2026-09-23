@@ -168,25 +168,37 @@ export default function ParentDocumentsPage() {
       // Results Table
       doc.setFont('Helvetica', 'bold');
       doc.setFontSize(9);
-      doc.text('BILAN DES PERFORMANCES SCOLAIRES', 14, 116);
+      doc.text('BILAN DES PERFORMANCES SCOLAIRES (BARÈME SUR 20)', 14, 116);
 
-      const tableBody = (data.results || []).map((r: any) => [
-        r.subjectName || 'N/A',
-        r.className || 'N/A',
-        r.examName || '—',
-        `${r.semester || 'N/A'} (${r.term || 'N/A'})`,
-        `${r.marks != null ? r.marks : '—'}%`,
-        r.letterGrade || 'N/A',
-        r.remarks || '—'
-      ]);
+      const tableBody = (data.results || []).map((r: any) => {
+        const n20 = r.marks != null ? Number(r.marks) : (r.marks20 != null ? Number(r.marks20) : (r.percentage != null ? Number(r.percentage) / 5 : 0));
+        return [
+          r.subjectName || 'N/A',
+          r.className || 'N/A',
+          r.examName || '—',
+          `${r.semester || 'N/A'} (${r.term || 'N/A'})`,
+          `${n20.toFixed(2)} / 20`,
+          r.letterGrade || 'N/A',
+          r.remarks || r.decision || '—'
+        ];
+      });
 
       autoTable(doc, {
         startY: 120,
-        head: [['LISTE DES MATIERES', 'Classe', 'Examen', 'Semestre (Trimestre)', 'Note', 'Mention', 'Remarques']],
+        head: [['Matière', 'Classe', 'Évaluation', 'Période', 'Note (/20)', 'Mention', 'Observations']],
         body: tableBody,
         theme: 'striped',
         headStyles: { fillColor: [43, 76, 126] as any, fontSize: 8.5, fontStyle: 'bold' },
-        bodyStyles: { fontSize: 8 }
+        bodyStyles: { fontSize: 8 },
+        columnStyles: {
+          0: { cellWidth: 35 },
+          1: { cellWidth: 15 },
+          2: { cellWidth: 25 },
+          3: { cellWidth: 35 },
+          4: { cellWidth: 20, halign: 'center', fontStyle: 'bold' },
+          5: { cellWidth: 15, halign: 'center' },
+          6: { cellWidth: 37 }
+        }
       });
 
       let currentY = doc.lastAutoTable?.finalY ? doc.lastAutoTable.finalY + 12 : 170;
@@ -196,18 +208,38 @@ export default function ParentDocumentsPage() {
       }
 
       // Summary Card
-      doc.setFillColor(15, 23, 42);
+      doc.setFillColor(43, 76, 126);
       doc.rect(14, currentY, 182, 28, 'F');
+
+      const rawAvg = sum.annualAverage ?? sum.weightedAverageScore ?? sum.averageScore ?? 0;
+      const avgVal20 = Number(rawAvg > 20 ? rawAvg / 5 : rawAvg);
+      const isAdmis = avgVal20 >= 10.0;
+      const statusColor = isAdmis ? [110, 190, 68] : [220, 38, 38];
+
+      doc.setFillColor(statusColor[0], statusColor[1], statusColor[2]);
+      doc.rect(126, currentY + 2, 66, 24, 'F');
+
       doc.setTextColor(255, 255, 255);
       doc.setFont('Helvetica', 'bold');
-      doc.setFontSize(9);
-      doc.text('LISTE DES MATIERES', 20, currentY + 8);
-      doc.text('PERFORMANCE MOYENNE', 70, currentY + 8);
-      doc.text('MOYENNE GENERALE', 135, currentY + 8);
-      doc.setFontSize(18);
+      doc.setFontSize(8);
+      doc.text('MATIÈRES ÉVALUÉES', 20, currentY + 8);
+      doc.text('MOYENNE PONDÉRÉE (SUR 20)', 65, currentY + 8);
+      doc.text('MENTION & DÉCISION', 130, currentY + 8);
+
+      doc.setFontSize(16);
       doc.text(String(sum.totalSubjectsCount || 0), 20, currentY + 18);
-      doc.text(`${sum.weightedAverageScore || 0}%`, 70, currentY + 18);
-      doc.text(typeof sum.gpa === 'number' ? sum.gpa.toFixed(2) : '0.00', 135, currentY + 18);
+      doc.text(`${avgVal20.toFixed(2)} / 20`, 65, currentY + 18);
+
+      const mentionText = (sum.annualRemark || (avgVal20 >= 16 ? 'Très Bien' : avgVal20 >= 14 ? 'Bien' : avgVal20 >= 12 ? 'Assez Bien' : avgVal20 >= 10 ? 'Passable' : 'Insuffisant')).toUpperCase();
+      doc.setFontSize(11);
+      doc.text(mentionText, 130, currentY + 16);
+      doc.setFontSize(8.5);
+      doc.text(sum.annualDecision || (isAdmis ? 'ADMIS(E)' : 'AJOURNÉ(E)'), 130, currentY + 22);
+
+      doc.setFontSize(7);
+      doc.setTextColor(200, 220, 245);
+      doc.text('Domaines validés', 20, currentY + 24);
+      doc.text('Seuil de réussite: 10.00 / 20', 65, currentY + 24);
 
       // Signatures & QR
       const sigY = Math.max(235, currentY + 36);
