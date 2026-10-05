@@ -61,30 +61,45 @@ export default {
   },
 
   async assignTeacher(ctx: any) {
+    // Route is auth:false, so the caller must be checked here.
+    const user = await _verifyAdmin(ctx);
+    if (!user) return;
     const { teacherId, classId } = ctx.request.body;
     const result = await strapi.service('api::school-admin.school-admin').assignTeacherToClass(teacherId, classId);
     ctx.body = result || {};
   },
 
   async assignStudent(ctx: any) {
+    // Route is auth:false, so the caller must be checked here.
+    const user = await _verifyAdmin(ctx);
+    if (!user) return;
     const { studentId, classId } = ctx.request.body;
     const result = await strapi.service('api::school-admin.school-admin').assignStudentToClass(studentId, classId);
     ctx.body = result || {};
   },
 
   async getClassesForStudent(ctx: any) {
+    // Route is auth:false, so the caller must be checked here.
+    const user = await _verifyAdmin(ctx);
+    if (!user) return;
     ctx.body = await strapi.service('api::school-admin.school-admin').getClassesForStudent(
       Number(ctx.params.studentId),
     );
   },
 
   async getClassesForTeacher(ctx: any) {
+    // Route is auth:false, so the caller must be checked here.
+    const user = await _verifyAdmin(ctx);
+    if (!user) return;
     ctx.body = await strapi.service('api::school-admin.school-admin').getClassesForTeacher(
       Number(ctx.params.teacherId),
     );
   },
 
   async unassignTeacher(ctx: any) {
+    // Route is auth:false, so the caller must be checked here.
+    const user = await _verifyAdmin(ctx);
+    if (!user) return;
     const { teacherId, classId } = ctx.request.body;
     await strapi.service('api::school-admin.school-admin').unassignTeacherFromClass(
       Number(teacherId),
@@ -94,6 +109,9 @@ export default {
   },
 
   async unassignStudent(ctx: any) {
+    // Route is auth:false, so the caller must be checked here.
+    const user = await _verifyAdmin(ctx);
+    if (!user) return;
     const { studentId, classId } = ctx.request.body;
     await strapi.service('api::school-admin.school-admin').unassignStudentFromClass(
       Number(studentId),
@@ -695,10 +713,16 @@ export default {
 
   // ─── Certificates ────────────────────────────────────────────────────────────
   async getAllCertificates(ctx: any) {
+    // Route is auth:false, so the caller must be checked here.
+    const user = await _verifyAdmin(ctx);
+    if (!user) return;
     ctx.body = await strapi.service('api::school-admin.school-admin').getAllCertificates();
   },
 
   async createCertificate(ctx: any) {
+    // Route is auth:false, so the caller must be checked here.
+    const user = await _verifyAdmin(ctx);
+    if (!user) return;
     try {
       ctx.body = await strapi.service('api::school-admin.school-admin').createCertificate(ctx.request.body);
     } catch (err: any) {
@@ -708,15 +732,24 @@ export default {
   },
 
   async revokeCertificate(ctx: any) {
+    // Route is auth:false, so the caller must be checked here.
+    const user = await _verifyAdmin(ctx);
+    if (!user) return;
     const { id } = ctx.params;
     ctx.body = await strapi.service('api::school-admin.school-admin').revokeCertificate(Number(id));
   },
 
   async getCertificateTypes(ctx: any) {
+    // Route is auth:false, so the caller must be checked here.
+    const user = await _verifyAdmin(ctx);
+    if (!user) return;
     ctx.body = await strapi.service('api::school-admin.school-admin').getCertificateTypes();
   },
 
   async getCertificateMentions(ctx: any) {
+    // Route is auth:false, so the caller must be checked here.
+    const user = await _verifyAdmin(ctx);
+    if (!user) return;
     ctx.body = await strapi.service('api::school-admin.school-admin').getCertificateMentions();
   },
 

@@ -37,7 +37,7 @@ export default function DriverSchedulePage() {
         const res = await api.get('/driver/my-assignments');
         setAssignments(Array.isArray(res.data) ? res.data : []);
       } catch (err) {
-        toast.error('Failed to load transit registry');
+        toast.error('Impossible de charger votre tournée');
         console.error(err);
       } finally {
         setLoading(false);
@@ -50,7 +50,7 @@ export default function DriverSchedulePage() {
     return (
       <div className="h-[80vh] flex flex-col items-center justify-center gap-4">
         <Loader2 size={40} className="animate-spin text-primary" />
-        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Loading Route Schedules...</p>
+        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Chargement de votre tournée...</p>
       </div>
     );
   }
@@ -63,22 +63,22 @@ export default function DriverSchedulePage() {
       <header className="space-y-2">
         <div className="flex items-center gap-2 text-blue-600">
           <Bus size={18} />
-          <span className="text-[10px] font-black uppercase tracking-[0.4em]">Transit Operations</span>
+          <span className="text-[10px] font-black uppercase tracking-[0.4em]">Transport scolaire</span>
         </div>
         <h1 className="text-3xl font-black text-slate-900 tracking-tighter italic uppercase">
-          My <span className="text-blue-600">Schedule.</span>
+          Mon <span className="text-blue-600">Planning.</span>
         </h1>
         <p className="text-slate-400 font-bold text-[10px] uppercase tracking-widest mt-1">
-          View assigned routes, vehicle configuration, and passenger registry logs
+          Vos itinéraires, votre véhicule et la liste des élèves
         </p>
       </header>
 
       {assignments.length === 0 ? (
         <Card className="border-2 border-dashed border-slate-200 rounded-3xl bg-white p-12 text-center max-w-2xl mx-auto space-y-4">
           <Bus className="mx-auto text-slate-200" size={60} />
-          <h2 className="text-xl font-black text-slate-900 uppercase tracking-tight">No Routes Assigned</h2>
+          <h2 className="text-xl font-black text-slate-900 uppercase tracking-tight">Aucun itinéraire assigné</h2>
           <p className="text-slate-400 text-xs font-bold leading-relaxed max-w-md mx-auto">
-            You do not currently have any active student transport routes assigned to your profile. Contact administration.
+            Aucun itinéraire ne vous est assigné pour le moment. Contactez l&apos;administration.
           </p>
         </Card>
       ) : (
@@ -87,22 +87,22 @@ export default function DriverSchedulePage() {
           <div className="space-y-6">
             <Card className="border border-slate-100 rounded-3xl bg-slate-900 text-white shadow-sm p-6 relative overflow-hidden group">
               <div className="relative z-10 space-y-4">
-                <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">Transit Asset Config</span>
-                <h3 className="text-2xl font-black tracking-tight">{firstRoute?.routeName || 'Campus Shuttle'}</h3>
+                <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">Véhicule</span>
+                <h3 className="text-2xl font-black tracking-tight">{firstRoute?.routeName || 'Navette scolaire'}</h3>
                 <div className="space-y-1">
-                  <p className="text-xs text-slate-400 font-bold">Vehicle Details:</p>
-                  <p className="text-sm font-bold text-blue-400">{firstRoute?.vehicleInfo || 'Standard school transit'}</p>
+                  <p className="text-xs text-slate-400 font-bold">Détails du véhicule :</p>
+                  <p className="text-sm font-bold text-blue-400">{firstRoute?.vehicleInfo || 'Bus scolaire standard'}</p>
                 </div>
               </div>
               <Bus className="absolute -right-8 -bottom-8 text-white/5" size={160} />
             </Card>
 
             <Card className="border border-slate-100 rounded-3xl bg-white shadow-sm p-6 space-y-4">
-              <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">Overview Stats</span>
+              <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">Aperçu</span>
               <div className="flex gap-6">
                 <div className="space-y-0.5">
                   <p className="text-3xl font-black text-slate-900">{assignments.length}</p>
-                  <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">Total Passengers</p>
+                  <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">Élèves transportés</p>
                 </div>
               </div>
             </Card>
@@ -112,17 +112,17 @@ export default function DriverSchedulePage() {
           <Card className="lg:col-span-2 border border-slate-100 rounded-3xl overflow-hidden shadow-sm bg-white">
             <CardHeader className="px-8 py-5 border-b border-slate-50">
               <h3 className="font-black text-xs uppercase tracking-widest text-slate-900 flex items-center gap-2">
-                <Users size={16} className="text-slate-400" /> Passenger Registry
+                <Users size={16} className="text-slate-400" /> Liste des élèves
               </h3>
             </CardHeader>
             <CardContent className="p-0">
               <Table>
                 <TableHeader className="bg-slate-50">
                   <TableRow>
-                    <TableHead className="pl-8 py-4 font-black text-[9px] uppercase tracking-widest text-slate-400">Student</TableHead>
-                    <TableHead className="font-black text-[9px] uppercase tracking-widest text-slate-400">Pickup</TableHead>
-                    <TableHead className="font-black text-[9px] uppercase tracking-widest text-slate-400">Dropoff</TableHead>
-                    <TableHead className="pr-8 text-right font-black text-[9px] uppercase tracking-widest text-slate-400">Pickup Time</TableHead>
+                    <TableHead className="pl-8 py-4 font-black text-[9px] uppercase tracking-widest text-slate-400">Élève</TableHead>
+                    <TableHead className="font-black text-[9px] uppercase tracking-widest text-slate-400">Ramassage</TableHead>
+                    <TableHead className="font-black text-[9px] uppercase tracking-widest text-slate-400">Dépose</TableHead>
+                    <TableHead className="pr-8 text-right font-black text-[9px] uppercase tracking-widest text-slate-400">Heure</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -135,7 +135,7 @@ export default function DriverSchedulePage() {
                           </div>
                           <div>
                             <p className="text-xs font-black text-slate-800 tracking-tight">
-                              {item.student ? (item.student.name || item.student.username) : 'Unassigned'}
+                              {item.student ? (item.student.name || item.student.username) : 'Non assigné'}
                             </p>
                             <p className="text-[9px] font-mono text-slate-400">#{item.student?.userId || item.id}</p>
                           </div>

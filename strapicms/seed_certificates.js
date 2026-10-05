@@ -4,15 +4,29 @@
  * Usage: node seed_certificates.js
  */
 
+// Reads the same DATABASE_* variables Strapi's own config/database.ts uses,
+// so this script connects exactly like the app does. Nothing is hardcoded.
+// Run it from the strapicms folder so .env is picked up:
+//   node -r dotenv/config seed_certificates.js
 const { Client } = require('pg');
 
-const client = new Client({
-  host:     '127.0.0.1',
-  port:     5432,
-  database: 'cscomplexe_strapi',
-  user:     'postgres',
-  password: 'postgres18',
-});
+const client = new Client(
+  process.env.DATABASE_URL
+    ? { connectionString: process.env.DATABASE_URL }
+    : {
+        host:     process.env.DATABASE_HOST     || '127.0.0.1',
+        port:     Number(process.env.DATABASE_PORT || 5432),
+        database: process.env.DATABASE_NAME     || 'cscomplexe_strapi',
+        user:     process.env.DATABASE_USERNAME || 'postgres',
+        password: process.env.DATABASE_PASSWORD,
+      }
+);
+
+if (!process.env.DATABASE_URL && !process.env.DATABASE_PASSWORD) {
+  console.error('DATABASE_PASSWORD is not set. Run with:  node -r dotenv/config seed_certificates.js');
+  process.exit(1);
+}
+
 
 // ─── 7 Certificate Types ──────────────────────────────────────────────────────
 const CERT_TYPES = [

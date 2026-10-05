@@ -41,3 +41,7 @@ yarn-error.log*
 next-env.d.ts
 
 
+
+# Figma scratch — never commit these again
+my token
+figma_design.json

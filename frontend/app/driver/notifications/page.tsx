@@ -12,7 +12,7 @@ export default function DriverNotificationsPage() {
 
   const handleMarkAllRead = async () => {
     await markAllRead();
-    toast.success('All notifications marked as read');
+    toast.success('Toutes les notifications ont été marquées comme lues');
   };
 
   const handleMarkRead = async (id: number) => {
@@ -23,7 +23,7 @@ export default function DriverNotificationsPage() {
     return (
       <div className="h-[80vh] flex flex-col items-center justify-center gap-4">
         <Loader2 size={40} className="animate-spin text-primary" />
-        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Syncing Notification Feed...</p>
+        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Chargement des notifications...</p>
       </div>
     );
   }
@@ -42,13 +42,13 @@ export default function DriverNotificationsPage() {
         <div className="space-y-1">
           <div className="flex items-center gap-2 text-primary">
             <Bell size={18} />
-            <span className="text-[10px] font-black uppercase tracking-[0.4em]">Alert System</span>
+            <span className="text-[10px] font-black uppercase tracking-[0.4em]">Alertes</span>
           </div>
           <h1 className="text-3xl font-black text-slate-900 tracking-tighter italic uppercase">
-            Notifications <span className="text-primary">Hub.</span>
+            Mes <span className="text-primary">Notifications.</span>
           </h1>
           <p className="text-slate-400 font-bold text-[10px] uppercase tracking-widest">
-            Check direct logs, route updates, administration messages, and system alerts
+            Messages de l&apos;administration, changements d&apos;itinéraire et alertes
           </p>
         </div>
         {unreadCount > 0 && (
@@ -56,7 +56,7 @@ export default function DriverNotificationsPage() {
             onClick={handleMarkAllRead}
             className="bg-slate-900 hover:bg-blue-600 text-white rounded-2xl h-12 px-6 font-black transition-all cursor-pointer shadow-md"
           >
-            <CheckCheck size={16} className="mr-2" /> Mark All as Read
+            <CheckCheck size={16} className="mr-2" /> Tout marquer comme lu
           </Button>
         )}
       </header>
@@ -65,7 +65,7 @@ export default function DriverNotificationsPage() {
       {unreadCount > 0 && (
         <div className="bg-primary/10 text-primary border border-primary/20 rounded-2xl px-6 py-4 flex items-center justify-between">
           <p className="text-xs font-bold">
-            You have <span className="font-black text-sm">{unreadCount}</span> unread notifications requiring your attention.
+            Vous avez <span className="font-black text-sm">{unreadCount}</span> notification(s) non lue(s) qui demandent votre attention.
           </p>
         </div>
       )}
@@ -74,9 +74,9 @@ export default function DriverNotificationsPage() {
       {notifications.length === 0 ? (
         <Card className="border-2 border-dashed border-slate-200 rounded-3xl bg-white p-12 text-center max-w-2xl mx-auto space-y-4">
           <Bell className="mx-auto text-slate-200" size={60} />
-          <h2 className="text-xl font-black text-slate-900 uppercase tracking-tight">Inbox Clean</h2>
+          <h2 className="text-xl font-black text-slate-900 uppercase tracking-tight">Aucune notification</h2>
           <p className="text-slate-400 text-xs font-bold leading-relaxed max-w-md mx-auto">
-            You don't have any notifications logged at this moment. You're completely up to date!
+            Vous n&apos;avez aucune notification pour le moment. Vous êtes à jour !
           </p>
         </Card>
       ) : (
