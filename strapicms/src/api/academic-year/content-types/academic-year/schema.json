@@ -16,6 +16,16 @@
       "required": true,
       "unique": true
     },
+    "startDate": {
+      "type": "date"
+    },
+    "endDate": {
+      "type": "date"
+    },
+    "isCurrent": {
+      "type": "boolean",
+      "default": false
+    },
     "classes": {
       "type": "relation",
       "relation": "oneToMany",

@@ -1139,4 +1139,51 @@ export default () => ({
     }));
   },
 
+  // ─── Academic Years ─────────────────────────────────────────────────────────
+
+  async getAllAcademicYears() {
+    return (strapi.entityService.findMany as any)('api::academic-year.academic-year', {
+      populate: ['semesters', 'classes'],
+      sort: [{ createdAt: 'desc' }],
+    });
+  },
+
+  async createAcademicYear(data: any) {
+    if (data.isCurrent) {
+      // Unset isCurrent for all other academic years if this one is current
+      const allYears = await (strapi.entityService.findMany as any)('api::academic-year.academic-year', {
+        filters: { isCurrent: true }
+      }) as any[];
+      for (const y of allYears) {
+        await (strapi.entityService.update as any)('api::academic-year.academic-year', y.id, { data: { isCurrent: false } });
+      }
+    }
+    return (strapi.entityService.create as any)('api::academic-year.academic-year', {
+      data,
+      populate: ['semesters', 'classes'],
+    });
+  },
+
+  async updateAcademicYear(id: number, data: any) {
+    if (data.isCurrent) {
+      const allYears = await (strapi.entityService.findMany as any)('api::academic-year.academic-year', {
+        filters: { isCurrent: true }
+      }) as any[];
+      for (const y of allYears) {
+        if (y.id !== id) {
+          await (strapi.entityService.update as any)('api::academic-year.academic-year', y.id, { data: { isCurrent: false } });
+        }
+      }
+    }
+    return (strapi.entityService.update as any)('api::academic-year.academic-year', id, {
+      data,
+      populate: ['semesters', 'classes'],
+    });
+  },
+
+  async deleteAcademicYear(id: number) {
+    return (strapi.entityService.delete as any)('api::academic-year.academic-year', id);
+  },
+
 });
+

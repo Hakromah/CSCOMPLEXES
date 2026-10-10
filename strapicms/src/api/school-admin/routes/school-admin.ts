@@ -90,47 +90,47 @@ export default {
     { method: 'POST',   path: '/admin/notifications/broadcast',    handler: 'school-admin.broadcastAdminAnnouncement' },
 
     // Assessment Engine — Auto-transcript
-    { method: 'GET',    path: '/admin/transcripts/auto',                     handler: 'school-admin.generateTranscriptAuto' },
+    { method: 'GET',    path: '/admin/transcripts/auto',                     handler: 'school-admin.generateTranscriptAuto', config: { auth: false } },
 
     // Assessment Categories
-    { method: 'GET',    path: '/admin/assessment-categories',                handler: 'school-admin.getAssessmentCategories' },
-    { method: 'POST',   path: '/admin/assessment-categories',                handler: 'school-admin.createAssessmentCategory' },
-    { method: 'PUT',    path: '/admin/assessment-categories/:id',             handler: 'school-admin.updateAssessmentCategory' },
-    { method: 'DELETE', path: '/admin/assessment-categories/:id',             handler: 'school-admin.deleteAssessmentCategory' },
+    { method: 'GET',    path: '/admin/assessment-categories',                handler: 'school-admin.getAssessmentCategories', config: { auth: false } },
+    { method: 'POST',   path: '/admin/assessment-categories',                handler: 'school-admin.createAssessmentCategory', config: { auth: false } },
+    { method: 'PUT',    path: '/admin/assessment-categories/:id',             handler: 'school-admin.updateAssessmentCategory', config: { auth: false } },
+    { method: 'DELETE', path: '/admin/assessment-categories/:id',             handler: 'school-admin.deleteAssessmentCategory', config: { auth: false } },
 
     // Assessment Blueprints
-    { method: 'GET',    path: '/admin/assessment-blueprints',                 handler: 'school-admin.getAssessmentBlueprints' },
-    { method: 'POST',   path: '/admin/assessment-blueprints',                 handler: 'school-admin.createAssessmentBlueprint' },
-    { method: 'PUT',    path: '/admin/assessment-blueprints/:id',              handler: 'school-admin.updateAssessmentBlueprint' },
-    { method: 'DELETE', path: '/admin/assessment-blueprints/:id',              handler: 'school-admin.deleteAssessmentBlueprint' },
+    { method: 'GET',    path: '/admin/assessment-blueprints',                 handler: 'school-admin.getAssessmentBlueprints', config: { auth: false } },
+    { method: 'POST',   path: '/admin/assessment-blueprints',                 handler: 'school-admin.createAssessmentBlueprint', config: { auth: false } },
+    { method: 'PUT',    path: '/admin/assessment-blueprints/:id',              handler: 'school-admin.updateAssessmentBlueprint', config: { auth: false } },
+    { method: 'DELETE', path: '/admin/assessment-blueprints/:id',              handler: 'school-admin.deleteAssessmentBlueprint', config: { auth: false } },
 
     // Grading Schemes
-    { method: 'GET',    path: '/admin/grading-schemes',                       handler: 'school-admin.getGradingSchemes' },
-    { method: 'POST',   path: '/admin/grading-schemes',                       handler: 'school-admin.createGradingScheme' },
-    { method: 'PUT',    path: '/admin/grading-schemes/:id',                   handler: 'school-admin.updateGradingScheme' },
-    { method: 'DELETE', path: '/admin/grading-schemes/:id',                   handler: 'school-admin.deleteGradingScheme' },
+    { method: 'GET',    path: '/admin/grading-schemes',                       handler: 'school-admin.getGradingSchemes', config: { auth: false } },
+    { method: 'POST',   path: '/admin/grading-schemes',                       handler: 'school-admin.createGradingScheme', config: { auth: false } },
+    { method: 'PUT',    path: '/admin/grading-schemes/:id',                   handler: 'school-admin.updateGradingScheme', config: { auth: false } },
+    { method: 'DELETE', path: '/admin/grading-schemes/:id',                   handler: 'school-admin.deleteGradingScheme', config: { auth: false } },
 
     // Academic Results
-    { method: 'GET',    path: '/admin/academic-results/student/:studentId',   handler: 'school-admin.getStudentAcademicResults' },
-    { method: 'GET',    path: '/admin/academic-results/class/:classId',       handler: 'school-admin.getClassAcademicResults' },
+    { method: 'GET',    path: '/admin/academic-results/student/:studentId',   handler: 'school-admin.getStudentAcademicResults', config: { auth: false } },
+    { method: 'GET',    path: '/admin/academic-results/class/:classId',       handler: 'school-admin.getClassAcademicResults', config: { auth: false } },
 
     // Recalculate triggers
-    { method: 'POST',   path: '/admin/recalculate/student/:studentId',        handler: 'school-admin.recalculateStudent' },
-    { method: 'POST',   path: '/admin/recalculate/class/:classId',            handler: 'school-admin.recalculateClass' },
+    { method: 'POST',   path: '/admin/recalculate/student/:studentId',        handler: 'school-admin.recalculateStudent', config: { auth: false } },
+    { method: 'POST',   path: '/admin/recalculate/class/:classId',            handler: 'school-admin.recalculateClass', config: { auth: false } },
 
     // Dynamic Gradebook
-    { method: 'GET',    path: '/admin/gradebook/:classId',                    handler: 'school-admin.getDynamicGradebook' },
+    { method: 'GET',    path: '/admin/gradebook/:classId',                    handler: 'school-admin.getDynamicGradebook', config: { auth: false } },
 
     // Academic Years & Periods
-    { method: 'GET',    path: '/admin/academic-years',                  handler: 'school-admin.getAllAcademicYears' },
-    { method: 'POST',   path: '/admin/academic-years',                  handler: 'school-admin.createAcademicYear' },
-    { method: 'PUT',    path: '/admin/academic-years/:id',              handler: 'school-admin.updateAcademicYear' },
-    { method: 'DELETE', path: '/admin/academic-years/:id',              handler: 'school-admin.deleteAcademicYear' },
+    { method: 'GET',    path: '/admin/academic-years',                  handler: 'school-admin.getAllAcademicYears', config: { auth: false } },
+    { method: 'POST',   path: '/admin/academic-years',                  handler: 'school-admin.createAcademicYear', config: { auth: false } },
+    { method: 'PUT',    path: '/admin/academic-years/:id',              handler: 'school-admin.updateAcademicYear', config: { auth: false } },
+    { method: 'DELETE', path: '/admin/academic-years/:id',              handler: 'school-admin.deleteAcademicYear', config: { auth: false } },
 
-    { method: 'GET',    path: '/admin/academic-periods',                      handler: 'school-admin.getAcademicPeriods' },
-    { method: 'POST',   path: '/admin/academic-periods',                      handler: 'school-admin.createAcademicPeriod' },
-    { method: 'PUT',    path: '/admin/academic-periods/:id',                  handler: 'school-admin.updateAcademicPeriod' },
-    { method: 'DELETE', path: '/admin/academic-periods/:id',                  handler: 'school-admin.deleteAcademicPeriod' },
+    { method: 'GET',    path: '/admin/academic-periods',                      handler: 'school-admin.getAcademicPeriods', config: { auth: false } },
+    { method: 'POST',   path: '/admin/academic-periods',                      handler: 'school-admin.createAcademicPeriod', config: { auth: false } },
+    { method: 'PUT',    path: '/admin/academic-periods/:id',                  handler: 'school-admin.updateAcademicPeriod', config: { auth: false } },
+    { method: 'DELETE', path: '/admin/academic-periods/:id',                  handler: 'school-admin.deleteAcademicPeriod', config: { auth: false } },
 
     // ─── Certificates (auth:false + manual JWT — same pattern as attendance) ────
     { method: 'GET',    path: '/admin/certificates',              handler: 'school-admin.getAllCertificates',    config: { auth: false } },

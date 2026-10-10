@@ -693,10 +693,12 @@ export interface ApiAcademicYearAcademicYear
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    endDate: Schema.Attribute.Date;
     exams: Schema.Attribute.Relation<
       'oneToMany',
       'api::school-exam.school-exam'
     >;
+    isCurrent: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -708,6 +710,7 @@ export interface ApiAcademicYearAcademicYear
       Schema.Attribute.Unique;
     publishedAt: Schema.Attribute.DateTime;
     semesters: Schema.Attribute.Relation<'oneToMany', 'api::semester.semester'>;
+    startDate: Schema.Attribute.Date;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
