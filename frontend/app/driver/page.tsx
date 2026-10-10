@@ -8,7 +8,7 @@ export default function DriverDashboard() {
     <PayrollPortal
       role="DRIVER"
       icon={Bus}
-      portalName="Driver Portal"
+      portalName="Espace Chauffeur"
     />
   );
 }
