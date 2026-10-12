@@ -13,7 +13,9 @@ export default {
     { method: 'DELETE', path: '/admin/users/:id',                  handler: 'school-admin.deleteUser' },
 
     // Classes
-    { method: 'GET',    path: '/admin/classes',                    handler: 'school-admin.getAllClasses' },
+    { method: 'GET',    path: '/admin/classes',                    handler: 'school-admin.getAllClasses', config: { auth: false } },
+    { method: 'GET',    path: '/admin/classes/:id',                handler: 'school-admin.getClassById', config: { auth: false } },
+    { method: 'GET',    path: '/admin/classes/:id/overview',       handler: 'school-admin.getClassOverview', config: { auth: false } },
     { method: 'GET',    path: '/admin/classes/:id/students',       handler: 'school-admin.getStudentsByClass', config: { auth: false } },
     { method: 'POST',   path: '/admin/classes',                    handler: 'school-admin.createClass' },
     { method: 'PUT',    path: '/admin/classes/:id',                handler: 'school-admin.updateClass' },
@@ -38,7 +40,7 @@ export default {
     { method: 'GET',    path: '/admin/materials/analytics',        handler: 'school-admin.getMaterialAnalytics' },
 
     // Timetables
-    { method: 'GET',    path: '/admin/timetables',                 handler: 'school-admin.getAllTimetables' },
+    { method: 'GET',    path: '/admin/timetables',                 handler: 'school-admin.getAllTimetables', config: { auth: false } },
     { method: 'POST',   path: '/admin/timetables',                 handler: 'school-admin.createTimetable' },
     { method: 'PUT',    path: '/admin/timetables/:id',             handler: 'school-admin.updateTimetable' },
     { method: 'DELETE', path: '/admin/timetables/:id',             handler: 'school-admin.deleteTimetable' },

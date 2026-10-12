@@ -131,6 +131,83 @@ export default () => ({
     });
   },
 
+  async getClassById(classId: number) {
+    return (strapi.entityService.findOne as any)('api::school-class.school-class', classId, {
+      populate: ['teachers', 'students', 'academicYear'],
+    });
+  },
+
+  async getClassOverview(classId: number) {
+    const cls = await (strapi.entityService.findOne as any)('api::school-class.school-class', classId, {
+      populate: ['teachers', 'students', 'academicYear'],
+    }) as any;
+    if (!cls) return null;
+
+    const timetableEntries = await (strapi.entityService.findMany as any)('api::timetable-entry.timetable-entry', {
+      filters: { classe: { id: classId } },
+      populate: ['subject', 'teacher', 'room', 'academicYear', 'semester'],
+      sort: [{ dayOfWeek: 'asc' }, { startTime: 'asc' }],
+    }) as any[];
+
+    // Map teachers and their teaching courses in this class
+    const teacherMap = new Map<number, any>();
+
+    // 1. Add assigned teachers from class.teachers
+    for (const t of (cls.teachers || [])) {
+      teacherMap.set(t.id, {
+        id: t.id,
+        username: t.username,
+        name: t.username,
+        userId: t.userId,
+        email: t.email,
+        phoneNumber: t.phoneNumber,
+        gender: t.gender,
+        subjects: [],
+        sessionsCount: 0,
+      });
+    }
+
+    // 2. Correlate with timetable entries to discover subjects taught
+    for (const entry of timetableEntries) {
+      if (!entry.teacher?.id) continue;
+      let t = teacherMap.get(entry.teacher.id);
+      if (!t) {
+        t = {
+          id: entry.teacher.id,
+          username: entry.teacher.username,
+          name: entry.teacher.username,
+          userId: entry.teacher.userId,
+          email: entry.teacher.email,
+          phoneNumber: entry.teacher.phoneNumber,
+          gender: entry.teacher.gender,
+          subjects: [],
+          sessionsCount: 0,
+        };
+        teacherMap.set(entry.teacher.id, t);
+      }
+      t.sessionsCount++;
+      if (entry.subject?.id && !t.subjects.some((s: any) => s.id === entry.subject.id)) {
+        t.subjects.push({
+          id: entry.subject.id,
+          name: entry.subject.name,
+          code: entry.subject.code || null,
+        });
+      }
+    }
+
+    return {
+      class: {
+        id: cls.id,
+        name: cls.name,
+        grade: cls.grade,
+        academicYear: cls.academicYear,
+      },
+      students: cls.students || [],
+      teachers: Array.from(teacherMap.values()),
+      timetable: timetableEntries,
+    };
+  },
+
   async createClass(data: any) {
     return strapi.entityService.create('api::school-class.school-class', { data });
   },

@@ -44,6 +44,26 @@ export default {
     ctx.body = await strapi.service('api::school-admin.school-admin').getAllClasses();
   },
 
+  async getClassById(ctx: any) {
+    const cls = await strapi.service('api::school-admin.school-admin').getClassById(Number(ctx.params.id));
+    if (!cls) {
+      ctx.status = 404;
+      ctx.body = { error: 'Class not found' };
+      return;
+    }
+    ctx.body = cls;
+  },
+
+  async getClassOverview(ctx: any) {
+    const overview = await strapi.service('api::school-admin.school-admin').getClassOverview(Number(ctx.params.id));
+    if (!overview) {
+      ctx.status = 404;
+      ctx.body = { error: 'Class not found' };
+      return;
+    }
+    ctx.body = overview;
+  },
+
   async createClass(ctx: any) {
     ctx.body = await strapi.service('api::school-admin.school-admin').createClass(ctx.request.body);
   },

@@ -131,9 +131,11 @@ export default function StudentDashboard() {
           </p>
         </div>
         <div className="flex gap-3">
-          <Button className="bg-white border border-primary/0 md:hover:border-primary duration-500 hover:bg-slate-50 text-slate-900 rounded-2xl px-6 h-12 font-bold shadow-sm">
-            <CalendarIcon size={18} className="mr-1 text-primary" />
-            Emploi du temps
+          <Button asChild className="bg-white border border-primary/0 md:hover:border-primary duration-500 hover:bg-slate-50 text-slate-900 rounded-2xl px-6 h-12 font-bold shadow-sm">
+            <a href="/student/classes" className="flex items-center">
+              <CalendarIcon size={18} className="mr-1 text-primary" />
+              Emploi du temps
+            </a>
           </Button>
         </div>
       </header>

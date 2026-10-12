@@ -145,19 +145,21 @@ export default function TeacherDashboard() {
       {/* STATS GRID */}
       <div className="grid gap-6 md:grid-cols-3">
         {[
-          { label: 'Classes Assignées', val: stats.classes, icon: BookOpen, color: 'bg-blue-600' },
-          { label: 'Élèves Inscrits', val: stats.students, icon: Users, color: 'bg-emerald-500' },
-          { label: 'Matériaux Académiques', val: stats.exams, icon: FileText, color: 'bg-amber-500' }
+          { label: 'Classes Assignées', val: stats.classes, icon: BookOpen, color: 'bg-blue-600', href: '/teacher/classes' },
+          { label: 'Élèves Inscrits', val: stats.students, icon: Users, color: 'bg-emerald-500', href: '/teacher/students' },
+          { label: 'Matériaux Académiques', val: stats.exams, icon: FileText, color: 'bg-amber-500', href: '/teacher/materials' }
         ].map((item, i) => (
           <motion.div key={i} whileHover={{ y: -5 }} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}>
-            <Card className="border border-slate-100 py-3 md:hover:border-primary duration-500 transition-colors shadow-sm bg-white relative overflow-hidden">
-              <div className={`absolute top-0 left-0 w-1.5 h-full ${item.color}`} />
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-[10px] font-black uppercase text-slate-400 tracking-widest">{item.label}</CardTitle>
-                <item.icon className="h-4 w-4 text-slate-300" />
-              </CardHeader>
-              <CardContent><div className="text-4xl font-black text-slate-800">{loading ? "..." : item.val}</div></CardContent>
-            </Card>
+            <a href={item.href} className="block">
+              <Card className="border border-slate-100 py-3 md:hover:border-primary duration-500 transition-colors shadow-sm bg-white relative overflow-hidden cursor-pointer">
+                <div className={`absolute top-0 left-0 w-1.5 h-full ${item.color}`} />
+                <CardHeader className="flex flex-row items-center justify-between pb-2">
+                  <CardTitle className="text-[10px] font-black uppercase text-slate-400 tracking-widest">{item.label}</CardTitle>
+                  <item.icon className="h-4 w-4 text-slate-300" />
+                </CardHeader>
+                <CardContent><div className="text-4xl font-black text-slate-800">{loading ? "..." : item.val}</div></CardContent>
+              </Card>
+            </a>
           </motion.div>
         ))}
       </div>
