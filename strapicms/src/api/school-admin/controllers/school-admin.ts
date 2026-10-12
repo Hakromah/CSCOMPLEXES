@@ -290,6 +290,35 @@ export default {
     );
   },
 
+  async createResult(ctx: any) {
+    ctx.body = await strapi.service('api::school-admin.school-admin').saveResult(ctx.request.body);
+  },
+
+  async updateResult(ctx: any) {
+    ctx.body = await strapi.service('api::school-admin.school-admin').updateResult(
+      Number(ctx.params.id), ctx.request.body
+    );
+  },
+
+  async deleteResult(ctx: any) {
+    await strapi.service('api::school-admin.school-admin').deleteResult(Number(ctx.params.id));
+    ctx.body = { success: true };
+  },
+
+  async saveBulkResults(ctx: any) {
+    await strapi.service('api::school-admin.school-admin').saveBulkResults(ctx.request.body);
+    ctx.body = { message: 'Bulk marks saved successfully' };
+  },
+
+  async submitResults(ctx: any) {
+    await strapi.service('api::school-admin.school-admin').submitResults(ctx.request.body);
+    ctx.body = { success: true };
+  },
+
+  async getStudentsByClass(ctx: any) {
+    ctx.body = await strapi.service('api::school-admin.school-admin').getStudentsByClass(Number(ctx.params.id));
+  },
+
   async getSummaryReport(ctx: any) {
     ctx.body = await strapi.service('api::school-admin.school-admin').getSummaryReport();
   },

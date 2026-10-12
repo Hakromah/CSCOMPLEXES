@@ -537,13 +537,21 @@ export default () => ({
 
   // ─── Exam Management ──────────────────────────────────────────────
 
+  async getStudentsByClass(classId: number) {
+    const cls = await (strapi.entityService.findOne as any)('api::school-class.school-class', classId, {
+      populate: ['students'],
+    }) as any;
+    return cls?.students || [];
+  },
+
   async getExams(filters: { teacherId?: number; classId?: number }) {
     const f: any = {};
     if (filters.teacherId) f.teacher = { id: filters.teacherId };
     if (filters.classId) f.classe = { id: filters.classId };
-    return strapi.entityService.findMany('api::school-exam.school-exam', {
+    return (strapi.entityService.findMany as any)('api::school-exam.school-exam', {
       filters: f,
-      populate: ['classe', 'teacher', 'subject'],
+      populate: ['classe', 'teacher', 'subject', 'academicYear', 'semesterRel', 'termRel', 'assessmentCategory'],
+      sort: [{ date: 'desc' }, { id: 'desc' }],
     });
   },
 
@@ -565,9 +573,10 @@ export default () => ({
     const filters: any = {};
     if (classId) filters.exam = { classe: { id: classId } };
 
-    const results = await strapi.entityService.findMany('api::exam-result.exam-result', {
+    const results = await (strapi.entityService.findMany as any)('api::exam-result.exam-result', {
       filters,
-      populate: ['exam', 'exam.classe', 'exam.subject', 'student'],
+      populate: ['exam', 'exam.classe', 'exam.subject', 'exam.academicYear', 'student'],
+      sort: [{ id: 'desc' }],
     }) as any[];
 
     if (studentQuery) {
@@ -579,6 +588,96 @@ export default () => ({
       );
     }
     return results;
+  },
+
+  async saveResult(data: any) {
+    const examId = data.exam?.id || data.examId || data.exam;
+    const studentId = data.student?.id || data.studentId || data.student;
+    const exam = await (strapi.entityService.findOne as any)('api::school-exam.school-exam', examId) as any;
+
+    const letterGrade = _computeAdminGrade20(data.marks, exam?.maxScore || 20);
+    const payload = {
+      ...data,
+      exam: examId,
+      student: studentId,
+      letterGrade,
+      status: data.status || 'SUBMITTED',
+    };
+
+    const existing = await (strapi.entityService.findMany as any)('api::exam-result.exam-result', {
+      filters: { exam: { id: examId }, student: { id: studentId } },
+    }) as any[];
+
+    if (existing && existing.length > 0) {
+      return (strapi.entityService.update as any)('api::exam-result.exam-result', existing[0].id, {
+        data: payload,
+      });
+    }
+
+    return (strapi.entityService.create as any)('api::exam-result.exam-result', {
+      data: payload,
+    });
+  },
+
+  async updateResult(resultId: number, data: any) {
+    const examId = data.exam?.id || data.examId || data.exam;
+    const studentId = data.student?.id || data.studentId || data.student;
+    const letterGrade = data.marks !== undefined ? _computeAdminGrade20(data.marks, data.maxScore || 20) : undefined;
+    const payload: any = {
+      ...data,
+      ...(examId ? { exam: examId } : {}),
+      ...(studentId ? { student: studentId } : {}),
+      ...(letterGrade ? { letterGrade } : {}),
+    };
+    return (strapi.entityService.update as any)('api::exam-result.exam-result', resultId, {
+      data: payload,
+    });
+  },
+
+  async deleteResult(resultId: number) {
+    return (strapi.entityService.delete as any)('api::exam-result.exam-result', resultId);
+  },
+
+  async saveBulkResults(results: any[]) {
+    return Promise.all(results.map(async (r) => {
+      const examId = r.exam?.id || r.exam;
+      const studentId = r.student?.id || r.student;
+      const letterGrade = _computeAdminGrade20(r.marks, r.maxScore || 20);
+      const payload = {
+        ...r,
+        exam: examId,
+        student: studentId,
+        letterGrade,
+      };
+
+      if (r.id) {
+        return (strapi.entityService.update as any)('api::exam-result.exam-result', r.id, {
+          data: payload,
+        });
+      }
+
+      const existing = await (strapi.entityService.findMany as any)('api::exam-result.exam-result', {
+        filters: { exam: { id: examId }, student: { id: studentId } },
+      }) as any[];
+
+      if (existing && existing.length > 0) {
+        return (strapi.entityService.update as any)('api::exam-result.exam-result', existing[0].id, {
+          data: payload,
+        });
+      }
+
+      return (strapi.entityService.create as any)('api::exam-result.exam-result', {
+        data: { ...payload, status: 'SUBMITTED' },
+      });
+    }));
+  },
+
+  async submitResults(resultIds: number[]) {
+    return Promise.all(resultIds.map((id) =>
+      (strapi.entityService.update as any)('api::exam-result.exam-result', id, {
+        data: { status: 'SUBMITTED' },
+      })
+    ));
   },
 
   async calculateSemesterGPA(studentId: number, semester: string) {
@@ -1191,4 +1290,18 @@ export default () => ({
   },
 
 });
+
+function _computeAdminGrade20(marks: number, maxScore: number = 20): string {
+  if (marks === null || marks === undefined || isNaN(marks)) return 'F';
+  const num = Number(marks);
+  const score20 = (num > 20 || maxScore > 20) ? (num / (maxScore || 100)) * 20 : num;
+  if (score20 >= 18) return 'A+';
+  if (score20 >= 16) return 'A';
+  if (score20 >= 14) return 'B+';
+  if (score20 >= 12) return 'B';
+  if (score20 >= 10) return 'C';
+  if (score20 >= 8) return 'D';
+  return 'F';
+}
+
 

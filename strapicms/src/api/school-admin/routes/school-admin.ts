@@ -14,6 +14,7 @@ export default {
 
     // Classes
     { method: 'GET',    path: '/admin/classes',                    handler: 'school-admin.getAllClasses' },
+    { method: 'GET',    path: '/admin/classes/:id/students',       handler: 'school-admin.getStudentsByClass', config: { auth: false } },
     { method: 'POST',   path: '/admin/classes',                    handler: 'school-admin.createClass' },
     { method: 'PUT',    path: '/admin/classes/:id',                handler: 'school-admin.updateClass' },
     { method: 'DELETE', path: '/admin/classes/:id',                handler: 'school-admin.deleteClass' },
@@ -63,11 +64,16 @@ export default {
     { method: 'DELETE', path: '/admin/time-slots/:id',             handler: 'school-admin.deleteTimeSlot' },
 
     // Exams
-    { method: 'GET',    path: '/admin/exams',                      handler: 'school-admin.getExams' },
-    { method: 'PATCH',  path: '/admin/exams/lock-semester',        handler: 'school-admin.lockSemesterExams' },
+    { method: 'GET',    path: '/admin/exams',                      handler: 'school-admin.getExams', config: { auth: false } },
+    { method: 'PATCH',  path: '/admin/exams/lock-semester',        handler: 'school-admin.lockSemesterExams', config: { auth: false } },
 
     // Results & Reports
-    { method: 'GET',    path: '/admin/results/filter',             handler: 'school-admin.filterResults' },
+    { method: 'GET',    path: '/admin/results/filter',             handler: 'school-admin.filterResults', config: { auth: false } },
+    { method: 'POST',   path: '/admin/results',                    handler: 'school-admin.createResult', config: { auth: false } },
+    { method: 'PUT',    path: '/admin/results/:id',                handler: 'school-admin.updateResult', config: { auth: false } },
+    { method: 'DELETE', path: '/admin/results/:id',                handler: 'school-admin.deleteResult', config: { auth: false } },
+    { method: 'POST',   path: '/admin/results/bulk',               handler: 'school-admin.saveBulkResults', config: { auth: false } },
+    { method: 'POST',   path: '/admin/results/submit',             handler: 'school-admin.submitResults', config: { auth: false } },
     { method: 'GET',    path: '/admin/reports/summary',            handler: 'school-admin.getSummaryReport' },
     { method: 'GET',    path: '/admin/reports/semester-summary',   handler: 'school-admin.getSemesterGPA' },
     { method: 'PUT',    path: '/admin/semester/finalize',          handler: 'school-admin.finalizeSemester' },

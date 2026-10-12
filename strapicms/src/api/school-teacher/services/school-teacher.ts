@@ -197,9 +197,22 @@ export default () => ({
     });
   },
 
-  async getExamsByTeacher(teacherId: number) {
+  async getAllExams() {
     return strapi.entityService.findMany('api::school-exam.school-exam', {
-      filters: { teacher: { id: teacherId } },
+      populate: ['classe', 'subject', 'academicYear', 'semesterRel', 'termRel', 'assessmentCategory', 'blueprint'] as any,
+      sort: [{ date: 'desc' }, { id: 'desc' }] as any,
+    });
+  },
+
+  async getExamsByTeacher(teacherId?: number) {
+    if (!teacherId) return this.getAllExams();
+    return strapi.entityService.findMany('api::school-exam.school-exam', {
+      filters: {
+        $or: [
+          { teacher: { id: teacherId } },
+          { classe: { teachers: { id: teacherId } } },
+        ],
+      },
       populate: ['classe', 'subject', 'academicYear', 'semesterRel', 'termRel', 'assessmentCategory', 'blueprint'] as any,
       sort: [{ date: 'desc' }, { id: 'desc' }] as any,
     });
@@ -261,23 +274,37 @@ export default () => ({
 
   async getGradebookByClass(teacherId: number, classId: number) {
     return strapi.entityService.findMany('api::exam-result.exam-result', {
-      filters: { exam: { classe: { id: classId }, teacher: { id: teacherId } } },
+      filters: { exam: { classe: { id: classId } } },
       populate: ['exam', 'exam.subject', 'student'],
     });
   },
 
   async saveResult(teacherId: number, data: any) {
-    const exam = await strapi.entityService.findOne('api::school-exam.school-exam', data.exam?.id || data.examId || data.exam, { populate: ['teacher'] }) as any;
-    if (exam?.teacher?.id !== teacherId) throw new Error('Unauthorized');
+    const examId = data.exam?.id || data.examId || data.exam;
+    const studentId = data.student?.id || data.studentId || data.student;
+    const exam = await strapi.entityService.findOne('api::school-exam.school-exam', examId, { populate: ['teacher', 'classe', 'classe.teachers'] }) as any;
+    const isAuthorized = !teacherId || !exam?.teacher || exam?.teacher?.id === teacherId || (exam?.classe?.teachers || []).some((t: any) => t.id === teacherId);
+    if (!isAuthorized) throw new Error('Unauthorized');
 
-    const letterGrade = _computeLetterGrade(data.marks);
+    const letterGrade = _computeLetterGrade(data.marks, exam?.maxScore || 20);
     const payload = {
       ...data,
-      exam: data.exam?.id || data.exam,
-      student: data.student?.id || data.student,
+      exam: examId,
+      student: studentId,
       letterGrade,
-      status: 'DRAFT'
+      status: data.status || 'DRAFT',
     };
+
+    const existing = await strapi.entityService.findMany('api::exam-result.exam-result', {
+      filters: { exam: { id: examId }, student: { id: studentId } },
+    }) as any[];
+
+    if (existing && existing.length > 0) {
+      return strapi.entityService.update('api::exam-result.exam-result', existing[0].id, {
+        data: payload,
+      });
+    }
+
     return await strapi.entityService.create('api::exam-result.exam-result', {
       data: payload,
     });
@@ -297,12 +324,14 @@ export default () => ({
   },
 
   async saveBulkResults(teacherId: number, results: any[]) {
-    await Promise.all(results.map((r) => {
+    await Promise.all(results.map(async (r) => {
+      const examId = r.exam?.id || r.exam;
+      const studentId = r.student?.id || r.student;
       const letterGrade = _computeLetterGrade(r.marks);
       const payload = {
         ...r,
-        exam: r.exam?.id || r.exam,
-        student: r.student?.id || r.student,
+        exam: examId,
+        student: studentId,
         letterGrade
       };
       if (r.id) {
@@ -310,6 +339,16 @@ export default () => ({
           data: payload,
         });
       }
+      const existing = await strapi.entityService.findMany('api::exam-result.exam-result', {
+        filters: { exam: { id: examId }, student: { id: studentId } },
+      }) as any[];
+
+      if (existing && existing.length > 0) {
+        return strapi.entityService.update('api::exam-result.exam-result', existing[0].id, {
+          data: payload,
+        });
+      }
+
       return strapi.entityService.create('api::exam-result.exam-result', {
         data: { ...payload, status: 'DRAFT' },
       });
@@ -324,9 +363,18 @@ export default () => ({
     ));
   },
 
-  async getResultsByTeacher(teacherId: number) {
+  async getResultsByTeacher(teacherId?: number) {
+    const filters: any = {};
+    if (teacherId) {
+      filters.exam = {
+        $or: [
+          { teacher: { id: teacherId } },
+          { classe: { teachers: { id: teacherId } } },
+        ],
+      };
+    }
     return strapi.entityService.findMany('api::exam-result.exam-result', {
-      filters: { exam: { teacher: { id: teacherId } } },
+      filters,
       populate: ['exam', 'exam.subject', 'exam.classe', 'student'],
     });
   },

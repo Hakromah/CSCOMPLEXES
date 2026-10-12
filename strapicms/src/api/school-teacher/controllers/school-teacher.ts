@@ -57,8 +57,17 @@ export default {
   },
 
   async getMyExams(ctx: any) {
-    const user = ctx.state.user;
-    ctx.body = await strapi.service('api::school-teacher.school-teacher').getExamsByTeacher(user.id);
+    try {
+      const user = ctx.state.user;
+      if (!user || user.schoolRole === 'ADMIN' || user.role?.name === 'Admin' || user.role?.type === 'admin') {
+        ctx.body = await strapi.service('api::school-teacher.school-teacher').getAllExams();
+        return;
+      }
+      ctx.body = await strapi.service('api::school-teacher.school-teacher').getExamsByTeacher(user.id);
+    } catch (err: any) {
+      ctx.status = 500;
+      ctx.body = { error: err.message, stack: err.stack };
+    }
   },
 
   async updateExam(ctx: any) {
@@ -84,19 +93,19 @@ export default {
   async getGradebook(ctx: any) {
     const user = ctx.state.user;
     ctx.body = await strapi.service('api::school-teacher.school-teacher').getGradebookByClass(
-      user.id, Number(ctx.params.classId)
+      user?.id, Number(ctx.params.classId)
     );
   },
 
   async saveBulkResults(ctx: any) {
     const user = ctx.state.user;
-    await strapi.service('api::school-teacher.school-teacher').saveBulkResults(user.id, ctx.request.body);
+    await strapi.service('api::school-teacher.school-teacher').saveBulkResults(user?.id, ctx.request.body);
     ctx.body = { message: 'Bulk marks saved successfully' };
   },
 
   async createResult(ctx: any) {
     const user = ctx.state.user;
-    ctx.body = await strapi.service('api::school-teacher.school-teacher').saveResult(user.id, ctx.request.body);
+    ctx.body = await strapi.service('api::school-teacher.school-teacher').saveResult(user?.id, ctx.request.body);
   },
 
   async updateResult(ctx: any) {
@@ -112,7 +121,7 @@ export default {
 
   async getResults(ctx: any) {
     const user = ctx.state.user;
-    ctx.body = await strapi.service('api::school-teacher.school-teacher').getResultsByTeacher(user.id);
+    ctx.body = await strapi.service('api::school-teacher.school-teacher').getResultsByTeacher(user?.id);
   },
 
   async filterResults(ctx: any) {

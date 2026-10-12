@@ -14,7 +14,7 @@ export default {
     { method: 'GET',  path: '/teacher/classes/:classId/subjects',            handler: 'school-teacher.getSubjectsByClass' },
 
     { method: 'POST',   path: '/teacher/exams',                              handler: 'school-teacher.createExam' },
-    { method: 'GET',    path: '/teacher/exams',                              handler: 'school-teacher.getMyExams' },
+    { method: 'GET',    path: '/teacher/exams',                              handler: 'school-teacher.getMyExams', config: { auth: false } },
     { method: 'PUT',    path: '/teacher/exams/:id',                          handler: 'school-teacher.updateExam' },
     { method: 'DELETE', path: '/teacher/exams/:id',                          handler: 'school-teacher.deleteExam' },
     { method: 'PATCH',  path: '/teacher/exams/:id/toggle-status',            handler: 'school-teacher.toggleExamStatus' },

@@ -234,6 +234,7 @@ export default function TeacherResultsPage() {
   const [classes, setClasses] = useState<any[]>([]);
   const [selectedClassId, setSelectedClassId] = useState<string>('all');
   const [results, setResults] = useState<any[]>([]);
+  const [allExams, setAllExams] = useState<any[]>([]);
   const [exams, setExams] = useState<any[]>([]);
   const [reportData, setReportData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -259,6 +260,7 @@ export default function TeacherResultsPage() {
   const [formMarks, setFormMarks] = useState('');
   const [formRemarks, setFormRemarks] = useState('');
   const [formStudentsList, setFormStudentsList] = useState<any[]>([]);
+  const [formExamsList, setFormExamsList] = useState<any[]>([]);
   const [savingResult, setSavingResult] = useState(false);
 
   // ─── Fetch Classes ───────────────────────────────────────────────────────────
@@ -289,17 +291,24 @@ export default function TeacherResultsPage() {
 
   // ─── Fetch Gradebook Matrix Data ─────────────────────────────────────────────
   const fetchGradebookData = useCallback(async () => {
-    if (selectedClassId === 'all') return;
     try {
-      const [resultsRes, examsRes] = await Promise.all([
-        api.get(`/teacher/classes/${selectedClassId}/gradebook`).catch(() => ({ data: [] })),
-        api.get('/teacher/exams').catch(() => ({ data: [] })),
-      ]);
+      const examsRes = await api.get('/teacher/exams').catch(() => ({ data: [] }));
+      const allExamsList = normalizeArray<any>(examsRes.data);
+      setAllExams(allExamsList);
 
-      const allExams = normalizeArray<any>(examsRes.data);
-      const classExams = allExams.filter((e: any) => e?.classe?.id && String(e.classe.id) === selectedClassId);
+      if (selectedClassId === 'all') {
+        setExams(allExamsList);
+        setReportData([]);
+        return;
+      }
+
+      const classExams = allExamsList.filter((e: any) => {
+        const cId = e?.classe?.id ?? e?.classe;
+        return cId && String(cId) === String(selectedClassId);
+      });
       setExams(classExams);
 
+      const resultsRes = await api.get(`/teacher/classes/${selectedClassId}/gradebook`).catch(() => ({ data: [] }));
       const gradebookRows = normalizeArray<any>(resultsRes.data);
       const studentMap: Record<string, any> = {};
 
@@ -349,14 +358,48 @@ export default function TeacherResultsPage() {
     }
   }, [selectedClassId, fetchResultsList, fetchGradebookData]);
 
-  // ─── Load students for form class ────────────────────────────────────────────
+  // ─── Load students & exams for form class ────────────────────────────────────
   useEffect(() => {
     if (formClassId) {
+      // 1. Fetch students for the form class
       api.get(`/teacher/classes/${formClassId}/students`)
-        .then(res => setFormStudentsList(normalizeArray<any>(res.data)))
-        .catch(() => setFormStudentsList([]));
+        .then(res => {
+          const list = normalizeArray<any>(res.data);
+          setFormStudentsList(list);
+          setFormStudentId(prev => {
+            if (list.some(s => String(s.id) === String(prev))) return prev;
+            return list[0]?.id ? String(list[0].id) : '';
+          });
+        })
+        .catch(() => {
+          setFormStudentsList([]);
+          setFormStudentId('');
+        });
+
+      // 2. Fetch/filter exams for the form class
+      api.get('/teacher/exams')
+        .then(res => {
+          const freshExams = normalizeArray<any>(res.data);
+          setAllExams(freshExams);
+          const classExams = freshExams.filter((e: any) => {
+            const cId = e?.classe?.id ?? e?.classe;
+            return cId && String(cId) === String(formClassId);
+          });
+          setFormExamsList(classExams);
+          setFormExamId(prev => {
+            if (classExams.some(e => String(e.id) === String(prev))) return prev;
+            return classExams[0]?.id ? String(classExams[0].id) : '';
+          });
+        })
+        .catch(() => {
+          setFormExamsList([]);
+          setFormExamId('');
+        });
     } else {
       setFormStudentsList([]);
+      setFormExamsList([]);
+      setFormStudentId('');
+      setFormExamId('');
     }
   }, [formClassId]);
 
@@ -419,9 +462,15 @@ export default function TeacherResultsPage() {
   // ─── Open Single Result Form Modal ───────────────────────────────────────────
   const handleOpenAddModal = () => {
     setEditingResult(null);
-    setFormClassId(selectedClassId !== 'all' ? selectedClassId : (classes[0]?.id ? String(classes[0].id) : ''));
+    const initialClassId = selectedClassId !== 'all' ? selectedClassId : (classes[0]?.id ? String(classes[0].id) : '');
+    const matchingExams = allExams.filter((e: any) => {
+      const cId = e?.classe?.id ?? e?.classe;
+      return cId && String(cId) === String(initialClassId);
+    });
+    setFormClassId(initialClassId);
     setFormStudentId('');
-    setFormExamId(exams[0]?.id ? String(exams[0].id) : '');
+    setFormExamsList(matchingExams);
+    setFormExamId(matchingExams[0]?.id ? String(matchingExams[0].id) : '');
     setFormMarks('');
     setFormRemarks('');
     setIsDialogOpen(true);
@@ -429,9 +478,15 @@ export default function TeacherResultsPage() {
 
   const handleOpenEditModal = (r: any) => {
     setEditingResult(r);
-    setFormClassId(r.exam?.classe?.id ? String(r.exam.classe.id) : '');
+    const rClassId = r.exam?.classe?.id ? String(r.exam.classe.id) : (classes[0]?.id ? String(classes[0].id) : '');
+    const matchingExams = allExams.filter((e: any) => {
+      const cId = e?.classe?.id ?? e?.classe;
+      return cId && String(cId) === String(rClassId);
+    });
+    setFormClassId(rClassId);
     setFormStudentId(r.student?.id ? String(r.student.id) : '');
-    setFormExamId(r.exam?.id ? String(r.exam.id) : '');
+    setFormExamsList(matchingExams);
+    setFormExamId(r.exam?.id ? String(r.exam.id) : (matchingExams[0]?.id ? String(matchingExams[0].id) : ''));
     const m = r.marks ?? r.rawScore ?? '';
     setFormMarks(m !== '' ? String(m) : '');
     setFormRemarks(r.remarks || '');
@@ -973,7 +1028,7 @@ export default function TeacherResultsPage() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="ALL">Toutes les épreuves</SelectItem>
-                    {exams.map(e => (
+                    {(selectedClassId === 'all' ? allExams : exams).map(e => (
                       <SelectItem key={e.id} value={String(e.id)}>{e.name}</SelectItem>
                     ))}
                   </SelectContent>
@@ -1259,9 +1314,9 @@ export default function TeacherResultsPage() {
               <Label className="text-xs font-bold text-slate-700 dark:text-slate-300">
                 Élève <span className="text-red-500">*</span>
               </Label>
-              <Select value={formStudentId} onValueChange={setFormStudentId}>
+              <Select value={formStudentId} onValueChange={setFormStudentId} disabled={formStudentsList.length === 0}>
                 <SelectTrigger className="rounded-xl">
-                  <SelectValue placeholder="Sélectionner l'élève..." />
+                  <SelectValue placeholder={formStudentsList.length === 0 ? "Aucun élève dans cette classe" : "Sélectionner l'élève..."} />
                 </SelectTrigger>
                 <SelectContent>
                   {formStudentsList.map(st => (
@@ -1271,6 +1326,11 @@ export default function TeacherResultsPage() {
                   ))}
                 </SelectContent>
               </Select>
+              {formStudentsList.length === 0 && formClassId && (
+                <p className="text-[11px] text-amber-600 dark:text-amber-400 mt-1">
+                  Aucun élève inscrit dans cette classe.
+                </p>
+              )}
             </div>
 
             {/* Exam selection */}
@@ -1278,18 +1338,23 @@ export default function TeacherResultsPage() {
               <Label className="text-xs font-bold text-slate-700 dark:text-slate-300">
                 Épreuve / Examen <span className="text-red-500">*</span>
               </Label>
-              <Select value={formExamId} onValueChange={setFormExamId}>
+              <Select value={formExamId} onValueChange={setFormExamId} disabled={formExamsList.length === 0}>
                 <SelectTrigger className="rounded-xl">
-                  <SelectValue placeholder="Choisir l'épreuve..." />
+                  <SelectValue placeholder={formExamsList.length === 0 ? "Aucune épreuve trouvée pour cette classe" : "Choisir l'épreuve..."} />
                 </SelectTrigger>
                 <SelectContent>
-                  {exams.map(e => (
+                  {formExamsList.map(e => (
                     <SelectItem key={e.id} value={String(e.id)}>
                       {e.name} (Coef: {e.weight || 1})
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
+              {formExamsList.length === 0 && formClassId && (
+                <p className="text-[11px] text-amber-600 dark:text-amber-400 mt-1">
+                  Aucune épreuve trouvée pour cette classe. Veuillez d&apos;abord créer une épreuve dans la gestion des examens.
+                </p>
+              )}
             </div>
 
             {/* Score input with instant preview */}

@@ -1156,7 +1156,7 @@ export default function TeacherExamsPage() {
                 <div className="flex items-center gap-1.5">
                   <Input
                     type="number"
-                    step="0.5"
+                    step="any"
                     min="1"
                     max="100"
                     value={formData.maxScore}
@@ -1174,14 +1174,18 @@ export default function TeacherExamsPage() {
                 <div className="flex items-center gap-1.5">
                   <Input
                     type="number"
-                    step="0.5"
+                    step="any"
                     min="0.1"
+                    placeholder="Ex: 1, 2, 3..."
                     value={formData.weight}
                     onChange={e => setFormData({ ...formData, weight: e.target.value })}
                     className="rounded-xl bg-white dark:bg-slate-900 font-bold"
                   />
                   <span className="text-xs font-bold text-slate-500">Coef</span>
                 </div>
+                <p className="text-[10px] text-slate-400">
+                  Pondération pour la moyenne (ex: 1, 2, 3...)
+                </p>
               </div>
             </div>
 
@@ -1318,7 +1322,7 @@ export default function TeacherExamsPage() {
                         <TableCell className="text-center py-2.5">
                           <Input
                             type="number"
-                            step="0.25"
+                            step="any"
                             min="0"
                             max={selectedExamForGrading?.maxScore || 20}
                             placeholder="Ex: 14.5"
