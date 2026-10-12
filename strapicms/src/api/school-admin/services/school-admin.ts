@@ -13,11 +13,16 @@ export default () => ({
   async getAllUsers(role?: string) {
     const filters: any = {};
     if (role) filters.schoolRole = role.toUpperCase();
-    return strapi.entityService.findMany('plugin::users-permissions.user' as any, {
+    const users = await strapi.entityService.findMany('plugin::users-permissions.user' as any, {
       filters,
       fields: ['id', 'userId', 'username', 'email', 'firstName', 'lastName', 'schoolRole', 'birthDate',
         'birthCountry', 'birthCity', 'address', 'gender', 'phoneNumber', 'createdAt'] as any,
-    });
+    }) as any[];
+    if (role) {
+      const target = role.toUpperCase();
+      return (users || []).filter((u: any) => (u.schoolRole || '').toUpperCase() === target);
+    }
+    return users || [];
   },
 
   async createUser(data: any) {

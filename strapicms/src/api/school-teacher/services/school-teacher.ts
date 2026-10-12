@@ -171,8 +171,12 @@ export default () => ({
       if (trm) termName = (trm as any).name;
     }
 
+    const maxScoreVal = data.maxScore !== undefined && data.maxScore !== null ? Number(data.maxScore) : 20;
+    const weightVal = data.weight !== undefined && data.weight !== null ? Number(data.weight) : 1;
+
     const payload = {
       ...data,
+      name: data.name || 'Évaluation',
       teacher: teacherId,
       classe: data.classe?.id || data.classe,
       subject: data.subject?.id || data.subject,
@@ -181,6 +185,12 @@ export default () => ({
       academicYear: data.academicYear?.id || data.academicYear,
       semesterRel: data.semesterRel?.id || data.semesterRel,
       termRel: data.termRel?.id || data.termRel,
+      assessmentCategory: data.assessmentCategory?.id || data.assessmentCategory || null,
+      blueprint: data.blueprint?.id || data.blueprint || null,
+      maxScore: maxScoreVal,
+      weight: weightVal,
+      examStatus: data.examStatus || (data.closed ? 'CLOSED' : 'PUBLISHED'),
+      dueDate: data.dueDate || data.date || null,
     };
     return strapi.entityService.create('api::school-exam.school-exam', {
       data: payload,
@@ -190,12 +200,13 @@ export default () => ({
   async getExamsByTeacher(teacherId: number) {
     return strapi.entityService.findMany('api::school-exam.school-exam', {
       filters: { teacher: { id: teacherId } },
-      populate: ['classe', 'subject', 'academicYear', 'semesterRel', 'termRel'] as any,
+      populate: ['classe', 'subject', 'academicYear', 'semesterRel', 'termRel', 'assessmentCategory', 'blueprint'] as any,
+      sort: [{ date: 'desc' }, { id: 'desc' }] as any,
     });
   },
 
   async updateExam(examId: number, data: any, teacherId: number) {
-    const exam = await strapi.entityService.findOne('api::school-exam.school-exam', examId, { populate: ['teacher'] }) as any;
+    const exam = await strapi.entityService.findOne('api::school-exam.school-exam', examId, { populate: ['teacher', 'assessmentCategory', 'blueprint'] }) as any;
     if (exam.teacher?.id !== teacherId) throw new Error('Unauthorized');
     if (exam.locked) throw new Error('This exam is locked by admin');
 
@@ -211,6 +222,9 @@ export default () => ({
       if (trm) termName = (trm as any).name;
     }
     
+    const maxScoreVal = data.maxScore !== undefined && data.maxScore !== null ? Number(data.maxScore) : (exam.maxScore || 20);
+    const weightVal = data.weight !== undefined && data.weight !== null ? Number(data.weight) : (exam.weight || 1);
+
     const payload = {
       ...data,
       classe: data.classe?.id || data.classe,
@@ -220,6 +234,12 @@ export default () => ({
       academicYear: data.academicYear?.id || data.academicYear,
       semesterRel: data.semesterRel?.id || data.semesterRel,
       termRel: data.termRel?.id || data.termRel,
+      assessmentCategory: data.assessmentCategory !== undefined ? (data.assessmentCategory?.id || data.assessmentCategory || null) : exam.assessmentCategory?.id,
+      blueprint: data.blueprint !== undefined ? (data.blueprint?.id || data.blueprint || null) : exam.blueprint?.id,
+      maxScore: maxScoreVal,
+      weight: weightVal,
+      examStatus: data.examStatus || (data.closed !== undefined ? (data.closed ? 'CLOSED' : 'PUBLISHED') : exam.examStatus),
+      dueDate: data.dueDate || data.date || exam.dueDate,
     };
     
     return strapi.entityService.update('api::school-exam.school-exam', examId, { data: payload });
@@ -233,7 +253,7 @@ export default () => ({
 
   async toggleExamStatus(examId: number, closed: boolean) {
     return strapi.entityService.update('api::school-exam.school-exam', examId, {
-      data: { closed },
+      data: { closed, examStatus: closed ? 'CLOSED' : 'PUBLISHED' },
     });
   },
 
@@ -478,14 +498,17 @@ export default () => ({
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-function _computeLetterGrade(marks: number): string {
-  if (marks >= 90) return 'A';
-  if (marks >= 87) return 'A-';
-  if (marks >= 83) return 'B+';
-  if (marks >= 80) return 'B';
-  if (marks >= 77) return 'B-';
-  if (marks >= 73) return 'C+';
-  if (marks >= 70) return 'C';
-  if (marks >= 60) return 'D';
+function _computeLetterGrade(marks: number, maxScore: number = 20): string {
+  if (marks === null || marks === undefined || isNaN(marks)) return 'F';
+  const num = Number(marks);
+  // If score is out of 20 (or normalized to 20):
+  const score20 = (num > 20 || maxScore > 20) ? (num / (maxScore || 100)) * 20 : num;
+
+  if (score20 >= 18) return 'A+';
+  if (score20 >= 16) return 'A';
+  if (score20 >= 14) return 'B+';
+  if (score20 >= 12) return 'B';
+  if (score20 >= 10) return 'C';
+  if (score20 >= 8) return 'D';
   return 'F';
 }
