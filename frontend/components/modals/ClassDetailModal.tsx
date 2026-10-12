@@ -356,7 +356,7 @@ export default function ClassDetailModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => { if (!open) onClose(); }}>
-      <DialogContent className="max-w-4xl p-0 border-none shadow-2xl rounded-3xl md:rounded-[2.5rem] overflow-hidden bg-[#F8FAFC] max-h-[90vh] flex flex-col focus:outline-none">
+      <DialogContent className="w-[95vw] sm:max-w-[92vw] md:max-w-[880px] lg:max-w-[1050px] xl:max-w-[1150px] p-0 border-none shadow-2xl rounded-3xl md:rounded-[2.5rem] overflow-hidden bg-[#F8FAFC] max-h-[90vh] flex flex-col focus:outline-none">
         
         {/* MODAL HERO HEADER */}
         <div className="relative bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 text-white p-6 sm:p-8 flex-shrink-0 overflow-hidden">
@@ -417,7 +417,7 @@ export default function ClassDetailModal({
           </div>
 
           {/* TAB SWITCHER */}
-          <div className="flex items-center gap-2 mt-6 pt-4 border-t border-white/10">
+          <div className="flex flex-wrap items-center gap-2 mt-6 pt-4 border-t border-white/10">
             <button
               onClick={() => setActiveTab('students')}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all ${
@@ -457,7 +457,7 @@ export default function ClassDetailModal({
         </div>
 
         {/* MODAL BODY CONTAINER */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6 space-y-6">
           {loading ? (
             <div className="py-20 flex flex-col items-center justify-center gap-3">
               <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
@@ -634,7 +634,7 @@ export default function ClassDetailModal({
                       </p>
                     </div>
                   ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full min-w-0">
                       {filteredTeachers.map((teacher) => {
                         const displayName = teacher.name || teacher.username || 'Enseignant';
                         const initials = displayName
@@ -650,32 +650,32 @@ export default function ClassDetailModal({
                         return (
                           <div
                             key={teacher.id}
-                            className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md hover:border-blue-400 transition-all flex flex-col justify-between group"
+                            className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md hover:border-blue-400 transition-all flex flex-col justify-between group min-w-0 overflow-hidden"
                           >
-                            <div>
-                              <div className="flex items-start gap-3.5 mb-3">
+                            <div className="min-w-0">
+                              <div className="flex items-start gap-3.5 mb-3 min-w-0">
                                 <div className="w-12 h-12 rounded-2xl bg-slate-900 flex items-center justify-center text-blue-400 font-black text-sm tracking-wider shadow-inner flex-shrink-0 group-hover:scale-105 transition-transform">
                                   {initials}
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                  <div className="flex items-center justify-between gap-1">
+                                  <div className="flex items-center justify-between gap-1.5">
                                     <h4 className="text-sm font-black text-slate-900 tracking-tight truncate group-hover:text-blue-600 transition-colors">
                                       {displayName}
                                     </h4>
-                                    <Badge className="bg-blue-50 text-blue-700 border-none text-[9px] font-black uppercase px-2 py-0.5">
+                                    <Badge className="bg-blue-50 text-blue-700 border-none text-[9px] font-black uppercase px-2 py-0.5 flex-shrink-0">
                                       {isFr ? 'Enseignant' : 'Instructor'}
                                     </Badge>
                                   </div>
 
-                                  <div className="flex items-center gap-2 mt-1">
+                                  <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
                                     {teacher.userId && (
-                                      <span className="font-mono text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-600">
+                                      <span className="font-mono text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-600 flex-shrink-0">
                                         #{teacher.userId}
                                       </span>
                                     )}
                                     {teacher.sessionsCount ? (
-                                      <span className="text-[10px] font-bold text-slate-400 flex items-center gap-1">
-                                        <Clock size={10} className="text-emerald-500" />
+                                      <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200/60 flex items-center gap-1 flex-shrink-0 whitespace-nowrap">
+                                        <Clock size={10} className="text-emerald-600" />
                                         {isFr ? `${teacher.sessionsCount} séances/sem` : `${teacher.sessionsCount} sessions/wk`}
                                       </span>
                                     ) : null}
@@ -720,7 +720,7 @@ export default function ClassDetailModal({
                                   href={`mailto:${teacher.email}`}
                                   className="flex items-center gap-1 hover:text-blue-600 transition-colors truncate max-w-[200px]"
                                 >
-                                  <Mail size={12} className="text-slate-400" />
+                                  <Mail size={12} className="text-slate-400 flex-shrink-0" />
                                   <span className="truncate">{teacher.email}</span>
                                 </a>
                               ) : <span />}
@@ -728,9 +728,9 @@ export default function ClassDetailModal({
                               {teacher.phoneNumber && (
                                 <a
                                   href={`tel:${teacher.phoneNumber}`}
-                                  className="flex items-center gap-1 hover:text-blue-600 transition-colors"
+                                  className="flex items-center gap-1 hover:text-blue-600 transition-colors flex-shrink-0"
                                 >
-                                  <Phone size={12} className="text-slate-400" />
+                                  <Phone size={12} className="text-slate-400 flex-shrink-0" />
                                   <span>{teacher.phoneNumber}</span>
                                 </a>
                               )}
@@ -825,51 +825,51 @@ export default function ClassDetailModal({
                         return (
                           <div
                             key={slot.id}
-                            className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md hover:border-blue-400 transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 group"
+                            className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md hover:border-blue-400 transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 group min-w-0 overflow-hidden"
                           >
-                            <div className="flex items-center gap-3.5">
+                            <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0 w-full sm:w-auto">
                               {/* Day badge & Time pill */}
-                              <div className="w-28 flex flex-col">
+                              <div className="w-24 sm:w-28 flex flex-col flex-shrink-0">
                                 <span className="text-[10px] font-black uppercase tracking-wider text-blue-600">
                                   {dayLabel}
                                 </span>
-                                <div className="flex items-center gap-1 text-slate-900 font-black text-sm">
-                                  <Clock size={13} className="text-slate-400 flex-shrink-0" />
+                                <div className="flex items-center gap-1 text-slate-900 font-black text-xs sm:text-sm whitespace-nowrap">
+                                  <Clock size={12} className="text-slate-400 flex-shrink-0" />
                                   <span>{formatTime(slot.startTime)} - {formatTime(slot.endTime)}</span>
                                 </div>
                               </div>
 
                               {/* Divider */}
-                              <div className="hidden sm:block w-px h-10 bg-slate-100" />
+                              <div className="hidden sm:block w-px h-10 bg-slate-100 flex-shrink-0" />
 
                               {/* Subject & Lesson Type */}
-                              <div className="space-y-0.5">
-                                <div className="flex items-center gap-2">
-                                  <h4 className="text-sm font-black text-slate-900 tracking-tight group-hover:text-blue-600 transition-colors">
+                              <div className="space-y-0.5 min-w-0 flex-1">
+                                <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                                  <h4 className="text-sm font-black text-slate-900 tracking-tight group-hover:text-blue-600 transition-colors truncate">
                                     {subjectName}
                                   </h4>
                                   {slot.lessonType && (
-                                    <Badge variant="outline" className="text-[9px] font-bold px-2 py-0 border-slate-200 text-slate-500">
+                                    <Badge variant="outline" className="text-[9px] font-bold px-1.5 py-0 border-slate-200 text-slate-500 flex-shrink-0">
                                       {slot.lessonType}
                                     </Badge>
                                   )}
                                 </div>
-                                <p className="text-xs text-slate-500 font-medium flex items-center gap-1.5">
-                                  <User size={12} className="text-slate-400" />
-                                  <span>{isFr ? 'Enseignant :' : 'Teacher :'} <strong className="text-slate-700">{teacherName}</strong></span>
+                                <p className="text-xs text-slate-500 font-medium flex items-center gap-1.5 truncate">
+                                  <User size={12} className="text-slate-400 flex-shrink-0" />
+                                  <span className="truncate">{isFr ? 'Enseignant :' : 'Teacher :'} <strong className="text-slate-700">{teacherName}</strong></span>
                                 </p>
                               </div>
                             </div>
 
                             {/* Location & Period info */}
-                            <div className="flex items-center gap-2 sm:gap-3 self-end sm:self-center">
+                            <div className="flex flex-wrap items-center gap-2 self-start sm:self-center flex-shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100 w-full sm:w-auto justify-end">
                               {slot.periodName && (
-                                <span className="text-[10px] font-bold px-2.5 py-1 rounded-xl bg-slate-50 text-slate-600 border border-slate-200">
+                                <span className="text-[10px] font-bold px-2 py-1 rounded-xl bg-slate-50 text-slate-600 border border-slate-200 whitespace-nowrap">
                                   {slot.periodName}
                                 </span>
                               )}
-                              <span className="flex items-center gap-1 text-xs font-bold px-3 py-1.5 rounded-xl bg-blue-50 text-blue-800 border border-blue-200/60">
-                                <MapPin size={13} className="text-blue-600" />
+                              <span className="flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-xl bg-blue-50 text-blue-800 border border-blue-200/60 whitespace-nowrap">
+                                <MapPin size={12} className="text-blue-600 flex-shrink-0" />
                                 {roomName}
                               </span>
                             </div>
