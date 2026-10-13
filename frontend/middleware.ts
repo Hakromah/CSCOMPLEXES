@@ -1,6 +1,22 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
+function isJwtExpired(token: string): boolean {
+  try {
+    const parts = token.split('.');
+    if (parts.length !== 3) return true;
+    const base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+    const jsonStr = atob(base64);
+    const payload = JSON.parse(jsonStr);
+    if (payload.exp && payload.exp * 1000 < Date.now()) {
+      return true;
+    }
+    return false;
+  } catch {
+    return true;
+  }
+}
+
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
@@ -8,14 +24,23 @@ export function middleware(request: NextRequest) {
   const userRole = request.cookies.get('userRole')?.value;
 
   const isAuthPage = pathname.startsWith('/login') || pathname.startsWith('/register');
+  const isInvalidToken = !accessToken || isJwtExpired(accessToken);
 
-  // If the user is not authenticated
-  if (!accessToken) {
+  // If the user is not authenticated or token is expired
+  if (isInvalidToken) {
     if (isAuthPage) {
-      return NextResponse.next(); // Allow access to auth pages
+      const response = NextResponse.next();
+      if (accessToken) {
+        response.cookies.delete('accessToken');
+        response.cookies.delete('userRole');
+      }
+      return response;
     }
-    // Redirect any other protected route to the login page
-    return NextResponse.redirect(new URL('/login', request.url));
+    // Redirect any other protected route to the login page and clear stale cookies
+    const response = NextResponse.redirect(new URL('/login', request.url));
+    response.cookies.delete('accessToken');
+    response.cookies.delete('userRole');
+    return response;
   }
 
   // If the user is authenticated

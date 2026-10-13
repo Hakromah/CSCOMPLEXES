@@ -49,11 +49,11 @@ Required edits:
 =======================================================================
 ```
 ## PULL THE DATA FROM GITHUB TO HETZNER
-cd /var/www/AMFOFANA
+cd /var/www/CSCOMPLEXES
 git pull origin main
 
-## Navigate into the backend CMS folder
-cd /var/www/AMFOFANA/strapicms
+## Navigate into the backend CMS folder (Port: 1338)
+cd /var/www/CSCOMPLEXES/strapicms
 
 ## 1. Install any newly added package dependencies
 npm install
@@ -64,11 +64,11 @@ rm -rf dist build
 ## 3. Compile a clean, static production admin panel bundle
 NODE_ENV=production npm run build
 
-## 4. Safely reload your backend PM2 process container without downtime
-pm2 restart amfofana-backend
+## 4. Safely reload your backend PM2 process container
+pm2 restart cscomplexes-backend || pm2 start npm --name "cscomplexes-backend" -- run start
 
-## Navigate into the frontend Next.js UI folder
-cd /var/www/AMFOFANA/frontend
+## Navigate into the frontend Next.js UI folder (Port: 3001)
+cd /var/www/CSCOMPLEXES/frontend
 
 ## 1. Install fresh frontend dependencies
 npm install
@@ -79,8 +79,10 @@ rm -rf .next
 ## 3. Recompile the production static web pages and assets
 npm run build
 
-## 4. Reload your frontend PM2 server pool instance
-pm2 restart amfofana-frontend
+## 4. Reload your frontend PM2 server pool instance on Port 3001
+pm2 restart cscomplexes-frontend --update-env || pm2 start npm --name "cscomplexes-frontend" -- start
+
+## Check running processes and verify ports
 pm2 list
 ```
 

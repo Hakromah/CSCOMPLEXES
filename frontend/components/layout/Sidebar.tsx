@@ -23,6 +23,7 @@ import { toast } from 'sonner';
 import ClientOnly from './ClientOnly';
 import { motion, AnimatePresence } from 'framer-motion';
 import Cookies from 'js-cookie';
+import { isLoggedIn, logout } from '@/lib/auth';
 interface MenuItem {
    name: string;
    href: string;
@@ -74,13 +75,19 @@ export default function Sidebar({ menuItems }: SidebarProps) {
 
    useEffect(() => {
       const fetchSidebarData = async () => {
+         if (!isLoggedIn()) {
+            logout();
+            window.location.href = '/login';
+            return;
+         }
+
          try {
             const userRes = await api.get('/auth/me');
             // Standardize the role string (remove ROLE_ prefix if present)
-            const cleanRole = userRes.data.role.replace('ROLE_', '');
+            const cleanRole = userRes.data?.role ? userRes.data.role.replace('ROLE_', '') : '';
 
             setUserData({
-               name: userRes.data.name,
+               name: userRes.data?.name || 'User',
                role: cleanRole
             });
             setIsOnline(true);
@@ -88,11 +95,18 @@ export default function Sidebar({ menuItems }: SidebarProps) {
             // Conditional fetch for teachers
             if (cleanRole === 'TEACHER') {
                const resultsRes = await api.get('/teacher/results/filter').catch(() => ({ data: [] }));
-               const drafts = resultsRes.data.filter((r: any) => r.status === 'DRAFT').length;
+               const drafts = Array.isArray(resultsRes.data)
+                  ? resultsRes.data.filter((r: any) => r.status === 'DRAFT').length
+                  : 0;
                setDraftCount(drafts);
             }
-         } catch (e) {
-            console.error("Erreur de synchronisation d'authentification:", e);
+         } catch (e: any) {
+            if (e?.response?.status === 401) {
+               logout();
+               window.location.href = '/login';
+               return;
+            }
+            console.warn("Erreur de synchronisation d'authentification:", e?.message || e);
             setIsOnline(false);
          }
       };
@@ -102,17 +116,13 @@ export default function Sidebar({ menuItems }: SidebarProps) {
    const handleLogout = async () => {
       const tid = toast.loading('Fin de session...');
       try {
-         await api.post('/auth/logout', {});
-
-         // Manually clear the First-Party NextJS cookies since the Strapi network headers can't touch them natively
-         Cookies.remove('accessToken', { path: '/' });
-         Cookies.remove('userRole', { path: '/' });
-
+         await api.post('/auth/logout', {}).catch(() => {});
+         logout();
          toast.success('Fin de session réussie', { id: tid });
          window.location.href = '/login';
       } catch (error) {
-         toast.error('Fin de session échouée', { id: tid });
-         console.log(error)
+         logout();
+         window.location.href = '/login';
       }
    };
 
