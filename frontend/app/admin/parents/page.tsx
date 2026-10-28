@@ -71,12 +71,16 @@ export default function ParentManagement() {
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.username || !formData.email || !formData.password) {
-      return toast.error('Username, Email, and Password are required');
+    if (!formData.firstName || !formData.lastName || !formData.password) {
+      return toast.error('First Name, Last Name, and Password are required');
     }
 
     try {
-      const payload: any = { ...formData };
+      const fullName = `${formData.firstName.trim()} ${formData.lastName.trim()}`.trim();
+      const payload: any = {
+        ...formData,
+        username: fullName,
+      };
       if (payload.familyId) {
         payload.familyId = Number(payload.familyId);
       } else {
@@ -84,7 +88,7 @@ export default function ParentManagement() {
       }
 
       await api.post('/admin/parents', payload);
-      toast.success(`Parent account "${formData.username}" created successfully`);
+      toast.success(`Parent account "${fullName}" created successfully`);
       setIsCreateOpen(false);
       resetForm();
       fetchParents();
@@ -286,22 +290,43 @@ export default function ParentManagement() {
           <form onSubmit={handleCreate} className="space-y-6 mt-4">
             <div className="grid gap-6 md:grid-cols-2">
               <div className="space-y-2">
-                <label className="text-xs font-black uppercase text-slate-400 tracking-wider">Username</label>
+                <label className="text-xs font-black uppercase text-slate-400 tracking-wider">First Name</label>
                 <Input
                   required
-                  placeholder="e.g. dialloparent"
-                  value={formData.username}
-                  onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                  placeholder="e.g. Mamadou"
+                  value={formData.firstName}
+                  onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-xs font-black uppercase text-slate-400 tracking-wider">Email Address</label>
+                <label className="text-xs font-black uppercase text-slate-400 tracking-wider">Last Name</label>
                 <Input
                   required
-                  type="email"
-                  placeholder="e.g. parent@diallo.com"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  placeholder="e.g. Diallo"
+                  value={formData.lastName}
+                  onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-xs font-black uppercase text-slate-400 tracking-wider">Strapi Username (Auto)</label>
+                <Input
+                  readOnly
+                  placeholder="First & Last Name"
+                  value={[formData.firstName.trim(), formData.lastName.trim()].filter(Boolean).join(' ')}
+                  className="bg-slate-100 text-slate-600 cursor-default"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-xs font-black uppercase text-slate-400 tracking-wider">Email Address (Auto)</label>
+                <Input
+                  readOnly
+                  placeholder="Auto-generated: userId@2cscomplexes.com"
+                  value={
+                    formData.firstName || formData.lastName
+                      ? `${((formData.firstName.trim()[0] || 'x') + (formData.lastName.trim()[0] || 'x') + String(new Date().getFullYear()).slice(-2)).toLowerCase()}xxxxx@2cscomplexes.com`
+                      : ''
+                  }
+                  className="bg-slate-100 font-mono text-xs text-slate-600 cursor-default"
                 />
               </div>
               <div className="space-y-2">
@@ -326,22 +351,6 @@ export default function ParentManagement() {
                     <SelectItem value="Other">Other</SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
-              <div className="space-y-2">
-                <label className="text-xs font-black uppercase text-slate-400 tracking-wider">First Name</label>
-                <Input
-                  placeholder="e.g. Mamadou"
-                  value={formData.firstName}
-                  onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-xs font-black uppercase text-slate-400 tracking-wider">Last Name</label>
-                <Input
-                  placeholder="e.g. Diallo"
-                  value={formData.lastName}
-                  onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                />
               </div>
               <div className="space-y-2">
                 <label className="text-xs font-black uppercase text-slate-400 tracking-wider">Phone Number</label>

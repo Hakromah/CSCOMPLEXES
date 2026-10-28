@@ -480,23 +480,16 @@ export default {
   },
 
   async createParent(ctx: any) {
-    const crypto = require('crypto');
     try {
-      const data = ctx.request.body;
-      data.schoolRole = 'PARENT';
-      if (!data.userId) {
-        data.userId = crypto.randomBytes(6).toString('hex').toUpperCase().substring(0, 12);
-      }
-      const parent = await strapi.entityService.create('plugin::users-permissions.user' as any, {
-        data: {
-          ...data,
-          provider: 'local',
-          confirmed: true,
-        },
-      }) as any;
+      const { familyId, ...data } = ctx.request.body || {};
+      const parent = await (strapi.service('api::school-admin.school-admin') as any).createUser({
+        ...data,
+        role: 'PARENT',
+        schoolRole: 'PARENT',
+      });
 
-      if (data.familyId) {
-        const family = await strapi.entityService.findOne('api::family.family' as any, data.familyId, {
+      if (familyId) {
+        const family = await strapi.entityService.findOne('api::family.family' as any, familyId, {
           populate: ['parents'],
         }) as any;
         if (family) {

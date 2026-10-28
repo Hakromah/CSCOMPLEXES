@@ -3674,7 +3674,6 @@ export interface PluginUsersPermissionsUser
     userId: Schema.Attribute.UID & Schema.Attribute.Unique;
     username: Schema.Attribute.String &
       Schema.Attribute.Required &
-      Schema.Attribute.Unique &
       Schema.Attribute.SetMinMaxLength<{
         minLength: 3;
       }>;

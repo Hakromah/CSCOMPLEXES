@@ -1,3 +1,5 @@
+import { generateUserId } from './api/school-admin/utils/userId';
+
 export default {
   /**
    * An asynchronous register function that runs before
@@ -393,15 +395,120 @@ export default {
         strapi.log.warn(`[Bootstrap] Error seeding default payment settings: ${e.message}`);
       }
 
-      // 2. Attach a permanent database lifecycle hook so future dashboard users never get locked out again
+      // 2. Attach a permanent database lifecycle hook so future users always get:
+      //    - provider = 'local'
+      //    - structured userId (e.g. KB2600003)
+      //    - username = "FirstName LastName"
+      //    - email = "${userId.toLowerCase()}@2cscomplexes.com"
+      const emailDomain = process.env.SCHOOL_EMAIL_DOMAIN || '2cscomplexes.com';
+      const protectedSeedEmails = new Set(['admin@amfofana.com', '2cscomplexes@gmail.com']);
+
       strapi.db.lifecycles.subscribe({
         models: ['plugin::users-permissions.user'],
         async beforeCreate(event) {
-          if (!event.params.data.provider) {
-            event.params.data.provider = 'local';
+          const data = event.params.data;
+          if (!data.provider) {
+            data.provider = 'local';
+          }
+
+          const rawName = String(data.name || data.username || '').trim();
+          const nameParts = rawName.split(/\s+/).filter(Boolean);
+          const firstName = String(data.firstName || nameParts[0] || 'X').trim();
+          const lastName  = String(data.lastName  || nameParts.slice(1).join(' ') || 'X').trim();
+
+          if (!data.firstName && firstName !== 'X') data.firstName = firstName;
+          if (!data.lastName && lastName !== 'X') data.lastName = lastName;
+
+          if (!data.userId) {
+            data.userId = await generateUserId(firstName, lastName);
+          }
+
+          const fullName = [firstName !== 'X' ? firstName : '', lastName !== 'X' ? lastName : '']
+            .filter(Boolean)
+            .join(' ')
+            .trim();
+          if (fullName) {
+            data.username = fullName;
+          }
+
+          const incomingEmail = String(data.email || '').trim().toLowerCase();
+          if (data.userId && !protectedSeedEmails.has(incomingEmail)) {
+            data.email = `${String(data.userId).trim().toLowerCase()}@${emailDomain}`;
+          }
+        },
+        async beforeUpdate(event) {
+          const data = event.params.data;
+          if (!data) return;
+
+          if (data.firstName !== undefined || data.lastName !== undefined || data.userId !== undefined) {
+            const existing = event.params.where
+              ? await strapi.db.query('plugin::users-permissions.user').findOne({
+                  where: event.params.where,
+                  select: ['id', 'firstName', 'lastName', 'userId', 'email'],
+                })
+              : null;
+
+            const fn = String(data.firstName ?? existing?.firstName ?? '').trim();
+            const ln = String(data.lastName ?? existing?.lastName ?? '').trim();
+            const fullName = [fn && fn !== 'X' ? fn : '', ln && ln !== 'X' ? ln : '']
+              .filter(Boolean)
+              .join(' ')
+              .trim();
+            if (fullName) {
+              data.username = fullName;
+            }
+
+            const uid = String(data.userId ?? existing?.userId ?? '').trim();
+            const currentEmail = String(existing?.email || '').trim().toLowerCase();
+            if (/^[A-Za-z]{2}\d{7}$/.test(uid) && !protectedSeedEmails.has(currentEmail)) {
+              data.email = `${uid.toLowerCase()}@${emailDomain}`;
+            }
           }
         },
       });
+
+      // 3. Normalize existing structured users so username = "FirstName LastName"
+      //    and email = "${userId.toLowerCase()}@2cscomplexes.com"
+      try {
+        const allUsers = await strapi.db.query('plugin::users-permissions.user').findMany({
+          select: ['id', 'userId', 'username', 'email', 'firstName', 'lastName'],
+        });
+        for (const u of allUsers) {
+          const currentEmail = String(u.email || '').trim().toLowerCase();
+          if (protectedSeedEmails.has(currentEmail)) continue;
+
+          const uid = String(u.userId || '').trim();
+          if (!/^[A-Za-z]{2}\d{7}$/.test(uid)) continue;
+
+          const fn = String(u.firstName || '').trim();
+          const ln = String(u.lastName || '').trim();
+          const expectedUsername = [fn && fn !== 'X' ? fn : '', ln && ln !== 'X' ? ln : '']
+            .filter(Boolean)
+            .join(' ')
+            .trim();
+          const expectedEmail = `${uid.toLowerCase()}@${emailDomain}`;
+
+          const updatePayload: Record<string, string> = {};
+          if (expectedUsername && u.username !== expectedUsername) {
+            updatePayload.username = expectedUsername;
+          }
+          if (u.email !== expectedEmail) {
+            updatePayload.email = expectedEmail;
+          }
+
+          if (Object.keys(updatePayload).length > 0) {
+            await strapi.db.query('plugin::users-permissions.user').update({
+              where: { id: u.id },
+              data: updatePayload,
+            });
+            strapi.log.info(
+              `[Bootstrap] Normalized user ${uid}: username="${updatePayload.username || u.username}", email="${updatePayload.email || u.email}"`
+            );
+          }
+        }
+      } catch (normErr: any) {
+        strapi.log.warn(`[Bootstrap] Could not normalize existing user records: ${normErr.message}`);
+      }
 
     } catch (e) {
       strapi.log.error('Failed to auto-assign role permissions. Ensure the database matches the v5 shape.', e);

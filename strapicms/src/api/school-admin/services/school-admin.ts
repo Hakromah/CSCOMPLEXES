@@ -26,33 +26,26 @@ export default () => ({
   },
 
   async createUser(data: any) {
-    const firstName = data.firstName || data.name?.split(' ')[0] || 'X';
-    const lastName  = data.lastName  || data.name?.split(' ').slice(1).join(' ') || 'X';
+    const rawName = (data.name || data.username || '').trim();
+    const nameParts = rawName.split(/\s+/).filter(Boolean);
+    const firstName = (data.firstName || nameParts[0] || 'X').trim();
+    const lastName  = (data.lastName  || nameParts.slice(1).join(' ') || 'X').trim();
 
     const userId = data.userId || await generateUserId(firstName, lastName);
 
-    // ── Email uniqueness guard ──────────────────────────────────────────────
-    if (data.email) {
-      const existing = await strapi.entityService.findMany('plugin::users-permissions.user' as any, {
-        filters: { email: data.email.trim().toLowerCase() } as any,
-      }) as any[];
-      if (existing.length > 0) {
-        const err: any = new Error(
-          `Email "${data.email}" is already registered. Each user must have a unique email address.`
-        );
-        err.status = 400;
-        err.name   = 'DuplicateEmailError';
-        throw err;
-      }
-    }
+    const emailDomain = process.env.SCHOOL_EMAIL_DOMAIN || '2cscomplexes.com';
+    const generatedEmail = `${String(userId).trim().toLowerCase()}@${emailDomain}`;
 
     const defaultRoles = await strapi.entityService.findMany('plugin::users-permissions.role' as any, {
       filters: { type: 'authenticated' },
     }) as any[];
 
-    // Use the email prefix as username — email is already unique, so this prevents
-    // the "attribute must be unique" error when two users share the same full name.
-    const username = data.email.trim().toLowerCase().split('@')[0];
+    // Use the user's first and last name as the username in Strapi
+    const fullName = [firstName !== 'X' ? firstName : '', lastName !== 'X' ? lastName : '']
+      .filter(Boolean)
+      .join(' ')
+      .trim();
+    const username = fullName || rawName || userId;
     const schoolRole = data.role || data.schoolRole || 'STUDENT';
 
     // Remove the frontend 'name' and 'role' fields to prevent DB conflict
@@ -64,7 +57,7 @@ export default () => ({
     return await strapi.entityService.create('plugin::users-permissions.user' as any, {
       data: {
         ...cleanData,
-        email: data.email.trim().toLowerCase(),
+        email: generatedEmail,
         username,
         firstName,
         lastName,
@@ -85,14 +78,11 @@ export default () => ({
 
     for (const u of users) {
       try {
-        const existing = await strapi.entityService.findMany('plugin::users-permissions.user' as any, {
-          filters: { email: u.email } as any,
-        });
-        if ((existing as any[]).length > 0) { skipped++; continue; }
         await this.createUser(u);
         imported++;
       } catch (e: any) {
-        errors.push(u.email + ': ' + e.message);
+        const label = [u.firstName, u.lastName].filter(Boolean).join(' ') || u.email || 'User';
+        errors.push(label + ': ' + e.message);
         skipped++;
       }
     }
@@ -106,8 +96,20 @@ export default () => ({
       cleanData.firstName = parts[0] || '';
       cleanData.lastName = parts.slice(1).join(' ') || '';
     }
-    const username = data.name || data.username;
-    if (username) cleanData.username = username;
+    if (cleanData.firstName || cleanData.lastName) {
+      const existingUser = await strapi.entityService.findOne('plugin::users-permissions.user' as any, id, {
+        fields: ['firstName', 'lastName', 'userId', 'schoolRole'] as any,
+      }) as any;
+      const fn = (cleanData.firstName ?? existingUser?.firstName ?? '').trim();
+      const ln = (cleanData.lastName ?? existingUser?.lastName ?? '').trim();
+      const fullName = [fn !== 'X' ? fn : '', ln !== 'X' ? ln : ''].filter(Boolean).join(' ').trim();
+      if (fullName) {
+        cleanData.username = fullName;
+      }
+    } else {
+      const username = data.name || data.username;
+      if (username) cleanData.username = username;
+    }
     const schoolRole = data.role || data.schoolRole;
     if (schoolRole) cleanData.schoolRole = schoolRole;
     

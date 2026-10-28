@@ -2,10 +2,10 @@
  * users-permissions extension
  *
  * Overrides auth routes to:
- * 1. Set JWT in HTTP-only cookie on login (matching Spring Boot behavior)
- * 2. Set userRole cookie on login
- * 3. Add /auth/logout to clear cookies
- * 4. Auto-generate userId on registration
+ * 1. Allow full-name usernames ("FirstName LastName") without unique constraint collisions
+ * 2. Auto-generate structured userId on registration
+ * 3. Automatically set username = "FirstName LastName" and email = "${userId.toLowerCase()}@2cscomplexes.com"
+ * 4. Support login via email, username, or userId
  */
 
 import crypto from 'crypto';
@@ -16,7 +16,7 @@ async function generateUserId(firstName: string, lastName: string, registrationY
   const fi = (firstName?.[0] ?? 'X').toUpperCase().replace(/[^A-Z]/g, 'X');
   const li = (lastName?.[0] ?? 'X').toUpperCase().replace(/[^A-Z]/g, 'X');
   const yy = String(year).slice(-2);
-  const prefix = `${fi}${li}${yy}`; // e.g. "HK26"
+  const prefix = `${fi}${li}${yy}`; // e.g. "KB26"
 
   // strapi.db.query uses raw SQL LIKE — works on uid and string fields alike
   const existing = await strapi.db.query('plugin::users-permissions.user').findMany({
@@ -39,6 +39,12 @@ export default (plugin: any) => {
   // ─── Add Custom Fields to User Model ──────────────────────────────
   plugin.contentTypes.user.schema.attributes = {
     ...plugin.contentTypes.user.schema.attributes,
+    // Allow full name ("FirstName LastName") as username even if two users share the same name;
+    // uniqueness is guaranteed by userId and auto-generated email (userId@2cscomplexes.com).
+    username: {
+      ...(plugin.contentTypes.user.schema.attributes?.username || { type: 'string' }),
+      unique: false,
+    },
     userId: { type: 'uid', unique: true },
     birthDate: { type: 'date' },
     birthCountry: { type: 'string' },
@@ -73,14 +79,30 @@ export default (plugin: any) => {
   const originalRegister = plugin.controllers.auth.register;
 
   plugin.controllers.auth.register = async (ctx: any) => {
-    // Auto-generate userId before calling original register
     const body = ctx.request.body;
+    const rawName = (body.name || body.username || '').trim();
+    const nameParts = rawName.split(/\s+/).filter(Boolean);
+    const firstName = (body.firstName || nameParts[0] || 'X').trim();
+    const lastName  = (body.lastName  || nameParts.slice(1).join(' ') || 'X').trim();
+
+    body.firstName = firstName;
+    body.lastName  = lastName;
+
+    // Auto-generate userId before calling original register
     if (!body.userId) {
-      body.userId = await generateUserId(
-        body.firstName || body.username?.split(' ')[0] || 'X',
-        body.lastName  || body.username?.split(' ')[1] || 'X'
-      );
+      body.userId = await generateUserId(firstName, lastName);
     }
+
+    // Set username to First + Last Name
+    const fullName = [firstName !== 'X' ? firstName : '', lastName !== 'X' ? lastName : '']
+      .filter(Boolean)
+      .join(' ')
+      .trim();
+    body.username = fullName || rawName || body.userId;
+
+    // Automatically set email to generated userId + @2cscomplexes.com
+    const emailDomain = process.env.SCHOOL_EMAIL_DOMAIN || '2cscomplexes.com';
+    body.email = `${String(body.userId).trim().toLowerCase()}@${emailDomain}`;
 
     // Set schoolRole from the request (defaults to STUDENT)
     if (!body.schoolRole) {
@@ -89,6 +111,42 @@ export default (plugin: any) => {
 
     await originalRegister.call(this, ctx);
   };
+
+  // ─── Override: Login Callback (Support login by userId, email, or username) ──
+  const originalCallback = plugin.controllers.auth.callback;
+  if (originalCallback) {
+    plugin.controllers.auth.callback = async (ctx: any) => {
+      const body = ctx.request?.body;
+      if (body && typeof body.identifier === 'string') {
+        const rawIdentifier = body.identifier.trim();
+        if (rawIdentifier) {
+          // Check if a user already matches by email or username directly
+          const directMatch = await strapi.db.query('plugin::users-permissions.user').findOne({
+            where: {
+              $or: [
+                { email: rawIdentifier.toLowerCase() },
+                { username: rawIdentifier },
+              ],
+            },
+            select: ['id', 'email'],
+          });
+
+          if (!directMatch) {
+            // Try matching by userId (either raw "KB2600003" or prefix before "@" in "kb2600003@...")
+            const candidateUserId = (rawIdentifier.includes('@') ? rawIdentifier.split('@')[0] : rawIdentifier).toUpperCase();
+            const userByUserId = await strapi.db.query('plugin::users-permissions.user').findOne({
+              where: { userId: candidateUserId },
+              select: ['id', 'email'],
+            });
+            if (userByUserId?.email) {
+              ctx.request.body.identifier = userByUserId.email;
+            }
+          }
+        }
+      }
+      return await originalCallback.call(this, ctx);
+    };
+  }
 
   return plugin;
 };
