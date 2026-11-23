@@ -1111,7 +1111,10 @@ export default () => ({
         id:           s.id,
         date:         s.date,
         sessionTime:  s.sessionTime || null,
+        createdAt:    s.createdAt || null,
+        subjectId:    s.subject?.id || null,
         subjectName:  s.subject?.name || null,
+        subjectCode:  s.subject?.code || null,
         notes:        s.notes || null,
         className:    s.classe?.name || 'N/A',
         classId:      s.classe?.id,
@@ -1124,9 +1127,12 @@ export default () => ({
           ? Math.round(((presentCount + lateCount) / records.length) * 100)
           : 0,
         records: records.map((r: any) => ({
+          id:          r.id,
           studentId:   r.student?.id,
-          studentName: r.student?.username || r.student?.name,
-          userId:      r.student?.userId,
+          studentName: (r.student?.firstName && r.student?.lastName)
+            ? `${r.student.firstName} ${r.student.lastName}`.trim()
+            : (r.student?.username || r.student?.name || 'Student'),
+          userId:      r.student?.userId || null,
           status:      r.status,
         })),
       };

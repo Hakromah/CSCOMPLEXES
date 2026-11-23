@@ -121,16 +121,16 @@ export default {
     const user = ctx.state.user;
     if (!user || user.schoolRole !== 'PARENT') return ctx.unauthorized('Access denied');
     try { await _verifyParentAccess(user, Number(ctx.params.id)); } catch (e: any) { ctx.status = e.status; return (ctx.body = { error: e.message }); }
-    const { month, year } = ctx.query;
+    const { month, year, all } = ctx.query;
     const where: any = { student: { id: Number(ctx.params.id) } };
-    if (month && year) {
+    if (month && year && all !== 'true') {
       const startDate = new Date(Number(year), Number(month) - 1, 1).toISOString().split('T')[0];
       const endDate = new Date(Number(year), Number(month), 0).toISOString().split('T')[0];
       where.session = { date: { $gte: startDate, $lte: endDate } };
     }
     const records = await strapi.db.query('api::attendance-record.attendance-record').findMany({
       where,
-      populate: ['session', 'session.subject'],
+      populate: ['session', 'session.subject', 'session.classe'],
     }) as any[];
     
     // Sort in memory instead of database order by

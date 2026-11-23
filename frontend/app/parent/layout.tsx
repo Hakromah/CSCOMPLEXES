@@ -4,6 +4,7 @@ export default function ParentLayout({ children }: { children: React.ReactNode }
   const menuItems = [
     { name: 'Tableau de bord', href: '/parent' },
     { name: 'Mes Enfants', href: '/parent/children' },
+    { name: 'Gestion des présences', href: '/parent/attendance' },
     { name: 'Aperçu Financier', href: '/parent/finance' },
     { name: 'Messages', href: '/parent/messages' },
     { name: 'Notifications', href: '/parent/notifications' },

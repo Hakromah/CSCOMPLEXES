@@ -54,8 +54,8 @@ export default () => ({
     const sessionData: any = {
       date: dto.date,
       classe: dto.classId,
+      sessionTime: dto.sessionTime || new Date().toTimeString().slice(0, 5),
     };
-    if (dto.sessionTime) sessionData.sessionTime = dto.sessionTime;
     if (dto.subjectId)   sessionData.subject = dto.subjectId;
     if (dto.notes)       sessionData.notes = dto.notes;
 
@@ -117,7 +117,7 @@ export default () => ({
   async getAttendanceHistory(classId: number) {
     const sessions = await (strapi.entityService.findMany as any)('api::attendance-session.attendance-session', {
       filters: { classe: { id: classId } },
-      populate: ['records', 'records.student', 'subject'],
+      populate: ['records', 'records.student', 'subject', 'classe'],
       sort: [{ date: 'desc' }],
     }) as any[];
 
@@ -130,7 +130,11 @@ export default () => ({
         id:           s.id,
         date:         s.date,
         sessionTime:  s.sessionTime || null,
+        createdAt:    s.createdAt || null,
+        classId:      s.classe?.id || classId,
+        className:    s.classe?.name || null,
         subjectName:  s.subject?.name || null,
+        subjectCode:  s.subject?.code || null,
         subjectId:    s.subject?.id || null,
         notes:        s.notes || null,
         totalCount,
@@ -139,8 +143,12 @@ export default () => ({
         absentCount:  records.filter((r: any) => r.status === 'ABSENT').length,
         excusedCount: records.filter((r: any) => r.status === 'EXCUSED' || r.status === 'SICK').length,
         records: records.map((r: any) => ({
+          id:          r.id,
           studentId:   r.student?.id,
-          studentName: r.student?.username || r.student?.name,
+          userId:      r.student?.userId || null,
+          studentName: (r.student?.firstName && r.student?.lastName)
+            ? `${r.student.firstName} ${r.student.lastName}`.trim()
+            : (r.student?.username || r.student?.name || 'Student'),
           status:      r.status,
         })),
       };

@@ -95,10 +95,15 @@ export default () => ({
 
     return records.map((r) => ({
       id:          r.id,
+      sessionId:   r.session?.id || null,
       date:        r.session?.date,
       sessionTime: r.session?.sessionTime || null,
+      createdAt:   r.session?.createdAt || r.createdAt || null,
+      classId:     r.session?.classe?.id || null,
       className:   r.session?.classe?.name || null,
+      subjectId:   r.session?.subject?.id || null,
       subjectName: r.session?.subject?.name || null,
+      subjectCode: r.session?.subject?.code || null,
       notes:       r.session?.notes || null,
       status:      r.status,
     }));
