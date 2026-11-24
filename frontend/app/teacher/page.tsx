@@ -22,7 +22,8 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 const COLORS = ['#2563eb', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'];
 
 export default function TeacherDashboard() {
-  const [stats, setStats] = useState({ classes: 0, students: 0, exams: 0, teacherName: '' });
+  const [stats, setStats] = useState({ classes: 0, students: 0, exams: 0, subjects: 0, teacherName: '' });
+  const [assignedClasses, setAssignedClasses] = useState<any[]>([]);
   const [recentResults, setRecentResults] = useState<any[]>([]);
   const [upcomingExams, setUpcomingExams] = useState<any[]>([]);
   const [resultsData, setResultsData] = useState<any[]>([]);
@@ -66,6 +67,12 @@ export default function TeacherDashboard() {
         const resultsList = Array.isArray(resultsRes.data) ? resultsRes.data : [];
 
         const totalStudents = classesList.reduce((acc: number, curr: any) => acc + (curr.students?.length || 0), 0);
+        const uniqueSubjectIds = new Set<number>();
+        classesList.forEach((cls: any) => {
+          (cls.subjects || []).forEach((s: any) => {
+            if (s?.id) uniqueSubjectIds.add(s.id);
+          });
+        });
 
         const now = new Date();
         now.setHours(0, 0, 0, 0);
@@ -74,10 +81,12 @@ export default function TeacherDashboard() {
           .sort((a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime())
           .slice(0, 3);
 
+        setAssignedClasses(classesList);
         setStats({
           classes: classesList.length,
           students: totalStudents,
           exams: examsList.length,
+          subjects: uniqueSubjectIds.size,
           teacherName: userRes.data?.name || ''
         });
         setResultsData(resultsList);
@@ -143,11 +152,12 @@ export default function TeacherDashboard() {
       </div>
 
       {/* STATS GRID */}
-      <div className="grid gap-6 md:grid-cols-3">
+      <div className="grid gap-6 md:grid-cols-4">
         {[
           { label: 'Classes Assignées', val: stats.classes, icon: BookOpen, color: 'bg-blue-600', href: '/teacher/classes' },
+          { label: 'Matières Enseignées', val: stats.subjects, icon: GraduationCap, color: 'bg-indigo-600', href: '/teacher/classes' },
           { label: 'Élèves Inscrits', val: stats.students, icon: Users, color: 'bg-emerald-500', href: '/teacher/students' },
-          { label: 'Matériaux Académiques', val: stats.exams, icon: FileText, color: 'bg-amber-500', href: '/teacher/materials' }
+          { label: 'Examens & Évaluations', val: stats.exams, icon: FileText, color: 'bg-amber-500', href: '/teacher/exams' }
         ].map((item, i) => (
           <motion.div key={i} whileHover={{ y: -5 }} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}>
             <a href={item.href} className="block">
@@ -163,6 +173,72 @@ export default function TeacherDashboard() {
           </motion.div>
         ))}
       </div>
+
+      {/* MY ASSIGNED CLASSES & TEACHING SUBJECTS */}
+      <Card className="border border-slate-100 shadow-sm bg-white rounded-3xl overflow-hidden">
+        <CardHeader className="border-b bg-slate-50/50 py-4 px-6 flex flex-row items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+              <BookOpen className="w-5 h-5" />
+            </div>
+            <div>
+              <CardTitle className="text-base font-black text-slate-900">Mes Classes & Matières Assignées</CardTitle>
+              <p className="text-[11px] font-semibold text-slate-400">Liste des cours que vous dispensez dans chaque classe</p>
+            </div>
+          </div>
+          <Button variant="ghost" size="sm" className="text-xs font-bold text-primary" asChild>
+            <a href="/teacher/classes">Voir toutes les classes <ArrowRight className="ml-1 w-3 h-3" /></a>
+          </Button>
+        </CardHeader>
+        <CardContent className="p-6">
+          {assignedClasses.length === 0 ? (
+            <div className="text-center py-8 text-slate-400 text-xs font-bold">
+              Aucune classe ou matière assignée pour le moment.
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {assignedClasses.map((cls: any) => (
+                <div
+                  key={cls.id}
+                  className="p-4 rounded-2xl border border-slate-100 bg-slate-50/60 hover:border-blue-300 hover:bg-white transition-all space-y-3"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-blue-600">
+                        {cls.grade || 'Classe'}
+                      </p>
+                      <h4 className="text-sm font-black text-slate-900 mt-0.5">{cls.name}</h4>
+                    </div>
+                    <span className="text-[10px] font-black bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-full">
+                      {cls.students?.length || 0} élèves
+                    </span>
+                  </div>
+                  <div className="space-y-1.5">
+                    <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">
+                      Matières enseignées ({(cls.subjects || []).length})
+                    </p>
+                    {(cls.subjects || []).length > 0 ? (
+                      <div className="flex flex-wrap gap-1.5">
+                        {cls.subjects.map((subj: any) => (
+                          <span
+                            key={subj.id}
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200 text-[10px] font-black"
+                          >
+                            <BookOpen className="w-3 h-3" />
+                            {subj.name}
+                          </span>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-[11px] italic text-slate-400">Aucune matière attribuée pour cette classe</p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       <div className="grid lg:grid-cols-3 gap-8">
 

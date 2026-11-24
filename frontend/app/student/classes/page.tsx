@@ -43,6 +43,13 @@ interface ClassItem {
   academicYear?: { id: number; name: string };
   teachers?: Teacher[];
   students?: any[];
+  teachingAssignments?: Array<{
+    teacherId: number;
+    teacherName: string;
+    teacherEmail?: string;
+    subjects: Array<{ id: number; name: string; code?: string }>;
+  }>;
+  subjects?: Array<{ id: number; name: string; code?: string; teacherId?: number; teacherName?: string }>;
 }
 
 export default function StudentClassesPage() {
@@ -207,30 +214,49 @@ export default function StudentClassesPage() {
                               {teachers.length > 0 ? (
                                 teachers.slice(0, 3).map((teacher) => {
                                   const tName = teacher.name || teacher.username || 'Enseignant';
+                                  const tAssignment = c.teachingAssignments?.find(
+                                    (ta) => ta.teacherId === teacher.id
+                                  );
+                                  const tSubjects = tAssignment?.subjects || teacher.subjects || [];
                                   return (
                                     <div
                                       key={teacher.id}
                                       onClick={(e) => e.stopPropagation()}
-                                      className="flex items-center justify-between p-2.5 rounded-xl bg-white border border-slate-200/70 hover:border-blue-400 transition-colors"
+                                      className="p-2.5 rounded-xl bg-white border border-slate-200/70 hover:border-blue-400 transition-colors space-y-2"
                                     >
-                                      <div className="flex items-center gap-2.5 min-w-0">
-                                        <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 flex-shrink-0">
-                                          <User size={14} />
+                                      <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-2.5 min-w-0">
+                                          <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 flex-shrink-0">
+                                            <User size={14} />
+                                          </div>
+                                          <div className="truncate">
+                                            <p className="text-xs font-black text-slate-800 truncate">{tName}</p>
+                                            {teacher.email && (
+                                              <p className="text-[10px] text-slate-400 truncate">{teacher.email}</p>
+                                            )}
+                                          </div>
                                         </div>
-                                        <div className="truncate">
-                                          <p className="text-xs font-black text-slate-800 truncate">{tName}</p>
-                                          {teacher.email && (
-                                            <p className="text-[10px] text-slate-400 truncate">{teacher.email}</p>
-                                          )}
-                                        </div>
+                                        {teacher.email && (
+                                          <a
+                                            href={`mailto:${teacher.email}`}
+                                            className="w-7 h-7 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-blue-600"
+                                          >
+                                            <Mail size={14} />
+                                          </a>
+                                        )}
                                       </div>
-                                      {teacher.email && (
-                                        <a
-                                          href={`mailto:${teacher.email}`}
-                                          className="w-7 h-7 rounded-lg hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-blue-600"
-                                        >
-                                          <Mail size={14} />
-                                        </a>
+                                      {tSubjects.length > 0 && (
+                                        <div className="flex flex-wrap gap-1 pt-1 border-t border-slate-100">
+                                          {tSubjects.map((sub) => (
+                                            <span
+                                              key={sub.id}
+                                              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-blue-50 text-blue-700 text-[9px] font-black uppercase tracking-tight"
+                                            >
+                                              <BookOpen size={9} />
+                                              {sub.name}
+                                            </span>
+                                          ))}
+                                        </div>
                                       )}
                                     </div>
                                   );

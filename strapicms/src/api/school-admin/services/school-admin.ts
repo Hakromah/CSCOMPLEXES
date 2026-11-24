@@ -128,9 +128,43 @@ export default () => ({
   // ─── Class Management ─────────────────────────────────────────────
 
   async getAllClasses() {
-    return strapi.entityService.findMany('api::school-class.school-class', {
+    const classes = await strapi.entityService.findMany('api::school-class.school-class', {
       populate: ['teachers', 'students', 'academicYear'],
-    });
+    }) as any[];
+
+    let assignments: any[] = [];
+    try {
+      assignments = await (strapi.entityService.findMany as any)('api::teacher-assignment.teacher-assignment', {
+        populate: ['teacher', 'classe', 'subjects'],
+      }) as any[];
+    } catch {
+      assignments = [];
+    }
+
+    const byClass = new Map<number, any[]>();
+    for (const a of assignments || []) {
+      const cId = a.classe?.id;
+      const tId = a.teacher?.id;
+      if (!cId || !tId) continue;
+      if (!byClass.has(cId)) byClass.set(cId, []);
+      byClass.get(cId)!.push({
+        id: a.id,
+        teacherId: tId,
+        teacherName: a.teacher?.firstName && a.teacher?.lastName
+          ? `${a.teacher.firstName} ${a.teacher.lastName}`.trim()
+          : (a.teacher?.username || a.teacher?.email || `Teacher #${tId}`),
+        subjects: (a.subjects || []).map((s: any) => ({
+          id: s.id,
+          name: s.name,
+          code: s.code || null,
+        })),
+      });
+    }
+
+    return (classes || []).map((cls: any) => ({
+      ...cls,
+      teacherAssignments: byClass.get(cls.id) || [],
+    }));
   },
 
   async getClassById(classId: number) {
@@ -151,15 +185,28 @@ export default () => ({
       sort: [{ dayOfWeek: 'asc' }, { startTime: 'asc' }],
     }) as any[];
 
+    let teacherAssignments: any[] = [];
+    try {
+      teacherAssignments = await (strapi.entityService.findMany as any)('api::teacher-assignment.teacher-assignment', {
+        filters: { classe: { id: classId } },
+        populate: ['teacher', 'subjects'],
+      }) as any[];
+    } catch {
+      teacherAssignments = [];
+    }
+
     // Map teachers and their teaching courses in this class
     const teacherMap = new Map<number, any>();
 
     // 1. Add assigned teachers from class.teachers
     for (const t of (cls.teachers || [])) {
+      const fullName = t.firstName && t.lastName
+        ? `${t.firstName} ${t.lastName}`.trim()
+        : (t.username || t.name || '');
       teacherMap.set(t.id, {
         id: t.id,
-        username: t.username,
-        name: t.username,
+        username: fullName || t.username,
+        name: fullName || t.username,
         userId: t.userId,
         email: t.email,
         phoneNumber: t.phoneNumber,
@@ -169,15 +216,50 @@ export default () => ({
       });
     }
 
-    // 2. Correlate with timetable entries to discover subjects taught
+    // 2. Merge explicit teacher-assignment subjects for this class
+    for (const assign of teacherAssignments) {
+      if (!assign.teacher?.id) continue;
+      let t = teacherMap.get(assign.teacher.id);
+      if (!t) {
+        const fullName = assign.teacher.firstName && assign.teacher.lastName
+          ? `${assign.teacher.firstName} ${assign.teacher.lastName}`.trim()
+          : (assign.teacher.username || assign.teacher.name || '');
+        t = {
+          id: assign.teacher.id,
+          username: fullName || assign.teacher.username,
+          name: fullName || assign.teacher.username,
+          userId: assign.teacher.userId,
+          email: assign.teacher.email,
+          phoneNumber: assign.teacher.phoneNumber,
+          gender: assign.teacher.gender,
+          subjects: [],
+          sessionsCount: 0,
+        };
+        teacherMap.set(assign.teacher.id, t);
+      }
+      for (const subj of (assign.subjects || [])) {
+        if (subj?.id && !t.subjects.some((s: any) => s.id === subj.id)) {
+          t.subjects.push({
+            id: subj.id,
+            name: subj.name,
+            code: subj.code || null,
+          });
+        }
+      }
+    }
+
+    // 3. Correlate with timetable entries to discover additional subjects taught & session count
     for (const entry of timetableEntries) {
       if (!entry.teacher?.id) continue;
       let t = teacherMap.get(entry.teacher.id);
       if (!t) {
+        const fullName = entry.teacher.firstName && entry.teacher.lastName
+          ? `${entry.teacher.firstName} ${entry.teacher.lastName}`.trim()
+          : (entry.teacher.username || entry.teacher.name || '');
         t = {
           id: entry.teacher.id,
-          username: entry.teacher.username,
-          name: entry.teacher.username,
+          username: fullName || entry.teacher.username,
+          name: fullName || entry.teacher.username,
           userId: entry.teacher.userId,
           email: entry.teacher.email,
           phoneNumber: entry.teacher.phoneNumber,
@@ -222,7 +304,7 @@ export default () => ({
     return strapi.entityService.delete('api::school-class.school-class', id);
   },
 
-  async assignTeacherToClass(teacherId: number, classId: number) {
+  async assignTeacherToClass(teacherId: number, classId: number, subjectIds?: number[]) {
     const cls = await strapi.entityService.findOne('api::school-class.school-class', classId, {
       populate: ['teachers'],
     }) as any;
@@ -241,7 +323,43 @@ export default () => ({
         });
       }
     }
-    return { alreadyAssigned };
+
+    // Upsert teacher-assignment record storing the courses taught by this teacher in this class
+    let assignment: any = null;
+    if (Array.isArray(subjectIds)) {
+      const cleanSubjectIds = Array.from(new Set(subjectIds.map((id) => Number(id)).filter((id) => !isNaN(id))));
+      try {
+        const existingAssignments = await (strapi.entityService.findMany as any)('api::teacher-assignment.teacher-assignment', {
+          filters: {
+            teacher: { id: Number(teacherId) },
+            classe: { id: Number(classId) },
+          },
+          populate: ['subjects'],
+        }) as any[];
+
+        if (existingAssignments && existingAssignments.length > 0) {
+          assignment = await (strapi.entityService.update as any)('api::teacher-assignment.teacher-assignment', existingAssignments[0].id, {
+            data: {
+              subjects: cleanSubjectIds,
+            },
+            populate: ['subjects', 'classe', 'teacher'],
+          });
+        } else {
+          assignment = await (strapi.entityService.create as any)('api::teacher-assignment.teacher-assignment', {
+            data: {
+              teacher: Number(teacherId),
+              classe: Number(classId),
+              subjects: cleanSubjectIds,
+            },
+            populate: ['subjects', 'classe', 'teacher'],
+          });
+        }
+      } catch (err: any) {
+        strapi.log.warn(`[assignTeacherToClass] Could not save teacher-assignment subjects: ${err?.message}`);
+      }
+    }
+
+    return { alreadyAssigned, assignment };
   },
 
   async assignStudentToClass(studentId: number, classId: number) {
@@ -285,21 +403,71 @@ export default () => ({
   },
 
   async getClassesForTeacher(teacherId: number) {
+    let teacherClasses: any[] = [];
     try {
       const allClasses = await strapi.entityService.findMany('api::school-class.school-class', {
-        populate: ['teachers', 'students'],
+        populate: ['teachers', 'students', 'academicYear'],
       }) as any[];
-      return (allClasses || []).filter((cls: any) =>
+      teacherClasses = (allClasses || []).filter((cls: any) =>
         (cls.teachers || []).some((t: any) => t.id === Number(teacherId))
       );
     } catch {
       const knex = strapi.db.connection;
-      const classRows = await knex('school_classes as sc')
+      teacherClasses = await knex('school_classes as sc')
         .join('school_classes_teachers_lnk as lnk', 'lnk.school_class_id', 'sc.id')
         .where('lnk.user_id', Number(teacherId))
         .select('sc.id', 'sc.name', 'sc.grade');
-      return classRows;
     }
+
+    // Fetch explicit teacher-assignment records for this teacher
+    let assignments: any[] = [];
+    try {
+      assignments = await (strapi.entityService.findMany as any)('api::teacher-assignment.teacher-assignment', {
+        filters: { teacher: { id: Number(teacherId) } },
+        populate: ['classe', 'subjects'],
+      }) as any[];
+    } catch {
+      assignments = [];
+    }
+
+    // Also include any timetable subjects as supplementary fallback
+    let ttEntries: any[] = [];
+    try {
+      ttEntries = await (strapi.entityService.findMany as any)('api::timetable-entry.timetable-entry', {
+        filters: { teacher: { id: Number(teacherId) } },
+        populate: ['classe', 'subject'],
+      }) as any[];
+    } catch {
+      ttEntries = [];
+    }
+
+    const subjectsByClass = new Map<number, Array<{ id: number; name: string; code: string | null }>>();
+    for (const a of assignments || []) {
+      const cId = a.classe?.id;
+      if (!cId) continue;
+      if (!subjectsByClass.has(cId)) subjectsByClass.set(cId, []);
+      const list = subjectsByClass.get(cId)!;
+      for (const s of a.subjects || []) {
+        if (s?.id && !list.some((x) => x.id === s.id)) {
+          list.push({ id: s.id, name: s.name, code: s.code || null });
+        }
+      }
+    }
+    for (const tt of ttEntries || []) {
+      const cId = tt.classe?.id;
+      const s = tt.subject;
+      if (!cId || !s?.id) continue;
+      if (!subjectsByClass.has(cId)) subjectsByClass.set(cId, []);
+      const list = subjectsByClass.get(cId)!;
+      if (!list.some((x) => x.id === s.id)) {
+        list.push({ id: s.id, name: s.name, code: s.code || null });
+      }
+    }
+
+    return teacherClasses.map((cls: any) => ({
+      ...cls,
+      subjects: subjectsByClass.get(cls.id) || [],
+    }));
   },
 
   async unassignTeacherFromClass(teacherId: number, classId: number) {
@@ -320,6 +488,23 @@ export default () => ({
       await knex('school_classes_teachers_lnk')
         .where({ school_class_id: Number(classId), user_id: Number(teacherId) })
         .del();
+    }
+
+    // Remove matching teacher-assignment record(s) for this (teacher, class)
+    try {
+      const existingAssignments = await (strapi.entityService.findMany as any)('api::teacher-assignment.teacher-assignment', {
+        filters: {
+          teacher: { id: Number(teacherId) },
+          classe: { id: Number(classId) },
+        },
+      }) as any[];
+      await Promise.all(
+        (existingAssignments || []).map((a: any) =>
+          (strapi.entityService.delete as any)('api::teacher-assignment.teacher-assignment', a.id)
+        )
+      );
+    } catch {
+      // ignore if table not yet synced
     }
   },
 

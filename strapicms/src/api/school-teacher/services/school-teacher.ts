@@ -8,10 +8,58 @@ export default () => ({
   // ─── Classes & Students ───────────────────────────────────────────
 
   async getClassesByTeacher(teacherId: number) {
-    return strapi.entityService.findMany('api::school-class.school-class' as any, {
+    const classes = await strapi.entityService.findMany('api::school-class.school-class' as any, {
       filters: { teachers: { id: teacherId } },
-      populate: ['teachers', 'students'] as any,
-    });
+      populate: ['teachers', 'students', 'academicYear'] as any,
+    }) as any[];
+
+    let assignments: any[] = [];
+    try {
+      assignments = await (strapi.entityService.findMany as any)('api::teacher-assignment.teacher-assignment', {
+        filters: { teacher: { id: Number(teacherId) } },
+        populate: ['classe', 'subjects'],
+      }) as any[];
+    } catch {
+      assignments = [];
+    }
+
+    let ttEntries: any[] = [];
+    try {
+      ttEntries = await (strapi.entityService.findMany as any)('api::timetable-entry.timetable-entry', {
+        filters: { teacher: { id: Number(teacherId) } },
+        populate: ['classe', 'subject'],
+      }) as any[];
+    } catch {
+      ttEntries = [];
+    }
+
+    const subjectsByClass = new Map<number, Array<{ id: number; name: string; code: string | null }>>();
+    for (const a of assignments || []) {
+      const cId = a.classe?.id;
+      if (!cId) continue;
+      if (!subjectsByClass.has(cId)) subjectsByClass.set(cId, []);
+      const list = subjectsByClass.get(cId)!;
+      for (const s of a.subjects || []) {
+        if (s?.id && !list.some((x) => x.id === s.id)) {
+          list.push({ id: s.id, name: s.name, code: s.code || null });
+        }
+      }
+    }
+    for (const tt of ttEntries || []) {
+      const cId = tt.classe?.id;
+      const s = tt.subject;
+      if (!cId || !s?.id) continue;
+      if (!subjectsByClass.has(cId)) subjectsByClass.set(cId, []);
+      const list = subjectsByClass.get(cId)!;
+      if (!list.some((x) => x.id === s.id)) {
+        list.push({ id: s.id, name: s.name, code: s.code || null });
+      }
+    }
+
+    return (classes || []).map((cls: any) => ({
+      ...cls,
+      subjects: subjectsByClass.get(cls.id) || [],
+    }));
   },
 
   async getStudentsByClass(teacherId: number, classId: number) {
@@ -155,9 +203,32 @@ export default () => ({
     });
   },
 
-  async getSubjectsByClass(_teacherId: number, _classId: number) {
-    // Return all subjects — simple and always works regardless of exam assignments.
-    // The frontend labels these as the teacher's subjects since subjects are school-wide.
+  async getSubjectsByClass(teacherId: number, classId: number) {
+    // Prefer explicitly assigned subjects for this (teacher, class) if available
+    try {
+      const assignments = await (strapi.entityService.findMany as any)('api::teacher-assignment.teacher-assignment', {
+        filters: {
+          teacher: { id: Number(teacherId) },
+          classe: { id: Number(classId) },
+        },
+        populate: ['subjects'],
+      }) as any[];
+      const assignedSubjects: Array<{ id: number; name: string; code: string | null }> = [];
+      for (const a of assignments || []) {
+        for (const s of a.subjects || []) {
+          if (s?.id && !assignedSubjects.some((x) => x.id === s.id)) {
+            assignedSubjects.push({ id: s.id, name: s.name, code: s.code || null });
+          }
+        }
+      }
+      if (assignedSubjects.length > 0) {
+        return assignedSubjects.sort((a, b) => a.name.localeCompare(b.name));
+      }
+    } catch {
+      // fallback to all subjects
+    }
+
+    // Fallback: return all subjects sorted alphabetically so legacy classes without explicit assignments keep working
     const allSubjects = await (strapi.entityService.findMany as any)('api::subject.subject', {
       sort: [{ name: 'asc' }],
     }) as any[];

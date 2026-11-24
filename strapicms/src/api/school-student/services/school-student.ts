@@ -72,9 +72,108 @@ export default () => ({
   // ─── Classes ──────────────────────────────────────────────────────
 
   async getClassesByStudent(studentId: number) {
-    return strapi.entityService.findMany('api::school-class.school-class', {
+    const classes = await strapi.entityService.findMany('api::school-class.school-class', {
       filters: { students: { id: studentId } },
-      populate: ['teachers', 'students'],
+      populate: ['teachers', 'students', 'academicYear'],
+    }) as any[];
+
+    const classIds = (classes || []).map((c: any) => c.id);
+    if (!classIds.length) return [];
+
+    let assignments: any[] = [];
+    try {
+      assignments = await (strapi.entityService.findMany as any)('api::teacher-assignment.teacher-assignment', {
+        filters: { classe: { id: { $in: classIds } } },
+        populate: ['teacher', 'classe', 'subjects'],
+      }) as any[];
+    } catch {
+      assignments = [];
+    }
+
+    let ttEntries: any[] = [];
+    try {
+      ttEntries = await (strapi.entityService.findMany as any)('api::timetable-entry.timetable-entry', {
+        filters: { classe: { id: { $in: classIds } } },
+        populate: ['teacher', 'classe', 'subject'],
+      }) as any[];
+    } catch {
+      ttEntries = [];
+    }
+
+    return (classes || []).map((cls: any) => {
+      const teacherMap = new Map<number, {
+        teacherId: number;
+        teacherName: string;
+        teacherEmail: string;
+        subjects: Array<{ id: number; name: string; code: string | null }>;
+      }>();
+
+      for (const t of cls.teachers || []) {
+        const name = t.firstName && t.lastName
+          ? `${t.firstName} ${t.lastName}`.trim()
+          : (t.username || t.name || t.email);
+        teacherMap.set(t.id, {
+          teacherId: t.id,
+          teacherName: name,
+          teacherEmail: t.email || '',
+          subjects: [],
+        });
+      }
+
+      for (const a of (assignments || []).filter((x: any) => x.classe?.id === cls.id)) {
+        if (!a.teacher?.id) continue;
+        if (!teacherMap.has(a.teacher.id)) {
+          const name = a.teacher.firstName && a.teacher.lastName
+            ? `${a.teacher.firstName} ${a.teacher.lastName}`.trim()
+            : (a.teacher.username || a.teacher.email);
+          teacherMap.set(a.teacher.id, {
+            teacherId: a.teacher.id,
+            teacherName: name,
+            teacherEmail: a.teacher.email || '',
+            subjects: [],
+          });
+        }
+        const entry = teacherMap.get(a.teacher.id)!;
+        for (const s of a.subjects || []) {
+          if (s?.id && !entry.subjects.some((x) => x.id === s.id)) {
+            entry.subjects.push({ id: s.id, name: s.name, code: s.code || null });
+          }
+        }
+      }
+
+      for (const tt of (ttEntries || []).filter((x: any) => x.classe?.id === cls.id)) {
+        if (!tt.teacher?.id || !tt.subject?.id) continue;
+        if (!teacherMap.has(tt.teacher.id)) {
+          const name = tt.teacher.firstName && tt.teacher.lastName
+            ? `${tt.teacher.firstName} ${tt.teacher.lastName}`.trim()
+            : (tt.teacher.username || tt.teacher.email);
+          teacherMap.set(tt.teacher.id, {
+            teacherId: tt.teacher.id,
+            teacherName: name,
+            teacherEmail: tt.teacher.email || '',
+            subjects: [],
+          });
+        }
+        const entry = teacherMap.get(tt.teacher.id)!;
+        if (!entry.subjects.some((x) => x.id === tt.subject.id)) {
+          entry.subjects.push({ id: tt.subject.id, name: tt.subject.name, code: tt.subject.code || null });
+        }
+      }
+
+      const teachingAssignments = Array.from(teacherMap.values());
+      const subjects = teachingAssignments.flatMap((ta) =>
+        ta.subjects.map((s) => ({
+          ...s,
+          teacherId: ta.teacherId,
+          teacherName: ta.teacherName,
+        }))
+      );
+
+      return {
+        ...cls,
+        teachingAssignments,
+        subjects,
+      };
     });
   },
 
@@ -192,11 +291,21 @@ export default () => ({
   // ─── Dashboard Stats ──────────────────────────────────────────────
 
   async getDashboardStats(studentId: number) {
-    // 1. Fetch Classes First to map related materials/exams
-    const classes = await strapi.entityService.findMany('api::school-class.school-class', {
-      filters: { students: { id: studentId } },
-    }) as any[];
-    const classIds = classes.map(c => c.id);
+    // 1. Fetch Enriched Classes (with Teachers & Assigned Subjects)
+    const enrichedClasses = await this.getClassesByStudent(studentId);
+    const classIds = enrichedClasses.map((c: any) => c.id);
+
+    const courseList = enrichedClasses.flatMap((cls: any) =>
+      (cls.subjects || []).map((s: any) => ({
+        subjectId: s.id,
+        subjectName: s.name,
+        subjectCode: s.code || null,
+        classId: cls.id,
+        className: cls.name,
+        teacherId: s.teacherId,
+        teacherName: s.teacherName,
+      }))
+    );
 
     // 2. Fetch all other aggregates in parallel
     const [attendanceRecords, exams, results, materials] = await Promise.all([
@@ -258,12 +367,21 @@ export default () => ({
     recentActivity.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 
     return {
-      courseCount: classes.length,
+      courseCount: courseList.length > 0 ? courseList.length : enrichedClasses.length,
+      classCount: enrichedClasses.length,
       attendance,
       materials: materials.length,
       averageGrade,
       upcomingExam,
-      recentActivity: recentActivity.slice(0, 3)
+      recentActivity: recentActivity.slice(0, 3),
+      assignedClasses: enrichedClasses.map((cls: any) => ({
+        id: cls.id,
+        name: cls.name,
+        grade: cls.grade,
+        subjects: cls.subjects || [],
+        teachingAssignments: cls.teachingAssignments || [],
+      })),
+      courseList,
     };
   },
 

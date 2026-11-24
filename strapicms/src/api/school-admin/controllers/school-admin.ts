@@ -84,8 +84,12 @@ export default {
     // Route is auth:false, so the caller must be checked here.
     const user = await _verifyAdmin(ctx);
     if (!user) return;
-    const { teacherId, classId } = ctx.request.body;
-    const result = await strapi.service('api::school-admin.school-admin').assignTeacherToClass(teacherId, classId);
+    const { teacherId, classId, subjectIds } = ctx.request.body;
+    const result = await strapi.service('api::school-admin.school-admin').assignTeacherToClass(
+      Number(teacherId),
+      Number(classId),
+      Array.isArray(subjectIds) ? subjectIds.map((id: any) => Number(id)).filter((id: number) => !isNaN(id)) : undefined,
+    );
     ctx.body = result || {};
   },
 

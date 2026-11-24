@@ -21,7 +21,7 @@ const navCards = [
 
 export default function ChildProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = React.use(params);
-  const [student, setStudent] = useState<SchoolUser & { classes?: { id: number; name: string; teachers?: SchoolUser[] }[] } | null>(null);
+  const [student, setStudent] = useState<SchoolUser & { classes?: { id: number; name: string; teachers?: SchoolUser[]; subjects?: { id: number; name: string; code?: string | null; teacherId?: number; teacherName?: string }[]; teachingAssignments?: { teacherId: number; teacherName: string; subjects: { id: number; name: string; code?: string | null }[] }[] }[] } | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -130,24 +130,48 @@ export default function ChildProfilePage({ params }: { params: Promise<{ id: str
         </div>
       </div>
 
-      {/* Teachers */}
-      {currentClass?.teachers && currentClass.teachers.length > 0 && (
+      {/* Teachers & Assigned Subjects */}
+      {((currentClass?.teachingAssignments && currentClass.teachingAssignments.length > 0) || (currentClass?.teachers && currentClass.teachers.length > 0)) && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6"
+          className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 space-y-4"
         >
-          <h2 className="text-xs font-extrabold uppercase tracking-widest text-slate-400 mb-4">Class Teachers</h2>
-          <div className="flex flex-wrap gap-3">
-            {currentClass.teachers.map((t: SchoolUser) => (
-              <div key={t.id} className="flex items-center gap-2 bg-slate-50 rounded-xl px-4 py-2">
-                <div className="w-7 h-7 rounded-lg bg-primary/10 text-primary font-black text-xs flex items-center justify-center">
-                  {(t.firstName?.[0] || t.username[0]).toUpperCase()}
+          <h2 className="text-xs font-extrabold uppercase tracking-widest text-slate-400">
+            Class Teachers &amp; Assigned Subjects
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {(currentClass?.teachingAssignments && currentClass.teachingAssignments.length > 0
+              ? currentClass.teachingAssignments
+              : (currentClass?.teachers || []).map((t: SchoolUser) => ({
+                  teacherId: t.id,
+                  teacherName: t.firstName ? `${t.firstName} ${t.lastName || ''}`.trim() : t.username,
+                  subjects: [],
+                }))
+            ).map((ta) => (
+              <div key={ta.teacherId} className="bg-slate-50 rounded-xl p-4 space-y-2 border border-slate-100">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary font-black text-xs flex items-center justify-center shrink-0">
+                    {(ta.teacherName?.[0] || 'T').toUpperCase()}
+                  </div>
+                  <span className="text-sm font-bold text-slate-800">{ta.teacherName}</span>
                 </div>
-                <span className="text-sm font-semibold text-slate-700">
-                  {t.firstName ? `${t.firstName} ${t.lastName || ''}` : t.username}
-                </span>
+                {ta.subjects && ta.subjects.length > 0 ? (
+                  <div className="flex flex-wrap gap-1.5 pt-1">
+                    {ta.subjects.map((s) => (
+                      <span
+                        key={s.id}
+                        className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 text-[10px] font-bold"
+                      >
+                        <BookOpen className="w-2.5 h-2.5" />
+                        {s.name}
+                      </span>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-[11px] italic text-slate-400">No subjects listed yet</p>
+                )}
               </div>
             ))}
           </div>

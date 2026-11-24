@@ -193,6 +193,81 @@ export default function ParentDashboardPage() {
         ))}
       </div>
 
+      {/* Selected Child's Assigned Classes, Subjects & Teachers */}
+      {(() => {
+        const activeChild: any = (stats?.children || []).find((c: any) => c.id === selectedChildId) || stats?.children?.[0];
+        const childClasses: any[] = activeChild?.classes || [];
+        if (!activeChild) return null;
+        return (
+          <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div>
+                <p className="text-xs font-extrabold uppercase tracking-widest text-slate-400">Programme Académique</p>
+                <h2 className="text-lg font-black text-slate-900 mt-0.5 flex items-center gap-2">
+                  <BookOpen className="w-5 h-5 text-primary" />
+                  Classes, Matières & Enseignants — {activeChild.firstName || activeChild.username}
+                </h2>
+              </div>
+              <Link
+                href={`/parent/children/${activeChild.id}`}
+                className="text-xs font-bold text-primary hover:underline flex items-center gap-1"
+              >
+                Voir le profil complet <ChevronRight className="w-3 h-3" />
+              </Link>
+            </div>
+
+            {childClasses.length === 0 ? (
+              <p className="text-xs font-semibold text-slate-400 py-4 text-center">
+                Aucune classe ou matière assignée pour le moment.
+              </p>
+            ) : (
+              <div className="space-y-4">
+                {childClasses.map((cls: any) => (
+                  <div key={cls.id} className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <span className="text-[10px] font-extrabold uppercase tracking-widest text-primary">
+                          {cls.grade || 'Classe'}
+                        </span>
+                        <h3 className="text-sm font-black text-slate-900">{cls.name}</h3>
+                      </div>
+                      <span className="text-[10px] font-black bg-blue-50 text-blue-700 px-2.5 py-1 rounded-full">
+                        {(cls.subjects || []).length} matière(s)
+                      </span>
+                    </div>
+
+                    {(cls.subjects || []).length > 0 ? (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+                        {cls.subjects.map((subj: any, idx: number) => (
+                          <div
+                            key={`${subj.id}-${subj.teacherId || idx}`}
+                            className="p-3 rounded-xl bg-white border border-slate-200/70 flex items-center justify-between gap-2"
+                          >
+                            <div className="min-w-0">
+                              <p className="text-xs font-black text-slate-800 truncate">{subj.name}</p>
+                              <p className="text-[10px] font-bold text-slate-400 truncate mt-0.5">
+                                Prof. {subj.teacherName || 'Non assigné'}
+                              </p>
+                            </div>
+                            {subj.code && (
+                              <span className="font-mono text-[9px] font-bold bg-slate-100 text-slate-500 px-2 py-0.5 rounded shrink-0">
+                                {subj.code}
+                              </span>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-xs italic text-slate-400">Aucune matière assignée à cette classe pour le moment.</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      })()}
+
       {/* Main Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Attendance Chart */}

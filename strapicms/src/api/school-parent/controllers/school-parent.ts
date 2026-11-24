@@ -108,12 +108,9 @@ export default {
       populate: ['enrolledClasses'],
     }) as any;
     if (!student) return ctx.notFound('Student not found');
-    // Enrich with class details
-    const classes = await strapi.db.query('api::school-class.school-class').findMany({
-      where: { students: { id: student.id } },
-      populate: ['teachers', 'academicYear'],
-    });
-    ctx.body = { ...student, classes };
+    // Enrich with class details + assigned subjects/teachers
+    const enrichedClasses = await strapi.service('api::school-student.school-student').getClassesByStudent(student.id);
+    ctx.body = { ...student, classes: enrichedClasses };
   },
 
   // ─── Attendance ───────────────────────────────────────────────────────
@@ -393,12 +390,30 @@ export default {
         upcomingExams += examCount;
       }
     }
+    const enrichedChildren = await Promise.all(
+      unique.map(async (s: any) => {
+        const childClasses = await strapi.service('api::school-student.school-student').getClassesByStudent(s.id);
+        return {
+          id: s.id,
+          username: s.username,
+          firstName: s.firstName,
+          lastName: s.lastName,
+          classes: (childClasses || []).map((cls: any) => ({
+            id: cls.id,
+            name: cls.name,
+            grade: cls.grade,
+            subjects: cls.subjects || [],
+            teachingAssignments: cls.teachingAssignments || [],
+          })),
+        };
+      })
+    );
     ctx.body = {
       totalChildren: unique.length,
       outstandingBalance,
       unreadNotifications,
       upcomingExams,
-      children: unique.map((s: any) => ({ id: s.id, username: s.username, firstName: s.firstName, lastName: s.lastName })),
+      children: enrichedChildren,
     };
   },
 

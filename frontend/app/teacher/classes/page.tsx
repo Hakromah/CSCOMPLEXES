@@ -31,6 +31,7 @@ interface ClassItem {
   academicYear?: { id: number; name: string };
   students?: any[];
   teachers?: any[];
+  subjects?: Array<{ id: number; name: string; code?: string }>;
 }
 
 export default function TeacherClassesPage() {
@@ -198,10 +199,34 @@ export default function TeacherClassesPage() {
                     <h3 className="text-2xl font-black text-slate-900 tracking-tight mb-1 group-hover:text-blue-600 transition-colors uppercase italic">
                       {cls.name}
                     </h3>
-                    <p className="text-xs font-bold text-slate-400 mb-5 flex items-center gap-1.5">
+                    <p className="text-xs font-bold text-slate-400 mb-4 flex items-center gap-1.5">
                       <Activity size={12} className="text-emerald-500" />
                       {studentCount} Élèves inscrits • {teachersCount} Enseignants
                     </p>
+
+                    {/* Assigned Teaching Subjects */}
+                    <div className="mb-5">
+                      <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-2">
+                        Matières enseignées ({cls.subjects?.length || 0})
+                      </p>
+                      {cls.subjects && cls.subjects.length > 0 ? (
+                        <div className="flex flex-wrap gap-1.5">
+                          {cls.subjects.map((sub) => (
+                            <span
+                              key={sub.id}
+                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-100 text-[10px] font-black uppercase tracking-tight"
+                            >
+                              <BookOpen size={10} />
+                              {sub.name}
+                            </span>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-[10px] font-bold text-slate-400 italic">
+                          Aucune matière assignée pour cette classe
+                        </p>
+                      )}
+                    </div>
 
                     {/* Action buttons inside card */}
                     <div className="grid grid-cols-2 gap-2 mb-4" onClick={(e) => e.stopPropagation()}>

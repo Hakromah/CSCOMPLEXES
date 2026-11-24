@@ -29,11 +29,14 @@ import { Button } from '@/components/ui/button';
 export default function StudentDashboard() {
   const [stats, setStats] = useState({
     courseCount: 0,
+    classCount: 0,
     attendance: 0,
     materials: 0,
     averageGrade: 'N/A',
     upcomingExam: null as any,
     recentActivity: [] as any[],
+    assignedClasses: [] as any[],
+    courseList: [] as any[],
   });
   const [attendanceData, setAttendanceData] = useState<any[]>([
     { day: 'Lun', value: 100 },
@@ -171,6 +174,72 @@ export default function StudentDashboard() {
           </motion.div>
         ))}
       </div>
+
+      {/* My Enrolled Classes, Subjects & Teachers */}
+      <Card className="border border-slate-100 shadow-sm rounded-3xl bg-white p-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-5">
+          <div>
+            <h2 className="text-lg font-black text-slate-900 uppercase tracking-tight flex items-center gap-2">
+              <BookOpen className="w-5 h-5 text-primary" /> Mes Classes, Matières & Enseignants
+            </h2>
+            <p className="text-xs text-slate-400 font-bold uppercase tracking-widest mt-0.5">
+              Cours assignés à votre classe et professeurs responsables
+            </p>
+          </div>
+          <Button variant="ghost" size="sm" className="text-xs font-bold text-primary w-fit" asChild>
+            <a href="/student/classes">Voir mes classes <ChevronRight className="w-3.5 h-3.5 ml-1" /></a>
+          </Button>
+        </div>
+
+        {(stats.assignedClasses || []).length === 0 ? (
+          <p className="text-xs font-bold text-slate-400 text-center py-6">
+            Aucune classe ou matière assignée pour le moment.
+          </p>
+        ) : (
+          <div className="space-y-4">
+            {stats.assignedClasses.map((cls: any) => (
+              <div key={cls.id} className="p-4 rounded-2xl bg-slate-50/80 border border-slate-100 space-y-3">
+                <div className="flex items-center justify-between gap-2">
+                  <div>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-primary">
+                      {cls.grade || 'Classe'}
+                    </span>
+                    <h3 className="text-sm font-black text-slate-900">{cls.name}</h3>
+                  </div>
+                  <Badge className="bg-blue-50 text-blue-700 border-blue-200 text-[10px] font-black">
+                    {(cls.subjects || []).length} matière(s)
+                  </Badge>
+                </div>
+
+                {(cls.subjects || []).length > 0 ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+                    {cls.subjects.map((subj: any, idx: number) => (
+                      <div
+                        key={`${subj.id}-${subj.teacherId || idx}`}
+                        className="p-3 rounded-xl bg-white border border-slate-200/70 flex items-center justify-between gap-2"
+                      >
+                        <div className="min-w-0">
+                          <p className="text-xs font-black text-slate-800 truncate">{subj.name}</p>
+                          <p className="text-[10px] font-bold text-slate-400 truncate mt-0.5">
+                            Prof. {subj.teacherName || 'Non assigné'}
+                          </p>
+                        </div>
+                        {subj.code && (
+                          <Badge variant="outline" className="font-mono text-[9px] shrink-0">
+                            {subj.code}
+                          </Badge>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-xs italic text-slate-400">Aucune matière assignée à cette classe pour le moment.</p>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </Card>
 
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Main Chart Section */}
